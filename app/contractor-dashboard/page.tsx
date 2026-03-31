@@ -1,0 +1,1293 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase-browser';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import Navigation from '@/components/Navigation';
+import { PARTNER_STATUS } from '@/lib/partner-status';
+import { ContractorProfile, TIERS } from './types';
+import StatusCard from './StatusCard';
+import SubscriptionSection from './SubscriptionSection';
+import PerformanceSection from './PerformanceSection';
+import MarketingSection from './MarketingSection';
+import ApplicationForm from './ApplicationForm';
+import ComplianceDocuments from './ComplianceDocuments';
+import ReferralsSection from './ReferralsSection';
+import {
+  Loader as Loader2,
+  CircleAlert as AlertCircle,
+  RefreshCw,
+  LogOut,
+  Building2,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Briefcase,
+  Upload,
+  CircleCheck as CheckCircle2,
+  Shield,
+  CreditCard,
+  LayoutDashboard,
+  Settings,
+  ChartBar as BarChart3,
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+type DashboardTab = 'overview' | 'profile' | 'settings';
+
+function isContractorRole(role?: string | null) {
+  return (role || '').toUpperCase() === 'CONTRACTOR';
+}
+
+export default function ContractorDashboard() {
+  const router = useRouter();
+  const supabaseRef = useRef(createClient());
+  const supabase = supabaseRef.current;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [authChecking, setAuthChecking] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [profile, setProfile] = useState<ContractorProfile | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
+
+  const [leadCount, setLeadCount] = useState(0);
+  const [totalLeads, setTotalLeads] = useState(0);
+  const [leadsLast30, setLeadsLast30] = useState(0);
+
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileEdit, setProfileEdit] = useState({
+    company_name: '',
+    owner_name: '',
+    phone: '',
+    website: '',
+    bio: '',
+    license_number: '',
+    email: '',
+    google_business_url: '',
+    business_description: '',
+    years_in_business: 0,
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
+  const [saveProfileError, setSaveProfileError] = useState<string | null>(null);
+  const [saveProfileInfo, setSaveProfileInfo] = useState<string | null>(null);
+
+  useEffect(() => {
+    void checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (!profile) return;
+
+    setProfileEdit({
+      company_name: profile.company_name || '',
+      owner_name: profile.owner_name || '',
+      phone: profile.phone || '',
+      website: profile.website || '',
+      bio: profile.bio || '',
+      license_number: profile.license_number || '',
+      email: profile.email || '',
+      google_business_url: (profile as any).google_business_url || '',
+      business_description: (profile as any).business_description || '',
+      years_in_business: (profile as any).years_in_business || 0,
+    });
+
+    const channel = supabase
+      .channel('contractor-profile-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'contractor_profiles',
+          filter: `id=eq.${profile.id}`,
+        },
+        (payload) => {
+          setProfile(payload.new as ContractorProfile);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [profile?.id, supabase]);
+
+  async function checkAuth() {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        router.push('/login?redirect=/contractor-dashboard');
+        return;
+      }
+
+      const {
+        data: { user },
+        error: userErr,
+      } = await supabase.auth.getUser();
+
+      if (userErr || !user) {
+        router.push('/login?redirect=/contractor-dashboard');
+        return;
+      }
+
+      const { data: appUser, error: appUserError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (appUserError) {
+        setError(appUserError.message);
+        setAuthChecking(false);
+        setLoading(false);
+        return;
+      }
+
+      if (!isContractorRole(appUser?.role)) {
+        window.location.href = '/requestor-dashboard';
+        return;
+      }
+
+      setUserId(user.id);
+      setUserEmail(user.email ?? '');
+      setAuthChecking(false);
+      await loadProfile(user.id, user.email ?? '');
+    } catch (err: any) {
+      setError(err.message);
+      setAuthChecking(false);
+      setLoading(false);
+    }
+  }
+
+  async function loadProfile(uid: string, email: string) {
+    setLoading(true);
+
+    try {
+      const { data, error: profileErr } = await supabase
+        .from('contractor_profiles')
+        .select('*')
+        .eq('user_id', uid)
+        .maybeSingle();
+
+      if (profileErr) {
+        setError(profileErr.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!data) {
+        const { data: inserted, error: insertErr } = await supabase
+          .from('contractor_profiles')
+          .insert({
+            user_id: uid,
+            email: email.trim().toLowerCase(),
+            partner_status: PARTNER_STATUS.APPLIED,
+            company_name: '',
+            owner_name: '',
+            phone: '',
+          })
+          .select()
+          .maybeSingle();
+
+        if (insertErr) {
+          setError(
+            'Profile could not be created. Please contact support. Error: ' + insertErr.message
+          );
+        } else {
+          setProfile(inserted);
+          if (inserted) await loadLeadData(inserted.id);
+        }
+
+        setLoading(false);
+        return;
+      }
+
+      const [countiesRes, categoriesRes] = await Promise.all([
+        supabase
+          .from('contractor_counties')
+          .select('county_id, counties(id, name, state_code)')
+          .eq('contractor_id', data.id),
+        supabase
+          .from('contractor_categories')
+          .select('category_id, categories(id, name)')
+          .eq('contractor_id', data.id),
+      ]);
+
+      const liveCounties = (countiesRes.data || []).map((row: any) => row.counties).filter(Boolean);
+      const liveTrades = (categoriesRes.data || []).map((row: any) => row.categories).filter(Boolean);
+
+      const enrichedProfile = {
+        ...data,
+        _liveCounties: liveCounties,
+        _liveTrades: liveTrades,
+      };
+
+      setProfile(enrichedProfile as any);
+      await loadLeadData(data.id);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function refreshProfile() {
+    if (!userId) return;
+
+    setRefreshing(true);
+
+    try {
+      const { data, error: profileErr } = await supabase
+        .from('contractor_profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (!profileErr && data) {
+        const [countiesRes, categoriesRes] = await Promise.all([
+          supabase
+            .from('contractor_counties')
+            .select('county_id, counties(id, name, state_code)')
+            .eq('contractor_id', data.id),
+          supabase
+            .from('contractor_categories')
+            .select('category_id, categories(id, name)')
+            .eq('contractor_id', data.id),
+        ]);
+
+        const liveCounties = (countiesRes.data || []).map((row: any) => row.counties).filter(Boolean);
+        const liveTrades = (categoriesRes.data || []).map((row: any) => row.categories).filter(Boolean);
+
+        setProfile({ ...data, _liveCounties: liveCounties, _liveTrades: liveTrades } as any);
+
+        if (data.id) {
+          await loadLeadData(data.id);
+        }
+      }
+    } catch (err: any) {
+      console.error('Refresh error:', err);
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
+  async function loadLeadData(profileId: string) {
+    try {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const [thisMonthResult, totalResult, last30Result] = await Promise.all([
+        supabase
+          .from('referrals')
+          .select('*', { count: 'exact', head: true })
+          .eq('contractor_id', profileId)
+          .gte('created_at', startOfMonth.toISOString()),
+        supabase
+          .from('referrals')
+          .select('*', { count: 'exact', head: true })
+          .eq('contractor_id', profileId),
+        supabase
+          .from('referrals')
+          .select('*', { count: 'exact', head: true })
+          .eq('contractor_id', profileId)
+          .gte('created_at', thirtyDaysAgo.toISOString()),
+      ]);
+
+      setLeadCount(thisMonthResult.count || 0);
+      setTotalLeads(totalResult.count || 0);
+      setLeadsLast30(last30Result.count || 0);
+    } catch (err) {
+      console.error('Lead data error:', err);
+    }
+  }
+
+  async function handleLogoUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files || !event.target.files[0] || !profile) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      const file = event.target.files[0];
+
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('File must be under 5MB');
+      }
+
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${profile.user_id}-${Date.now()}.${fileExt}`;
+
+      const { error: storageError } = await supabase.storage
+        .from('logos')
+        .upload(filePath, file, { upsert: true });
+
+      if (storageError) {
+        throw new Error(`Upload failed: ${storageError.message}`);
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('logos').getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from('contractor_profiles')
+        .update({ logo_url: publicUrl })
+        .eq('user_id', profile.user_id);
+
+      if (updateError) {
+        throw new Error(`Profile update failed: ${updateError.message}`);
+      }
+
+      setProfile({ ...profile, logo_url: publicUrl });
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      setUploadError(err.message || 'Logo upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function handleEditProfile() {
+    if (!profile) return;
+
+    setProfileEdit({
+      company_name: profile.company_name || '',
+      owner_name: profile.owner_name || '',
+      phone: profile.phone || '',
+      website: profile.website || '',
+      bio: profile.bio || '',
+      license_number: profile.license_number || '',
+      email: profile.email || '',
+      google_business_url: (profile as any).google_business_url || '',
+      business_description: (profile as any).business_description || '',
+      years_in_business: (profile as any).years_in_business || 0,
+    });
+
+    setSaveProfileError(null);
+    setSaveProfileInfo(null);
+    setIsEditingProfile(true);
+  }
+
+  function handleCancelEdit() {
+    setIsEditingProfile(false);
+    setSaveProfileError(null);
+    setSaveProfileInfo(null);
+  }
+
+  async function handleSaveProfile() {
+    if (!profile) return;
+
+    setSavingProfile(true);
+    setSaveProfileError(null);
+    setSaveProfileInfo(null);
+
+    try {
+      const newEmail = profileEdit.email.trim().toLowerCase();
+      const emailChanged = newEmail && newEmail !== profile.email?.toLowerCase();
+
+      if (emailChanged) {
+        const res = await fetch('/api/update-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ newEmail }),
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+          setSaveProfileError(
+            json.error || "We couldn't update your email. Please try again or contact support."
+          );
+          setSavingProfile(false);
+          return;
+        }
+
+        setSaveProfileInfo(json.message);
+        setProfile({ ...profile, email: newEmail });
+        setUserEmail(newEmail);
+      }
+
+      const { error } = await supabase
+        .from('contractor_profiles')
+        .update({
+          company_name: profileEdit.company_name,
+          owner_name: profileEdit.owner_name,
+          phone: profileEdit.phone,
+          website: profileEdit.website,
+          bio: profileEdit.bio,
+          license_number: profileEdit.license_number,
+          google_business_url: profileEdit.google_business_url,
+          business_description: profileEdit.business_description,
+          years_in_business: profileEdit.years_in_business || 0,
+        })
+        .eq('user_id', profile.user_id);
+
+      if (error) throw error;
+
+      setProfile((prev) =>
+        prev
+          ? {
+              ...prev,
+              company_name: profileEdit.company_name,
+              owner_name: profileEdit.owner_name,
+              phone: profileEdit.phone,
+              website: profileEdit.website,
+              bio: profileEdit.bio,
+              license_number: profileEdit.license_number,
+              google_business_url: profileEdit.google_business_url,
+              business_description: profileEdit.business_description,
+              years_in_business: profileEdit.years_in_business,
+            }
+          : prev
+      );
+
+      setProfileSaved(true);
+      setIsEditingProfile(false);
+      setTimeout(() => {
+        setProfileSaved(false);
+        setSaveProfileInfo(null);
+      }, 6000);
+    } catch (err: any) {
+      console.error('Save profile error:', err);
+      setSaveProfileError(err.message || 'Failed to save changes. Please try again.');
+    } finally {
+      setSavingProfile(false);
+    }
+  }
+
+  async function handleCheckout(tierId: string, isAnnual: boolean) {
+    const key = `${tierId}-${isAnnual ? 'annual' : 'monthly'}`;
+    setCheckoutLoading(key);
+    setCheckoutError(null);
+
+    try {
+      const tier = TIERS.find((t) => t.id === tierId);
+
+      if (!tier) {
+        throw new Error(`Unknown tier: ${tierId}`);
+      }
+
+      if (!profile?.id) {
+        throw new Error('Missing contractor profile ID');
+      }
+
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contractorId: profile.id,
+          tierId: tier.id,
+          tierName: tier.name,
+          billingPeriod: isAnnual ? 'annual' : 'monthly',
+          isAddOn: false,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+
+      if (!data.url) {
+        throw new Error('No checkout URL returned');
+      }
+
+      window.location.href = data.url;
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      setCheckoutError(err.message || 'Failed to create checkout session');
+    } finally {
+      setCheckoutLoading(null);
+    }
+  }
+
+  async function handleManageSubscription() {
+    setPortalLoading(true);
+
+    try {
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const { url, error } = await response.json();
+
+      if (error) throw new Error(error);
+      if (url) window.location.href = url;
+    } catch (err: any) {
+      console.error('Portal error:', err);
+    } finally {
+      setPortalLoading(false);
+    }
+  }
+
+  async function handleCancelSubscription() {
+    if (
+      !confirm(
+        'Cancel your subscription? You will stop receiving leads at the end of your billing period.'
+      )
+    ) {
+      return;
+    }
+
+    setCancelLoading(true);
+
+    try {
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const { url, error } = await response.json();
+
+      if (error) throw new Error(error);
+      if (url) window.location.href = url;
+    } catch (err: any) {
+      console.error('Cancel error:', err);
+    } finally {
+      setCancelLoading(false);
+    }
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    window.location.href = '/login';
+  }
+
+  if (authChecking || loading) {
+    return (
+      <div className="min-h-screen bg-lw-dark text-white">
+        <Navigation />
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="mx-auto mb-3 h-8 w-8 animate-spin text-lw-rust" />
+            <p className="text-sm text-zinc-500">
+              {authChecking ? 'Authenticating...' : 'Loading your dashboard...'}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-lw-dark text-white">
+        <Navigation />
+        <div className="container mx-auto max-w-2xl px-4 py-12">
+          <Alert className="mb-4 border-red-500/30 bg-red-500/10 text-red-200">
+            <AlertCircle className="h-4 w-4 text-red-400" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setError(null);
+                setLoading(true);
+                void checkAuth();
+              }}
+              className="border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+            >
+              <RefreshCw className="mr-2 h-4 w-4" /> Retry
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleLogout}
+              className="text-zinc-400 hover:text-white hover:bg-zinc-800"
+            >
+              <LogOut className="mr-2 h-4 w-4" /> Sign Out
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const isApproved =
+    profile?.partner_status === PARTNER_STATUS.APPROVED ||
+    profile?.partner_status === PARTNER_STATUS.ACTIVE;
+
+  const isApplied = profile?.partner_status === PARTNER_STATUS.APPLIED;
+  const hasFilledApplication = profile && (profile.company_name || profile.owner_name);
+
+  if (!profile || !hasFilledApplication) {
+    return (
+      <div className="min-h-screen bg-lw-dark text-white">
+        <Navigation />
+        <div className="container mx-auto max-w-3xl px-4 py-8">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white">Partner Application</h1>
+              <p className="mt-1 text-sm text-zinc-500">{userEmail}</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="text-zinc-400 hover:text-white hover:bg-zinc-800"
+            >
+              <LogOut className="mr-1.5 h-4 w-4" /> Sign Out
+            </Button>
+          </div>
+
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/10 p-4">
+            <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-lw-rust" />
+            <div>
+              <p className="text-sm font-semibold text-white">Account Created!</p>
+              <p className="mt-0.5 text-sm text-zinc-300">
+                Complete your application below to apply as a ListWorx IronClad partner. Our team
+                reviews applications within 24–48 hours.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+            <ApplicationForm
+              userId={userId!}
+              userEmail={userEmail}
+              existingProfile={profile}
+              onSuccess={refreshProfile}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const tabs: { id: DashboardTab; label: string; icon: React.ElementType }[] = [
+    { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'profile', label: 'Profile', icon: Settings },
+  ];
+
+  if (profile.partner_status === PARTNER_STATUS.APPLIED) {
+    tabs.push({ id: 'settings', label: 'Edit Application', icon: BarChart3 });
+  }
+
+  return (
+    <div className="min-h-screen bg-lw-dark text-white">
+      <Navigation />
+
+      <div className="container mx-auto max-w-7xl px-4 py-8">
+        <StatusCard
+          profile={profile}
+          userEmail={userEmail}
+          refreshing={refreshing}
+          onRefresh={refreshProfile}
+          onLogout={handleLogout}
+        />
+
+        <div className="mt-6 flex items-center gap-1 border-b border-zinc-800">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-all ${
+                  activeTab === tab.id
+                    ? 'border-lw-rust text-lw-rust'
+                    : 'border-transparent text-zinc-500 hover:text-white'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-8 space-y-10">
+          {activeTab === 'overview' && (
+            <>
+              <SubscriptionSection contractorProfileId={profile?.id} />
+              <PerformanceSection
+                profile={profile}
+                performanceData={{
+                  totalLeads,
+                  leadsThisMonth: leadCount,
+                  leadsLast30Days: leadsLast30,
+                  acceptedLeads: Math.round(totalLeads * 0.75),
+                  declinedLeads: Math.round(totalLeads * 0.15),
+                  completedJobs: Math.round(totalLeads * 0.5),
+                }}
+              />
+              <ReferralsSection contractorProfileId={profile.id} />
+              <MarketingSection
+                profile={profile}
+                onCheckout={handleCheckout}
+                checkoutLoading={checkoutLoading}
+              />
+            </>
+          )}
+
+          {activeTab === 'profile' && (
+            <div className="space-y-8">
+              <div className="grid gap-6 lg:grid-cols-3">
+                <div className="space-y-6 lg:col-span-2">
+                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+                    <div className="mb-5 flex items-center justify-between">
+                      <h3 className="text-base font-bold text-white">Company Information</h3>
+                      {!isEditingProfile ? (
+                        <Button
+                          onClick={handleEditProfile}
+                          size="sm"
+                          variant="outline"
+                          className="gap-1.5 border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+                        >
+                          <Settings className="h-3.5 w-3.5" />
+                          Edit Profile
+                        </Button>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Button
+                            onClick={handleCancelEdit}
+                            size="sm"
+                            variant="ghost"
+                            className="text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                            disabled={savingProfile}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={handleSaveProfile}
+                            size="sm"
+                            disabled={savingProfile}
+                            className="gap-1.5 bg-lw-rust text-white hover:bg-lw-rust-hover"
+                          >
+                            {savingProfile ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                            )}
+                            Save Changes
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    {profileSaved && (
+                      <div className="mb-4 flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2">
+                        <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-400" />
+                        <p className="text-sm text-emerald-200">Profile saved successfully.</p>
+                      </div>
+                    )}
+
+                    {saveProfileError && (
+                      <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2">
+                        <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-400" />
+                        <p className="text-sm text-red-200">{saveProfileError}</p>
+                      </div>
+                    )}
+
+                    {saveProfileInfo && (
+                      <div className="mb-4 flex items-start gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2">
+                        <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-400" />
+                        <p className="text-sm text-blue-200">{saveProfileInfo}</p>
+                      </div>
+                    )}
+
+                    {!isEditingProfile ? (
+                      <div className="space-y-4">
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          {[
+                            {
+                              label: 'Company Name',
+                              icon: Building2,
+                              value: profile.company_name,
+                            },
+                            {
+                              label: 'Owner / Contact Name',
+                              icon: User,
+                              value: profile.owner_name,
+                            },
+                            {
+                              label: 'Phone Number',
+                              icon: Phone,
+                              value: profile.phone,
+                            },
+                            {
+                              label: 'License Number',
+                              icon: Shield,
+                              value: profile.license_number || '—',
+                            },
+                          ].map((field) => (
+                            <div key={field.label}>
+                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                                {field.label}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <field.icon className="h-4 w-4 flex-shrink-0 text-zinc-500" />
+                                <p className="text-sm font-medium text-white">{field.value || '—'}</p>
+                              </div>
+                            </div>
+                          ))}
+
+                          <div className="sm:col-span-2">
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              Email Address
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <Mail className="h-4 w-4 flex-shrink-0 text-zinc-500" />
+                              <p className="text-sm text-zinc-300">{profile.email}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {profile.bio && (
+                          <div>
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              Bio
+                            </p>
+                            <p className="text-sm leading-relaxed text-zinc-300">{profile.bio}</p>
+                          </div>
+                        )}
+
+                        {(profile as any).business_description && (
+                          <div>
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              Business Description
+                            </p>
+                            <p className="text-sm leading-relaxed text-zinc-300">{(profile as any).business_description}</p>
+                          </div>
+                        )}
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          {profile.website && (
+                            <div>
+                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                                Business Website
+                              </p>
+                              <a
+                                href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="break-all text-sm text-lw-rust hover:underline"
+                              >
+                                {profile.website}
+                              </a>
+                            </div>
+                          )}
+
+                          {(profile as any).google_business_url && (
+                            <div>
+                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                                Google Business Profile
+                              </p>
+                              <a
+                                href={(profile as any).google_business_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="break-all text-sm text-lw-rust hover:underline"
+                              >
+                                View Profile
+                              </a>
+                            </div>
+                          )}
+
+                          {(profile as any).years_in_business > 0 && (
+                            <div>
+                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                                Years in Business
+                              </p>
+                              <p className="text-sm font-medium text-white">{(profile as any).years_in_business}</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {(profile as any).profile_slug && (
+                          <div>
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              Public Profile
+                            </p>
+                            <a
+                              href={`/contractor/${(profile as any).profile_slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-lw-rust hover:underline"
+                            >
+                              View Public Profile
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          {[
+                            {
+                              id: 'company_name',
+                              label: 'Company Name',
+                              icon: Building2,
+                              type: 'text',
+                              placeholder: 'Your company name',
+                            },
+                            {
+                              id: 'owner_name',
+                              label: 'Owner / Contact Name',
+                              icon: User,
+                              type: 'text',
+                              placeholder: 'Full name',
+                            },
+                            {
+                              id: 'phone',
+                              label: 'Phone Number',
+                              icon: Phone,
+                              type: 'tel',
+                              placeholder: '(615) 000-0000',
+                              formatFn: (v: string) => {
+                                const digits = v.replace(/\D/g, '').slice(0, 10);
+                                if (digits.length <= 3) return digits.length ? `(${digits}` : '';
+                                if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+                                return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+                              },
+                            },
+                            {
+                              id: 'license_number',
+                              label: 'License Number',
+                              icon: Shield,
+                              type: 'text',
+                              placeholder: 'Optional',
+                            },
+                          ].map((field) => (
+                            <div key={field.id}>
+                              <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                                {field.label}
+                              </Label>
+                              <div className="relative">
+                                <field.icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                                <Input
+                                  type={field.type}
+                                  value={profileEdit[field.id as keyof typeof profileEdit]}
+                                  onChange={(e) => {
+                                    const raw = e.target.value;
+                                    const val = (field as any).formatFn ? (field as any).formatFn(raw) : raw;
+                                    setProfileEdit({ ...profileEdit, [field.id]: val });
+                                  }}
+                                  placeholder={field.placeholder}
+                                  className="border-zinc-700 bg-zinc-950 pl-9 text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                                />
+                              </div>
+                            </div>
+                          ))}
+
+                          <div className="sm:col-span-2">
+                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              Email Address
+                            </Label>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                              <Input
+                                type="email"
+                                value={profileEdit.email}
+                                onChange={(e) =>
+                                  setProfileEdit({ ...profileEdit, email: e.target.value })
+                                }
+                                placeholder="your@email.com"
+                                className="border-zinc-700 bg-zinc-950 pl-9 text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                              />
+                            </div>
+                            <p className="mt-1.5 text-xs text-zinc-500">
+                              Changing your email will update your login credentials.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            Short Bio
+                          </Label>
+                          <textarea
+                            value={profileEdit.bio}
+                            onChange={(e) =>
+                              setProfileEdit({ ...profileEdit, bio: e.target.value })
+                            }
+                            placeholder="Brief tagline or summary..."
+                            rows={2}
+                            className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/10"
+                          />
+                        </div>
+
+                        <div>
+                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            Business Description
+                          </Label>
+                          <textarea
+                            value={profileEdit.business_description}
+                            onChange={(e) =>
+                              setProfileEdit({ ...profileEdit, business_description: e.target.value })
+                            }
+                            placeholder="Detailed description of your business, experience, and services..."
+                            rows={4}
+                            className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/10"
+                          />
+                        </div>
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div>
+                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              Business Website
+                            </Label>
+                            <Input
+                              type="url"
+                              value={profileEdit.website}
+                              onChange={(e) =>
+                                setProfileEdit({ ...profileEdit, website: e.target.value })
+                              }
+                              placeholder="https://..."
+                              className="border-zinc-700 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                            />
+                          </div>
+
+                          <div>
+                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              Years in Business
+                            </Label>
+                            <Input
+                              type="number"
+                              min={0}
+                              max={100}
+                              value={profileEdit.years_in_business || ''}
+                              onChange={(e) =>
+                                setProfileEdit({ ...profileEdit, years_in_business: parseInt(e.target.value) || 0 })
+                              }
+                              placeholder="e.g. 10"
+                              className="border-zinc-700 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            Google Business Profile URL
+                          </Label>
+                          <Input
+                            type="url"
+                            value={profileEdit.google_business_url}
+                            onChange={(e) =>
+                              setProfileEdit({ ...profileEdit, google_business_url: e.target.value })
+                            }
+                            placeholder="https://g.page/..."
+                            className="border-zinc-700 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+                    <h3 className="mb-4 text-base font-bold text-white">Service Areas</h3>
+                    {(profile as any)._liveCounties && (profile as any)._liveCounties.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {(profile as any)._liveCounties.map((county: any, idx: number) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-950 px-3 py-1 text-xs font-medium text-zinc-300"
+                          >
+                            <MapPin className="h-3 w-3 text-zinc-500" />
+                            {county.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-zinc-500">
+                        No service areas added yet. Complete your application to add counties.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+                    <h3 className="mb-4 text-base font-bold text-white">Trade Specialties</h3>
+                    {(profile as any)._liveTrades && (profile as any)._liveTrades.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {(profile as any)._liveTrades.map((trade: any, idx: number) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-lw-rust/30 bg-lw-rust/10 px-3 py-1 text-xs font-medium text-lw-rust"
+                          >
+                            <Briefcase className="h-3 w-3" />
+                            {trade.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-zinc-500">
+                        No trades selected yet. Complete your application to add specialties.
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {isApproved && (
+                    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+                      <h3 className="mb-4 text-base font-bold text-white">Company Logo</h3>
+                      <div className="flex flex-col items-center gap-4">
+                        {profile.logo_url ? (
+                          <img
+                            src={profile.logo_url}
+                            alt="Company Logo"
+                            className="h-24 w-24 rounded-xl border border-zinc-700 bg-zinc-950 p-2 object-contain"
+                          />
+                        ) : (
+                          <div className="flex h-24 w-24 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-950">
+                            <Building2 className="h-10 w-10 text-zinc-600" />
+                          </div>
+                        )}
+
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          className="hidden"
+                          accept="image/png,image/jpeg,image/jpg,image/webp"
+                          onChange={handleLogoUpload}
+                          disabled={uploading}
+                        />
+
+                        <Button
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploading}
+                          variant="outline"
+                          size="sm"
+                          className="w-full border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+                        >
+                          {uploading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" />
+                              {profile.logo_url ? 'Replace Logo' : 'Upload Logo'}
+                            </>
+                          )}
+                        </Button>
+
+                        <p className="text-center text-xs text-zinc-500">
+                          PNG, JPG, WebP — max 5MB
+                        </p>
+
+                        {uploadError && (
+                          <div className="flex w-full items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3">
+                            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-400" />
+                            <p className="text-xs text-red-200">{uploadError}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+                    <h3 className="mb-4 text-base font-bold text-white">Account Details</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-zinc-500">Partner Status</span>
+                        <span className="font-medium capitalize text-white">
+                          {profile.partner_status}
+                        </span>
+                      </div>
+
+                      {profile.tier && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-zinc-500">Plan</span>
+                          <span className="font-medium capitalize text-lw-rust">
+                            {profile.tier}
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-zinc-500">Member Since</span>
+                        <span className="font-medium text-white">
+                          {new Date(profile.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </span>
+                      </div>
+
+                      {profile.partner_status === PARTNER_STATUS.ACTIVE && (
+                        <div className="border-t border-zinc-800 pt-3">
+                          <Button
+                            onClick={handleManageSubscription}
+                            variant="outline"
+                            size="sm"
+                            className="w-full border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+                            disabled={portalLoading}
+                          >
+                            {portalLoading ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                              <CreditCard className="mr-2 h-4 w-4" />
+                            )}
+                            Manage Billing
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <ComplianceDocuments
+                contractorId={profile.id}
+                userId={profile.user_id}
+                licenseExpirationDate={profile.license_expiration_date}
+                insuranceExpirationDate={profile.insurance_expiration_date}
+              />
+            </div>
+          )}
+
+          {activeTab === 'settings' && (
+            <div className="max-w-3xl">
+              <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+                <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-400" />
+                <div>
+                  <p className="text-sm font-semibold text-amber-200">Resubmit Your Application</p>
+                  <p className="mt-0.5 text-sm text-zinc-300">
+                    You can update your application details and resubmit while under review.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+                <ApplicationForm
+                  userId={userId!}
+                  userEmail={userEmail}
+                  existingProfile={profile}
+                  onSuccess={refreshProfile}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

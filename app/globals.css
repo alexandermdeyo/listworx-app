@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* =====================================================
+       LISTWORX DESIGN TOKENS
+       Primary brand: dark charcoal bg + rust orange accent
+    ====================================================== */
+
+    /* Core page background (light surfaces: forms, dashboards) */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 18%;
+
+    /* Card / surface backgrounds */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 18%;
+
+    /* Popovers / dropdowns */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 18%;
+
+    /* Primary = ListWorx rust orange (#C65A1E) */
+    --primary: 22 73% 44%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary = light neutral surface */
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 18%;
+
+    /* Muted text / placeholder */
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 45%;
+
+    /* Accent = same as primary for consistency */
+    --accent: 22 73% 44%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders and inputs */
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 22 73% 44%;
+
+    /* Charts */
+    --chart-1: 22 73% 44%;
+    --chart-2: 0 0% 28%;
+    --chart-3: 0 0% 50%;
+    --chart-4: 22 60% 35%;
+    --chart-5: 22 85% 55%;
+
+    --radius: 0.5rem;
+
+    /* =====================================================
+       NAMED BRAND TOKENS (use these for direct CSS references)
+    ====================================================== */
+    --lw-rust: #C65A1E;
+    --lw-rust-hover: #a84d18;
+    --lw-rust-light: rgba(198, 90, 30, 0.1);
+    --lw-rust-border: rgba(198, 90, 30, 0.2);
+
+    /* Dark brand backgrounds */
+    --lw-dark: #1a1a1a;
+    --lw-dark-surface: #242424;
+    --lw-dark-card: #2a2a2a;
+    --lw-dark-border: #333333;
+
+    /* Light surface tokens */
+    --lw-surface: #F8F8F8;
+    --lw-surface-card: #FFFFFF;
+    --lw-border-light: #E8E8E8;
+
+    /* Text tokens */
+    --lw-text: #2F2F2F;
+    --lw-text-muted: rgba(47, 47, 47, 0.5);
+    --lw-text-subtle: rgba(47, 47, 47, 0.35);
+
+    /* Font families */
+    --font-body: 'Inter', Arial, Helvetica, sans-serif;
+    --font-display: 'Oswald', Arial, Helvetica, sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-body);
+  }
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* =====================================================
+   SHARED UTILITY CLASSES
+====================================================== */
+
+/* Dark brand page wrapper */
+.lw-dark-page {
+  background-color: var(--lw-dark);
+  color: white;
+}
+
+/* Light form/dashboard page wrapper */
+.lw-light-page {
+  background-color: var(--lw-surface);
+  color: var(--lw-text);
+}
+
+/* Rust orange primary button */
+.lw-btn-primary {
+  background-color: var(--lw-rust);
+  color: white;
+  font-weight: 600;
+}
+.lw-btn-primary:hover {
+  background-color: var(--lw-rust-hover);
+}
+
+/* Outline button for dark backgrounds */
+.lw-btn-outline-dark {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  background: transparent;
+}
+.lw-btn-outline-dark:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Standard card for dark sections */
+.lw-card-dark {
+  background-color: var(--lw-dark-card);
+  border: 1px solid var(--lw-dark-border);
+  border-radius: 1rem;
+}
+
+/* Standard card for light sections */
+.lw-card-light {
+  background-color: var(--lw-surface-card);
+  border: 1px solid var(--lw-border-light);
+  border-radius: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+/* Section divider on dark bg */
+.lw-divider-dark {
+  border-color: var(--lw-dark-border);
+}
+
+/* Rust accent badge/label */
+.lw-label {
+  color: var(--lw-rust);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
