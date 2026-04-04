@@ -61,6 +61,14 @@ function formatZipCode(value: string) {
   return `${digits.slice(0, 5)}-${digits.slice(5)}`;
 }
 
+function normalizeClientType(role: string | null | undefined) {
+  const normalized = String(role || '').toUpperCase();
+
+  if (normalized === 'REALTOR') return 'Realtor';
+  if (normalized === 'PROPERTY_MANAGER') return 'Property Manager';
+  return 'Homeowner';
+}
+
 export default function RequestPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -78,7 +86,7 @@ export default function RequestPage() {
   const [requestId, setRequestId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    clientType: 'Realtor',
+    clientType: 'Homeowner',
     clientName: '',
     clientEmail: '',
     clientPhone: '',
@@ -104,11 +112,16 @@ export default function RequestPage() {
       }
 
       const user = session.user;
-      const { data: appUser } = await supabase
+
+      const { data: appUser, error: appUserError } = await supabase
         .from('users')
-        .select('role, full_name, email')
+        .select('role, name, email')
         .eq('id', user.id)
         .maybeSingle();
+
+      if (appUserError) {
+        console.error('[request] app user lookup failed:', appUserError);
+      }
 
       const role = String(appUser?.role || '').toUpperCase();
 
@@ -122,20 +135,22 @@ export default function RequestPage() {
         return;
       }
 
-      const { data: realtorProfile } = await supabase
-        .from('realtor_profiles')
-        .select('id, requester_type, brokerage_name')
+      const { data: requestorProfile, error: requestorProfileError } = await supabase
+        .from('requestor_profiles')
+        .select('id, company_name')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      const requesterType = realtorProfile?.requester_type || 'Homeowner';
+      if (requestorProfileError) {
+        console.error('[request] requestor profile lookup failed:', requestorProfileError);
+      }
 
       setFormData((prev) => ({
         ...prev,
-        clientType: requesterType,
-        clientName: appUser?.full_name || '',
+        clientType: normalizeClientType(appUser?.role),
+        clientName: appUser?.name || '',
         clientEmail: appUser?.email || user.email || '',
-        companyName: realtorProfile?.brokerage_name || '',
+        companyName: requestorProfile?.company_name || '',
       }));
 
       setAuthReady(true);
@@ -197,7 +212,6 @@ export default function RequestPage() {
     setFormData((prev) => ({
       ...prev,
       clientPhone: '',
-      companyName: '',
       propertyAddressLine1: '',
       propertyCity: '',
       propertyStateCode: '',
@@ -329,7 +343,11 @@ export default function RequestPage() {
                       <div className="flex items-center gap-2">
                         <Globe className="h-4 w-4 text-primary" />
                         <a
-                          href={contractor.website.startsWith('http') ? contractor.website : `https://${contractor.website}`}
+                          href={
+                            contractor.website.startsWith('http')
+                              ? contractor.website
+                              : `https://${contractor.website}`
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-primary break-all"

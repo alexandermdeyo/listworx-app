@@ -7,7 +7,9 @@ function getClient() {
 export type AppUserRole =
   | 'ADMIN'
   | 'CONTRACTOR'
-  | 'USER'
+  | 'REALTOR'
+  | 'HOMEOWNER'
+  | 'PROPERTY_MANAGER'
   | null;
 
 export async function signInWithEmail(email: string, password: string) {
@@ -83,7 +85,9 @@ export async function getUserRole(userId: string): Promise<AppUserRole> {
   if (
     normalized === 'ADMIN' ||
     normalized === 'CONTRACTOR' ||
-    normalized === 'USER'
+    normalized === 'REALTOR' ||
+    normalized === 'HOMEOWNER' ||
+    normalized === 'PROPERTY_MANAGER'
   ) {
     return normalized as AppUserRole;
   }
@@ -104,7 +108,7 @@ export async function isAdmin(): Promise<boolean> {
 
 export async function checkAdminAccess(): Promise<{
   isAdmin: boolean;
-  user: { id: string; role?: string; full_name?: string; email?: string } | null;
+  user: { id: string; role?: string; name?: string; email?: string } | null;
 }> {
   const supabase = getClient();
 
@@ -118,7 +122,7 @@ export async function checkAdminAccess(): Promise<{
 
   const { data: userData, error } = await supabase
     .from('users')
-    .select('id, role, full_name, email')
+    .select('id, role, name, email')
     .eq('id', session.user.id)
     .maybeSingle();
 

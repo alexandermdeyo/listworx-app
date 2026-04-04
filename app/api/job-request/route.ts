@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
-import { findMatchedContractors, buildReferralRows, incrementReferralCounts } from '@/lib/contractor-matching';
+import {
+  findMatchedContractors,
+  buildReferralRows,
+  buildJobAssignmentRows,
+  incrementReferralCounts,
+} from '@/lib/contractor-matching';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +15,17 @@ function createAdminClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
+}
+
+function normalizeUrgency(value: string | null | undefined) {
+  const normalized = String(value || '').trim().toUpperCase();
+
+  if (normalized === 'ASAP' || normalized === 'IMMEDIATE') return 'IMMEDIATE';
+  if (normalized === 'URGENT' || normalized === 'WITHIN_WEEK') return 'WITHIN_WEEK';
+  if (normalized === 'STANDARD' || normalized === 'WITHIN_MONTH') return 'WITHIN_MONTH';
+  if (normalized === 'FLEXIBLE') return 'FLEXIBLE';
+
+  return 'WITHIN_MONTH';
 }
 
 export async function POST(request: NextRequest) {
@@ -63,7 +79,9 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    const { data: { user } } = await supabaseAuth.auth.getUser();
+    const {
+      data: { user },
+    } = await supabaseAuth.auth.getUser();
 
     if (!user) {
       return NextResponse.json(
@@ -74,39 +92,64 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
-    const { data: realtorProfile } = await supabase
-      .from('realtor_profiles')
+    const { data: requestorProfile, error: requestorProfileError } = await supabase
+      .from('requestor_profiles')
       .select('id')
       .eq('user_id', user.id)
       .maybeSingle();
 
-    const realtorId = realtorProfile?.id || null;
+    if (requestorProfileError) {
+      console.error('[job-request] requestor profile lookup failed:', requestorProfileError);
+      return NextResponse.json(
+        { error: requestorProfileError.message || 'Failed to load requestor profile.' },
+        { status: 500 }
+      );
+    }
 
-    const { data: countyRow } = await supabase
+    if (!requestorProfile?.id) {
+      return NextResponse.json(
+        { error: 'No requestor profile found for this account.' },
+        { status: 400 }
+      );
+    }
+
+    const requestorProfileId = requestorProfile.id;
+
+    const { data: countyRow, error: countyError } = await supabase
       .from('counties')
-      .select('name, state_code')
+      .select('id, name, state_code')
       .eq('id', propertyCountyId)
       .maybeSingle();
 
+    if (countyError) {
+      console.error('[job-request] county lookup failed:', countyError);
+      return NextResponse.json(
+        { error: countyError.message || 'Failed to load county information.' },
+        { status: 500 }
+      );
+    }
+
     const propertyCounty = countyRow?.name || '';
-    const propertyState = countyRow?.state_code || propertyStateCode;
+    const stateCode = countyRow?.state_code || propertyStateCode;
+    const normalizedUrgency = normalizeUrgency(urgencyLevel);
 
     const { data: jobRequest, error: jobRequestError } = await supabase
       .from('job_requests')
       .insert({
-        realtor_id: realtorId,
+        requestor_profile_id: requestorProfileId,
         requester_name: clientName.trim(),
         requester_email: clientEmail.trim().toLowerCase(),
         requester_phone: clientPhone?.trim() || '',
         requester_type: clientType,
         property_address: propertyAddressLine1.trim(),
         property_city: propertyCity.trim(),
-        property_state: propertyState,
+        property_state: stateCode,
         property_county: propertyCounty,
         property_zip: propertyZip?.trim() || '',
+        state_code: stateCode,
         county_id: propertyCountyId,
         job_description: description.trim(),
-        urgency: urgencyLevel || 'standard',
+        urgency: normalizedUrgency,
         status: 'PENDING',
       })
       .select()
@@ -139,15 +182,34 @@ export async function POST(request: NextRequest) {
       jobRequestId: jobRequest.id,
     });
 
+    let insertedReferrals: { id: string; contractor_id: string }[] = [];
+
     if (matchedContractors.length > 0) {
       const referralRows = buildReferralRows(jobRequest.id, matchedContractors);
 
-      const { error: referralError } = await supabase
+      const { data: referralData, error: referralError } = await supabase
         .from('referrals')
-        .insert(referralRows);
+        .insert(referralRows)
+        .select('id, contractor_id');
 
       if (referralError) {
         console.error('[job-request] referral insert failed:', referralError);
+      } else {
+        insertedReferrals = referralData || [];
+      }
+
+      const assignmentRows = buildJobAssignmentRows(
+        jobRequest.id,
+        matchedContractors,
+        insertedReferrals
+      );
+
+      const { error: assignmentError } = await supabase
+        .from('job_assignments')
+        .insert(assignmentRows);
+
+      if (assignmentError) {
+        console.error('[job-request] job assignment insert failed:', assignmentError);
       }
 
       await incrementReferralCounts(

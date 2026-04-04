@@ -2,12 +2,12 @@ import { SupabaseClient } from '@supabase/supabase-js';
 
 const TIER_WEIGHTS: Record<string, number> = {
   'Elite Partner': 300,
-  'elite': 300,
+  elite: 300,
   'Preferred Partner': 200,
-  'preferred': 200,
+  preferred: 200,
   'Basic Partner': 100,
-  'basic': 100,
-  'none': 50,
+  basic: 100,
+  none: 50,
 };
 
 const MAX_REFERRALS = 3;
@@ -28,18 +28,48 @@ interface MatchedContractor {
 }
 
 function getTierWeight(tier: string | null): number {
-  if (!tier) return TIER_WEIGHTS['none'];
-  return TIER_WEIGHTS[tier] || TIER_WEIGHTS['none'];
+  if (!tier) return TIER_WEIGHTS.none;
+  return TIER_WEIGHTS[tier] || TIER_WEIGHTS.none;
 }
 
 function seededRandom(seed: string): number {
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
     const char = seed.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash |= 0;
   }
   return Math.abs(hash % 1000) / 1000;
+}
+
+function pickString(row: any, keys: string[], fallback = ''): string {
+  for (const key of keys) {
+    const value = row?.[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+  return fallback;
+}
+
+function pickNullableString(row: any, keys: string[]): string | null {
+  for (const key of keys) {
+    const value = row?.[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+  return null;
+}
+
+function pickNumber(row: any, keys: string[], fallback = 0): number {
+  for (const key of keys) {
+    const value = row?.[key];
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
+  }
+  return fallback;
 }
 
 export async function findMatchedContractors(
@@ -54,67 +84,102 @@ export async function findMatchedContractors(
 
   if (!categoryIds.length) return [];
 
-  const { data: countyContractorRows } = await supabase
+  const { data: countyContractorRows, error: countyError } = await supabase
     .from('contractor_counties')
     .select('contractor_id')
     .eq('county_id', countyId);
+
+  if (countyError) {
+    console.error('[matching] contractor_counties lookup failed:', countyError);
+    return [];
+  }
 
   const countyContractorIds = Array.from(
     new Set((countyContractorRows || []).map((r: any) => r.contractor_id).filter(Boolean))
   );
 
-  if (!countyContractorIds.length) return [];
+  if (!countyContractorIds.length) {
+    console.log('[matching] no contractor_counties rows for county:', countyId);
+    return [];
+  }
 
-  const { data: activeProfiles } = await supabase
-    .from('contractor_profiles')
-    .select('id, user_id, company_name, owner_name, email, phone, website, bio, tier, total_referrals_received')
-    .in('id', countyContractorIds)
-    .eq('partner_status', 'active')
-    .eq('archived', false);
-
-  if (!activeProfiles?.length) return [];
-
-  const activeContractorIds = activeProfiles.map((c: any) => c.id);
-
-  const { data: contractorCategories } = await supabase
+  const { data: contractorCategories, error: categoriesError } = await supabase
     .from('contractor_categories')
-    .select('contractor_id')
-    .in('contractor_id', activeContractorIds)
+    .select('contractor_id, category_id')
+    .in('contractor_id', countyContractorIds)
     .in('category_id', categoryIds);
+
+  if (categoriesError) {
+    console.error('[matching] contractor_categories lookup failed:', categoriesError);
+    return [];
+  }
 
   const matchedIdSet = new Set(
     (contractorCategories || []).map((r: any) => r.contractor_id).filter(Boolean)
   );
 
-  const eligibleContractors = activeProfiles.filter((c: any) => matchedIdSet.has(c.id));
+  if (!matchedIdSet.size) {
+    console.log('[matching] no contractor_categories matches for county/categories', {
+      countyId,
+      categoryIds,
+    });
+    return [];
+  }
 
-  if (!eligibleContractors.length) return [];
+  const eligibleIds = countyContractorIds.filter((id) => matchedIdSet.has(id));
+
+  const { data: activeProfiles, error: profilesError } = await supabase
+    .from('contractor_profiles')
+    .select('*')
+    .in('id', eligibleIds)
+    .eq('partner_status', 'active')
+    .eq('archived', false);
+
+  if (profilesError) {
+    console.error('[matching] contractor_profiles lookup failed:', profilesError);
+    return [];
+  }
+
+  if (!activeProfiles?.length) {
+    console.log('[matching] eligible contractors found, but no active profiles returned', {
+      countyId,
+      categoryIds,
+      eligibleIds,
+    });
+    return [];
+  }
 
   const today = new Date().toISOString().slice(0, 10);
   const rotationSeed = jobRequestId || today;
 
-  const scored: MatchedContractor[] = eligibleContractors.map((c: any) => {
-    const tierWeight = getTierWeight(c.tier);
-    const referralPenalty = Math.min((c.total_referrals_received || 0) * 0.5, 50);
-    const rotationJitter = seededRandom(`${rotationSeed}-${c.id}`) * 30;
+  const scored: MatchedContractor[] = activeProfiles.map((row: any) => {
+    const tier =
+      pickNullableString(row, ['tier', 'subscription_tier', 'partner_tier']) || 'basic';
+
+    const totalReferralsReceived = pickNumber(
+      row,
+      ['total_referrals_received', 'referral_count', 'total_referrals'],
+      0
+    );
+
+    const tierWeight = getTierWeight(tier);
+    const referralPenalty = Math.min(totalReferralsReceived * 0.5, 50);
+    const rotationJitter = seededRandom(`${rotationSeed}-${row.id}`) * 30;
     const score = tierWeight - referralPenalty + rotationJitter;
 
-    const tierLabel = c.tier || 'basic';
-    const matchReason = `tier:${tierLabel},weight:${tierWeight},refs:${c.total_referrals_received || 0}`;
-
     return {
-      id: c.id,
-      user_id: c.user_id,
-      company_name: c.company_name,
-      owner_name: c.owner_name,
-      email: c.email,
-      phone: c.phone,
-      website: c.website,
-      bio: c.bio,
-      tier: c.tier,
-      total_referrals_received: c.total_referrals_received || 0,
+      id: row.id,
+      user_id: row.user_id,
+      company_name: pickString(row, ['company_name'], 'Contractor'),
+      owner_name: pickString(row, ['owner_name', 'contact_name'], ''),
+      email: pickString(row, ['email'], ''),
+      phone: pickString(row, ['phone'], ''),
+      website: pickNullableString(row, ['website', 'website_url']),
+      bio: pickNullableString(row, ['bio', 'company_bio', 'description']),
+      tier,
+      total_referrals_received: totalReferralsReceived,
       score,
-      matchReason,
+      matchReason: `tier:${tier},weight:${tierWeight},refs:${totalReferralsReceived}`,
     };
   });
 
@@ -123,20 +188,30 @@ export async function findMatchedContractors(
   return scored.slice(0, MAX_REFERRALS);
 }
 
-export function buildReferralRows(
-  jobRequestId: string,
-  contractors: MatchedContractor[]
-) {
-  return contractors.map((contractor, index) => ({
+export function buildReferralRows(jobRequestId: string, contractors: MatchedContractor[]) {
+  return contractors.map((contractor) => ({
     job_request_id: jobRequestId,
     contractor_id: contractor.id,
     status: 'PENDING',
-    slot_position: index + 1,
-    tier_at_referral: contractor.tier || 'Basic',
-    match_score: contractor.score,
-    match_reason: contractor.matchReason,
-    email_sent: false,
+    notes: null,
   }));
+}
+
+export function buildJobAssignmentRows(
+  jobRequestId: string,
+  contractors: MatchedContractor[],
+  referrals: { id: string; contractor_id: string }[]
+) {
+  return contractors.map((contractor) => {
+    const matchingReferral = referrals.find((r) => r.contractor_id === contractor.id);
+
+    return {
+      job_request_id: jobRequestId,
+      contractor_id: contractor.id,
+      referral_id: matchingReferral?.id || null,
+      status: 'ASSIGNED',
+    };
+  });
 }
 
 export async function incrementReferralCounts(
@@ -144,12 +219,31 @@ export async function incrementReferralCounts(
   contractorIds: string[]
 ) {
   for (const id of contractorIds) {
-    const { error } = await supabase.rpc('increment_referral_count', { contractor_id_input: id });
+    const { error } = await supabase.rpc('increment_referral_count', {
+      contractor_id_input: id,
+    });
+
     if (error) {
-      await supabase
+      console.error('[matching] increment_referral_count rpc failed:', error);
+
+      const { data: currentRow } = await supabase
         .from('contractor_profiles')
-        .update({ total_referrals_received: 1 })
+        .select('total_referrals_received')
+        .eq('id', id)
+        .maybeSingle();
+
+      const nextValue = (currentRow?.total_referrals_received || 0) + 1;
+
+      const { error: fallbackError } = await supabase
+        .from('contractor_profiles')
+        .update({
+          total_referrals_received: nextValue,
+        })
         .eq('id', id);
+
+      if (fallbackError) {
+        console.error('[matching] fallback referral count update failed:', fallbackError);
+      }
     }
   }
 }

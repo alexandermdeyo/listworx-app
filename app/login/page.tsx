@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Mail, Lock, Loader as Loader2 } from 'lucide-react';
+import { Mail, Lock, Loader as Loader2, Eye, EyeOff } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,11 +12,26 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-type Role = 'ADMIN' | 'CONTRACTOR' | 'USER' | null;
+type Role =
+  | 'ADMIN'
+  | 'CONTRACTOR'
+  | 'REALTOR'
+  | 'HOMEOWNER'
+  | 'PROPERTY_MANAGER'
+  | null;
+
+function isRequestorRole(role: Role) {
+  return (
+    role === 'REALTOR' ||
+    role === 'HOMEOWNER' ||
+    role === 'PROPERTY_MANAGER'
+  );
+}
 
 function getDefaultRoute(role: Role) {
   if (role === 'ADMIN') return '/admin/crm';
   if (role === 'CONTRACTOR') return '/contractor-dashboard';
+  if (isRequestorRole(role)) return '/requestor-dashboard';
   return '/requestor-dashboard';
 }
 
@@ -29,9 +44,7 @@ function sanitizeRedirect(redirect: string | null, role: Role) {
 
   const trimmed = redirect.trim();
 
-  if (!trimmed.startsWith('/')) {
-    return fallback;
-  }
+  if (!trimmed.startsWith('/')) return fallback;
 
   if (
     trimmed.startsWith('//') ||
@@ -50,14 +63,15 @@ function sanitizeRedirect(redirect: string | null, role: Role) {
     if (
       trimmed.startsWith('/contractor-dashboard') ||
       trimmed.startsWith('/billing') ||
-      trimmed.startsWith('/apply')
+      trimmed.startsWith('/apply') ||
+      trimmed.startsWith('/set-password')
     ) {
       return trimmed;
     }
     return fallback;
   }
 
-  if (role === 'USER') {
+  if (isRequestorRole(role)) {
     if (
       trimmed.startsWith('/requestor-dashboard') ||
       trimmed.startsWith('/request')
@@ -70,13 +84,35 @@ function sanitizeRedirect(redirect: string | null, role: Role) {
   return fallback;
 }
 
+async function waitForSession(
+  supabase: ReturnType<typeof createClient>,
+  attempts = 30,
+  delayMs = 250
+) {
+  for (let i = 0; i < attempts; i++) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (session?.user?.id) {
+      return session;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  return null;
+}
+
 export default function LoginPage() {
+  const router = useRouter();
   const supabase = createClient();
   const searchParams = useSearchParams();
 
   const redirect = searchParams.get('redirect');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [sendingMagic, setSendingMagic] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -100,15 +136,22 @@ export default function LoginPage() {
         throw signInError;
       }
 
-      const userId = data.user?.id;
-      if (!userId) {
+      if (!data.user?.id) {
         throw new Error('Login failed.');
+      }
+
+      const settledSession = await waitForSession(supabase, 30, 250);
+
+      if (!settledSession?.user?.id) {
+        throw new Error(
+          'Login succeeded, but the session was not ready. Open the connected standalone app tab and try again there.'
+        );
       }
 
       const { data: appUser, error: appUserError } = await supabase
         .from('users')
         .select('role')
-        .eq('id', userId)
+        .eq('id', settledSession.user.id)
         .maybeSingle();
 
       if (appUserError) {
@@ -118,11 +161,10 @@ export default function LoginPage() {
       const role = (appUser?.role as Role) || null;
       const nextRoute = sanitizeRedirect(redirect, role);
 
-      // Force a full browser navigation so protected-route middleware
-      // sees the settled auth session/cookies.
       window.location.href = nextRoute;
+      return;
     } catch (err: any) {
-      setError(err.message || 'Invalid login credentials.');
+      setError(err?.message || 'Invalid login credentials.');
       setLoading(false);
     }
   }
@@ -153,13 +195,11 @@ export default function LoginPage() {
         },
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       setMessage('Magic link sent. Check your email.');
     } catch (err: any) {
-      setError(err.message || 'Could not send magic link.');
+      setError(err?.message || 'Could not send magic link.');
     } finally {
       setSendingMagic(false);
     }
@@ -215,14 +255,29 @@ export default function LoginPage() {
               <Lock className="h-4 w-4" />
               Password
             </Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading || sendingMagic}
-              autoComplete="current-password"
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading || sendingMagic}
+                autoComplete="current-password"
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
 
           <Button

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -31,16 +31,35 @@ import {
 
 type RequestorRole = 'REALTOR' | 'HOMEOWNER' | 'PROPERTY_MANAGER';
 
+async function waitForSession(supabase: ReturnType<typeof createClient>, attempts = 10) {
+  for (let i = 0; i < attempts; i++) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (session?.user) {
+      return session;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+
+  return null;
+}
+
 export default function SignupPage() {
+  const router = useRouter();
   const supabase = createClient();
   const searchParams = useSearchParams();
 
-  const redirect = searchParams.get('redirect') || '/request';
+  const redirect = searchParams.get('redirect') || '/requestor-dashboard';
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [requestorRole, setRequestorRole] = useState<RequestorRole>('HOMEOWNER');
   const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -55,10 +74,6 @@ export default function SignupPage() {
 
     if (msg.includes('password')) {
       return 'Password must be at least 6 characters.';
-    }
-
-    if (msg.includes('invalid')) {
-      return 'Please check your information and try again.';
     }
 
     return message || 'Something went wrong. Please try again.';
@@ -80,6 +95,11 @@ export default function SignupPage() {
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
       return;
     }
 
@@ -110,14 +130,14 @@ export default function SignupPage() {
         }),
       });
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setError(friendlyError(result.error));
+        setError(friendlyError(result?.error || `Signup failed with status ${response.status}.`));
+        setLoading(false);
         return;
       }
 
-      // Sign in after successful server-side signup
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password,
@@ -125,15 +145,26 @@ export default function SignupPage() {
 
       if (signInError) {
         setError(
-          'Your account was created, but sign-in failed. Please go to the login page and sign in.'
+          `Your account was created, but sign-in failed: ${
+            signInError.message || 'Please go to the login page and sign in.'
+          }`
         );
+        setLoading(false);
         return;
       }
 
-      window.location.href = redirect;
+      const settledSession = await waitForSession(supabase);
+
+      if (!settledSession?.user?.id) {
+        setError('Account created, but the session was not ready. Please sign in.');
+        setLoading(false);
+        return;
+      }
+
+      router.replace(redirect);
+      router.refresh();
     } catch (err: any) {
-      setError(friendlyError(err.message));
-    } finally {
+      setError(friendlyError(err?.message || 'Something went wrong. Please try again.'));
       setLoading(false);
     }
   }
@@ -287,6 +318,38 @@ export default function SignupPage() {
                 tabIndex={-1}
               >
                 {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="confirmPassword" className="flex items-center gap-2 mb-2">
+              <Lock className="h-4 w-4" />
+              Confirm Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Re-enter password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                disabled={loading}
+                className="w-full pr-10"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                tabIndex={-1}
+              >
+                {showConfirmPassword ? (
                   <EyeOff className="h-4 w-4" />
                 ) : (
                   <Eye className="h-4 w-4" />

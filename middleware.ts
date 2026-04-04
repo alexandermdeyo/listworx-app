@@ -1,16 +1,27 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
-type AppRole = 'ADMIN' | 'CONTRACTOR' | 'USER' | null;
+type AppRole =
+  | 'ADMIN'
+  | 'CONTRACTOR'
+  | 'REALTOR'
+  | 'HOMEOWNER'
+  | 'PROPERTY_MANAGER'
+  | null;
 
 function getDefaultRoute(role: AppRole) {
   if (role === 'ADMIN') return '/admin/crm';
   if (role === 'CONTRACTOR') return '/contractor-dashboard';
+  if (isRequestorRole(role)) return '/requestor-dashboard';
   return '/requestor-dashboard';
 }
 
 function isRequestorRole(role: AppRole) {
-  return role === 'USER';
+  return (
+    role === 'REALTOR' ||
+    role === 'HOMEOWNER' ||
+    role === 'PROPERTY_MANAGER'
+  );
 }
 
 function sanitizeRedirect(redirect: string | null, role: AppRole) {
@@ -51,7 +62,7 @@ function sanitizeRedirect(redirect: string | null, role: AppRole) {
     return fallback;
   }
 
-  if (role === 'USER') {
+  if (isRequestorRole(role)) {
     if (
       trimmed.startsWith('/requestor-dashboard') ||
       trimmed.startsWith('/request')
