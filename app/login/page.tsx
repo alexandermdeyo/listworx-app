@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, Lock, Loader as Loader2, Eye, EyeOff } from 'lucide-react';
@@ -62,9 +62,7 @@ function sanitizeRedirect(redirect: string | null, role: Role) {
   if (role === 'CONTRACTOR') {
     if (
       trimmed.startsWith('/contractor-dashboard') ||
-      trimmed.startsWith('/billing') ||
-      trimmed.startsWith('/apply') ||
-      trimmed.startsWith('/set-password')
+      trimmed.startsWith('/billing')
     ) {
       return trimmed;
     }
@@ -105,7 +103,6 @@ async function waitForSession(
 }
 
 export default function LoginPage() {
-  const router = useRouter();
   const supabase = createClient();
   const searchParams = useSearchParams();
 
@@ -143,15 +140,15 @@ export default function LoginPage() {
       const settledSession = await waitForSession(supabase, 30, 250);
 
       if (!settledSession?.user?.id) {
-        throw new Error(
-          'Login succeeded, but the session was not ready. Open the connected standalone app tab and try again there.'
-        );
+        throw new Error('Login succeeded, but the session was not ready.');
       }
+
+      const userId = settledSession.user.id;
 
       const { data: appUser, error: appUserError } = await supabase
         .from('users')
         .select('role')
-        .eq('id', settledSession.user.id)
+        .eq('id', userId)
         .maybeSingle();
 
       if (appUserError) {
@@ -159,10 +156,66 @@ export default function LoginPage() {
       }
 
       const role = (appUser?.role as Role) || null;
-      const nextRoute = sanitizeRedirect(redirect, role);
 
-      window.location.href = nextRoute;
-      return;
+      if (role === 'ADMIN') {
+        const nextRoute = sanitizeRedirect(redirect, role);
+        window.location.href = nextRoute;
+        return;
+      }
+
+      if (role === 'CONTRACTOR') {
+        const { data: contractor, error: contractorError } = await supabase
+          .from('contractor_profiles')
+          .select('partner_status')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (contractorError) {
+          throw new Error(contractorError.message || 'Could not load contractor status.');
+        }
+
+        const status = (contractor?.partner_status || '').toString().toLowerCase();
+
+        if (!contractor) {
+          window.location.href = '/contractor-dashboard';
+          return;
+        }
+
+        if (status === 'approved') {
+          window.location.href = '/billing';
+          return;
+        }
+
+        if (status === 'active') {
+          window.location.href = '/contractor-dashboard';
+          return;
+        }
+
+        if (
+          status === 'applied' ||
+          status === 'under_review' ||
+          status === 'suspended' ||
+          status === 'rejected' ||
+          status === 'cancelled' ||
+          status === 'paused' ||
+          status === 'removed' ||
+          !status
+        ) {
+          window.location.href = '/contractor-dashboard';
+          return;
+        }
+
+        window.location.href = '/contractor-dashboard';
+        return;
+      }
+
+      if (isRequestorRole(role)) {
+        const nextRoute = sanitizeRedirect(redirect, role);
+        window.location.href = nextRoute;
+        return;
+      }
+
+      window.location.href = '/';
     } catch (err: any) {
       setError(err?.message || 'Invalid login credentials.');
       setLoading(false);

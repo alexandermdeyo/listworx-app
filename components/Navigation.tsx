@@ -1,65 +1,116 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { LayoutDashboard, LogIn, LogOut } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 
-type Role = 'ADMIN' | 'CONTRACTOR' | 'USER' | null;
+type Role =
+  | 'ADMIN'
+  | 'CONTRACTOR'
+  | 'REALTOR'
+  | 'HOMEOWNER'
+  | 'PROPERTY_MANAGER'
+  | null;
+
+function isRequestorRole(role: Role) {
+  return (
+    role === 'REALTOR' ||
+    role === 'HOMEOWNER' ||
+    role === 'PROPERTY_MANAGER'
+  );
+}
 
 export default function Navigation() {
-  const supabase = createClient();
-  const router = useRouter();
-
+  const supabase = useMemo(() => createClient(), []);
   const [role, setRole] = useState<Role>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [dashboardHref, setDashboardHref] = useState('/requestor-dashboard');
 
   useEffect(() => {
+    let mounted = true;
+
     const load = async () => {
+      setLoading(true);
+
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
+      if (!mounted) return;
+
       if (!session?.user) {
         setLoggedIn(false);
         setRole(null);
+        setDashboardHref('/requestor-dashboard');
         setLoading(false);
         return;
       }
 
       setLoggedIn(true);
 
+      const userId = session.user.id;
+
       const { data: appUser } = await supabase
         .from('users')
         .select('role')
-        .eq('id', session.user.id)
+        .eq('id', userId)
         .maybeSingle();
 
-      setRole((appUser?.role as Role) || null);
+      const resolvedRole = (appUser?.role as Role) || null;
+      setRole(resolvedRole);
+
+      if (resolvedRole === 'ADMIN') {
+        setDashboardHref('/admin/crm');
+        setLoading(false);
+        return;
+      }
+
+      if (resolvedRole === 'CONTRACTOR') {
+        const { data: contractor } = await supabase
+          .from('contractor_profiles')
+          .select('partner_status')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        const status = (contractor?.partner_status || '').toString().toLowerCase();
+
+        if (status === 'approved') {
+          setDashboardHref('/billing');
+        } else {
+          setDashboardHref('/contractor-dashboard');
+        }
+
+        setLoading(false);
+        return;
+      }
+
+      if (isRequestorRole(resolvedRole)) {
+        setDashboardHref('/requestor-dashboard');
+        setLoading(false);
+        return;
+      }
+
+      setDashboardHref('/requestor-dashboard');
       setLoading(false);
     };
 
-    load();
+    void load();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(() => {
-      load();
+      void load();
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, [supabase]);
-
-  const dashboardHref =
-    role === 'ADMIN'
-      ? '/admin/crm'
-      : role === 'CONTRACTOR'
-      ? '/contractor-dashboard'
-      : '/requestor-dashboard';
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
