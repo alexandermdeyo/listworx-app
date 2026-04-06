@@ -28,64 +28,10 @@ function isRequestorRole(role: Role) {
   );
 }
 
-function getDefaultRoute(role: Role) {
-  if (role === 'ADMIN') return '/admin/crm';
-  if (role === 'CONTRACTOR') return '/contractor-dashboard';
-  if (isRequestorRole(role)) return '/requestor-dashboard';
-  return '/requestor-dashboard';
-}
-
-function sanitizeRedirect(redirect: string | null, role: Role) {
-  const fallback = getDefaultRoute(role);
-
-  if (!redirect || typeof redirect !== 'string') {
-    return fallback;
-  }
-
-  const trimmed = redirect.trim();
-
-  if (!trimmed.startsWith('/')) return fallback;
-
-  if (
-    trimmed.startsWith('//') ||
-    trimmed.startsWith('/login') ||
-    trimmed.startsWith('/signup') ||
-    trimmed.startsWith('/logout')
-  ) {
-    return fallback;
-  }
-
-  if (role === 'ADMIN') {
-    return trimmed.startsWith('/admin') ? trimmed : fallback;
-  }
-
-  if (role === 'CONTRACTOR') {
-    if (
-      trimmed.startsWith('/contractor-dashboard') ||
-      trimmed.startsWith('/billing')
-    ) {
-      return trimmed;
-    }
-    return fallback;
-  }
-
-  if (isRequestorRole(role)) {
-    if (
-      trimmed.startsWith('/requestor-dashboard') ||
-      trimmed.startsWith('/request')
-    ) {
-      return trimmed;
-    }
-    return fallback;
-  }
-
-  return fallback;
-}
-
 async function waitForSession(
   supabase: ReturnType<typeof createClient>,
   attempts = 30,
-  delayMs = 250
+  delayMs = 200
 ) {
   for (let i = 0; i < attempts; i++) {
     const {
@@ -107,6 +53,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const redirect = searchParams.get('redirect');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -124,7 +71,7 @@ export default function LoginPage() {
     try {
       const normalizedEmail = email.trim().toLowerCase();
 
-      const { error: signInError, data } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password,
       });
@@ -133,11 +80,7 @@ export default function LoginPage() {
         throw signInError;
       }
 
-      if (!data.user?.id) {
-        throw new Error('Login failed.');
-      }
-
-      const settledSession = await waitForSession(supabase, 30, 250);
+      const settledSession = await waitForSession(supabase);
 
       if (!settledSession?.user?.id) {
         throw new Error('Login succeeded, but the session was not ready.');
@@ -145,6 +88,7 @@ export default function LoginPage() {
 
       const userId = settledSession.user.id;
 
+      // 1) Try app role from users table
       const { data: appUser, error: appUserError } = await supabase
         .from('users')
         .select('role')
@@ -157,64 +101,79 @@ export default function LoginPage() {
 
       const role = (appUser?.role as Role) || null;
 
+      // 2) Always also check contractor profile as fallback truth
+      const { data: contractorProfile, error: contractorError } = await supabase
+        .from('contractor_profiles')
+        .select('partner_status')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (contractorError) {
+        throw new Error(
+          contractorError.message || 'Could not load contractor profile.'
+        );
+      }
+
+      const contractorStatus = (
+        contractorProfile?.partner_status || ''
+      ).toString().trim().toLowerCase();
+
+      const hasContractorProfile = !!contractorProfile;
+
+      // ADMIN
       if (role === 'ADMIN') {
-        const nextRoute = sanitizeRedirect(redirect, role);
-        window.location.href = nextRoute;
+        window.location.href = '/admin/crm';
         return;
       }
 
-      if (role === 'CONTRACTOR') {
-        const { data: contractor, error: contractorError } = await supabase
-          .from('contractor_profiles')
-          .select('partner_status')
-          .eq('user_id', userId)
-          .maybeSingle();
-
-        if (contractorError) {
-          throw new Error(contractorError.message || 'Could not load contractor status.');
-        }
-
-        const status = (contractor?.partner_status || '').toString().toLowerCase();
-
-        if (!contractor) {
-          window.location.href = '/contractor-dashboard';
-          return;
-        }
-
-        if (status === 'approved') {
-          window.location.href = '/billing';
-          return;
-        }
-
-        if (status === 'active') {
-          window.location.href = '/contractor-dashboard';
+      // CONTRACTOR:
+      // Use either explicit CONTRACTOR role OR existence of contractor profile
+      if (role === 'CONTRACTOR' || hasContractorProfile) {
+        if (!hasContractorProfile) {
+          window.location.href = '/apply';
           return;
         }
 
         if (
-          status === 'applied' ||
-          status === 'under_review' ||
-          status === 'suspended' ||
-          status === 'rejected' ||
-          status === 'cancelled' ||
-          status === 'paused' ||
-          status === 'removed' ||
-          !status
+          contractorStatus === 'applied' ||
+          contractorStatus === 'under_review' ||
+          contractorStatus === 'pending'
         ) {
+          window.location.href = '/apply';
+          return;
+        }
+
+        if (contractorStatus === 'approved') {
+          window.location.href = '/billing';
+          return;
+        }
+
+        if (contractorStatus === 'active') {
           window.location.href = '/contractor-dashboard';
           return;
         }
 
-        window.location.href = '/contractor-dashboard';
+        // suspended / cancelled / rejected / unknown
+        window.location.href = '/apply';
         return;
       }
 
+      // REQUESTORS
       if (isRequestorRole(role)) {
-        const nextRoute = sanitizeRedirect(redirect, role);
-        window.location.href = nextRoute;
+        if (
+          redirect &&
+          (redirect.startsWith('/requestor-dashboard') ||
+            redirect.startsWith('/request'))
+        ) {
+          window.location.href = redirect;
+          return;
+        }
+
+        window.location.href = '/requestor-dashboard';
         return;
       }
 
+      // Final fallback
       window.location.href = '/';
     } catch (err: any) {
       setError(err?.message || 'Invalid login credentials.');
@@ -236,10 +195,7 @@ export default function LoginPage() {
     setSendingMagic(true);
 
     try {
-      const safeRedirect = redirect && redirect.startsWith('/') ? redirect : '';
-      const emailRedirectTo = safeRedirect
-        ? `${window.location.origin}/login?redirect=${encodeURIComponent(safeRedirect)}`
-        : `${window.location.origin}/login`;
+      const emailRedirectTo = `${window.location.origin}/login`;
 
       const { error } = await supabase.auth.signInWithOtp({
         email: normalizedEmail,

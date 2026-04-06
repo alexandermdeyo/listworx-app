@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
-type AppRole =
+type Role =
   | 'ADMIN'
   | 'CONTRACTOR'
   | 'REALTOR'
@@ -9,7 +9,7 @@ type AppRole =
   | 'PROPERTY_MANAGER'
   | null;
 
-function isRequestorRole(role: AppRole) {
+function isRequestor(role: Role) {
   return (
     role === 'REALTOR' ||
     role === 'HOMEOWNER' ||
@@ -17,191 +17,114 @@ function isRequestorRole(role: AppRole) {
   );
 }
 
-function getDefaultRoute(role: AppRole) {
-  if (role === 'ADMIN') return '/admin/crm';
-  if (role === 'CONTRACTOR') return '/contractor-dashboard';
-  if (isRequestorRole(role)) return '/requestor-dashboard';
-  return '/requestor-dashboard';
-}
-
-function sanitizeRedirect(redirect: string | null, role: AppRole) {
-  const fallback = getDefaultRoute(role);
-
-  if (!redirect || typeof redirect !== 'string') {
-    return fallback;
-  }
-
-  const trimmed = redirect.trim();
-
-  if (!trimmed.startsWith('/')) {
-    return fallback;
-  }
-
-  if (
-    trimmed.startsWith('//') ||
-    trimmed.startsWith('/login') ||
-    trimmed.startsWith('/signup') ||
-    trimmed.startsWith('/logout')
-  ) {
-    return fallback;
-  }
-
-  if (role === 'ADMIN') {
-    return trimmed.startsWith('/admin') ? trimmed : fallback;
-  }
-
-  if (role === 'CONTRACTOR') {
-    if (
-      trimmed.startsWith('/contractor-dashboard') ||
-      trimmed.startsWith('/billing')
-    ) {
-      return trimmed;
-    }
-    return fallback;
-  }
-
-  if (isRequestorRole(role)) {
-    if (
-      trimmed.startsWith('/requestor-dashboard') ||
-      trimmed.startsWith('/request')
-    ) {
-      return trimmed;
-    }
-    return fallback;
-  }
-
-  return fallback;
-}
-
 export async function middleware(req: NextRequest) {
-  let res = NextResponse.next({
-    request: { headers: req.headers },
-  });
+  const path = req.nextUrl.pathname;
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
-        },
-        set() {},
-        remove() {},
+  const protectedRoutes = [
+    '/admin',
+    '/contractor-dashboard',
+    '/requestor-dashboard',
+    '/billing',
+  ];
+
+  const isProtected = protectedRoutes.some((route) => path.startsWith(route));
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Prevent StackBlitz/local preview from crashing if env vars are not loaded.
+  // In production/Netlify, these should always exist.
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.next();
+  }
+
+  const res = NextResponse.next();
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get(name: string) {
+        return req.cookies.get(name)?.value;
       },
-    }
-  );
+      set() {
+        // no-op in middleware
+      },
+      remove() {
+        // no-op in middleware
+      },
+    },
+  });
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let role: AppRole = null;
+  let role: Role = null;
 
-  if (user) {
+  if (user?.id) {
     const { data: appUser } = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
       .maybeSingle();
 
-    role = (appUser?.role as AppRole) || null;
+    role = (appUser?.role as Role) || null;
   }
 
-  const pathname = req.nextUrl.pathname;
-  const redirectParam = req.nextUrl.searchParams.get('redirect');
-  const isRequestor = isRequestorRole(role);
+  if (isProtected && !user) {
+    const url = new URL('/login', req.url);
+    url.searchParams.set('redirect', path);
+    return NextResponse.redirect(url);
+  }
 
-  const isProtectedRoute =
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/contractor-dashboard') ||
-    pathname.startsWith('/requestor-dashboard') ||
-    pathname.startsWith('/billing');
+  if (path.startsWith('/admin')) {
+    if (role !== 'ADMIN') {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+  }
 
-  if (isProtectedRoute) {
+  if (path.startsWith('/contractor-dashboard')) {
+    if (role !== 'CONTRACTOR') {
+      if (role === 'ADMIN') {
+        return NextResponse.redirect(new URL('/admin/crm', req.url));
+      }
+      if (isRequestor(role)) {
+        return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
+      }
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+  }
+
+  if (path.startsWith('/requestor-dashboard')) {
+    if (!isRequestor(role)) {
+      if (role === 'ADMIN') {
+        return NextResponse.redirect(new URL('/admin/crm', req.url));
+      }
+      if (role === 'CONTRACTOR') {
+        return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
+      }
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+  }
+
+  if (path.startsWith('/billing')) {
+    if (role !== 'CONTRACTOR') {
+      if (role === 'ADMIN') {
+        return NextResponse.redirect(new URL('/admin/crm', req.url));
+      }
+      if (isRequestor(role)) {
+        return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
+      }
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+  }
+
+  if (isProtected) {
     res.headers.set(
       'Cache-Control',
-      'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0'
+      'no-store, no-cache, must-revalidate, max-age=0'
     );
     res.headers.set('Pragma', 'no-cache');
     res.headers.set('Expires', '0');
-  }
-
-  if ((pathname === '/login' || pathname === '/signup') && user) {
-    const target = sanitizeRedirect(redirectParam, role);
-    return NextResponse.redirect(new URL(target, req.url));
-  }
-
-  if (pathname.startsWith('/admin')) {
-    if (!user) {
-      const url = new URL('/login', req.url);
-      url.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(url);
-    }
-
-    if (role !== 'ADMIN') {
-      if (role === 'CONTRACTOR') {
-        return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
-      }
-      if (isRequestor) {
-        return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
-      }
-      return NextResponse.redirect(new URL('/', req.url));
-    }
-  }
-
-  if (pathname.startsWith('/contractor-dashboard')) {
-    if (!user) {
-      const url = new URL('/login', req.url);
-      url.searchParams.set('redirect', '/contractor-dashboard');
-      return NextResponse.redirect(url);
-    }
-
-    if (role !== 'CONTRACTOR') {
-      if (isRequestor) {
-        return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
-      }
-      if (role === 'ADMIN') {
-        return NextResponse.redirect(new URL('/admin/crm', req.url));
-      }
-      return NextResponse.redirect(new URL('/', req.url));
-    }
-  }
-
-  if (pathname.startsWith('/requestor-dashboard')) {
-    if (!user) {
-      const url = new URL('/login', req.url);
-      url.searchParams.set('redirect', '/requestor-dashboard');
-      return NextResponse.redirect(url);
-    }
-
-    if (!isRequestor) {
-      if (role === 'CONTRACTOR') {
-        return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
-      }
-      if (role === 'ADMIN') {
-        return NextResponse.redirect(new URL('/admin/crm', req.url));
-      }
-      return NextResponse.redirect(new URL('/', req.url));
-    }
-  }
-
-  if (pathname.startsWith('/billing')) {
-    if (!user) {
-      const url = new URL('/login', req.url);
-      url.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(url);
-    }
-
-    if (role !== 'CONTRACTOR') {
-      if (isRequestor) {
-        return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
-      }
-      if (role === 'ADMIN') {
-        return NextResponse.redirect(new URL('/admin/crm', req.url));
-      }
-      return NextResponse.redirect(new URL('/', req.url));
-    }
   }
 
   return res;
