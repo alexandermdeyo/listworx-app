@@ -48,6 +48,21 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
     setLoading(true);
 
     try {
+      const baseQuery = supabase
+        .from('referrals')
+        .select(`
+          id,
+          job_request_id,
+          slot_position,
+          tier_at_referral,
+          status,
+          email_sent,
+          created_at
+        `)
+        .eq('contractor_id', contractorProfileId)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
       const { data, error } = await supabase
         .from('referrals')
         .select(`
@@ -74,7 +89,21 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
         .limit(20);
 
       if (error) {
-        console.error('Error loading referrals:', error);
+        console.error('Error loading enriched referrals, falling back to base referrals:', error);
+
+        const { data: fallbackData, error: fallbackError } = await baseQuery;
+
+        if (fallbackError) {
+          console.error('Error loading fallback referrals:', fallbackError);
+          setReferrals([]);
+        } else {
+          setReferrals(
+            ((fallbackData as any[]) || []).map((row) => ({
+              ...row,
+              job_requests: null,
+            }))
+          );
+        }
       } else {
         setReferrals((data as any) || []);
       }
