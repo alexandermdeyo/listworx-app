@@ -54,6 +54,18 @@ export async function POST(request: NextRequest) {
     let emailError: string | null = null;
 
     try {
+      const { data: appUser } = await supabaseAdmin
+        .from('users')
+        .select('email')
+        .eq('id', profile.user_id)
+        .maybeSingle();
+
+      const toEmail = appUser?.email || profile.email;
+
+      if (!toEmail) {
+        throw new Error('No email found for contractor.');
+      }
+
       const emailResponse = await fetch(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,
         {
@@ -64,7 +76,7 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({
             type: 'application_approved',
-            to: profile.email,
+            to: toEmail,
             contractorName: profile.owner_name,
             companyName: profile.company_name,
           }),
@@ -72,8 +84,8 @@ export async function POST(request: NextRequest) {
       );
 
       if (!emailResponse.ok) {
-        const errorData = await emailResponse.json();
-        emailError = errorData.error || 'Email send failed';
+        const errorText = await emailResponse.text();
+        emailError = errorText || 'Email send failed';
       }
     } catch (err: any) {
       emailError = err.message || 'Email send failed';

@@ -459,7 +459,7 @@ export default function ApplicationsPage() {
                 onClick={() => resendApprovalEmail(profile)}
                 disabled={processing === profile.id}
                 variant="outline"
-                className="w-full"
+                className="w-full border-lw-dark-border text-zinc-100 bg-lw-dark-surface hover:bg-lw-rust hover:text-white"
               >
                 {processing === profile.id ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
