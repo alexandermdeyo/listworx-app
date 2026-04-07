@@ -282,7 +282,19 @@ export default function ApplyPage() {
         return;
       }
 
-      window.location.href = '/contractor-dashboard';
+      const { data: contractorProfile } = await supabase
+        .from('contractor_profiles')
+        .select('partner_status')
+        .eq('user_id', data.user.id)
+        .maybeSingle();
+
+      const partnerStatus = (contractorProfile?.partner_status || '')
+        .toString()
+        .trim()
+        .toLowerCase();
+
+      window.location.href =
+        partnerStatus === 'approved' ? '/billing' : '/contractor-dashboard';
     } catch (err: any) {
       console.error('CONTRACTOR LOGIN FLOW FAILED:', err);
       setError(`Unexpected error. Please try again. (${err.message})`);

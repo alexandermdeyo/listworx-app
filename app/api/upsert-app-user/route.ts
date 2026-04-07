@@ -61,15 +61,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error } = await supabase.from('users').upsert(
-      {
-        id,
-        email: normalizedEmail,
-        name: safeName,
-        role,
-      },
-      { onConflict: 'id' }
-    );
+    const payload = {
+      id,
+      email: normalizedEmail,
+      name: safeName,
+      full_name: safeName,
+      role,
+    };
+
+    let { error } = await supabase.from('users').upsert(payload, { onConflict: 'id' });
+
+    if (error && (error.message || '').toLowerCase().includes('users_email_key')) {
+      const { data: existingByEmail } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', normalizedEmail)
+        .maybeSingle();
+
+      if (existingByEmail?.id) {
+        const updateResult = await supabase
+          .from('users')
+          .update({ name: safeName, full_name: safeName, role })
+          .eq('id', existingByEmail.id);
+
+        error = updateResult.error ?? null;
+      }
+    }
 
     if (error) {
       console.error('UPSERT APP USER FAILED:', error);

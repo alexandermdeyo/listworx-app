@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, Lock, Loader as Loader2, Eye, EyeOff } from 'lucide-react';
+import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -81,7 +82,7 @@ export default function LoginPage() {
         throw signInError;
       }
 
-      let authUser = data.user ?? data.session?.user ?? null;
+      let authUser: User | null = data.user ?? data.session?.user ?? null;
 
       if (!authUser?.id) {
         authUser = await waitForUser(supabase);
@@ -92,6 +93,9 @@ export default function LoginPage() {
       }
 
       const userId = authUser.id;
+
+      const metadataRole = ((authUser.user_metadata?.role as string | undefined) || '')
+        .toUpperCase() as Role;
 
       const [
         { data: appUser, error: appUserError },
@@ -104,7 +108,7 @@ export default function LoginPage() {
           .maybeSingle(),
         supabase
           .from('contractor_profiles')
-          .select('id')
+          .select('id, partner_status')
           .eq('user_id', userId)
           .maybeSingle(),
       ]);
@@ -118,8 +122,12 @@ export default function LoginPage() {
         console.error('LOGIN CONTRACTOR LOOKUP FAILED:', contractorError);
       }
 
-      const role = (appUser?.role as Role) || null;
+      const role = (appUser?.role as Role) || metadataRole || null;
       const hasContractorProfile = !!contractorProfile;
+      const contractorStatus = (contractorProfile?.partner_status || '')
+        .toString()
+        .trim()
+        .toLowerCase();
 
       if (role === 'ADMIN') {
         window.location.href = '/admin/crm';
@@ -127,7 +135,8 @@ export default function LoginPage() {
       }
 
       if (role === 'CONTRACTOR' || hasContractorProfile) {
-        window.location.href = '/contractor-dashboard';
+        window.location.href =
+          contractorStatus === 'approved' ? '/billing' : '/contractor-dashboard';
         return;
       }
 
@@ -152,7 +161,7 @@ export default function LoginPage() {
         return;
       }
 
-      window.location.href = '/login';
+      window.location.href = '/requestor-dashboard';
     } catch (err: any) {
       setError(err?.message || 'Invalid login credentials.');
       setLoading(false);

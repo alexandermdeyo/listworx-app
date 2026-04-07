@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, LogIn, LogOut } from 'lucide-react';
+import type { Session } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 
@@ -25,6 +27,8 @@ function isRequestorRole(role: Role) {
 
 export default function Navigation() {
   const supabase = useMemo(() => createClient(), []);
+  const router = useRouter();
+  const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dashboardHref, setDashboardHref] = useState<string | null>(null);
@@ -32,12 +36,14 @@ export default function Navigation() {
   useEffect(() => {
     let mounted = true;
 
-    const load = async () => {
+    const load = async (sessionOverride?: Session | null) => {
       setLoading(true);
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const session =
+        sessionOverride ??
+        (
+          await supabase.auth.getSession()
+        ).data.session;
 
       if (!mounted) return;
 
@@ -65,7 +71,9 @@ export default function Navigation() {
           .maybeSingle(),
       ]);
 
-      const resolvedRole = (appUser?.role as Role) || null;
+      const metadataRole = ((session.user.user_metadata?.role as string | undefined) || '')
+        .toUpperCase() as Role;
+      const resolvedRole = (appUser?.role as Role) || metadataRole || null;
 
       if (resolvedRole === 'ADMIN') {
         setDashboardHref('/admin/crm');
@@ -113,14 +121,15 @@ export default function Navigation() {
         return;
       }
 
-      void load();
+      setLoggedIn(true);
+      void load(session);
     });
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [pathname, supabase]);
 
   const handleSignOut = async () => {
     setLoggedIn(false);
@@ -133,7 +142,10 @@ export default function Navigation() {
       // ignore
     }
 
-    window.location.replace('/');
+    sessionStorage.removeItem('listworx_requestor_prefill');
+    sessionStorage.removeItem('listworx_contractor_prefill');
+    router.replace('/');
+    router.refresh();
   };
 
   return (
