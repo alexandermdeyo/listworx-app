@@ -604,10 +604,19 @@ export default function SubscriptionSection({
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-lw-text text-sm leading-snug">{addOn.name}</h4>
                       {addOn.hasSubscription ? (
-                        <p className="font-bold text-lw-text mt-0.5">
-                          ${isAnnual ? Math.round((addOn.annualPrice || 0) / 12) : addOn.monthlyPrice}
-                          <span className="text-xs font-normal text-lw-text/50">/mo</span>
-                        </p>
+                        <>
+                          <p className="font-bold text-lw-text mt-0.5">
+                            ${isAnnual ? addOn.annualPrice : addOn.monthlyPrice}
+                            <span className="text-xs font-normal text-lw-text/50">
+                              {isAnnual ? '/yr' : '/mo'}
+                            </span>
+                          </p>
+                          {isAnnual && (
+                            <p className="text-xs text-emerald-600 font-medium mt-0.5">
+                              Save ${(addOn.monthlyPrice || 0) * 12 - (addOn.annualPrice || 0)}/year
+                            </p>
+                          )}
+                        </>
                       ) : (
                         <p className="font-bold text-lw-text mt-0.5">${displayPrice}</p>
                       )}
@@ -706,7 +715,7 @@ export default function SubscriptionSection({
         <div className="grid gap-6 lg:grid-cols-3">
           {TIERS.map((tier) => {
             const Icon = tier.icon;
-            const displayMonthly = isAnnual ? Math.round(tier.annualPrice / 12) : tier.monthlyPrice;
+            const displayPrice = isAnnual ? tier.annualPrice : tier.monthlyPrice;
             const savings = calculateSavings(tier);
             const loadingThisTier = checkoutLoading === `tier-${tier.id}`;
 
@@ -741,8 +750,8 @@ export default function SubscriptionSection({
 
                 <div className="mb-5">
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-4xl font-bold text-lw-text">${displayMonthly}</span>
-                    <span className="text-lw-text/50 text-sm">/mo</span>
+                    <span className="text-4xl font-bold text-lw-text">${displayPrice}</span>
+                    <span className="text-lw-text/50 text-sm">{isAnnual ? '/yr' : '/mo'}</span>
                   </div>
                   <p className="text-xs text-lw-text/50 mt-1">
                     {isAnnual
