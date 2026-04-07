@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import Navigation from '@/components/Navigation';
 import {
   Loader as Loader2,
   CircleAlert as AlertCircle,
@@ -17,8 +18,8 @@ import {
   MapPin,
   Star,
   LayoutDashboard,
+  User,
 } from 'lucide-react';
-import Navigation from '@/components/Navigation';
 
 async function waitForSession(
   supabase: ReturnType<typeof createClient>,
@@ -48,6 +49,7 @@ export default function ApplyPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -87,19 +89,26 @@ export default function ApplyPage() {
     return msg || 'Something went wrong. Please try again.';
   }
 
-  async function ensureUserRecord(userId: string, userEmail: string) {
-    const { error: upsertError } = await supabase.from('users').upsert(
-      {
+  async function upsertAppUser(
+    userId: string,
+    userEmail: string,
+    userName: string
+  ) {
+    const res = await fetch('/api/upsert-app-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         id: userId,
         email: userEmail.trim().toLowerCase(),
+        name: userName.trim() || userEmail.trim().toLowerCase(),
         role: 'CONTRACTOR',
-      },
-      { onConflict: 'id' }
-    );
+      }),
+    });
 
-    if (upsertError) {
-      console.error('USERS UPSERT FAILED:', upsertError);
-      throw new Error(upsertError.message || 'Failed to create contractor user record.');
+    const json = await res.json();
+
+    if (!res.ok) {
+      throw new Error(json.error || 'Failed to create contractor user record.');
     }
   }
 
@@ -114,7 +123,9 @@ export default function ApplyPage() {
 
     if (existingByEmailError) {
       console.error('PROFILE LOOKUP BY EMAIL FAILED:', existingByEmailError);
-      throw new Error(existingByEmailError.message || 'Failed to check contractor email.');
+      throw new Error(
+        existingByEmailError.message || 'Failed to check contractor email.'
+      );
     }
 
     if (existingByEmail && !existingByEmail.user_id) {
@@ -125,12 +136,18 @@ export default function ApplyPage() {
 
       if (attachError) {
         console.error('PROFILE ATTACH FAILED:', attachError);
-        throw new Error(attachError.message || 'Failed to connect contractor profile.');
+        throw new Error(
+          attachError.message || 'Failed to connect contractor profile.'
+        );
       }
     }
   }
 
-  async function finishSignUpFlow(userEmail: string, fallbackUserId?: string) {
+  async function finishSignUpFlow(
+    userEmail: string,
+    userName: string,
+    fallbackUserId?: string
+  ) {
     const normalizedEmail = userEmail.trim().toLowerCase();
 
     let session = await waitForSession(supabase);
@@ -154,15 +171,28 @@ export default function ApplyPage() {
       throw new Error('Session not ready after authentication.');
     }
 
-    await ensureUserRecord(finalUserId, normalizedEmail);
+    await upsertAppUser(finalUserId, normalizedEmail, userName);
     await attachExistingProfileByEmail(finalUserId, normalizedEmail);
 
-    window.location.href = '/apply';
+    sessionStorage.setItem(
+      'listworx_contractor_prefill',
+      JSON.stringify({
+        name: userName.trim(),
+        email: normalizedEmail,
+      })
+    );
+
+    window.location.href = '/contractor-dashboard';
   }
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+
+    if (!fullName.trim()) {
+      setError('Full name is required.');
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
@@ -178,12 +208,17 @@ export default function ApplyPage() {
 
     try {
       const normalizedEmail = email.trim().toLowerCase();
+      const normalizedName = fullName.trim();
 
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: normalizedEmail,
         password,
         options: {
-          data: { role: 'CONTRACTOR' },
+          data: {
+            role: 'CONTRACTOR',
+            name: normalizedName,
+            full_name: normalizedName,
+          },
         },
       });
 
@@ -194,12 +229,14 @@ export default function ApplyPage() {
       }
 
       if (!data.user?.id) {
-        setError('Signup did not return a user. Please try again or contact support.');
+        setError(
+          'Signup did not return a user. Please try again or contact support.'
+        );
         setLoading(false);
         return;
       }
 
-      await finishSignUpFlow(normalizedEmail, data.user.id);
+      await finishSignUpFlow(normalizedEmail, normalizedName, data.user.id);
     } catch (err: any) {
       console.error('CONTRACTOR SIGNUP FLOW FAILED:', err);
       setError(`Unexpected error. Please try again. (${err.message})`);
@@ -348,14 +385,18 @@ export default function ApplyPage() {
                 <div className="mb-6">
                   {mode === 'signup' ? (
                     <>
-                      <h2 className="text-2xl font-bold text-lw-text mb-1">Create Your Account</h2>
+                      <h2 className="text-2xl font-bold text-lw-text mb-1">
+                        Create Your Account
+                      </h2>
                       <p className="text-lw-text/50 text-sm">
                         Sign up to start your contractor application.
                       </p>
                     </>
                   ) : (
                     <>
-                      <h2 className="text-2xl font-bold text-lw-text mb-1">Welcome Back</h2>
+                      <h2 className="text-2xl font-bold text-lw-text mb-1">
+                        Welcome Back
+                      </h2>
                       <p className="text-lw-text/50 text-sm">
                         Sign in to access your contractor dashboard.
                       </p>
@@ -370,7 +411,31 @@ export default function ApplyPage() {
                   </Alert>
                 )}
 
-                <form onSubmit={mode === 'signup' ? handleSignUp : handleLogin} className="space-y-4">
+                <form
+                  onSubmit={mode === 'signup' ? handleSignUp : handleLogin}
+                  className="space-y-4"
+                >
+                  {mode === 'signup' && (
+                    <div>
+                      <Label className="text-lw-text/70 text-sm font-medium mb-1.5 block">
+                        Full Name
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-lw-text/30" />
+                        <Input
+                          type="text"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          placeholder="John Smith"
+                          required
+                          disabled={loading}
+                          autoComplete="name"
+                          className="border-lw-border-light text-lw-text placeholder:text-lw-text/30 focus:border-lw-rust h-11 pl-10"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <div>
                     <Label className="text-lw-text/70 text-sm font-medium mb-1.5 block">
                       Email Address
@@ -396,11 +461,17 @@ export default function ApplyPage() {
                         type={showPassword ? 'text' : 'password'}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder={mode === 'signup' ? 'Minimum 6 characters' : 'Enter your password'}
+                        placeholder={
+                          mode === 'signup'
+                            ? 'Minimum 6 characters'
+                            : 'Enter your password'
+                        }
                         required
                         disabled={loading}
                         minLength={mode === 'signup' ? 6 : undefined}
-                        autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                        autoComplete={
+                          mode === 'signup' ? 'new-password' : 'current-password'
+                        }
                         className="border-lw-border-light text-lw-text placeholder:text-lw-text/30 focus:border-lw-rust h-11 pr-10"
                       />
                       <button
@@ -437,7 +508,9 @@ export default function ApplyPage() {
                         />
                         <button
                           type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-lw-text/30 hover:text-lw-text transition-colors"
                           tabIndex={-1}
                         >

@@ -28,18 +28,19 @@ function isRequestorRole(role: Role) {
   );
 }
 
-async function waitForSession(
+async function waitForUser(
   supabase: ReturnType<typeof createClient>,
-  attempts = 30,
+  attempts = 15,
   delayMs = 200
 ) {
   for (let i = 0; i < attempts; i++) {
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-    if (session?.user?.id) {
-      return session;
+    if (!error && user?.id) {
+      return user;
     }
 
     await new Promise((resolve) => setTimeout(resolve, delayMs));
@@ -71,7 +72,7 @@ export default function LoginPage() {
     try {
       const normalizedEmail = email.trim().toLowerCase();
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password,
       });
@@ -80,38 +81,44 @@ export default function LoginPage() {
         throw signInError;
       }
 
-      const settledSession = await waitForSession(supabase);
+      let authUser = data.user ?? data.session?.user ?? null;
 
-      if (!settledSession?.user?.id) {
-        throw new Error('Login succeeded, but the session was not ready.');
+      if (!authUser?.id) {
+        authUser = await waitForUser(supabase);
       }
 
-      const userId = settledSession.user.id;
+      if (!authUser?.id) {
+        throw new Error('Login worked, but authenticated user data did not load.');
+      }
 
-      const { data: appUser, error: appUserError } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', userId)
-        .maybeSingle();
+      const userId = authUser.id;
 
+      const [
+        { data: appUser, error: appUserError },
+        { data: contractorProfile, error: contractorError },
+      ] = await Promise.all([
+        supabase
+          .from('users')
+          .select('role')
+          .eq('id', userId)
+          .maybeSingle(),
+        supabase
+          .from('contractor_profiles')
+          .select('id')
+          .eq('user_id', userId)
+          .maybeSingle(),
+      ]);
+
+      // If role lookup fails, do NOT dump to home. Keep a sane fallback.
       if (appUserError) {
-        throw new Error(appUserError.message || 'Could not load account role.');
+        console.error('LOGIN ROLE LOOKUP FAILED:', appUserError);
+      }
+
+      if (contractorError) {
+        console.error('LOGIN CONTRACTOR LOOKUP FAILED:', contractorError);
       }
 
       const role = (appUser?.role as Role) || null;
-
-      const { data: contractorProfile, error: contractorError } = await supabase
-        .from('contractor_profiles')
-        .select('id')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (contractorError) {
-        throw new Error(
-          contractorError.message || 'Could not load contractor profile.'
-        );
-      }
-
       const hasContractorProfile = !!contractorProfile;
 
       if (role === 'ADMIN') {
@@ -138,7 +145,14 @@ export default function LoginPage() {
         return;
       }
 
-      window.location.href = '/';
+      // Auth succeeded, but app role did not resolve yet.
+      // Do NOT throw user back to home. Send them somewhere recoverable.
+      if (redirect && redirect.startsWith('/')) {
+        window.location.href = redirect;
+        return;
+      }
+
+      window.location.href = '/login';
     } catch (err: any) {
       setError(err?.message || 'Invalid login credentials.');
       setLoading(false);

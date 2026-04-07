@@ -25,10 +25,9 @@ function isRequestorRole(role: Role) {
 
 export default function Navigation() {
   const supabase = useMemo(() => createClient(), []);
-  const [role, setRole] = useState<Role>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [dashboardHref, setDashboardHref] = useState('/requestor-dashboard');
+  const [dashboardHref, setDashboardHref] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -44,8 +43,7 @@ export default function Navigation() {
 
       if (!session?.user) {
         setLoggedIn(false);
-        setRole(null);
-        setDashboardHref('/requestor-dashboard');
+        setDashboardHref(null);
         setLoading(false);
         return;
       }
@@ -54,14 +52,20 @@ export default function Navigation() {
 
       const userId = session.user.id;
 
-      const { data: appUser } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', userId)
-        .maybeSingle();
+      const [{ data: appUser }, { data: contractor }] = await Promise.all([
+        supabase
+          .from('users')
+          .select('role')
+          .eq('id', userId)
+          .maybeSingle(),
+        supabase
+          .from('contractor_profiles')
+          .select('partner_status')
+          .eq('user_id', userId)
+          .maybeSingle(),
+      ]);
 
       const resolvedRole = (appUser?.role as Role) || null;
-      setRole(resolvedRole);
 
       if (resolvedRole === 'ADMIN') {
         setDashboardHref('/admin/crm');
@@ -69,14 +73,11 @@ export default function Navigation() {
         return;
       }
 
-      if (resolvedRole === 'CONTRACTOR') {
-        const { data: contractor } = await supabase
-          .from('contractor_profiles')
-          .select('partner_status')
-          .eq('user_id', userId)
-          .maybeSingle();
-
-        const status = (contractor?.partner_status || '').toString().toLowerCase();
+      if (resolvedRole === 'CONTRACTOR' || contractor) {
+        const status = (contractor?.partner_status || '')
+          .toString()
+          .trim()
+          .toLowerCase();
 
         if (status === 'approved') {
           setDashboardHref('/billing');
@@ -94,7 +95,7 @@ export default function Navigation() {
         return;
       }
 
-      setDashboardHref('/requestor-dashboard');
+      setDashboardHref(null);
       setLoading(false);
     };
 
@@ -102,7 +103,16 @@ export default function Navigation() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+
+      if (!session?.user) {
+        setLoggedIn(false);
+        setDashboardHref(null);
+        setLoading(false);
+        return;
+      }
+
       void load();
     });
 
@@ -113,8 +123,17 @@ export default function Navigation() {
   }, [supabase]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = '/';
+    setLoggedIn(false);
+    setDashboardHref(null);
+    setLoading(false);
+
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch {
+      // ignore
+    }
+
+    window.location.replace('/');
   };
 
   return (
@@ -132,19 +151,34 @@ export default function Navigation() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <Link href="/about" className="text-foreground/80 hover:text-foreground transition-colors">
+          <Link
+            href="/about"
+            className="text-foreground/80 hover:text-foreground transition-colors"
+          >
             About
           </Link>
-          <Link href="/realtors" className="text-foreground/80 hover:text-foreground transition-colors">
+          <Link
+            href="/#how-it-works"
+            className="text-foreground/80 hover:text-foreground transition-colors"
+          >
             How It Works
           </Link>
-          <Link href="/realtors" className="text-foreground/80 hover:text-foreground transition-colors">
+          <Link
+            href="/realtors"
+            className="text-foreground/80 hover:text-foreground transition-colors"
+          >
             For Realtors & Homeowners
           </Link>
-          <Link href="/contractors" className="text-foreground/80 hover:text-foreground transition-colors">
+          <Link
+            href="/contractors"
+            className="text-foreground/80 hover:text-foreground transition-colors"
+          >
             For Contractors
           </Link>
-          <Link href="/ironclad" className="text-lw-rust hover:text-lw-rust-hover transition-colors">
+          <Link
+            href="/ironclad"
+            className="text-lw-rust hover:text-lw-rust-hover transition-colors"
+          >
             IronClad Standards
           </Link>
         </nav>
@@ -152,20 +186,30 @@ export default function Navigation() {
         <div className="flex items-center gap-3">
           {!loading && loggedIn ? (
             <>
-              <Link href={dashboardHref}>
-                <Button variant="outline" className="gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Button>
-              </Link>
-              <Button variant="ghost" onClick={handleSignOut} className="gap-2">
+              {dashboardHref && (
+                <Link href={dashboardHref}>
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-lw-border-light text-foreground hover:bg-white hover:text-lw-rust"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Button>
+                </Link>
+              )}
+
+              <Button
+                variant="ghost"
+                onClick={handleSignOut}
+                className="gap-2 text-foreground hover:text-lw-rust"
+              >
                 <LogOut className="h-4 w-4" />
                 Sign Out
               </Button>
             </>
           ) : (
             <Link href="/login">
-              <Button variant="outline" className="gap-2">
+              <Button className="gap-2 bg-lw-rust text-white hover:bg-white hover:text-lw-rust border border-lw-rust">
                 <LogIn className="h-4 w-4" />
                 Login
               </Button>
