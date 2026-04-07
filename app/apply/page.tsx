@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  CircleCheck as CheckCircle,
   Loader as Loader2,
   CircleAlert as AlertCircle,
   Eye,
@@ -19,8 +18,27 @@ import {
   Star,
   LayoutDashboard,
 } from 'lucide-react';
-import { PARTNER_STATUS } from '@/lib/partner-status';
 import Navigation from '@/components/Navigation';
+
+async function waitForSession(
+  supabase: ReturnType<typeof createClient>,
+  attempts = 20,
+  delayMs = 250
+) {
+  for (let i = 0; i < attempts; i++) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (session?.user?.id) {
+      return session;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  return null;
+}
 
 export default function ApplyPage() {
   const supabaseRef = useRef(createClient());
@@ -37,42 +55,109 @@ export default function ApplyPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   function friendlyAuthError(msg: string): string {
-    const m = msg.toLowerCase();
-    if (m.includes('already registered') || m.includes('already been registered') || m.includes('user already exists')) {
+    const m = (msg || '').toLowerCase();
+
+    if (
+      m.includes('already registered') ||
+      m.includes('already been registered') ||
+      m.includes('user already exists')
+    ) {
       return 'An account with this email already exists. Use Sign In instead.';
     }
-    if (m.includes('password') && (m.includes('short') || m.includes('weak') || m.includes('characters'))) {
-      return 'Password is too short — minimum 6 characters required.';
+
+    if (
+      m.includes('password') &&
+      (m.includes('short') || m.includes('weak') || m.includes('characters'))
+    ) {
+      return 'Password is too short. Minimum 6 characters required.';
     }
+
     if (m.includes('invalid email') || m.includes('valid email')) {
       return 'Please enter a valid email address.';
     }
+
     if (m.includes('rate limit') || m.includes('too many')) {
-      return 'Too many attempts — please wait a minute and try again.';
+      return 'Too many attempts. Please wait a minute and try again.';
     }
+
     if (m.includes('network') || m.includes('fetch')) {
-      return 'Network error — check your connection and try again.';
+      return 'Network error. Check your connection and try again.';
     }
-    return msg || 'Something went wrong — please try again.';
+
+    return msg || 'Something went wrong. Please try again.';
   }
 
-  async function ensureProfile(userId: string, userEmail: string) {
-    const { data: existing } = await supabase
+  async function ensureUserRecord(userId: string, userEmail: string) {
+    const { error: upsertError } = await supabase.from('users').upsert(
+      {
+        id: userId,
+        email: userEmail.trim().toLowerCase(),
+        role: 'CONTRACTOR',
+      },
+      { onConflict: 'id' }
+    );
+
+    if (upsertError) {
+      console.error('USERS UPSERT FAILED:', upsertError);
+      throw new Error(upsertError.message || 'Failed to create contractor user record.');
+    }
+  }
+
+  async function attachExistingProfileByEmail(userId: string, userEmail: string) {
+    const normalizedEmail = userEmail.trim().toLowerCase();
+
+    const { data: existingByEmail, error: existingByEmailError } = await supabase
       .from('contractor_profiles')
-      .select('id')
-      .eq('user_id', userId)
+      .select('id, user_id, email')
+      .ilike('email', normalizedEmail)
       .maybeSingle();
 
-    if (existing) return;
+    if (existingByEmailError) {
+      console.error('PROFILE LOOKUP BY EMAIL FAILED:', existingByEmailError);
+      throw new Error(existingByEmailError.message || 'Failed to check contractor email.');
+    }
 
-    await supabase.from('contractor_profiles').insert({
-      user_id: userId,
-      email: userEmail.trim().toLowerCase(),
-      partner_status: PARTNER_STATUS.APPLIED,
-      company_name: '',
-      owner_name: '',
-      phone: '',
-    });
+    if (existingByEmail && !existingByEmail.user_id) {
+      const { error: attachError } = await supabase
+        .from('contractor_profiles')
+        .update({ user_id: userId, email: normalizedEmail })
+        .eq('id', existingByEmail.id);
+
+      if (attachError) {
+        console.error('PROFILE ATTACH FAILED:', attachError);
+        throw new Error(attachError.message || 'Failed to connect contractor profile.');
+      }
+    }
+  }
+
+  async function finishSignUpFlow(userEmail: string, fallbackUserId?: string) {
+    const normalizedEmail = userEmail.trim().toLowerCase();
+
+    let session = await waitForSession(supabase);
+
+    if (!session?.user?.id && password) {
+      const { error: retrySignInError } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
+
+      if (retrySignInError) {
+        console.error('RETRY SIGNIN FAILED:', retrySignInError);
+      }
+
+      session = await waitForSession(supabase);
+    }
+
+    const finalUserId = session?.user?.id || fallbackUserId;
+
+    if (!finalUserId) {
+      throw new Error('Session not ready after authentication.');
+    }
+
+    await ensureUserRecord(finalUserId, normalizedEmail);
+    await attachExistingProfileByEmail(finalUserId, normalizedEmail);
+
+    window.location.href = '/apply';
   }
 
   async function handleSignUp(e: React.FormEvent) {
@@ -83,6 +168,7 @@ export default function ApplyPage() {
       setError('Passwords do not match.');
       return;
     }
+
     if (password.length < 6) {
       setError('Password must be at least 6 characters.');
       return;
@@ -91,10 +177,14 @@ export default function ApplyPage() {
     setLoading(true);
 
     try {
+      const normalizedEmail = email.trim().toLowerCase();
+
       const { data, error: signUpError } = await supabase.auth.signUp({
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         password,
-        options: { data: { role: 'CONTRACTOR' } },
+        options: {
+          data: { role: 'CONTRACTOR' },
+        },
       });
 
       if (signUpError) {
@@ -103,21 +193,16 @@ export default function ApplyPage() {
         return;
       }
 
-      if (!data.user) {
-        setError('Signup did not return a user — please try again or contact support.');
+      if (!data.user?.id) {
+        setError('Signup did not return a user. Please try again or contact support.');
         setLoading(false);
         return;
       }
 
-      await ensureProfile(data.user.id, email);
-
-      await supabase
-        .from('users')
-        .upsert({ id: data.user.id, email: email.trim().toLowerCase(), role: 'CONTRACTOR' }, { onConflict: 'id' });
-
-      window.location.href = '/contractor-dashboard';
+      await finishSignUpFlow(normalizedEmail, data.user.id);
     } catch (err: any) {
-      setError(`Unexpected error — please try again. (${err.message})`);
+      console.error('CONTRACTOR SIGNUP FLOW FAILED:', err);
+      setError(`Unexpected error. Please try again. (${err.message})`);
       setLoading(false);
     }
   }
@@ -128,35 +213,42 @@ export default function ApplyPage() {
     setLoading(true);
 
     try {
+      const normalizedEmail = email.trim().toLowerCase();
+
       const { data, error: loginError } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         password,
       });
 
       if (loginError) {
-        const m = loginError.message.toLowerCase();
-        if (m.includes('invalid login') || m.includes('invalid credentials') || m.includes('wrong password')) {
+        const m = (loginError.message || '').toLowerCase();
+
+        if (
+          m.includes('invalid login') ||
+          m.includes('invalid credentials') ||
+          m.includes('wrong password')
+        ) {
           setError('Incorrect email or password. Please try again.');
         } else if (m.includes('email not confirmed')) {
           setError('Please confirm your email address before signing in.');
         } else {
           setError(friendlyAuthError(loginError.message));
         }
+
         setLoading(false);
         return;
       }
 
-      if (!data.user) {
-        setError('Login did not return a user — please try again.');
+      if (!data.user?.id) {
+        setError('Login did not return a user. Please try again.');
         setLoading(false);
         return;
       }
-
-      await ensureProfile(data.user.id, data.user.email ?? email);
 
       window.location.href = '/contractor-dashboard';
     } catch (err: any) {
-      setError(`Unexpected error — please try again. (${err.message})`);
+      console.error('CONTRACTOR LOGIN FLOW FAILED:', err);
+      setError(`Unexpected error. Please try again. (${err.message})`);
       setLoading(false);
     }
   }
@@ -169,7 +261,7 @@ export default function ApplyPage() {
   ];
 
   const steps = [
-    'Create your account and land on your contractor dashboard',
+    'Create your account and go straight into your application',
     'Fill out your application: trades, counties, compliance docs',
     'Our team reviews your application within 24–48 hours',
     'Once approved, choose a plan and start receiving leads',
@@ -196,7 +288,9 @@ export default function ApplyPage() {
         <div className="grid lg:grid-cols-5 gap-8 items-start">
           <div className="lg:col-span-2 space-y-5">
             <div className="bg-lw-surface-card rounded-2xl border border-lw-border-light p-5 shadow-sm">
-              <h3 className="font-bold text-lw-text text-sm mb-4 uppercase tracking-wide">Partnership Benefits</h3>
+              <h3 className="font-bold text-lw-text text-sm mb-4 uppercase tracking-wide">
+                Partnership Benefits
+              </h3>
               <ul className="space-y-3">
                 {benefits.map(({ icon: Icon, text }) => (
                   <li key={text} className="flex items-start gap-3">
@@ -211,7 +305,9 @@ export default function ApplyPage() {
 
             {mode === 'signup' && (
               <div className="bg-lw-surface-card rounded-2xl border border-lw-border-light p-5 shadow-sm">
-                <h3 className="font-bold text-lw-text text-sm mb-4 uppercase tracking-wide">What Happens Next</h3>
+                <h3 className="font-bold text-lw-text text-sm mb-4 uppercase tracking-wide">
+                  What Happens Next
+                </h3>
                 <ol className="space-y-3">
                   {steps.map((step, i) => (
                     <li key={i} className="flex gap-3 text-sm">
@@ -229,11 +325,14 @@ export default function ApplyPage() {
           <div className="lg:col-span-3">
             <div className="bg-lw-surface-card rounded-2xl border border-lw-border-light overflow-hidden shadow-sm">
               <div className="flex border-b border-lw-border-light">
-                {(['signup', 'login'] as const).map(m => (
+                {(['signup', 'login'] as const).map((m) => (
                   <button
                     key={m}
                     type="button"
-                    onClick={() => { setMode(m); setError(''); }}
+                    onClick={() => {
+                      setMode(m);
+                      setError('');
+                    }}
                     className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-all ${
                       mode === m
                         ? 'border-lw-rust text-lw-rust'
@@ -251,13 +350,15 @@ export default function ApplyPage() {
                     <>
                       <h2 className="text-2xl font-bold text-lw-text mb-1">Create Your Account</h2>
                       <p className="text-lw-text/50 text-sm">
-                        Sign up to access your contractor dashboard and submit your application.
+                        Sign up to start your contractor application.
                       </p>
                     </>
                   ) : (
                     <>
                       <h2 className="text-2xl font-bold text-lw-text mb-1">Welcome Back</h2>
-                      <p className="text-lw-text/50 text-sm">Sign in to access your contractor dashboard.</p>
+                      <p className="text-lw-text/50 text-sm">
+                        Sign in to access your contractor dashboard.
+                      </p>
                     </>
                   )}
                 </div>
@@ -277,7 +378,7 @@ export default function ApplyPage() {
                     <Input
                       type="email"
                       value={email}
-                      onChange={e => setEmail(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="contractor@example.com"
                       required
                       disabled={loading}
@@ -294,7 +395,7 @@ export default function ApplyPage() {
                       <Input
                         type={showPassword ? 'text' : 'password'}
                         value={password}
-                        onChange={e => setPassword(e.target.value)}
+                        onChange={(e) => setPassword(e.target.value)}
                         placeholder={mode === 'signup' ? 'Minimum 6 characters' : 'Enter your password'}
                         required
                         disabled={loading}
@@ -308,7 +409,11 @@ export default function ApplyPage() {
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-lw-text/30 hover:text-lw-text transition-colors"
                         tabIndex={-1}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -322,7 +427,7 @@ export default function ApplyPage() {
                         <Input
                           type={showConfirmPassword ? 'text' : 'password'}
                           value={confirmPassword}
-                          onChange={e => setConfirmPassword(e.target.value)}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
                           placeholder="Re-enter your password"
                           required
                           disabled={loading}
@@ -336,7 +441,11 @@ export default function ApplyPage() {
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-lw-text/30 hover:text-lw-text transition-colors"
                           tabIndex={-1}
                         >
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -354,7 +463,7 @@ export default function ApplyPage() {
                       </>
                     ) : mode === 'signup' ? (
                       <>
-                        Create Account & Go to Dashboard
+                        Create Account & Continue
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </>
                     ) : (
@@ -368,11 +477,17 @@ export default function ApplyPage() {
 
                 <p className="text-center text-xs text-lw-text/40 mt-5">
                   By creating an account, you agree to our{' '}
-                  <Link href="/terms" className="text-lw-text/60 hover:text-lw-rust transition-colors">
+                  <Link
+                    href="/terms"
+                    className="text-lw-text/60 hover:text-lw-rust transition-colors"
+                  >
                     Terms of Service
                   </Link>{' '}
                   and{' '}
-                  <Link href="/privacy" className="text-lw-text/60 hover:text-lw-rust transition-colors">
+                  <Link
+                    href="/privacy"
+                    className="text-lw-text/60 hover:text-lw-rust transition-colors"
+                  >
                     Privacy Policy
                   </Link>
                 </p>

@@ -88,7 +88,6 @@ export default function LoginPage() {
 
       const userId = settledSession.user.id;
 
-      // 1) Try app role from users table
       const { data: appUser, error: appUserError } = await supabase
         .from('users')
         .select('role')
@@ -101,10 +100,9 @@ export default function LoginPage() {
 
       const role = (appUser?.role as Role) || null;
 
-      // 2) Always also check contractor profile as fallback truth
       const { data: contractorProfile, error: contractorError } = await supabase
         .from('contractor_profiles')
-        .select('partner_status')
+        .select('id')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -114,51 +112,18 @@ export default function LoginPage() {
         );
       }
 
-      const contractorStatus = (
-        contractorProfile?.partner_status || ''
-      ).toString().trim().toLowerCase();
-
       const hasContractorProfile = !!contractorProfile;
 
-      // ADMIN
       if (role === 'ADMIN') {
         window.location.href = '/admin/crm';
         return;
       }
 
-      // CONTRACTOR:
-      // Use either explicit CONTRACTOR role OR existence of contractor profile
       if (role === 'CONTRACTOR' || hasContractorProfile) {
-        if (!hasContractorProfile) {
-          window.location.href = '/apply';
-          return;
-        }
-
-        if (
-          contractorStatus === 'applied' ||
-          contractorStatus === 'under_review' ||
-          contractorStatus === 'pending'
-        ) {
-          window.location.href = '/apply';
-          return;
-        }
-
-        if (contractorStatus === 'approved') {
-          window.location.href = '/billing';
-          return;
-        }
-
-        if (contractorStatus === 'active') {
-          window.location.href = '/contractor-dashboard';
-          return;
-        }
-
-        // suspended / cancelled / rejected / unknown
-        window.location.href = '/apply';
+        window.location.href = '/contractor-dashboard';
         return;
       }
 
-      // REQUESTORS
       if (isRequestorRole(role)) {
         if (
           redirect &&
@@ -173,7 +138,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Final fallback
       window.location.href = '/';
     } catch (err: any) {
       setError(err?.message || 'Invalid login credentials.');

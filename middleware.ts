@@ -17,6 +17,26 @@ function isRequestor(role: Role) {
   );
 }
 
+function normalizeRole(role?: string | null): Role {
+  const normalized = (role || '').toUpperCase();
+
+  if (
+    normalized === 'ADMIN' ||
+    normalized === 'CONTRACTOR' ||
+    normalized === 'REALTOR' ||
+    normalized === 'HOMEOWNER' ||
+    normalized === 'PROPERTY_MANAGER'
+  ) {
+    return normalized as Role;
+  }
+
+  return null;
+}
+
+function normalizeStatus(status?: string | null) {
+  return (status || '').toString().trim().toLowerCase();
+}
+
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
@@ -32,8 +52,6 @@ export async function middleware(req: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // Prevent StackBlitz/local preview from crashing if env vars are not loaded.
-  // In production/Netlify, these should always exist.
   if (!supabaseUrl || !supabaseAnonKey) {
     return NextResponse.next();
   }
@@ -59,16 +77,25 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getUser();
 
   let role: Role = null;
+  let contractorStatus = '';
+  let hasContractorProfile = false;
 
   if (user?.id) {
-    const { data: appUser } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle();
+    const [{ data: appUser }, { data: contractorProfile }] = await Promise.all([
+      supabase.from('users').select('role').eq('id', user.id).maybeSingle(),
+      supabase
+        .from('contractor_profiles')
+        .select('partner_status')
+        .eq('user_id', user.id)
+        .maybeSingle(),
+    ]);
 
-    role = (appUser?.role as Role) || null;
+    role = normalizeRole(appUser?.role);
+    contractorStatus = normalizeStatus(contractorProfile?.partner_status);
+    hasContractorProfile = !!contractorProfile;
   }
+
+  const isContractor = role === 'CONTRACTOR' || hasContractorProfile;
 
   if (isProtected && !user) {
     const url = new URL('/login', req.url);
@@ -82,32 +109,20 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (path.startsWith('/contractor-dashboard')) {
-    if (role !== 'CONTRACTOR') {
-      if (role === 'ADMIN') {
-        return NextResponse.redirect(new URL('/admin/crm', req.url));
-      }
-      if (isRequestor(role)) {
-        return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
-      }
-      return NextResponse.redirect(new URL('/', req.url));
-    }
-  }
-
   if (path.startsWith('/requestor-dashboard')) {
     if (!isRequestor(role)) {
       if (role === 'ADMIN') {
         return NextResponse.redirect(new URL('/admin/crm', req.url));
       }
-      if (role === 'CONTRACTOR') {
+      if (isContractor) {
         return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
       }
       return NextResponse.redirect(new URL('/', req.url));
     }
   }
 
-  if (path.startsWith('/billing')) {
-    if (role !== 'CONTRACTOR') {
+  if (path.startsWith('/contractor-dashboard')) {
+    if (!isContractor) {
       if (role === 'ADMIN') {
         return NextResponse.redirect(new URL('/admin/crm', req.url));
       }
@@ -115,6 +130,25 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
       }
       return NextResponse.redirect(new URL('/', req.url));
+    }
+  }
+
+  if (path.startsWith('/billing')) {
+    if (!isContractor) {
+      if (role === 'ADMIN') {
+        return NextResponse.redirect(new URL('/admin/crm', req.url));
+      }
+      if (isRequestor(role)) {
+        return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
+      }
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+
+    if (
+      contractorStatus !== 'approved' &&
+      contractorStatus !== 'active'
+    ) {
+      return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
     }
   }
 
