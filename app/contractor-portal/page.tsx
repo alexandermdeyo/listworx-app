@@ -44,7 +44,7 @@ export default function ContractorPortalPage() {
     setPostAuthRedirect(safeRedirect);
     setPrefilledEmail(emailParam);
 
-    if (mode === 'login') {
+    if (mode === 'login' || (!mode && emailParam)) {
       setActiveTab('signin');
     } else if (mode === 'signup') {
       setActiveTab('signup');
@@ -87,8 +87,25 @@ export default function ContractorPortalPage() {
         return;
       }
 
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      let destination = postAuthRedirect;
+
+      if (user?.id) {
+        const { data: contractorProfile } = await supabase
+          .from('contractor_profiles')
+          .select('partner_status')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        const status = (contractorProfile?.partner_status || '').toString().toLowerCase();
+        destination = status === 'active' ? '/contractor-dashboard' : '/billing';
+      }
+
       setMessage('Signed in successfully! Redirecting...');
-      setTimeout(() => { window.location.href = postAuthRedirect; }, 1500);
+      setTimeout(() => { window.location.replace(destination); }, 300);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
