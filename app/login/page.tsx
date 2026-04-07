@@ -217,8 +217,13 @@ export default function LoginPage() {
                 className="h-12 w-auto mx-auto mb-6"
               />
             </Link>
+            <p className="text-xs font-semibold uppercase tracking-wider text-lw-rust mb-2">
+              Shared Account Sign In
+            </p>
             <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-            <p className="text-muted-foreground">Sign in to access your account</p>
+            <p className="text-muted-foreground">
+              Admins, contractors, and requestors sign in here.
+            </p>
           </div>
 
           {error && (
@@ -315,7 +320,9 @@ export default function LoginPage() {
           </Button>
 
           <div className="mt-6 pt-6 border-t space-y-3 text-sm">
-            <p className="text-center text-muted-foreground">Need to create an account?</p>
+            <p className="text-center text-muted-foreground">
+              Need to create a new account?
+            </p>
             <div className="grid gap-2">
               <Link
                 href="/signup"
