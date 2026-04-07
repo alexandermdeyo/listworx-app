@@ -48,6 +48,26 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
     setLoading(true);
 
     try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      let contractorIds = [contractorProfileId];
+
+      if (user?.id) {
+        const { data: linkedProfiles } = await supabase
+          .from('contractor_profiles')
+          .select('id')
+          .eq('user_id', user.id);
+
+        contractorIds = Array.from(
+          new Set([
+            contractorProfileId,
+            ...((linkedProfiles || []).map((p: any) => p.id).filter(Boolean)),
+          ])
+        );
+      }
+
       const baseQuery = supabase
         .from('referrals')
         .select(`
@@ -59,7 +79,7 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
           email_sent,
           created_at
         `)
-        .eq('contractor_id', contractorProfileId)
+        .in('contractor_id', contractorIds)
         .order('created_at', { ascending: false })
         .limit(20);
 
@@ -84,7 +104,7 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
             )
           )
         `)
-        .eq('contractor_id', contractorProfileId)
+        .in('contractor_id', contractorIds)
         .order('created_at', { ascending: false })
         .limit(20);
 
