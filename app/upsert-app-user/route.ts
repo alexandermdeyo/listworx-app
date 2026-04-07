@@ -22,14 +22,17 @@ type AllowedRole =
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, email, name, role } = body as {
+    const { id, email, name, full_name, role } = body as {
       id?: string;
       email?: string;
       name?: string;
+      full_name?: string;
       role?: AllowedRole;
     };
 
-    if (!id || !email || !name || !role) {
+    const resolvedName = (name || full_name || '').trim();
+
+    if (!id || !email || !resolvedName || !role) {
       return NextResponse.json(
         { error: 'Missing required fields: id, email, name, role' },
         { status: 400 }
@@ -37,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const safeName = name.trim();
+    const safeName = resolvedName;
 
     if (!safeName) {
       return NextResponse.json(
@@ -65,7 +68,6 @@ export async function POST(request: NextRequest) {
       id,
       email: normalizedEmail,
       name: safeName,
-      full_name: safeName,
       role,
     };
 
@@ -81,7 +83,7 @@ export async function POST(request: NextRequest) {
       if (existingByEmail?.id) {
         const updateResult = await supabase
           .from('users')
-          .update({ name: safeName, full_name: safeName, role })
+          .update({ name: safeName, role })
           .eq('id', existingByEmail.id);
 
         error = updateResult.error ?? null;
