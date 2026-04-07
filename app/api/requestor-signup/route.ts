@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, password, name, requestorRole, companyName } = body;
+    const allowedRequestorRoles = ['REALTOR', 'HOMEOWNER', 'PROPERTY_MANAGER'];
 
     if (!email || !password || !name || !requestorRole) {
       return NextResponse.json(
@@ -21,7 +22,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!allowedRequestorRoles.includes(String(requestorRole).toUpperCase())) {
+      return NextResponse.json(
+        { error: 'Invalid requestor role' },
+        { status: 400 }
+      );
+    }
+
     const normalizedEmail = email.trim().toLowerCase();
+    const normalizedRequestorRole = String(requestorRole).toUpperCase();
     const supabaseAdmin = createAdminClient();
 
     const { data: existingUser } = await supabaseAdmin
@@ -58,8 +67,8 @@ export async function POST(request: NextRequest) {
       .insert({
         id: userId,
         email: normalizedEmail,
-        full_name: name.trim(),
-        role: 'USER',
+        name: name.trim(),
+        role: normalizedRequestorRole,
       });
 
     if (userInsertError) {
@@ -71,11 +80,11 @@ export async function POST(request: NextRequest) {
     }
 
     const { error: profileError } = await supabaseAdmin
-      .from('realtor_profiles')
+      .from('requestor_profiles')
       .insert({
         user_id: userId,
-        brokerage_name: companyName?.trim() || '',
-        requester_type: requestorRole,
+        company_name: companyName?.trim() || '',
+        requester_type: normalizedRequestorRole,
         display_name: name.trim(),
       });
 

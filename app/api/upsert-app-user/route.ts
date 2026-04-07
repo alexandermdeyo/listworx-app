@@ -19,6 +19,8 @@ type AllowedRole =
   | 'HOMEOWNER'
   | 'PROPERTY_MANAGER';
 
+const REQUESTOR_ROLES: AllowedRole[] = ['REALTOR', 'HOMEOWNER', 'PROPERTY_MANAGER'];
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -77,6 +79,31 @@ export async function POST(request: NextRequest) {
         { error: error.message || 'Failed to upsert app user' },
         { status: 500 }
       );
+    }
+
+    if (REQUESTOR_ROLES.includes(role)) {
+      const { error: requestorProfileError } = await supabase
+        .from('requestor_profiles')
+        .upsert(
+          {
+            user_id: id,
+            display_name: safeName,
+            requester_type: role,
+          },
+          { onConflict: 'user_id' }
+        );
+
+      if (requestorProfileError) {
+        console.error('UPSERT REQUESTOR PROFILE FAILED:', requestorProfileError);
+        return NextResponse.json(
+          {
+            error:
+              requestorProfileError.message ||
+              'Failed to create requestor profile',
+          },
+          { status: 500 }
+        );
+      }
     }
 
     return NextResponse.json({ success: true });

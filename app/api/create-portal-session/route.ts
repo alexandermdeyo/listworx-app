@@ -53,7 +53,7 @@ export async function POST(request: Request) {
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${process.env.NEXT_PUBLIC_BASE_URL || process.env.APP_BASE_URL || 'https://listworx.co'}/contractor-dashboard`,
+      return_url: `${process.env.NEXT_PUBLIC_BASE_URL || process.env.APP_BASE_URL || 'https://listworx.co'}/billing`,
     });
 
     return NextResponse.json({ url: portalSession.url });
