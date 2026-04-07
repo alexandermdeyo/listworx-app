@@ -5,12 +5,14 @@ import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, Lock, Loader as Loader2, Eye, EyeOff } from 'lucide-react';
+import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import Navigation from '@/components/Navigation';
 
 type Role =
   | 'ADMIN'
@@ -81,7 +83,7 @@ export default function LoginPage() {
         throw signInError;
       }
 
-      let authUser = data.user ?? data.session?.user ?? null;
+      let authUser: User | null = data.user ?? data.session?.user ?? null;
 
       if (!authUser?.id) {
         authUser = await waitForUser(supabase);
@@ -92,6 +94,9 @@ export default function LoginPage() {
       }
 
       const userId = authUser.id;
+
+      const metadataRole = ((authUser.user_metadata?.role as string | undefined) || '')
+        .toUpperCase() as Role;
 
       const [
         { data: appUser, error: appUserError },
@@ -104,7 +109,7 @@ export default function LoginPage() {
           .maybeSingle(),
         supabase
           .from('contractor_profiles')
-          .select('id')
+          .select('id, partner_status')
           .eq('user_id', userId)
           .maybeSingle(),
       ]);
@@ -118,8 +123,12 @@ export default function LoginPage() {
         console.error('LOGIN CONTRACTOR LOOKUP FAILED:', contractorError);
       }
 
-      const role = (appUser?.role as Role) || null;
+      const role = (appUser?.role as Role) || metadataRole || null;
       const hasContractorProfile = !!contractorProfile;
+      const contractorStatus = (contractorProfile?.partner_status || '')
+        .toString()
+        .trim()
+        .toLowerCase();
 
       if (role === 'ADMIN') {
         window.location.href = '/admin/crm';
@@ -127,7 +136,8 @@ export default function LoginPage() {
       }
 
       if (role === 'CONTRACTOR' || hasContractorProfile) {
-        window.location.href = '/contractor-dashboard';
+        window.location.href =
+          contractorStatus === 'approved' ? '/billing' : '/contractor-dashboard';
         return;
       }
 
@@ -152,7 +162,7 @@ export default function LoginPage() {
         return;
       }
 
-      window.location.href = '/login';
+      window.location.href = '/requestor-dashboard';
     } catch (err: any) {
       setError(err?.message || 'Invalid login credentials.');
       setLoading(false);
@@ -193,122 +203,143 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-lw-surface flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-8 shadow-xl">
-        <div className="mb-8 text-center">
-          <Link href="/">
-            <Image
-              src="/Listworx_wordmark_logo.png"
-              alt="ListWorx"
-              width={220}
-              height={44}
-              className="h-12 w-auto mx-auto mb-6"
-            />
-          </Link>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-          <p className="text-muted-foreground">Sign in to access your account</p>
-        </div>
-
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {message && (
-          <Alert className="mb-6">
-            <AlertDescription>{message}</AlertDescription>
-          </Alert>
-        )}
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <Label htmlFor="email" className="flex items-center gap-2 mb-2">
-              <Mail className="h-4 w-4" />
-              Email Address
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading || sendingMagic}
-              autoComplete="email"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="password" className="flex items-center gap-2 mb-2">
-              <Lock className="h-4 w-4" />
-              Password
-            </Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading || sendingMagic}
-                autoComplete="current-password"
-                className="pr-10"
+    <div className="min-h-screen bg-lw-surface">
+      <Navigation />
+      <div className="flex items-center justify-center p-4 py-12">
+        <Card className="w-full max-w-md p-8 shadow-xl">
+          <div className="mb-8 text-center">
+            <Link href="/">
+              <Image
+                src="/Listworx_wordmark_logo.png"
+                alt="ListWorx"
+                width={220}
+                height={44}
+                className="h-12 w-auto mx-auto mb-6"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
+            </Link>
+            <p className="text-xs font-semibold uppercase tracking-wider text-lw-rust mb-2">
+              Shared Account Sign In
+            </p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
+            <p className="text-muted-foreground">
+              Admins, contractors, and requestors sign in here.
+            </p>
           </div>
+
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {message && (
+            <Alert className="mb-6">
+              <AlertDescription>{message}</AlertDescription>
+            </Alert>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <Label htmlFor="email" className="flex items-center gap-2 mb-2">
+                <Mail className="h-4 w-4" />
+                Email Address
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading || sendingMagic}
+                autoComplete="email"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="password" className="flex items-center gap-2 mb-2">
+                <Lock className="h-4 w-4" />
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading || sendingMagic}
+                  autoComplete="current-password"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                'Sign In'
+              )}
+            </Button>
+          </form>
+
+          <div className="my-4 text-center text-sm text-muted-foreground">or</div>
 
           <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white"
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleMagicLink}
+            disabled={sendingMagic}
           >
-            {loading ? (
+            {sendingMagic ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing In...
+                Sending Magic Link...
               </>
             ) : (
-              'Sign In'
+              'Sign in with Magic Link'
             )}
           </Button>
-        </form>
 
-        <div className="my-4 text-center text-sm text-muted-foreground">or</div>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={handleMagicLink}
-          disabled={sendingMagic}
-        >
-          {sendingMagic ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Sending Magic Link...
-            </>
-          ) : (
-            'Sign in with Magic Link'
-          )}
-        </Button>
-
-        <div className="mt-6 pt-6 border-t text-center text-sm text-muted-foreground">
-          Need a requestor account?{' '}
-          <Link href="/signup" className="text-primary hover:underline">
-            Create one
-          </Link>
-        </div>
-      </Card>
+          <div className="mt-6 pt-6 border-t space-y-3 text-sm">
+            <p className="text-center text-muted-foreground">
+              Need to create a new account?
+            </p>
+            <div className="grid gap-2">
+              <Link
+                href="/signup"
+                className="w-full rounded-md border border-lw-border-light px-3 py-2 text-center text-foreground hover:bg-muted transition-colors"
+              >
+                Create Requestor Account
+              </Link>
+              <Link
+                href="/apply"
+                className="w-full rounded-md border border-lw-border-light px-3 py-2 text-center text-foreground hover:bg-muted transition-colors"
+              >
+                Join as a Contractor
+              </Link>
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

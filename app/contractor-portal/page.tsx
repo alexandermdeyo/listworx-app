@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,9 +14,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function ContractorPortalPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>('signin');
+  const [prefilledEmail, setPrefilledEmail] = useState('');
+  const [postAuthRedirect, setPostAuthRedirect] = useState('/billing');
 
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
@@ -33,13 +34,36 @@ export default function ContractorPortalPage() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const emailParam = searchParams.get('email');
-    if (emailParam) {
-      const decodedEmail = decodeURIComponent(emailParam);
-      setSignUpEmail(decodedEmail);
+    const mode = (searchParams.get('mode') || '').toLowerCase();
+    const emailParam = (searchParams.get('email') || '').trim().toLowerCase();
+    const redirectParam = searchParams.get('redirect');
+
+    const safeRedirect =
+      redirectParam && redirectParam.startsWith('/') ? redirectParam : '/billing';
+
+    setPostAuthRedirect(safeRedirect);
+    setPrefilledEmail(emailParam);
+
+    if (mode === 'login' || (!mode && emailParam)) {
+      setActiveTab('signin');
+    } else if (mode === 'signup') {
       setActiveTab('signup');
     }
+
+    if (emailParam) {
+      setSignInEmail(emailParam);
+      setSignUpEmail(emailParam);
+    }
   }, [searchParams]);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+
+    if (prefilledEmail) {
+      setSignInEmail(prefilledEmail);
+      setSignUpEmail(prefilledEmail);
+    }
+  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,8 +87,25 @@ export default function ContractorPortalPage() {
         return;
       }
 
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      let destination = postAuthRedirect;
+
+      if (user?.id) {
+        const { data: contractorProfile } = await supabase
+          .from('contractor_profiles')
+          .select('partner_status')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        const status = (contractorProfile?.partner_status || '').toString().toLowerCase();
+        destination = status === 'active' ? '/contractor-dashboard' : '/billing';
+      }
+
       setMessage('Signed in successfully! Redirecting...');
-      setTimeout(() => { window.location.href = '/billing'; }, 1500);
+      setTimeout(() => { window.location.replace(destination); }, 300);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
@@ -124,7 +165,7 @@ export default function ContractorPortalPage() {
       }
 
       setMessage('Account created successfully! Redirecting to billing...');
-      setTimeout(() => { window.location.href = '/billing'; }, 1500);
+      setTimeout(() => { window.location.href = postAuthRedirect; }, 1500);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
@@ -164,7 +205,7 @@ export default function ContractorPortalPage() {
             </Alert>
           )}
 
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Create Account</TabsTrigger>
@@ -184,6 +225,8 @@ export default function ContractorPortalPage() {
                     onChange={(e) => setSignInEmail(e.target.value)}
                     disabled={loading}
                     placeholder="your-email@example.com"
+                    autoComplete={prefilledEmail ? 'off' : 'email'}
+                    readOnly={!!prefilledEmail}
                     required
                   />
                 </div>
@@ -242,6 +285,8 @@ export default function ContractorPortalPage() {
                     onChange={(e) => setSignUpEmail(e.target.value)}
                     disabled={loading}
                     placeholder="your-email@example.com"
+                    autoComplete={prefilledEmail ? 'off' : 'email'}
+                    readOnly={!!prefilledEmail}
                     required
                   />
                 </div>

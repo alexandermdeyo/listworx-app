@@ -688,21 +688,23 @@ export default function BillingPage() {
                     <div className="mb-6">
                       <div className="flex items-baseline gap-2">
                         <span className="text-4xl font-bold text-foreground">
-                          ${isAnnual ? Math.round(price / 12) : price}
+                          ${price}
                         </span>
-                        <span className="text-muted-foreground">/month</span>
+                        <span className="text-muted-foreground">
+                          {isAnnual ? '/year' : '/month'}
+                        </span>
                       </div>
 
-                      {isAnnual && (
-                        <div className="mt-2">
-                          <p className="text-sm text-muted-foreground">
-                            ${price}/year (billed annually)
-                          </p>
+                      <div className="mt-2">
+                        <p className="text-sm text-muted-foreground">
+                          {isAnnual ? `${tier.name} annual billing` : `${tier.name} monthly billing`}
+                        </p>
+                        {isAnnual && (
                           <p className="text-sm text-primary font-semibold">
                             Save ${savings}/year
                           </p>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
 
                     <Button
@@ -715,7 +717,11 @@ export default function BillingPage() {
                       disabled={isCurrentTier}
                       onClick={() => handleSelectTier(tier)}
                     >
-                      {isCurrentTier ? 'Current Plan' : `Select ${tier.name}`}
+                      {isCurrentTier
+                        ? 'Current Plan'
+                        : isAnnual
+                        ? `Select Annual — $${tier.annualPrice}/year`
+                        : `Select Monthly — $${tier.monthlyPrice}/month`}
                     </Button>
 
                     <div className="space-y-3">
@@ -773,12 +779,11 @@ export default function BillingPage() {
                             <div>
                               <div className="flex items-baseline gap-2">
                                 <span className="text-2xl font-bold text-primary">
-                                  $
-                                  {isAnnual
-                                    ? Math.round((addOn.annualPrice || 0) / 12)
-                                    : addOn.monthlyPrice}
+                                  ${isAnnual ? addOn.annualPrice : addOn.monthlyPrice}
                                 </span>
-                                <span className="text-sm text-muted-foreground">/month</span>
+                                <span className="text-sm text-muted-foreground">
+                                  {isAnnual ? '/year' : '/month'}
+                                </span>
                               </div>
 
                               {isAnnual && addOn.annualPrice && (
