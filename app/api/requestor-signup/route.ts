@@ -79,19 +79,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error: profileError } = await supabaseAdmin
+    const { data: existingProfile, error: existingProfileError } = await supabaseAdmin
       .from('requestor_profiles')
-      .insert({
-        user_id: userId,
-        company_name: companyName?.trim() || '',
-      });
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-    if (profileError) {
+    if (existingProfileError) {
+      console.error('REQUESTOR PROFILE LOOKUP FAILED:', {
+        userId,
+        error: existingProfileError,
+      });
       await supabaseAdmin.auth.admin.deleteUser(userId);
       return NextResponse.json(
-        { error: profileError.message },
+        { error: existingProfileError.message },
         { status: 500 }
       );
+    }
+
+    if (!existingProfile?.id) {
+      const { error: profileError } = await supabaseAdmin
+        .from('requestor_profiles')
+        .insert({
+          user_id: userId,
+          company_name: companyName?.trim() || '',
+        });
+
+      if (profileError) {
+        console.error('REQUESTOR PROFILE CREATE FAILED:', {
+          userId,
+          error: profileError,
+        });
+        await supabaseAdmin.auth.admin.deleteUser(userId);
+        return NextResponse.json(
+          { error: profileError.message },
+          { status: 500 }
+        );
+      }
     }
 
     return NextResponse.json({ success: true });

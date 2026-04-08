@@ -82,25 +82,50 @@ export async function POST(request: NextRequest) {
     }
 
     if (REQUESTOR_ROLES.includes(role)) {
-      const { error: requestorProfileError } = await supabase
+      const { data: existingRequestorProfile, error: requestorProfileLookupError } = await supabase
         .from('requestor_profiles')
-        .upsert(
-          {
-            user_id: id,
-          },
-          { onConflict: 'user_id' }
-        );
+        .select('id')
+        .eq('user_id', id)
+        .maybeSingle();
 
-      if (requestorProfileError) {
-        console.error('UPSERT REQUESTOR PROFILE FAILED:', requestorProfileError);
+      if (requestorProfileLookupError) {
+        console.error('REQUESTOR PROFILE LOOKUP FAILED:', {
+          userId: id,
+          role,
+          error: requestorProfileLookupError,
+        });
         return NextResponse.json(
           {
             error:
-              requestorProfileError.message ||
-              'Failed to create requestor profile',
+              requestorProfileLookupError.message ||
+              'Failed to check requestor profile',
           },
           { status: 500 }
         );
+      }
+
+      if (!existingRequestorProfile?.id) {
+        const { error: requestorProfileCreateError } = await supabase
+          .from('requestor_profiles')
+          .insert({
+            user_id: id,
+          });
+
+        if (requestorProfileCreateError) {
+          console.error('REQUESTOR PROFILE CREATE FAILED:', {
+            userId: id,
+            role,
+            error: requestorProfileCreateError,
+          });
+          return NextResponse.json(
+            {
+              error:
+                requestorProfileCreateError.message ||
+                'Failed to create requestor profile',
+            },
+            { status: 500 }
+          );
+        }
       }
     }
 
