@@ -84,8 +84,6 @@ export async function POST(request: NextRequest) {
       .insert({
         user_id: userId,
         company_name: companyName?.trim() || '',
-        requester_type: normalizedRequestorRole,
-        display_name: name.trim(),
       });
 
     if (profileError) {

@@ -87,8 +87,6 @@ export async function POST(request: NextRequest) {
         .upsert(
           {
             user_id: id,
-            display_name: safeName,
-            requester_type: role,
           },
           { onConflict: 'user_id' }
         );
