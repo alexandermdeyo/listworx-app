@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, Lock, Loader as Loader2, Eye, EyeOff } from 'lucide-react';
+import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -81,7 +82,7 @@ export default function LoginPage() {
         throw signInError;
       }
 
-      let authUser = data.user ?? data.session?.user ?? null;
+      let authUser: User | null = data.user ?? data.session?.user ?? null;
 
       if (!authUser?.id) {
         authUser = await waitForUser(supabase);

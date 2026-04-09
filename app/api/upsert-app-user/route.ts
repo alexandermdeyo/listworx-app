@@ -19,6 +19,8 @@ type AllowedRole =
   | 'HOMEOWNER'
   | 'PROPERTY_MANAGER';
 
+const REQUESTOR_ROLES: AllowedRole[] = ['REALTOR', 'HOMEOWNER', 'PROPERTY_MANAGER'];
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -77,6 +79,54 @@ export async function POST(request: NextRequest) {
         { error: error.message || 'Failed to upsert app user' },
         { status: 500 }
       );
+    }
+
+    if (REQUESTOR_ROLES.includes(role)) {
+      const { data: existingRequestorProfile, error: requestorProfileLookupError } = await supabase
+        .from('requestor_profiles')
+        .select('id')
+        .eq('user_id', id)
+        .maybeSingle();
+
+      if (requestorProfileLookupError) {
+        console.error('REQUESTOR PROFILE LOOKUP FAILED:', {
+          userId: id,
+          role,
+          error: requestorProfileLookupError,
+        });
+        return NextResponse.json(
+          {
+            error:
+              requestorProfileLookupError.message ||
+              'Failed to check requestor profile',
+          },
+          { status: 500 }
+        );
+      }
+
+      if (!existingRequestorProfile?.id) {
+        const { error: requestorProfileCreateError } = await supabase
+          .from('requestor_profiles')
+          .insert({
+            user_id: id,
+          });
+
+        if (requestorProfileCreateError) {
+          console.error('REQUESTOR PROFILE CREATE FAILED:', {
+            userId: id,
+            role,
+            error: requestorProfileCreateError,
+          });
+          return NextResponse.json(
+            {
+              error:
+                requestorProfileCreateError.message ||
+                'Failed to create requestor profile',
+            },
+            { status: 500 }
+          );
+        }
+      }
     }
 
     return NextResponse.json({ success: true });

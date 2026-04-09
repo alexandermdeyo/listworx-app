@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, password, name, requestorRole, companyName } = body;
+    const allowedRequestorRoles = ['REALTOR', 'HOMEOWNER', 'PROPERTY_MANAGER'];
 
     if (!email || !password || !name || !requestorRole) {
       return NextResponse.json(
@@ -21,7 +22,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!allowedRequestorRoles.includes(String(requestorRole).toUpperCase())) {
+      return NextResponse.json(
+        { error: 'Invalid requestor role' },
+        { status: 400 }
+      );
+    }
+
     const normalizedEmail = email.trim().toLowerCase();
+    const normalizedRequestorRole = String(requestorRole).toUpperCase();
     const supabaseAdmin = createAdminClient();
 
     const { data: existingUser } = await supabaseAdmin
@@ -58,8 +67,8 @@ export async function POST(request: NextRequest) {
       .insert({
         id: userId,
         email: normalizedEmail,
-        full_name: name.trim(),
-        role: 'USER',
+        name: name.trim(),
+        role: normalizedRequestorRole,
       });
 
     if (userInsertError) {
@@ -70,21 +79,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error: profileError } = await supabaseAdmin
-      .from('realtor_profiles')
-      .insert({
-        user_id: userId,
-        brokerage_name: companyName?.trim() || '',
-        requester_type: requestorRole,
-        display_name: name.trim(),
-      });
+    const { data: existingProfile, error: existingProfileError } = await supabaseAdmin
+      .from('requestor_profiles')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-    if (profileError) {
+    if (existingProfileError) {
+      console.error('REQUESTOR PROFILE LOOKUP FAILED:', {
+        userId,
+        error: existingProfileError,
+      });
       await supabaseAdmin.auth.admin.deleteUser(userId);
       return NextResponse.json(
-        { error: profileError.message },
+        { error: existingProfileError.message },
         { status: 500 }
       );
+    }
+
+    if (!existingProfile?.id) {
+      const { error: profileError } = await supabaseAdmin
+        .from('requestor_profiles')
+        .insert({
+          user_id: userId,
+          company_name: companyName?.trim() || '',
+        });
+
+      if (profileError) {
+        console.error('REQUESTOR PROFILE CREATE FAILED:', {
+          userId,
+          error: profileError,
+        });
+        await supabaseAdmin.auth.admin.deleteUser(userId);
+        return NextResponse.json(
+          { error: profileError.message },
+          { status: 500 }
+        );
+      }
     }
 
     return NextResponse.json({ success: true });
