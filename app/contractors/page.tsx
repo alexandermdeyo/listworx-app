@@ -7,10 +7,11 @@ import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Awar
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
+import { PageShell } from '@/components/design-system';
 
 export default function ContractorsPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <PageShell surface="dark">
       <Navigation />
 
       {/* HERO */}
@@ -651,6 +652,6 @@ export default function ContractorsPage() {
         </div>
       </section>
 
-    </div>
+    </PageShell>
   );
 }

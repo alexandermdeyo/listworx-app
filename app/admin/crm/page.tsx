@@ -16,6 +16,7 @@ import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
+import { PageShell } from '@/components/design-system';
 
 interface DashboardStats {
   pendingApplications: number;
@@ -169,7 +170,7 @@ export default function AdminCRMPage() {
 
   if (accessDenied) {
     return (
-      <div className="min-h-screen bg-lw-dark flex items-center justify-center">
+      <PageShell surface="dark" className="flex items-center justify-center">
         <Card className="p-8 max-w-md text-center bg-lw-dark-card border-lw-dark-border">
           <div className="flex justify-center mb-4">
             <div className="h-16 w-16 rounded-full bg-red-950/30 flex items-center justify-center">
@@ -183,23 +184,23 @@ export default function AdminCRMPage() {
             <Button onClick={handleSignOut} className="flex-1 bg-lw-rust hover:bg-lw-rust-hover text-white">Sign Out</Button>
           </div>
         </Card>
-      </div>
+      </PageShell>
     );
   }
 
   if (loading || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-lw-dark flex items-center justify-center">
+      <PageShell surface="dark" className="flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-10 w-10 animate-spin text-lw-rust mx-auto mb-3" />
           <p className="text-zinc-400 text-sm">Loading dashboard...</p>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-lw-dark">
+    <PageShell surface="dark">
       <Navigation />
 
       <div className="container mx-auto px-4 py-10 max-w-7xl">
@@ -428,6 +429,6 @@ export default function AdminCRMPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

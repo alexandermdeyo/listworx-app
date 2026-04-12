@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
+import { PageShell } from '@/components/design-system';
 import {
   Loader as Loader2,
   Phone,
@@ -81,18 +82,18 @@ export default function ContractorPublicProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <PageShell surface="dark">
         <Navigation />
         <div className="flex min-h-[60vh] items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (notFound || !profile) {
     return (
-      <div className="min-h-screen bg-background">
+      <PageShell surface="dark">
         <Navigation />
         <div className="container mx-auto max-w-2xl px-4 py-20 text-center">
           <h1 className="text-3xl font-bold mb-4">Contractor Not Found</h1>
@@ -103,7 +104,7 @@ export default function ContractorPublicProfilePage() {
             <Button>Browse All Contractors</Button>
           </Link>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
@@ -118,7 +119,7 @@ export default function ContractorPublicProfilePage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageShell surface="dark">
       <Navigation />
 
       <div className="container mx-auto max-w-5xl px-4 py-12">
@@ -353,6 +354,6 @@ export default function ContractorPublicProfilePage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

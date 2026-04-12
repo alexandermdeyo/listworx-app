@@ -7,6 +7,7 @@ import Navigation from '@/components/Navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { PageShell } from '@/components/design-system';
 import {
   Loader as Loader2,
   Mail,
@@ -91,7 +92,7 @@ export default function ContractorProfilePage() {
     .join(', ');
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageShell surface="dark">
       <Navigation />
 
       <main className="container mx-auto px-4 py-12">
@@ -212,6 +213,6 @@ export default function ContractorProfilePage() {
           )}
         </div>
       </main>
-    </div>
+    </PageShell>
   );
 }

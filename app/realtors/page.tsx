@@ -7,10 +7,11 @@ import { CircleCheck as CheckCircle, Users, Shield, Zap, Clock, Star, Chrome as 
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
+import { PageShell } from '@/components/design-system';
 
 export default function RealtorsPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <PageShell surface="dark">
       <Navigation />
 
       {/* HERO */}
@@ -322,6 +323,6 @@ export default function RealtorsPage() {
         </div>
       </section>
 
-    </div>
+    </PageShell>
   );
 }

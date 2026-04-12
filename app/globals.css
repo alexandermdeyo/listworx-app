@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,167 +6,109 @@
 
 @layer base {
   :root {
-    /* =====================================================
-       LISTWORX DESIGN TOKENS
-       Primary brand: dark charcoal bg + rust orange accent
-    ====================================================== */
+    --background: 0 0% 12%;
+    --foreground: 0 0% 100%;
 
-    /* Core page background (light surfaces: forms, dashboards) */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 18%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 100%;
 
-    /* Card / surface backgrounds */
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 18%;
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Popovers / dropdowns */
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 18%;
-
-    /* Primary = ListWorx rust orange (#C65A1E) */
     --primary: 22 73% 44%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary = light neutral surface */
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 0 0% 18%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 97%;
 
-    /* Muted text / placeholder */
-    --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 22%;
+    --muted-foreground: 0 0% 69%;
 
-    /* Accent = same as primary for consistency */
     --accent: 22 73% 44%;
     --accent-foreground: 0 0% 100%;
 
-    /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders and inputs */
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
+    --border: 0 0% 24%;
+    --input: 0 0% 24%;
     --ring: 22 73% 44%;
 
-    /* Charts */
-    --chart-1: 22 73% 44%;
-    --chart-2: 0 0% 28%;
-    --chart-3: 0 0% 50%;
-    --chart-4: 22 60% 35%;
-    --chart-5: 22 85% 55%;
+    --radius: 0.9rem;
 
-    --radius: 0.5rem;
-
-    /* =====================================================
-       NAMED BRAND TOKENS (use these for direct CSS references)
-    ====================================================== */
-    --lw-rust: #C65A1E;
+    --lw-dark: #1f1f1f;
+    --lw-dark-card: #292929;
+    --lw-dark-border: #3a3a3a;
+    --lw-rust: #c65a1e;
     --lw-rust-hover: #a84d18;
-    --lw-rust-light: rgba(198, 90, 30, 0.1);
-    --lw-rust-border: rgba(198, 90, 30, 0.2);
+    --lw-light: #ffffff;
+    --lw-light-bg: #f5f5f5;
+    --lw-secondary-text: #b0b0b0;
 
-    /* Dark brand backgrounds */
-    --lw-dark: #1a1a1a;
-    --lw-dark-surface: #242424;
-    --lw-dark-card: #2a2a2a;
-    --lw-dark-border: #333333;
-
-    /* Light surface tokens */
-    --lw-surface: #F8F8F8;
-    --lw-surface-card: #FFFFFF;
-    --lw-border-light: #E8E8E8;
-
-    /* Text tokens */
-    --lw-text: #2F2F2F;
-    --lw-text-muted: rgba(47, 47, 47, 0.5);
-    --lw-text-subtle: rgba(47, 47, 47, 0.35);
-
-    /* Font families */
-    --font-body: 'Inter', Arial, Helvetica, sans-serif;
-    --font-display: 'Oswald', Arial, Helvetica, sans-serif;
+    --font-body: 'Inter', Arial, sans-serif;
+    --font-display: 'Montserrat', Arial, sans-serif;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-body);
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
   }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus {
+    -webkit-text-fill-color: #000000;
+    box-shadow: 0 0 0px 1000px #ffffff inset;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    caret-color: #000000;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #888888;
+    opacity: 1;
+  }
+
 }
 
-.font-display {
-  font-family: var(--font-display);
-}
+@layer components {
+  .lw-card {
+    @apply rounded-2xl border border-lw-dark-border bg-lw-dark-card shadow-sm;
+  }
 
-/* =====================================================
-   SHARED UTILITY CLASSES
-====================================================== */
+  .lw-card-light {
+    @apply rounded-2xl border border-zinc-200 bg-white shadow-sm;
+  }
 
-/* Dark brand page wrapper */
-.lw-dark-page {
-  background-color: var(--lw-dark);
-  color: white;
-}
+  .lw-panel {
+    @apply rounded-2xl border border-lw-dark-border/80 bg-lw-dark-card/80 p-6;
+  }
 
-/* Light form/dashboard page wrapper */
-.lw-light-page {
-  background-color: var(--lw-surface);
-  color: var(--lw-text);
-}
+  .lw-label {
+    @apply text-xs font-bold uppercase tracking-[0.2em] text-lw-rust;
+  }
 
-/* Rust orange primary button */
-.lw-btn-primary {
-  background-color: var(--lw-rust);
-  color: white;
-  font-weight: 600;
-}
-.lw-btn-primary:hover {
-  background-color: var(--lw-rust-hover);
-}
-
-/* Outline button for dark backgrounds */
-.lw-btn-outline-dark {
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: white;
-  background: transparent;
-}
-.lw-btn-outline-dark:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* Standard card for dark sections */
-.lw-card-dark {
-  background-color: var(--lw-dark-card);
-  border: 1px solid var(--lw-dark-border);
-  border-radius: 1rem;
-}
-
-/* Standard card for light sections */
-.lw-card-light {
-  background-color: var(--lw-surface-card);
-  border: 1px solid var(--lw-border-light);
-  border-radius: 1rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-
-/* Section divider on dark bg */
-.lw-divider-dark {
-  border-color: var(--lw-dark-border);
-}
-
-/* Rust accent badge/label */
-.lw-label {
-  color: var(--lw-rust);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  .lw-muted {
+    color: var(--lw-secondary-text);
+  }
 }
