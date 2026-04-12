@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { PageShell } from '@/components/design-system';
 
 type Role =
   | 'ADMIN'
@@ -81,7 +82,7 @@ export default function LoginPage() {
         throw signInError;
       }
 
-      let authUser = data.user ?? data.session?.user ?? null;
+      let authUser: any = data.user ?? data.session?.user ?? null;
 
       if (!authUser?.id) {
         authUser = await waitForUser(supabase);
@@ -193,7 +194,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-lw-surface flex items-center justify-center p-4">
+    <PageShell surface="dark" className="flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="mb-8 text-center">
           <Link href="/">
@@ -309,6 +310,6 @@ export default function LoginPage() {
           </Link>
         </div>
       </Card>
-    </div>
+    </PageShell>
   );
 }

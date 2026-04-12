@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Navigation from '@/components/Navigation';
+import { PageShell } from '@/components/design-system';
 import {
   Loader as Loader2,
   CircleAlert as AlertCircle,
@@ -213,7 +214,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-lw-surface">
+    <PageShell surface="dark">
       <Navigation />
 
       <div className="container mx-auto px-4 py-12 max-w-3xl">
@@ -390,6 +391,6 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

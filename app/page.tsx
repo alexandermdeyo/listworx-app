@@ -8,6 +8,7 @@ import { CircleCheck as CheckCircle, Users, Search, UserCheck, Briefcase, Shield
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
+import { PageShell } from '@/components/design-system';
 
 interface FeaturedContractor {
   id: string;
@@ -26,7 +27,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-lw-surface">
+    <PageShell surface="dark">
       <Navigation />
 
       {/* HERO */}
@@ -588,6 +589,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-    </div>
+    </PageShell>
   );
 }
