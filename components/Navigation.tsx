@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { LayoutDashboard, LogIn, LogOut } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
@@ -28,6 +29,7 @@ export default function Navigation() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dashboardHref, setDashboardHref] = useState<string | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     let mounted = true;
@@ -158,10 +160,16 @@ export default function Navigation() {
             About
           </Link>
           <Link
-            href="/#how-it-works"
+            href="/"
             className="text-zinc-300 hover:text-white transition-colors"
+            onClick={(e) => {
+              if (pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
           >
-            How It Works
+            Home
           </Link>
           <Link
             href="/realtors"

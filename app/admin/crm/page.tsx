@@ -91,7 +91,7 @@ export default function AdminCRMPage() {
       const [
         applicationsRes,
         jobRequestsRes,
-        realtorsRes,
+        requestorEmailsRes,
         totalContractorsRes,
         activeContractorsRes,
         pausedContractorsRes,
@@ -103,7 +103,7 @@ export default function AdminCRMPage() {
       ] = await Promise.all([
         supabase.from('contractor_applications').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('job_requests').select('id', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
-        supabase.from('realtor_profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('job_requests').select('requester_email'),
         supabase.from('contractor_profiles').select('id', { count: 'exact', head: true }).eq('archived', false),
         supabase.from('contractor_profiles').select('id', { count: 'exact', head: true }).eq('partner_status', 'active'),
         supabase.from('contractor_profiles').select('id', { count: 'exact', head: true }).eq('partner_status', 'paused'),
@@ -117,7 +117,7 @@ export default function AdminCRMPage() {
       setStats({
         pendingApplications: applicationsRes.count || 0,
         recentJobRequests: jobRequestsRes.count || 0,
-        totalRealtors: realtorsRes.count || 0,
+        totalRealtors: Array.from(new Set((requestorEmailsRes.data || []).map((row: any) => (row.requester_email || '').trim().toLowerCase()).filter(Boolean))).length,
         totalContractors: totalContractorsRes.count || 0,
         activeContractors: activeContractorsRes.count || 0,
         pausedContractors: pausedContractorsRes.count || 0,
