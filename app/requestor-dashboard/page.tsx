@@ -6,6 +6,7 @@ import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { PageShell } from '@/components/design-system';
 import {
   Loader as Loader2,
   Plus,
@@ -133,7 +134,7 @@ export default function RequestorDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageShell surface="dark">
       <Navigation />
 
       <main className="container mx-auto px-4 py-12">
@@ -355,6 +356,6 @@ export default function RequestorDashboardPage() {
           )}
         </div>
       </main>
-    </div>
+    </PageShell>
   );
 }

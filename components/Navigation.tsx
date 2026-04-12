@@ -137,8 +137,8 @@ export default function Navigation() {
   };
 
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-40">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-40 border-b border-lw-dark-border bg-lw-dark/95 backdrop-blur">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
         <Link href="/" className="flex items-center">
           <Image
             src="/Listworx_wordmark_logo.png"
@@ -153,31 +153,31 @@ export default function Navigation() {
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           <Link
             href="/about"
-            className="text-foreground/80 hover:text-foreground transition-colors"
+            className="text-zinc-300 hover:text-white transition-colors"
           >
             About
           </Link>
           <Link
             href="/#how-it-works"
-            className="text-foreground/80 hover:text-foreground transition-colors"
+            className="text-zinc-300 hover:text-white transition-colors"
           >
             How It Works
           </Link>
           <Link
             href="/realtors"
-            className="text-foreground/80 hover:text-foreground transition-colors"
+            className="text-zinc-300 hover:text-white transition-colors"
           >
             For Realtors & Homeowners
           </Link>
           <Link
             href="/contractors"
-            className="text-foreground/80 hover:text-foreground transition-colors"
+            className="text-zinc-300 hover:text-white transition-colors"
           >
             For Contractors
           </Link>
           <Link
             href="/ironclad"
-            className="text-lw-rust hover:text-lw-rust-hover transition-colors"
+            className="text-lw-rust hover:text-orange-300 transition-colors"
           >
             IronClad Standards
           </Link>
@@ -190,7 +190,7 @@ export default function Navigation() {
                 <Link href={dashboardHref}>
                   <Button
                     variant="outline"
-                    className="gap-2 border-lw-border-light text-foreground hover:bg-white hover:text-lw-rust"
+                    className="gap-2 border-lw-dark-border text-zinc-200 hover:bg-lw-dark-card hover:text-white"
                   >
                     <LayoutDashboard className="h-4 w-4" />
                     Dashboard
@@ -201,7 +201,7 @@ export default function Navigation() {
               <Button
                 variant="ghost"
                 onClick={handleSignOut}
-                className="gap-2 text-foreground hover:text-lw-rust"
+                className="gap-2 text-zinc-200 hover:text-white"
               >
                 <LogOut className="h-4 w-4" />
                 Sign Out
@@ -209,7 +209,7 @@ export default function Navigation() {
             </>
           ) : (
             <Link href="/login">
-              <Button className="gap-2 bg-lw-rust text-white hover:bg-white hover:text-lw-rust border border-lw-rust">
+              <Button className="gap-2 bg-lw-rust text-white hover:bg-lw-rust-hover border border-lw-rust">
                 <LogIn className="h-4 w-4" />
                 Login
               </Button>

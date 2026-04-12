@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { PageShell } from '@/components/design-system';
 import {
   Select,
   SelectContent,
@@ -272,15 +273,15 @@ export default function RequestPage() {
 
   if (!authReady) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <PageShell surface="dark" className="flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      </PageShell>
     );
   }
 
   if (matching) {
     return (
-      <div className="min-h-screen bg-background">
+      <PageShell surface="dark">
         <Navigation />
         <div className="container mx-auto px-4 py-16 flex justify-center">
           <Card className="w-full max-w-xl p-10 text-center">
@@ -291,13 +292,13 @@ export default function RequestPage() {
             </p>
           </Card>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (matched) {
     return (
-      <div className="min-h-screen bg-background">
+      <PageShell surface="dark">
         <Navigation />
         <div className="container mx-auto max-w-5xl px-4 py-12">
           <div className="text-center mb-10">
@@ -384,12 +385,12 @@ export default function RequestPage() {
             </p>
           )}
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageShell surface="dark">
       <Navigation />
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-10">
@@ -611,6 +612,6 @@ export default function RequestPage() {
           </form>
         </Card>
       </div>
-    </div>
+    </PageShell>
   );
 }
