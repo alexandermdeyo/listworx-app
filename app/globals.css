@@ -75,17 +75,45 @@
   input:-webkit-autofill:focus,
   textarea:-webkit-autofill,
   textarea:-webkit-autofill:hover,
-  textarea:-webkit-autofill:focus {
-    -webkit-text-fill-color: #ffffff;
-    box-shadow: 0 0 0px 1000px #1f1f1f inset;
-    -webkit-box-shadow: 0 0 0px 1000px #1f1f1f inset;
-    caret-color: #ffffff;
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: #000000;
+    box-shadow: 0 0 0px 1000px #ffffff inset;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    caret-color: #000000;
     transition: background-color 5000s ease-in-out 0s;
   }
 
   input::placeholder,
-  textarea::placeholder {
-    color: #888888;
+  textarea::placeholder,
+  select::placeholder {
+    color: #71717a;
+    opacity: 1;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  textarea,
+  select {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #d4d4d8;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):focus,
+  textarea:focus,
+  select:focus {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):disabled,
+  textarea:disabled,
+  select:disabled {
+    background-color: #f4f4f5;
+    color: #3f3f46;
+    border-color: #d4d4d8;
     opacity: 1;
   }
 
