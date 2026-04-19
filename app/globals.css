@@ -70,6 +70,23 @@
     letter-spacing: -0.015em;
   }
 
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='hidden']):not([type='file']),
+  textarea,
+  select {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: #d1d5db !important;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='hidden']):not([type='file']):focus,
+  textarea:focus,
+  select:focus {
+    outline: none !important;
+    border-color: #c65a1e !important;
+    box-shadow: 0 0 0 2px rgba(198, 90, 30, 0.25) !important;
+  }
+
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
