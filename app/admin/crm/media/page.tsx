@@ -51,7 +51,7 @@ const PLATFORMS = [
   { value: 'instagram', label: 'Instagram', icon: Instagram, color: 'text-pink-500' },
   { value: 'facebook', label: 'Facebook', icon: Facebook, color: 'text-blue-400' },
   { value: 'upload', label: 'Upload/File', icon: Upload, color: 'text-emerald-400' },
-  { value: 'other', label: 'Other Link', icon: LinkIcon, color: 'text-zinc-400' },
+  { value: 'link', label: 'Other Link', icon: LinkIcon, color: 'text-zinc-400' },
 ];
 
 const EMPTY_FORM = {
@@ -91,6 +91,14 @@ function resolvedThumbnail(item: MediaItem): string | null {
   if (item.thumbnail_url) return item.thumbnail_url;
   if (item.platform === 'youtube') return getYouTubeThumbnail(item.url);
   return null;
+}
+
+function matchesPlatformFilter(itemPlatform: string, activeFilter: string) {
+  if (activeFilter === 'all') return true;
+  if (activeFilter === 'link') {
+    return itemPlatform === 'link' || itemPlatform === 'other';
+  }
+  return itemPlatform === activeFilter;
 }
 
 export default function AdminMediaPage() {
@@ -248,7 +256,7 @@ export default function AdminMediaPage() {
     try { await signOut(); router.push('/login'); } catch (e) { console.error(e); }
   };
 
-  const filtered = filterPlatform === 'all' ? items : items.filter(i => i.platform === filterPlatform);
+  const filtered = items.filter(i => matchesPlatformFilter(i.platform, filterPlatform));
 
   if (accessDenied) {
     return (
@@ -291,7 +299,7 @@ export default function AdminMediaPage() {
             <div className="w-px h-5 bg-lw-dark-border" />
             <div>
               <h1 className="text-2xl font-bold text-white">Media Library</h1>
-              <p className="text-zinc-400 text-sm mt-0.5">Manage website videos, social content, and featured media</p>
+              <p className="text-zinc-400 text-sm mt-0.5">Manually curate videos, social links, and uploads for the public media page</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -342,6 +350,7 @@ export default function AdminMediaPage() {
 
               <div>
                 <label className="text-xs font-medium text-zinc-400 mb-1.5 block">Platform / Source</label>
+                <p className="text-[11px] text-zinc-500 mb-2">Choose a content type for this item (manual library entry, not connected account sync).</p>
                 <div className="grid grid-cols-5 gap-2">
                   {PLATFORMS.map(p => (
                     <button
@@ -359,6 +368,9 @@ export default function AdminMediaPage() {
                     </button>
                   ))}
                 </div>
+                <p className="text-[11px] text-zinc-500 mt-2">
+                  Selected: <span className="text-zinc-300">{PLATFORMS.find(p => p.value === form.platform)?.label ?? form.platform}</span>
+                </p>
               </div>
 
               <div>
@@ -443,7 +455,9 @@ export default function AdminMediaPage() {
         </div>
 
         {/* Filter */}
-        <div className="flex flex-wrap gap-2 mb-5">
+        <div className="mb-5">
+          <p className="text-[11px] text-zinc-500 mb-2">Filter by content type:</p>
+          <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setFilterPlatform('all')}
             className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all ${filterPlatform === 'all' ? 'border-lw-rust/60 bg-lw-rust/10 text-white' : 'border-lw-dark-border text-zinc-400 hover:border-lw-dark-border/80'}`}
@@ -460,6 +474,7 @@ export default function AdminMediaPage() {
               {p.label}
             </button>
           ))}
+          </div>
         </div>
 
         {/* Items Grid */}

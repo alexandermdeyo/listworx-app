@@ -158,10 +158,10 @@ export default function Navigation() {
             About
           </Link>
           <Link
-            href="/#how-it-works"
+            href="/"
             className="text-zinc-300 hover:text-white transition-colors"
           >
-            How It Works
+            Home
           </Link>
           <Link
             href="/realtors"
