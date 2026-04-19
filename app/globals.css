@@ -87,12 +87,48 @@
     box-shadow: 0 0 0 2px rgba(198, 90, 30, 0.25) !important;
   }
 
+
+
+  /* Mobile-safe form control normalization (iOS Safari + mobile Chrome) */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='hidden']):not([type='file']),
+  textarea,
+  select,
+  option {
+    -webkit-text-fill-color: #000000 !important;
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    color-scheme: light !important;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='hidden']):not([type='file']) {
+    -webkit-appearance: none;
+    appearance: none;
+    opacity: 1 !important;
+  }
+
+  /* Explicit mobile overrides for iOS/WebKit rendering quirks */
+  @supports (-webkit-touch-callout: none) {
+    input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='hidden']):not([type='file']),
+    textarea,
+    select {
+      -webkit-text-fill-color: #000000 !important;
+      background-color: #ffffff !important;
+      border-color: #d1d5db !important;
+      caret-color: #000000 !important;
+      opacity: 1 !important;
+    }
+  }
+
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
+  input:autofill,
   textarea:-webkit-autofill,
   textarea:-webkit-autofill:hover,
-  textarea:-webkit-autofill:focus {
+  textarea:-webkit-autofill:focus,
+  textarea:autofill,
+  select:-webkit-autofill,
+  select:autofill {
     -webkit-text-fill-color: #000000;
     box-shadow: 0 0 0px 1000px #ffffff inset;
     -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
