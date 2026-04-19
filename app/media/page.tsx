@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Youtube, Instagram, Facebook, Link as LinkIcon, Upload,
-  ExternalLink, Play, Filter,
+  ExternalLink, Play,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navigation from '@/components/Navigation';
@@ -36,12 +36,6 @@ function getYouTubeThumbnail(url: string): string | null {
   return null;
 }
 
-function getYouTubeEmbedUrl(url: string): string | null {
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-  if (match) return `https://www.youtube.com/embed/${match[1]}`;
-  return null;
-}
-
 function resolvedThumbnail(item: MediaItem): string | null {
   if (item.thumbnail_url) return item.thumbnail_url;
   if (item.platform === 'youtube') return getYouTubeThumbnail(item.url);
@@ -59,59 +53,39 @@ function PlatformBadge({ platform }: { platform: string }) {
   );
 }
 
-function YouTubeEmbed({ url, title }: { url: string; title: string }) {
-  const embedUrl = getYouTubeEmbedUrl(url);
-  if (!embedUrl) return null;
-  return (
-    <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
-      <iframe
-        src={embedUrl}
-        title={title}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        className="absolute inset-0 w-full h-full"
-      />
-    </div>
-  );
-}
-
 function MediaCard({ item }: { item: MediaItem }) {
-  const [playing, setPlaying] = useState(false);
   const thumb = resolvedThumbnail(item);
-  const isYouTube = item.platform === 'youtube' && getYouTubeEmbedUrl(item.url);
   const meta = PLATFORM_META[item.platform] ?? PLATFORM_META.other;
   const Icon = meta.icon;
 
   return (
-    <div className={`rounded-2xl border bg-zinc-900/60 overflow-hidden hover:border-zinc-600 transition-all group ${item.is_featured ? 'ring-1 ring-zinc-600/50' : 'border-zinc-800'}`}>
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`block rounded-2xl border bg-zinc-900/60 overflow-hidden hover:border-zinc-600 transition-all group ${item.is_featured ? 'ring-1 ring-zinc-600/50' : 'border-zinc-800'}`}
+    >
       {/* Media area */}
       <div className="relative">
-        {isYouTube && playing ? (
-          <YouTubeEmbed url={item.url} title={item.title} />
-        ) : thumb ? (
+        {thumb ? (
           <div className="relative aspect-video bg-zinc-800 overflow-hidden">
             <img
               src={thumb}
               alt={item.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
-            {isYouTube && (
-              <button
-                onClick={() => setPlaying(true)}
-                className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors"
-              >
+            {item.platform === 'youtube' && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors">
                 <div className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
                   <Play className="h-6 w-6 text-red-600 ml-0.5" />
                 </div>
-              </button>
+              </div>
             )}
           </div>
         ) : (
-          <a href={item.url} target="_blank" rel="noopener noreferrer">
-            <div className="aspect-video bg-zinc-800/60 flex items-center justify-center group-hover:bg-zinc-800 transition-colors">
-              <Icon className={`h-14 w-14 ${meta.color} opacity-30 group-hover:opacity-50 transition-opacity`} />
-            </div>
-          </a>
+          <div className="aspect-video bg-zinc-800/60 flex items-center justify-center group-hover:bg-zinc-800 transition-colors">
+            <Icon className={`h-14 w-14 ${meta.color} opacity-30 group-hover:opacity-50 transition-opacity`} />
+          </div>
         )}
 
         {item.is_featured && (
@@ -132,27 +106,12 @@ function MediaCard({ item }: { item: MediaItem }) {
         {item.description && (
           <p className="text-xs text-zinc-500 leading-relaxed mt-1.5 line-clamp-2">{item.description}</p>
         )}
-        {!isYouTube || !thumb ? (
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white transition-colors"
-          >
-            <ExternalLink className="h-3.5 w-3.5" />
-            View on {meta.label}
-          </a>
-        ) : (
-          <button
-            onClick={() => setPlaying(true)}
-            className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white transition-colors"
-          >
-            <Play className="h-3.5 w-3.5" />
-            Watch video
-          </button>
-        )}
+        <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 group-hover:text-white transition-colors">
+          <ExternalLink className="h-3.5 w-3.5" />
+          Open on {meta.label}
+        </span>
       </div>
-    </div>
+    </a>
   );
 }
 
