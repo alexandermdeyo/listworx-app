@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     .from('media_items')
     .insert({
       title,
-      platform: platform || 'other',
+      platform: platform === 'other' ? 'link' : (platform || 'link'),
       url,
       thumbnail_url: thumbnail_url || null,
       description: description || null,

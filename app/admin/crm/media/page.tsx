@@ -51,7 +51,7 @@ const PLATFORMS = [
   { value: 'instagram', label: 'Instagram', icon: Instagram, color: 'text-pink-500' },
   { value: 'facebook', label: 'Facebook', icon: Facebook, color: 'text-blue-400' },
   { value: 'upload', label: 'Upload/File', icon: Upload, color: 'text-emerald-400' },
-  { value: 'other', label: 'Other Link', icon: LinkIcon, color: 'text-zinc-400' },
+  { value: 'link', label: 'External Link', icon: LinkIcon, color: 'text-zinc-400' },
 ];
 
 const EMPTY_FORM = {

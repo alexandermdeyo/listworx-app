@@ -26,6 +26,7 @@ const PLATFORM_META: Record<string, { label: string; icon: React.ElementType; co
   instagram: { label: 'Instagram',    icon: Instagram, color: 'text-pink-400',  bg: 'bg-pink-950/30 border-pink-900/40' },
   facebook:  { label: 'Facebook',     icon: Facebook,  color: 'text-blue-400',  bg: 'bg-blue-950/30 border-blue-900/40' },
   upload:    { label: 'Media File',   icon: Upload,    color: 'text-emerald-400', bg: 'bg-emerald-950/30 border-emerald-900/40' },
+  link:      { label: 'Link',         icon: LinkIcon,  color: 'text-slate-400', bg: 'bg-slate-800/40 border-slate-700/40' },
   other:     { label: 'Link',         icon: LinkIcon,  color: 'text-slate-400', bg: 'bg-slate-800/40 border-slate-700/40' },
 };
 

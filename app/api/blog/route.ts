@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       .from('blog_posts')
       .select('*')
       .eq('slug', slug)
-      .eq('is_published', true)
+      .eq('is_draft', false)
       .maybeSingle();
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -26,17 +26,20 @@ export async function GET(request: NextRequest) {
 
   let query = supabaseAdmin
     .from('blog_posts')
-    .select('id, title, slug, excerpt, featured_image_url, author_name, is_published, published_at, created_at, updated_at')
+    .select('id, title, slug, excerpt, featured_image_url, author_name, is_draft, published_at, created_at, updated_at')
     .order('published_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false });
 
   if (!all) {
-    query = query.eq('is_published', true);
+    query = query.eq('is_draft', false);
   }
 
   const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
+  return NextResponse.json((data || []).map((post: any) => ({
+    ...post,
+    is_published: !post.is_draft,
+  })));
 }
 
 export async function POST(request: NextRequest) {
@@ -58,14 +61,14 @@ export async function POST(request: NextRequest) {
       body: postBody?.trim() || null,
       featured_image_url: featured_image_url?.trim() || null,
       author_name: author_name?.trim() || 'ListWorx Team',
-      is_published: is_published ?? false,
+      is_draft: !(is_published ?? false),
       published_at: is_published ? new Date().toISOString() : null,
     })
     .select()
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data, { status: 201 });
+  return NextResponse.json({ ...data, is_published: !data.is_draft }, { status: 201 });
 }
 
 export async function PATCH(request: NextRequest) {
@@ -80,11 +83,16 @@ export async function PATCH(request: NextRequest) {
 
   const { data: existing } = await supabaseAdmin
     .from('blog_posts')
-    .select('is_published, published_at')
+    .select('is_draft, published_at')
     .eq('id', id)
     .maybeSingle();
 
-  if (updates.is_published === true && existing && !existing.is_published && !existing.published_at) {
+  if (Object.prototype.hasOwnProperty.call(updates, 'is_published')) {
+    updates.is_draft = !updates.is_published;
+    delete updates.is_published;
+  }
+
+  if (updates.is_draft === false && existing && existing.is_draft && !existing.published_at) {
     updates.published_at = new Date().toISOString();
   }
 
@@ -98,7 +106,7 @@ export async function PATCH(request: NextRequest) {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
+  return NextResponse.json({ ...data, is_published: !data.is_draft });
 }
 
 export async function DELETE(request: NextRequest) {
