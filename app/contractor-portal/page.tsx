@@ -77,10 +77,8 @@ async function waitForUser(
   return null;
 }
 
-function getContractorDestination(partnerStatus: string) {
-  if (partnerStatus === 'active') return '/contractor-dashboard';
-  if (partnerStatus === 'approved') return '/billing';
-  return '/apply';
+function getContractorSignInDestination() {
+  return '/contractor-dashboard';
 }
 
 async function resolveContractorDestination(
@@ -114,7 +112,7 @@ async function resolveContractorDestination(
   const role = (appUser?.role || '').toString().toUpperCase();
   const hasContractorProfile = !!contractorProfile;
   const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
-  const destination = getContractorDestination(partnerStatus);
+  const destination = getContractorSignInDestination();
 
   console.log('[contractor-portal] contractor resolution', {
     userId,

@@ -183,23 +183,6 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/', req.url));
     }
 
-    if (contractorStatus === 'approved') {
-      console.log('[middleware] contractor redirect', {
-        path,
-        reason: 'approved contractor must complete billing before dashboard',
-        destination: '/billing',
-      });
-      return NextResponse.redirect(new URL('/billing', req.url));
-    }
-
-    if (contractorStatus !== 'active') {
-      console.log('[middleware] contractor redirect', {
-        path,
-        reason: 'contractor not active for dashboard',
-        destination: '/apply',
-      });
-      return NextResponse.redirect(new URL('/apply', req.url));
-    }
   }
 
   if (path.startsWith('/billing')) {
@@ -250,12 +233,8 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/', req.url));
     }
 
-    if (contractorStatus === 'active') {
+    if (contractorStatus === 'active' || contractorStatus === 'approved') {
       return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
-    }
-
-    if (contractorStatus === 'approved') {
-      return NextResponse.redirect(new URL('/billing', req.url));
     }
   }
   if (isProtected) {
