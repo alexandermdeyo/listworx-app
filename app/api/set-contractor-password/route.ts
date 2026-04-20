@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+    const fallbackName = normalizedEmail.split('@')[0] || 'contractor';
     const existingUser = authUser.users.find(
       (u) => u.email?.trim().toLowerCase() === normalizedEmail
     );
@@ -65,14 +66,23 @@ export async function POST(request: NextRequest) {
 
       console.log('[SET PASSWORD] Password updated successfully');
 
-      await supabase.from('users').upsert(
+      const { error: existingUserUpsertError } = await supabase.from('users').upsert(
         {
           id: existingUser.id,
           email: normalizedEmail,
+          name: fallbackName,
           role: 'CONTRACTOR',
         },
         { onConflict: 'id' }
       );
+
+      if (existingUserUpsertError) {
+        console.error('[SET PASSWORD] Error upserting users row for existing auth user:', existingUserUpsertError);
+        return NextResponse.json(
+          { error: 'Failed to persist contractor user profile' },
+          { status: 500 }
+        );
+      }
 
       return NextResponse.json({ success: true });
     }
@@ -88,8 +98,9 @@ export async function POST(request: NextRequest) {
       console.error('[SET PASSWORD] Error fetching contractor profile:', profileError);
     }
 
-    const ownerName = contractorProfile?.owner_name || '';
+    const ownerName = contractorProfile?.owner_name?.trim() || '';
     const companyName = contractorProfile?.company_name || '';
+    const resolvedName = ownerName || fallbackName;
 
     if (!contractorProfile) {
       console.log('[SET PASSWORD] No contractor profile found for email; continuing with auth+users creation');
@@ -101,7 +112,7 @@ export async function POST(request: NextRequest) {
       password,
       email_confirm: true,
       user_metadata: {
-        name: ownerName,
+        name: resolvedName,
         company_name: companyName,
         owner_name: ownerName,
         role: 'CONTRACTOR'
@@ -126,15 +137,23 @@ export async function POST(request: NextRequest) {
 
     console.log('[SET PASSWORD] User created successfully:', newUser.user.id);
 
-    await supabase.from('users').upsert(
+    const { error: newUserUpsertError } = await supabase.from('users').upsert(
       {
         id: newUser.user.id,
         email: normalizedEmail,
-        full_name: ownerName,
+        name: resolvedName,
         role: 'CONTRACTOR',
       },
       { onConflict: 'id' }
     );
+
+    if (newUserUpsertError) {
+      console.error('[SET PASSWORD] Error upserting users row for new auth user:', newUserUpsertError);
+      return NextResponse.json(
+        { error: 'Failed to persist contractor user profile' },
+        { status: 500 }
+      );
+    }
 
     if (contractorProfile) {
       await supabase
