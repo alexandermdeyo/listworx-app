@@ -478,10 +478,6 @@ export default function ApplicationForm({
       ).catch(err => console.error('application_received email error:', err));
 
       setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        onSuccess();
-      }, 2500);
     } catch (err: any) {
       console.error('Application submit error:', err);
       setError('Failed to submit: ' + err.message);
@@ -496,11 +492,22 @@ export default function ApplicationForm({
         <div className="h-16 w-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-4">
           <CheckCircle2 className="h-8 w-8 text-emerald-500" />
         </div>
-        <h2 className="text-xl font-bold text-[#2F2F2F] mb-2">Application Submitted!</h2>
-        <p className="text-[#2F2F2F]/50 text-sm max-w-sm mx-auto">
-          Your application is now under review. We'll notify you at{' '}
-          <span className="text-[#2F2F2F] font-medium">{userEmail}</span> within 24–48 hours.
+        <h2 className="text-xl font-bold text-[#2F2F2F] mb-2">Application Submitted</h2>
+        <p className="text-[#2F2F2F]/60 text-sm max-w-md mx-auto">
+          Thank you. Your application has been submitted and is now under review.
         </p>
+        <p className="text-[#2F2F2F]/50 text-sm max-w-md mx-auto mt-2">
+          We&apos;ll email you when your application is approved.
+        </p>
+        <div className="mt-6">
+          <Button
+            type="button"
+            className="bg-lw-rust hover:bg-lw-rust-hover text-white"
+            onClick={() => window.location.assign('/')}
+          >
+            Return to Home
+          </Button>
+        </div>
       </div>
     );
   }

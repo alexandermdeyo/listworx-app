@@ -79,12 +79,10 @@ export default function Navigation() {
           .trim()
           .toLowerCase();
 
-        if (status === 'active') {
+        if (status === 'active' || status === 'approved') {
           setDashboardHref('/contractor-dashboard');
-        } else if (status === 'approved') {
-          setDashboardHref('/billing');
         } else {
-          setDashboardHref('/apply');
+          setDashboardHref(null);
         }
 
         setLoading(false);
