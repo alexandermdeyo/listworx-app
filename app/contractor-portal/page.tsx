@@ -31,6 +31,33 @@ function sanitizeRedirect(redirect: string | null) {
   return value;
 }
 
+function normalizePartnerStatus(status?: string | null) {
+  return (status || '').toString().trim().toLowerCase();
+}
+
+async function waitForUser(attempts = 15, delayMs = 200) {
+  for (let i = 0; i < attempts; i++) {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (!error && user?.id) {
+      return user;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  return null;
+}
+
+function getContractorDestination(partnerStatus: string) {
+  if (partnerStatus === 'active') return '/contractor-dashboard';
+  if (partnerStatus === 'approved') return '/billing';
+  return '/apply';
+}
+
 export default function ContractorPortalPage() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>('signin');
