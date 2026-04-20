@@ -175,7 +175,7 @@ export default function BlogPage() {
             Join the ListWorx IronClad network as a contractor or submit a free request.
           </p>
           <div className="flex gap-3 justify-center flex-wrap">
-            <Link href="/contractor-portal">
+            <Link href="/apply">
               <Button className="bg-[#e07b39] hover:bg-[#c96a2e] text-white px-6">Apply as Contractor</Button>
             </Link>
             <Link href="/request">

@@ -84,7 +84,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link href="/contractor-portal" className="hover:text-lw-rust transition-colors">
+                <Link href="/apply" className="hover:text-lw-rust transition-colors">
                   Apply to Join
                 </Link>
               </li>

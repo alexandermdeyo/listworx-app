@@ -52,7 +52,7 @@ export default function LandingPage() {
                 Request a Contractor — Free
               </Button>
             </Link>
-            <Link href="/contractor-portal" className="w-full sm:w-auto">
+            <Link href="/apply" className="w-full sm:w-auto">
               <Button size="lg" variant="outline" className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-lg border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
                 <Briefcase className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                 Apply as a Contractor
@@ -117,7 +117,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="mt-6">
-                  <Link href="/contractor-portal">
+                  <Link href="/apply">
                     <Button className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-5 text-base">
                       <Award className="mr-2 h-4 w-4" />
                       Apply for Founding Partner Status
@@ -551,7 +551,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center">
-              <Link href="/contractor-portal">
+              <Link href="/apply">
                 <Button size="lg" className="text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl bg-primary hover:bg-primary/90">
                   Apply to Join the Network
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -580,7 +580,7 @@ export default function LandingPage() {
                 Request a Contractor — Free
               </Button>
             </Link>
-            <Link href="/contractor-portal">
+            <Link href="/apply">
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-lg border-2 border-primary text-primary hover:bg-primary hover:text-white">
                 Apply as a Contractor
               </Button>
