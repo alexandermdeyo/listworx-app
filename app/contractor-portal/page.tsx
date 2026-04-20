@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { createClient } from '@/lib/supabase-browser';
+import { supabase } from '@/lib/supabase';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,32 +35,7 @@ function normalizePartnerStatus(status?: string | null) {
   return (status || '').toString().trim().toLowerCase();
 }
 
-async function waitForSession(
-  supabase: ReturnType<typeof createClient>,
-  attempts = 20,
-  delayMs = 200
-) {
-  for (let i = 0; i < attempts; i++) {
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
-
-    if (!error && session?.user?.id) {
-      return session;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, delayMs));
-  }
-
-  return null;
-}
-
-async function waitForUser(
-  supabase: ReturnType<typeof createClient>,
-  attempts = 15,
-  delayMs = 200
-) {
+async function waitForUser(attempts = 15, delayMs = 200) {
   for (let i = 0; i < attempts; i++) {
     const {
       data: { user },
@@ -77,14 +52,13 @@ async function waitForUser(
   return null;
 }
 
-function getContractorSignInDestination() {
-  return '/contractor-dashboard';
+function getContractorDestination(partnerStatus: string) {
+  if (partnerStatus === 'active') return '/contractor-dashboard';
+  if (partnerStatus === 'approved') return '/billing';
+  return '/apply';
 }
 
-async function resolveContractorDestination(
-  supabase: ReturnType<typeof createClient>,
-  userId: string
-) {
+async function resolveContractorDestination(userId: string) {
   const [{ data: appUser, error: appUserError }, { data: contractorProfile, error: contractorProfileError }] =
     await Promise.all([
       supabase.from('users').select('role').eq('id', userId).maybeSingle(),
@@ -112,7 +86,7 @@ async function resolveContractorDestination(
   const role = (appUser?.role || '').toString().toUpperCase();
   const hasContractorProfile = !!contractorProfile;
   const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
-  const destination = getContractorSignInDestination();
+  const destination = getContractorDestination(partnerStatus);
 
   console.log('[contractor-portal] contractor resolution', {
     userId,
@@ -125,37 +99,9 @@ async function resolveContractorDestination(
   return destination;
 }
 
-
-
-async function signInWithRetry(
-  supabase: ReturnType<typeof createClient>,
-  email: string,
-  password: string,
-  attempts = 4,
-  delayMs = 300
-) {
-  let lastError: any = null;
-
-  for (let i = 0; i < attempts; i++) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (!error) {
-      return { error: null };
-    }
-
-    lastError = error;
-    await new Promise((resolve) => setTimeout(resolve, delayMs * (i + 1)));
-  }
-
-  return { error: lastError };
-}
-
 export default function ContractorPortalPage() {
-  const supabaseRef = useRef(createClient());
-  const supabase = supabaseRef.current;
-
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<string>('signup');
+  const [activeTab, setActiveTab] = useState<string>('signin');
   const hasInitializedFromQuery = useRef(false);
 
   const [signInEmail, setSignInEmail] = useState('');
@@ -212,7 +158,7 @@ export default function ContractorPortalPage() {
     });
     try {
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: signInEmail.trim().toLowerCase(),
+        email: signInEmail,
         password: signInPassword,
       });
 
@@ -222,7 +168,7 @@ export default function ContractorPortalPage() {
         return;
       }
 
-      const authUser = await waitForUser(supabase);
+      const authUser = await waitForUser();
 
       if (!authUser?.id) {
         throw new Error('Login succeeded, but authenticated user data did not load.');
@@ -233,7 +179,7 @@ export default function ContractorPortalPage() {
         userId: authUser.id,
       });
 
-      const destination = await resolveContractorDestination(supabase, authUser.id);
+      const destination = await resolveContractorDestination(authUser.id);
 
       setMessage('Signed in successfully! Redirecting...');
       console.log('[contractor-portal] redirecting after signin', {
@@ -284,7 +230,7 @@ export default function ContractorPortalPage() {
       const response = await fetch('/api/set-contractor-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: signUpEmail.trim().toLowerCase(), password: signUpPassword }),
+        body: JSON.stringify({ email: signUpEmail, password: signUpPassword }),
       });
 
       const data = await response.json();
@@ -298,35 +244,24 @@ export default function ContractorPortalPage() {
         return;
       }
 
-      const normalizedSignUpEmail = signUpEmail.trim().toLowerCase();
-      const { error: signInError } = await signInWithRetry(
-        supabase,
-        normalizedSignUpEmail,
-        signUpPassword
-      );
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: signUpEmail,
+        password: signUpPassword,
+      });
 
       if (signInError) {
         setError('Account created, but auto-login failed. Please sign in manually.');
         setActiveTab('signin');
-        handleEmailChange(normalizedSignUpEmail);
+        handleEmailChange(signUpEmail);
         setLoading(false);
         return;
       }
 
-      const authSession = await waitForSession(supabase);
-      const authUser = authSession?.user || (await waitForUser(supabase));
-
-      if (!authUser?.id) {
-        setError('Account created, but session could not be confirmed. Please sign in manually.');
-        setActiveTab('signin');
-        handleEmailChange(normalizedSignUpEmail);
-        setLoading(false);
-        return;
-      }
+      const authUser = await waitForUser();
 
       console.log('[contractor-portal] auth success', {
         authContext: 'signup',
-        userId: authUser.id,
+        userId: authUser?.id || null,
       });
 
       setMessage('Account created successfully! Redirecting...');

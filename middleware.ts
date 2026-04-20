@@ -183,6 +183,23 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/', req.url));
     }
 
+    if (contractorStatus === 'approved') {
+      console.log('[middleware] contractor redirect', {
+        path,
+        reason: 'approved contractor must complete billing before dashboard',
+        destination: '/billing',
+      });
+      return NextResponse.redirect(new URL('/billing', req.url));
+    }
+
+    if (contractorStatus !== 'active') {
+      console.log('[middleware] contractor redirect', {
+        path,
+        reason: 'contractor not active for dashboard',
+        destination: '/apply',
+      });
+      return NextResponse.redirect(new URL('/apply', req.url));
+    }
   }
 
   if (path.startsWith('/billing')) {
@@ -215,28 +232,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-
-  if (path.startsWith('/apply')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/contractor-portal', req.url));
-    }
-
-    if (role === 'ADMIN') {
-      return NextResponse.redirect(new URL('/admin/crm', req.url));
-    }
-
-    if (isRequestor(role)) {
-      return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
-    }
-
-    if (!isContractor) {
-      return NextResponse.redirect(new URL('/', req.url));
-    }
-
-    if (contractorStatus === 'active' || contractorStatus === 'approved') {
-      return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
-    }
-  }
   if (isProtected) {
     res.headers.set(
       'Cache-Control',

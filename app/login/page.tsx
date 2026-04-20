@@ -33,8 +33,10 @@ function isRequestorRole(role: Role) {
   );
 }
 
-function getContractorDestination() {
-  return '/contractor-dashboard';
+function getContractorDestination(partnerStatus: string) {
+  if (partnerStatus === 'active') return '/contractor-dashboard';
+  if (partnerStatus === 'approved') return '/billing';
+  return '/apply';
 }
 
 async function waitForUser(
@@ -134,7 +136,7 @@ export default function LoginPage() {
       const role = (appUser?.role as Role) || null;
       const hasContractorProfile = !!contractorProfile;
       const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
-      const contractorDestination = getContractorDestination();
+      const contractorDestination = getContractorDestination(partnerStatus);
 
       console.log('[login] role/status resolution', {
         userId,
