@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function ContractorPortalPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>('signin');
 
@@ -31,13 +30,20 @@ export default function ContractorPortalPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const redirectTarget = searchParams.get('redirect') || '/billing';
+
+  const handleEmailChange = (nextEmail: string) => {
+    setSignInEmail(nextEmail);
+    setSignUpEmail(nextEmail);
+  };
 
   useEffect(() => {
     const emailParam = searchParams.get('email');
     if (emailParam) {
       const decodedEmail = decodeURIComponent(emailParam);
+      setSignInEmail(decodedEmail);
       setSignUpEmail(decodedEmail);
-      setActiveTab('signup');
+      setActiveTab('signin');
     }
   }, [searchParams]);
 
@@ -64,7 +70,7 @@ export default function ContractorPortalPage() {
       }
 
       setMessage('Signed in successfully! Redirecting...');
-      setTimeout(() => { window.location.href = '/billing'; }, 1500);
+      setTimeout(() => { window.location.href = redirectTarget; }, 1500);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
@@ -119,12 +125,12 @@ export default function ContractorPortalPage() {
       if (signInError) {
         setError('Account created, but auto-login failed. Please sign in manually.');
         setActiveTab('signin');
-        setSignInEmail(signUpEmail);
+        handleEmailChange(signUpEmail);
         return;
       }
 
-      setMessage('Account created successfully! Redirecting to billing...');
-      setTimeout(() => { window.location.href = '/billing'; }, 1500);
+      setMessage('Account created successfully! Redirecting...');
+      setTimeout(() => { window.location.href = redirectTarget; }, 1500);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
@@ -181,7 +187,7 @@ export default function ContractorPortalPage() {
                     id="signin-email"
                     type="email"
                     value={signInEmail}
-                    onChange={(e) => setSignInEmail(e.target.value)}
+                    onChange={(e) => handleEmailChange(e.target.value)}
                     disabled={loading}
                     placeholder="your-email@example.com"
                     required
@@ -239,7 +245,7 @@ export default function ContractorPortalPage() {
                     id="signup-email"
                     type="email"
                     value={signUpEmail}
-                    onChange={(e) => setSignUpEmail(e.target.value)}
+                    onChange={(e) => handleEmailChange(e.target.value)}
                     disabled={loading}
                     placeholder="your-email@example.com"
                     required

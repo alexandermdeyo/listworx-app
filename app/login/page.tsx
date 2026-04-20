@@ -21,6 +21,10 @@ type Role =
   | 'PROPERTY_MANAGER'
   | null;
 
+function normalizePartnerStatus(status?: string | null) {
+  return (status || '').toString().trim().toLowerCase();
+}
+
 function isRequestorRole(role: Role) {
   return (
     role === 'REALTOR' ||
@@ -105,7 +109,7 @@ export default function LoginPage() {
           .maybeSingle(),
         supabase
           .from('contractor_profiles')
-          .select('id')
+          .select('id, partner_status')
           .eq('user_id', userId)
           .maybeSingle(),
       ]);
@@ -121,6 +125,7 @@ export default function LoginPage() {
 
       const role = (appUser?.role as Role) || null;
       const hasContractorProfile = !!contractorProfile;
+      const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
 
       if (role === 'ADMIN') {
         window.location.href = '/admin/crm';
@@ -128,6 +133,32 @@ export default function LoginPage() {
       }
 
       if (role === 'CONTRACTOR' || hasContractorProfile) {
+        if (partnerStatus === 'active') {
+          window.location.href = '/contractor-dashboard';
+          return;
+        }
+
+        if (partnerStatus === 'approved') {
+          window.location.href = '/billing';
+          return;
+        }
+
+        if (
+          partnerStatus === 'applied' ||
+          partnerStatus === 'under_review' ||
+          partnerStatus === 'pending' ||
+          partnerStatus === 'rejected' ||
+          partnerStatus === 'declined' ||
+          partnerStatus === 'suspended' ||
+          partnerStatus === 'paused' ||
+          partnerStatus === 'cancelled' ||
+          partnerStatus === 'inactive' ||
+          !partnerStatus
+        ) {
+          window.location.href = '/apply';
+          return;
+        }
+
         window.location.href = '/contractor-dashboard';
         return;
       }
