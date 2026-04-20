@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -31,9 +31,37 @@ function sanitizeRedirect(redirect: string | null) {
   return value;
 }
 
+function normalizePartnerStatus(status?: string | null) {
+  return (status || '').toString().trim().toLowerCase();
+}
+
+async function waitForUser(attempts = 15, delayMs = 200) {
+  for (let i = 0; i < attempts; i++) {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (!error && user?.id) {
+      return user;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  return null;
+}
+
+function getContractorDestination(partnerStatus: string) {
+  if (partnerStatus === 'active') return '/contractor-dashboard';
+  if (partnerStatus === 'approved') return '/billing';
+  return '/apply';
+}
+
 export default function ContractorPortalPage() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>('signin');
+  const hasInitializedFromQuery = useRef(false);
 
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
@@ -48,6 +76,8 @@ export default function ContractorPortalPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const modeParam = searchParams.get('mode');
+  const emailParam = searchParams.get('email');
   const redirectTarget = sanitizeRedirect(searchParams.get('redirect'));
 
   const handleEmailChange = (nextEmail: string) => {
@@ -56,14 +86,70 @@ export default function ContractorPortalPage() {
   };
 
   useEffect(() => {
-    const emailParam = searchParams.get('email');
+    if (hasInitializedFromQuery.current) return;
+    hasInitializedFromQuery.current = true;
+
     if (emailParam) {
       const decodedEmail = decodeURIComponent(emailParam);
-      setSignInEmail(decodedEmail);
-      setSignUpEmail(decodedEmail);
+      handleEmailChange(decodedEmail);
+    }
+
+    if (modeParam === 'login') {
       setActiveTab('signin');
     }
-  }, [searchParams]);
+  }, [emailParam, modeParam]);
+
+  const routeAuthenticatedContractor = async (authContext: 'signin' | 'signup') => {
+    const {
+      data: { user: initialUser },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError) {
+      console.error('[contractor-portal] auth success, but getUser failed', {
+        authContext,
+        userError,
+      });
+    }
+
+    let authUser = initialUser;
+    if (!authUser?.id) {
+      authUser = await waitForUser();
+    }
+
+    if (!authUser?.id) {
+      throw new Error('Authentication succeeded, but authenticated user data did not load.');
+    }
+
+    const { data: contractorProfile, error: contractorError } = await supabase
+      .from('contractor_profiles')
+      .select('id, partner_status')
+      .eq('user_id', authUser.id)
+      .maybeSingle();
+
+    if (contractorError) {
+      console.error('[contractor-portal] contractor profile lookup failed', {
+        authContext,
+        userId: authUser.id,
+        contractorError,
+      });
+    }
+
+    const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
+    const contractorDestination = getContractorDestination(partnerStatus);
+    const chosenDestination = redirectTarget !== '/billing' ? redirectTarget : contractorDestination;
+
+    console.log('[contractor-portal] auth success', {
+      authContext,
+      userId: authUser.id,
+      activeTabBeforeRedirect: activeTab,
+      partnerStatus,
+      contractorDestination,
+      chosenDestination,
+    });
+
+    window.location.assign(chosenDestination);
+  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +162,11 @@ export default function ContractorPortalPage() {
     }
 
     setLoading(true);
+    console.log('[contractor-portal] submit start', {
+      authContext: 'signin',
+      activeTab,
+      email: signInEmail,
+    });
     try {
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: signInEmail,
@@ -88,9 +179,13 @@ export default function ContractorPortalPage() {
       }
 
       setMessage('Signed in successfully! Redirecting...');
-      setTimeout(() => { window.location.href = redirectTarget; }, 1500);
+      await routeAuthenticatedContractor('signin');
     } catch (err: any) {
       setError(err.message || 'An error occurred');
+      console.error('[contractor-portal] signin failed', {
+        activeTabAfterError: activeTab,
+        error: err,
+      });
     } finally {
       setLoading(false);
     }
@@ -117,6 +212,11 @@ export default function ContractorPortalPage() {
     }
 
     setLoading(true);
+    console.log('[contractor-portal] submit start', {
+      authContext: 'signup',
+      activeTab,
+      email: signUpEmail,
+    });
     try {
       const response = await fetch('/api/set-contractor-password', {
         method: 'POST',
@@ -148,9 +248,13 @@ export default function ContractorPortalPage() {
       }
 
       setMessage('Account created successfully! Redirecting...');
-      setTimeout(() => { window.location.href = redirectTarget; }, 1500);
+      await routeAuthenticatedContractor('signup');
     } catch (err: any) {
       setError(err.message || 'An error occurred');
+      console.error('[contractor-portal] signup failed', {
+        activeTabAfterError: activeTab,
+        error: err,
+      });
     } finally {
       setLoading(false);
     }
