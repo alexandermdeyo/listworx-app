@@ -24,7 +24,7 @@ export default function AboutPage() {
               ListWorx connects homeowners and realtors with contractors who are vetted, accountable, and ready to do the job right.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/apply">
+              <Link href="/contractor-portal">
                 <Button size="lg" className="bg-[#f97316] hover:bg-orange-600 text-white font-semibold px-8">
                   Apply as a Contractor
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -146,7 +146,7 @@ export default function AboutPage() {
               {
                 audience: 'Contractors',
                 body: 'Get consistent, quality work without fighting for scraps. Join a network where professionalism is rewarded and your reputation builds over time.',
-                href: '/apply',
+                href: '/contractor-portal',
                 cta: 'Apply to join',
               },
             ].map(item => (
@@ -186,7 +186,7 @@ export default function AboutPage() {
               Whether you're a contractor who's tired of chasing leads, or a homeowner who's tired of guessing — this is for you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/apply">
+              <Link href="/contractor-portal">
                 <Button size="lg" className="bg-[#f97316] hover:bg-orange-600 text-white font-semibold px-8">
                   Apply as a Contractor
                   <ArrowRight className="ml-2 h-4 w-4" />

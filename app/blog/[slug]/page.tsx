@@ -184,7 +184,7 @@ export default function BlogPostPage() {
               </Button>
             </Link>
             <div className="flex gap-3">
-              <Link href="/apply">
+              <Link href="/contractor-portal">
                 <Button className="bg-[#e07b39] hover:bg-[#c96a2e] text-white">Apply as Contractor</Button>
               </Link>
               <Link href="/request">

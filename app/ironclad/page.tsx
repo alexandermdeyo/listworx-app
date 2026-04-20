@@ -95,7 +95,7 @@ export default function IronCladStandardsPage() {
               The enforced compliance framework governing every contractor in the ListWorx network. Not a badge. A binding agreement.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/apply">
+              <Link href="/contractor-portal">
                 <Button size="lg" className="px-8 py-5 text-base rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold">
                   Apply to Become a Partner
                   <ChevronRight className="h-4 w-4 ml-1.5" />
@@ -550,7 +550,7 @@ export default function IronCladStandardsPage() {
                     <span>Launch-period exclusive</span>
                   </div>
                 </div>
-                <Link href="/apply">
+                <Link href="/contractor-portal">
                   <Button className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-5 text-base">
                     <Award className="mr-2 h-4 w-4" />
                     Apply for Founding Partner Status
@@ -580,7 +580,7 @@ export default function IronCladStandardsPage() {
               Applications are reviewed manually. If your credentials are in order and your business meets the standards above, approval typically takes 24–48 hours.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/apply">
+              <Link href="/contractor-portal">
                 <Button size="lg" className="px-10 py-5 text-base rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold">
                   Apply as a Contractor
                   <ChevronRight className="h-4 w-4 ml-1.5" />

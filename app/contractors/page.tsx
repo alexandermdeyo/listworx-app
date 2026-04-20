@@ -30,7 +30,7 @@ export default function ContractorsPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/apply">
+            <Link href="/contractor-portal">
               <Button size="lg" className="text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90">
                 <Award className="mr-2 h-5 w-5" />
                 Apply to Join the Network
@@ -500,7 +500,7 @@ export default function ContractorsPage() {
             </div>
 
             <div className="text-center">
-              <Link href="/apply">
+              <Link href="/contractor-portal">
                 <Button size="lg" className="text-lg px-8 py-6 rounded-lg shadow-lg bg-amber-600 hover:bg-amber-700 text-white">
                   <Award className="mr-2 h-5 w-5" />
                   Apply for Founding Partner Status
@@ -554,7 +554,7 @@ export default function ContractorsPage() {
                     <span>Credential tracking and compliance tools</span>
                   </li>
                 </ul>
-                <Link href="/apply" className="block">
+                <Link href="/contractor-portal" className="block">
                   <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white">
                     Apply Now
                   </Button>
@@ -584,7 +584,7 @@ export default function ContractorsPage() {
                     <span>IronClad Certified Partner badge</span>
                   </li>
                 </ul>
-                <Link href="/apply" className="block">
+                <Link href="/contractor-portal" className="block">
                   <Button className="w-full bg-primary hover:bg-primary/90 text-white">
                     Apply Now
                   </Button>
@@ -613,7 +613,7 @@ export default function ContractorsPage() {
                     <span>Professionally produced 60-second promo video <span className="text-xs italic">(annual plan)</span></span>
                   </li>
                 </ul>
-                <Link href="/apply" className="block">
+                <Link href="/contractor-portal" className="block">
                   <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white">
                     Apply Now
                   </Button>
@@ -641,7 +641,7 @@ export default function ContractorsPage() {
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
               Stop buying leads. Start building a referral pipeline with predictable costs and quality clients. Applications are reviewed within 48 hours.
             </p>
-            <Link href="/apply">
+            <Link href="/contractor-portal">
               <Button size="lg" className="text-lg px-8 md:px-10 py-6 rounded-lg shadow-lg hover:shadow-xl bg-white text-primary hover:bg-white/90">
                 <Award className="mr-2 h-5 w-5" />
                 Submit Your Application

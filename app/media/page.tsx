@@ -235,7 +235,7 @@ export default function MediaPage() {
             Partner with ListWorx as a vetted contractor or submit a request as a realtor.
           </p>
           <div className="flex gap-3 justify-center flex-wrap">
-            <Link href="/apply">
+            <Link href="/contractor-portal">
               <Button className="bg-[#e07b39] hover:bg-[#c96a2e] text-white px-6">Apply as Contractor</Button>
             </Link>
             <Link href="/request">
