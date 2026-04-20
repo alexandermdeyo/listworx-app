@@ -43,7 +43,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingUser = authUser.users.find(u => u.email === email);
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = authUser.users.find(
+      (u) => u.email?.trim().toLowerCase() === normalizedEmail
+    );
 
     if (existingUser) {
       console.log('[SET PASSWORD] Existing user found, updating password');
@@ -65,7 +68,7 @@ export async function POST(request: NextRequest) {
       await supabase.from('users').upsert(
         {
           id: existingUser.id,
-          email: email.trim().toLowerCase(),
+          email: normalizedEmail,
           role: 'CONTRACTOR',
         },
         { onConflict: 'id' }
@@ -74,11 +77,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    console.log('[SET PASSWORD] No existing auth user — looking up contractor profile for:', email);
+    console.log('[SET PASSWORD] No existing auth user — looking up contractor profile for:', normalizedEmail);
     const { data: contractorProfile, error: profileError } = await supabase
       .from('contractor_profiles')
       .select('company_name, owner_name')
-      .eq('email', email)
+      .ilike('email', normalizedEmail)
       .maybeSingle();
 
     if (profileError) {
@@ -89,16 +92,12 @@ export async function POST(request: NextRequest) {
     const companyName = contractorProfile?.company_name || '';
 
     if (!contractorProfile) {
-      console.log('[SET PASSWORD] No contractor profile found for:', email);
-      return NextResponse.json(
-        { error: 'No contractor account found with this email. Please contact support.' },
-        { status: 404 }
-      );
+      console.log('[SET PASSWORD] No contractor profile found for email; continuing with auth+users creation');
     }
 
     console.log('[SET PASSWORD] Creating new auth user for:', email);
     const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-      email,
+      email: normalizedEmail,
       password,
       email_confirm: true,
       user_metadata: {
@@ -130,18 +129,20 @@ export async function POST(request: NextRequest) {
     await supabase.from('users').upsert(
       {
         id: newUser.user.id,
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         full_name: ownerName,
         role: 'CONTRACTOR',
       },
       { onConflict: 'id' }
     );
 
-    await supabase
-      .from('contractor_profiles')
-      .update({ user_id: newUser.user.id })
-      .eq('email', email.trim().toLowerCase())
-      .is('user_id', null);
+    if (contractorProfile) {
+      await supabase
+        .from('contractor_profiles')
+        .update({ user_id: newUser.user.id })
+        .ilike('email', normalizedEmail)
+        .is('user_id', null);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

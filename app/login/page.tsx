@@ -33,6 +33,12 @@ function isRequestorRole(role: Role) {
   );
 }
 
+function getContractorDestination(partnerStatus: string) {
+  if (partnerStatus === 'active') return '/contractor-dashboard';
+  if (partnerStatus === 'approved') return '/billing';
+  return '/apply';
+}
+
 async function waitForUser(
   supabase: ReturnType<typeof createClient>,
   attempts = 15,
@@ -97,6 +103,10 @@ export default function LoginPage() {
       }
 
       const userId = authUser.id;
+      console.log('[login] auth success', {
+        userId,
+        email: normalizedEmail,
+      });
 
       const [
         { data: appUser, error: appUserError },
@@ -126,6 +136,15 @@ export default function LoginPage() {
       const role = (appUser?.role as Role) || null;
       const hasContractorProfile = !!contractorProfile;
       const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
+      const contractorDestination = getContractorDestination(partnerStatus);
+
+      console.log('[login] role/status resolution', {
+        userId,
+        role,
+        hasContractorProfile,
+        partnerStatus: partnerStatus || null,
+        contractorDestination,
+      });
 
       if (role === 'ADMIN') {
         window.location.href = '/admin/crm';
@@ -133,34 +152,7 @@ export default function LoginPage() {
       }
 
       if (role === 'CONTRACTOR' || hasContractorProfile) {
-        if (partnerStatus === 'active') {
-          window.location.href = '/contractor-dashboard';
-          return;
-        }
-
-        if (partnerStatus === 'approved') {
-          window.location.href = '/billing';
-          return;
-        }
-
-        if (
-          partnerStatus === 'applied' ||
-          partnerStatus === 'under_review' ||
-          partnerStatus === 'pending' ||
-          partnerStatus === 'rejected' ||
-          partnerStatus === 'declined' ||
-          partnerStatus === 'suspended' ||
-          partnerStatus === 'paused' ||
-          partnerStatus === 'cancelled' ||
-          partnerStatus === 'removed' ||
-          partnerStatus === 'inactive' ||
-          !partnerStatus
-        ) {
-          window.location.href = '/apply';
-          return;
-        }
-
-        window.location.href = '/contractor-dashboard';
+        window.location.href = contractorDestination;
         return;
       }
 

@@ -41,6 +41,16 @@ async function waitForSession(
   return null;
 }
 
+function normalizePartnerStatus(status?: string | null) {
+  return (status || '').toString().trim().toLowerCase();
+}
+
+function getContractorDestination(partnerStatus: string) {
+  if (partnerStatus === 'active') return '/contractor-dashboard';
+  if (partnerStatus === 'approved') return '/billing';
+  return '/apply';
+}
+
 export default function ApplyPage() {
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
@@ -55,6 +65,41 @@ export default function ApplyPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  async function resolveContractorDestination(userId: string) {
+    const [{ data: appUser, error: appUserError }, { data: contractorProfile, error: contractorError }] =
+      await Promise.all([
+        supabase.from('users').select('role').eq('id', userId).maybeSingle(),
+        supabase
+          .from('contractor_profiles')
+          .select('id, partner_status')
+          .eq('user_id', userId)
+          .maybeSingle(),
+      ]);
+
+    if (appUserError) {
+      console.error('CONTRACTOR ROLE LOOKUP FAILED:', appUserError);
+    }
+
+    if (contractorError) {
+      console.error('CONTRACTOR PROFILE LOOKUP FAILED:', contractorError);
+    }
+
+    const role = (appUser?.role || '').toString().toUpperCase();
+    const hasContractorProfile = !!contractorProfile;
+    const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
+    const destination = getContractorDestination(partnerStatus);
+
+    console.log('[apply] contractor state resolved', {
+      userId,
+      role,
+      hasContractorProfile,
+      partnerStatus: partnerStatus || null,
+      destination,
+    });
+
+    return destination;
+  }
 
   function friendlyAuthError(msg: string): string {
     const m = (msg || '').toLowerCase();
@@ -182,7 +227,7 @@ export default function ApplyPage() {
       })
     );
 
-    window.location.href = '/contractor-dashboard';
+    window.location.href = '/apply';
   }
 
   async function handleSignUp(e: React.FormEvent) {
@@ -282,7 +327,12 @@ export default function ApplyPage() {
         return;
       }
 
-      window.location.href = '/contractor-dashboard';
+      console.log('[apply] auth success', {
+        userId: data.user.id,
+        authContext: 'login',
+      });
+      const destination = await resolveContractorDestination(data.user.id);
+      window.location.href = destination;
     } catch (err: any) {
       console.error('CONTRACTOR LOGIN FLOW FAILED:', err);
       setError(`Unexpected error. Please try again. (${err.message})`);
