@@ -298,8 +298,8 @@ export const contractorEmails = {
       `
       ${successCard(`
         ${p(`<strong style="color:${C.white};">You're in the network.</strong> Sign in to your dashboard, select your partnership tier, and complete checkout to activate your account and start receiving referrals.`, C.gray200)}
-        ${cta('Sign In &amp; Choose Your Plan &rarr;', `${BASE_URL}/contractor-portal`)}
-        ${linkFallback(`${BASE_URL}/contractor-portal`)}
+        ${cta('Sign In &amp; Choose Your Plan &rarr;', `${BASE_URL}/contractor-portal?redirect=${encodeURIComponent('/billing')}`)}
+        ${linkFallback(`${BASE_URL}/contractor-portal?redirect=${encodeURIComponent('/billing')}`)}
       `)}
 
       ${sectionLabel('Once Active You Receive')}
@@ -323,7 +323,7 @@ export const contractorEmails = {
       'Congratulations — your application has been approved. Sign in to get started.',
       'contractor'
     ),
-    text: `You're Approved\n\nCongratulations, ${contractorName},\n\n${companyName} has been approved to join the ListWorx IronClad Partner Network.\n\nSign in to your dashboard and choose your plan:\n${BASE_URL}/contractor-portal\n\nOnce active you'll receive qualified referrals from realtors and homeowners in your area.\n\n— The ListWorx Team`,
+    text: `You're Approved\n\nCongratulations, ${contractorName},\n\n${companyName} has been approved to join the ListWorx IronClad Partner Network.\n\nSign in to your dashboard and choose your plan:\n${BASE_URL}/contractor-portal?redirect=${encodeURIComponent('/billing')}\n\nOnce active you'll receive qualified referrals from realtors and homeowners in your area.\n\n— The ListWorx Team`,
   }),
 
   applicationDeclined: (contractorName: string, reason: string): EmailTemplate => ({
