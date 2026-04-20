@@ -78,7 +78,7 @@ export default function ContractorPortalPage() {
   const [message, setMessage] = useState('');
   const modeParam = searchParams.get('mode');
   const emailParam = searchParams.get('email');
-  const redirectTarget = sanitizeRedirect(searchParams.get('redirect'));
+  const redirectTarget = sanitizeRedirect(searchParams.get('redirect')); // kept for handoff/sanitization behavior
 
   const handleEmailChange = (nextEmail: string) => {
     setSignInEmail(nextEmail);
@@ -98,58 +98,6 @@ export default function ContractorPortalPage() {
       setActiveTab('signin');
     }
   }, [emailParam, modeParam]);
-
-  const routeAuthenticatedContractor = async (authContext: 'signin' | 'signup') => {
-    const {
-      data: { user: initialUser },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError) {
-      console.error('[contractor-portal] auth success, but getUser failed', {
-        authContext,
-        userError,
-      });
-    }
-
-    let authUser = initialUser;
-    if (!authUser?.id) {
-      authUser = await waitForUser();
-    }
-
-    if (!authUser?.id) {
-      throw new Error('Authentication succeeded, but authenticated user data did not load.');
-    }
-
-    const { data: contractorProfile, error: contractorError } = await supabase
-      .from('contractor_profiles')
-      .select('id, partner_status')
-      .eq('user_id', authUser.id)
-      .maybeSingle();
-
-    if (contractorError) {
-      console.error('[contractor-portal] contractor profile lookup failed', {
-        authContext,
-        userId: authUser.id,
-        contractorError,
-      });
-    }
-
-    const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
-    const contractorDestination = getContractorDestination(partnerStatus);
-    const chosenDestination = redirectTarget !== '/billing' ? redirectTarget : contractorDestination;
-
-    console.log('[contractor-portal] auth success', {
-      authContext,
-      userId: authUser.id,
-      activeTabBeforeRedirect: activeTab,
-      partnerStatus,
-      contractorDestination,
-      chosenDestination,
-    });
-
-    window.location.assign(chosenDestination);
-  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,14 +127,20 @@ export default function ContractorPortalPage() {
       }
 
       setMessage('Signed in successfully! Redirecting...');
-      await routeAuthenticatedContractor('signin');
+      console.log('[contractor-portal] auth success', {
+        authContext: 'signin',
+        activeTabBeforeRedirect: activeTab,
+        chosenDestination: '/contractor-dashboard',
+        redirectTarget,
+      });
+      window.location.assign('/contractor-dashboard');
+      return;
     } catch (err: any) {
       setError(err.message || 'An error occurred');
       console.error('[contractor-portal] signin failed', {
         activeTabAfterError: activeTab,
         error: err,
       });
-    } finally {
       setLoading(false);
     }
   };
@@ -248,14 +202,20 @@ export default function ContractorPortalPage() {
       }
 
       setMessage('Account created successfully! Redirecting...');
-      await routeAuthenticatedContractor('signup');
+      console.log('[contractor-portal] auth success', {
+        authContext: 'signup',
+        activeTabBeforeRedirect: activeTab,
+        chosenDestination: '/apply',
+        redirectTarget,
+      });
+      window.location.assign('/apply');
+      return;
     } catch (err: any) {
       setError(err.message || 'An error occurred');
       console.error('[contractor-portal] signup failed', {
         activeTabAfterError: activeTab,
         error: err,
       });
-    } finally {
       setLoading(false);
     }
   };
