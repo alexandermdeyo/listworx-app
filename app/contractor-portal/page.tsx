@@ -13,6 +13,24 @@ import { Loader as Loader2, Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+function sanitizeRedirect(redirect: string | null) {
+  if (!redirect) return '/billing';
+
+  const value = redirect.trim();
+
+  if (
+    !value.startsWith('/') ||
+    value.startsWith('//') ||
+    value.startsWith('/login') ||
+    value.startsWith('/signup') ||
+    value.startsWith('/contractor-portal')
+  ) {
+    return '/billing';
+  }
+
+  return value;
+}
+
 export default function ContractorPortalPage() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>('signin');
@@ -30,7 +48,7 @@ export default function ContractorPortalPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  const redirectTarget = searchParams.get('redirect') || '/billing';
+  const redirectTarget = sanitizeRedirect(searchParams.get('redirect'));
 
   const handleEmailChange = (nextEmail: string) => {
     setSignInEmail(nextEmail);

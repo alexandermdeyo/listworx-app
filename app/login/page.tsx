@@ -152,6 +152,7 @@ export default function LoginPage() {
           partnerStatus === 'suspended' ||
           partnerStatus === 'paused' ||
           partnerStatus === 'cancelled' ||
+          partnerStatus === 'removed' ||
           partnerStatus === 'inactive' ||
           !partnerStatus
         ) {
