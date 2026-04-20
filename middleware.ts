@@ -232,6 +232,36 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+
+  if (path.startsWith('/apply') && user?.id) {
+    if (role === 'ADMIN') {
+      return NextResponse.redirect(new URL('/admin/crm', req.url));
+    }
+
+    if (isRequestor(role)) {
+      return NextResponse.redirect(new URL('/requestor-dashboard', req.url));
+    }
+
+    if (isContractor) {
+      if (contractorStatus === 'active') {
+        console.log('[middleware] contractor redirect', {
+          path,
+          reason: 'active contractor should use dashboard',
+          destination: '/contractor-dashboard',
+        });
+        return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
+      }
+
+      if (contractorStatus === 'approved') {
+        console.log('[middleware] contractor redirect', {
+          path,
+          reason: 'approved contractor should complete billing',
+          destination: '/billing',
+        });
+        return NextResponse.redirect(new URL('/billing', req.url));
+      }
+    }
+  }
   if (isProtected) {
     res.headers.set(
       'Cache-Control',
