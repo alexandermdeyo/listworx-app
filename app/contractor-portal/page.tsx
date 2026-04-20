@@ -58,6 +58,47 @@ function getContractorDestination(partnerStatus: string) {
   return '/apply';
 }
 
+async function resolveContractorDestination(userId: string) {
+  const [{ data: appUser, error: appUserError }, { data: contractorProfile, error: contractorProfileError }] =
+    await Promise.all([
+      supabase.from('users').select('role').eq('id', userId).maybeSingle(),
+      supabase
+        .from('contractor_profiles')
+        .select('id, partner_status')
+        .eq('user_id', userId)
+        .maybeSingle(),
+    ]);
+
+  if (appUserError) {
+    console.error('[contractor-portal] role lookup failed', {
+      userId,
+      error: appUserError,
+    });
+  }
+
+  if (contractorProfileError) {
+    console.error('[contractor-portal] contractor profile lookup failed', {
+      userId,
+      error: contractorProfileError,
+    });
+  }
+
+  const role = (appUser?.role || '').toString().toUpperCase();
+  const hasContractorProfile = !!contractorProfile;
+  const partnerStatus = normalizePartnerStatus(contractorProfile?.partner_status);
+  const destination = getContractorDestination(partnerStatus);
+
+  console.log('[contractor-portal] contractor resolution', {
+    userId,
+    role,
+    hasContractorProfile,
+    partnerStatus: partnerStatus || null,
+    destination,
+  });
+
+  return destination;
+}
+
 export default function ContractorPortalPage() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>('signin');
@@ -123,17 +164,31 @@ export default function ContractorPortalPage() {
 
       if (signInError) {
         setError(signInError.message);
+        setLoading(false);
         return;
       }
 
-      setMessage('Signed in successfully! Redirecting...');
+      const authUser = await waitForUser();
+
+      if (!authUser?.id) {
+        throw new Error('Login succeeded, but authenticated user data did not load.');
+      }
+
       console.log('[contractor-portal] auth success', {
         authContext: 'signin',
+        userId: authUser.id,
+      });
+
+      const destination = await resolveContractorDestination(authUser.id);
+
+      setMessage('Signed in successfully! Redirecting...');
+      console.log('[contractor-portal] redirecting after signin', {
+        authContext: 'signin',
         activeTabBeforeRedirect: activeTab,
-        chosenDestination: '/contractor-dashboard',
+        chosenDestination: destination,
         redirectTarget,
       });
-      window.location.assign('/contractor-dashboard');
+      window.location.assign(destination);
       return;
     } catch (err: any) {
       setError(err.message || 'An error occurred');
@@ -198,11 +253,19 @@ export default function ContractorPortalPage() {
         setError('Account created, but auto-login failed. Please sign in manually.');
         setActiveTab('signin');
         handleEmailChange(signUpEmail);
+        setLoading(false);
         return;
       }
 
-      setMessage('Account created successfully! Redirecting...');
+      const authUser = await waitForUser();
+
       console.log('[contractor-portal] auth success', {
+        authContext: 'signup',
+        userId: authUser?.id || null,
+      });
+
+      setMessage('Account created successfully! Redirecting...');
+      console.log('[contractor-portal] redirecting after signup', {
         authContext: 'signup',
         activeTabBeforeRedirect: activeTab,
         chosenDestination: '/apply',

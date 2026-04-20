@@ -37,6 +37,12 @@ function normalizeStatus(status?: string | null) {
   return (status || '').toString().trim().toLowerCase();
 }
 
+function getContractorDestination(status: string) {
+  if (status === 'active') return '/contractor-dashboard';
+  if (status === 'approved') return '/billing';
+  return '/apply';
+}
+
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({
     request: {
@@ -129,6 +135,18 @@ export async function middleware(req: NextRequest) {
   }
 
   const isContractor = role === 'CONTRACTOR' || hasContractorProfile;
+  const contractorDestination = getContractorDestination(contractorStatus);
+
+  if (user?.id) {
+    console.log('[middleware] auth resolution', {
+      path,
+      userId: user.id,
+      role,
+      hasContractorProfile,
+      contractorStatus: contractorStatus || null,
+      contractorDestination,
+    });
+  }
 
   if (isProtected && !user) {
     const url = new URL('/login', req.url);
@@ -166,10 +184,20 @@ export async function middleware(req: NextRequest) {
     }
 
     if (contractorStatus === 'approved') {
+      console.log('[middleware] contractor redirect', {
+        path,
+        reason: 'approved contractor must complete billing before dashboard',
+        destination: '/billing',
+      });
       return NextResponse.redirect(new URL('/billing', req.url));
     }
 
     if (contractorStatus !== 'active') {
+      console.log('[middleware] contractor redirect', {
+        path,
+        reason: 'contractor not active for dashboard',
+        destination: '/apply',
+      });
       return NextResponse.redirect(new URL('/apply', req.url));
     }
   }
@@ -185,10 +213,21 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/', req.url));
     }
 
-    if (
-      contractorStatus !== 'approved' &&
-      contractorStatus !== 'active'
-    ) {
+    if (contractorStatus === 'active') {
+      console.log('[middleware] contractor redirect', {
+        path,
+        reason: 'active contractor should use dashboard',
+        destination: '/contractor-dashboard',
+      });
+      return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
+    }
+
+    if (contractorStatus !== 'approved') {
+      console.log('[middleware] contractor redirect', {
+        path,
+        reason: 'contractor must have approved status for billing',
+        destination: '/apply',
+      });
       return NextResponse.redirect(new URL('/apply', req.url));
     }
   }
