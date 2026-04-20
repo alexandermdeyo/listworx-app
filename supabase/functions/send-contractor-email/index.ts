@@ -409,8 +409,8 @@ Deno.serve(async (req: Request) => {
           `
           ${successCard(`
             ${p(`<strong style="color:${C.white};">You're in the network.</strong> Sign in to your dashboard, select your partnership tier, and complete checkout to activate your account and start receiving referrals.`, C.gray200)}
-            ${cta('Sign In &amp; Choose Your Plan &rarr;', `${BASE_URL}/contractor-portal?email=${encodeURIComponent(to)}&redirect=${encodeURIComponent('/billing')}`)}
-            ${linkFallback(`${BASE_URL}/contractor-portal?email=${encodeURIComponent(to)}&redirect=${encodeURIComponent('/billing')}`)}
+            ${cta('Sign In to Your Dashboard &rarr;', `${BASE_URL}/contractor-portal?email=${encodeURIComponent(to)}&redirect=${encodeURIComponent('/contractor-dashboard')}`)}
+            ${linkFallback(`${BASE_URL}/contractor-portal?email=${encodeURIComponent(to)}&redirect=${encodeURIComponent('/contractor-dashboard')}`)}
           `)}
 
           ${sectionLabel('Once Active You Receive')}
@@ -433,7 +433,7 @@ Deno.serve(async (req: Request) => {
           `,
           'Congratulations — your application has been approved. Sign in to get started.'
         );
-        text = `You're Approved\n\nCongratulations, ${contractorName},\n\n${companyName} has been approved to join the ListWorx IronClad Partner Network.\n\nSign in to your dashboard and choose your plan:\n${BASE_URL}/contractor-portal?email=${encodeURIComponent(to)}&redirect=${encodeURIComponent('/billing')}\n\nOnce active you'll receive qualified referrals from realtors and homeowners in your area.\n\n— The ListWorx Team`;
+        text = `You're Approved\n\nCongratulations, ${contractorName},\n\n${companyName} has been approved to join the ListWorx IronClad Partner Network.\n\nSign in to your dashboard and choose your plan:\n${BASE_URL}/contractor-portal?email=${encodeURIComponent(to)}&redirect=${encodeURIComponent('/contractor-dashboard')}\n\nOnce active you'll receive qualified referrals from realtors and homeowners in your area.\n\n— The ListWorx Team`;
         break;
 
       /* ── APPLICATION DECLINED ─────────────────────────── */
