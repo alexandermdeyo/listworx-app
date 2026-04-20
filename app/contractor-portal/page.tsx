@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -34,6 +34,7 @@ function sanitizeRedirect(redirect: string | null) {
 export default function ContractorPortalPage() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>('signin');
+  const hasInitializedFromQuery = useRef(false);
 
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
@@ -48,7 +49,9 @@ export default function ContractorPortalPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  const redirectTarget = sanitizeRedirect(searchParams.get('redirect'));
+  const modeParam = searchParams.get('mode');
+  const emailParam = searchParams.get('email');
+  const redirectTarget = sanitizeRedirect(searchParams.get('redirect')); // kept for handoff/sanitization behavior
 
   const handleEmailChange = (nextEmail: string) => {
     setSignInEmail(nextEmail);
@@ -56,14 +59,18 @@ export default function ContractorPortalPage() {
   };
 
   useEffect(() => {
-    const emailParam = searchParams.get('email');
+    if (hasInitializedFromQuery.current) return;
+    hasInitializedFromQuery.current = true;
+
     if (emailParam) {
       const decodedEmail = decodeURIComponent(emailParam);
-      setSignInEmail(decodedEmail);
-      setSignUpEmail(decodedEmail);
+      handleEmailChange(decodedEmail);
+    }
+
+    if (modeParam === 'login') {
       setActiveTab('signin');
     }
-  }, [searchParams]);
+  }, [emailParam, modeParam]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +83,11 @@ export default function ContractorPortalPage() {
     }
 
     setLoading(true);
+    console.log('[contractor-portal] submit start', {
+      authContext: 'signin',
+      activeTab,
+      email: signInEmail,
+    });
     try {
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: signInEmail,
@@ -88,10 +100,20 @@ export default function ContractorPortalPage() {
       }
 
       setMessage('Signed in successfully! Redirecting...');
-      setTimeout(() => { window.location.href = redirectTarget; }, 1500);
+      console.log('[contractor-portal] auth success', {
+        authContext: 'signin',
+        activeTabBeforeRedirect: activeTab,
+        chosenDestination: '/contractor-dashboard',
+        redirectTarget,
+      });
+      window.location.assign('/contractor-dashboard');
+      return;
     } catch (err: any) {
       setError(err.message || 'An error occurred');
-    } finally {
+      console.error('[contractor-portal] signin failed', {
+        activeTabAfterError: activeTab,
+        error: err,
+      });
       setLoading(false);
     }
   };
@@ -117,6 +139,11 @@ export default function ContractorPortalPage() {
     }
 
     setLoading(true);
+    console.log('[contractor-portal] submit start', {
+      authContext: 'signup',
+      activeTab,
+      email: signUpEmail,
+    });
     try {
       const response = await fetch('/api/set-contractor-password', {
         method: 'POST',
@@ -148,10 +175,20 @@ export default function ContractorPortalPage() {
       }
 
       setMessage('Account created successfully! Redirecting...');
-      setTimeout(() => { window.location.href = redirectTarget; }, 1500);
+      console.log('[contractor-portal] auth success', {
+        authContext: 'signup',
+        activeTabBeforeRedirect: activeTab,
+        chosenDestination: '/apply',
+        redirectTarget,
+      });
+      window.location.assign('/apply');
+      return;
     } catch (err: any) {
       setError(err.message || 'An error occurred');
-    } finally {
+      console.error('[contractor-portal] signup failed', {
+        activeTabAfterError: activeTab,
+        error: err,
+      });
       setLoading(false);
     }
   };
