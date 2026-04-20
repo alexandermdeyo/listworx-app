@@ -157,7 +157,7 @@ export default function ContractorPortalPage() {
   const supabase = supabaseRef.current;
 
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<string>('signin');
+  const [activeTab, setActiveTab] = useState<string>('signup');
   const hasInitializedFromQuery = useRef(false);
 
   const [signInEmail, setSignInEmail] = useState('');
