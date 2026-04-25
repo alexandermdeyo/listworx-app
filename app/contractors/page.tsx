@@ -22,11 +22,11 @@ export default function ContractorsPage() {
             IronClad Partner Network
           </Badge>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-            Quality Referrals.<br className="hidden md:block" />
-            <span className="text-primary">Flat Monthly Rate.</span>
+            Built for Contractors<br className="hidden md:block" />
+            <span className="text-primary">Who Take Pride in Their Work.</span>
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-            ListWorx is not a lead marketplace. It's a professional contractor network where you pay for visibility and access — not per lead. Every referral comes from a realtor or homeowner who is serious and ready to move forward.
+            You bring the craftsmanship. We help bring the opportunity. ListWorx is your growth partner — helping serious home service pros get seen by realtors, homeowners, and property managers who need quality work done right.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -61,16 +61,53 @@ export default function ContractorsPage() {
         </div>
       </section>
 
+      {/* BRAND MESSAGE */}
+      <section className="py-16 md:py-20 bg-background border-y border-border">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-5">
+                We’re Building This With You
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto">
+                ListWorx is built for contractors who take pride in their work.
+              </p>
+            </div>
+
+            <Card className="p-6 md:p-8 bg-card border border-border mb-8">
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                We’re not here to sell random leads, spam your phone, or throw you into a race-to-the-bottom bidding war. We’re building a trusted contractor network that helps serious home service pros get in front of realtors, homeowners, and property managers who need quality work done right.
+              </p>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed mt-5">
+                As ListWorx grows, our goal is to grow with you — helping contractors get more exposure, build stronger reputations, earn more referrals, and eventually access tools, education, hiring support, mentorship opportunities, and marketing resources that help your business scale.
+              </p>
+            </Card>
+
+            <div className="grid sm:grid-cols-3 gap-4">
+              {[
+                'We don’t do lead spam.',
+                'We don’t do race-to-the-bottom bidding.',
+                'We help good contractors get seen by people who actually need them.',
+              ].map((line) => (
+                <div key={line} className="rounded-lg border border-primary/30 bg-primary/5 px-4 py-4 text-center">
+                  <p className="text-sm md:text-base font-semibold text-lw-text">{line}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* HOW THE NETWORK WORKS */}
       <section className="py-20 bg-lw-surface border-y border-lw-dark-border">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-                How the Network Works
+              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark mb-4">
+                How ListWorx Sends You Better Opportunities
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-                From application to referral — here's exactly what the process looks like.
+                From application to first call, here’s exactly how we help the right customers find your business.
               </p>
             </div>
 
@@ -98,7 +135,7 @@ export default function ContractorsPage() {
                   step: '04',
                   icon: Target,
                   title: 'Receive Referrals',
-                  desc: "When a realtor or homeowner requests your trade in your service area, you're matched and notified directly.",
+                  desc: "When someone needs your trade in your service area, you're matched directly — no junk blasts, no bidding circus.",
                 },
               ].map((item) => (
                 <div key={item.step} className="text-center">
@@ -201,11 +238,11 @@ export default function ContractorsPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-                Subscription vs. Pay-Per-Lead
+              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark mb-4">
+                Stop Paying for Dead-End Leads
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground">
-                Here's what you actually get when you switch from per-lead chaos to a flat subscription model.
+                Here’s what changes when you stop buying random leads and join a trusted contractor network.
               </p>
             </div>
 
@@ -238,7 +275,7 @@ export default function ContractorsPage() {
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">✗</span>
-                    <span>Requests from browsers with no real intent to buy</span>
+                    <span>Too many “just looking” requests that never become real jobs</span>
                   </li>
                 </ul>
               </Card>
@@ -271,7 +308,7 @@ export default function ContractorsPage() {
                   </li>
                   <li className="flex items-start">
                     <span className="mr-3 font-bold">✓</span>
-                    <span>Every request is from a serious buyer with real work</span>
+                    <span>We help good contractors get seen by people who actually need them</span>
                   </li>
                 </ul>
               </Card>
@@ -520,11 +557,11 @@ export default function ContractorsPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-                Partnership Tiers
+              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark mb-4">
+                Choose Your Spot in the Network
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground mb-2">
-                Flat monthly pricing. No per-lead fees. Choose the tier that fits your growth goals.
+                Flat monthly pricing. No per-lead surprises. Pick the level that matches where your business is headed.
               </p>
               <p className="text-sm text-muted-foreground italic mt-2">
                 All Partners must maintain active IronClad Standards compliance to remain in the network.
