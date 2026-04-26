@@ -6,6 +6,7 @@ import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/design-system';
 import {
   Loader as Loader2,
@@ -17,6 +18,15 @@ import {
   Mail,
   Phone,
   Globe,
+  ShieldCheck,
+  Heart,
+  MessageSquare,
+  BookmarkCheck,
+  ClipboardList,
+  Home,
+  Users,
+  ExternalLink,
+  Star,
 } from 'lucide-react';
 
 type JobRequest = {
@@ -34,6 +44,10 @@ type JobRequest = {
   urgency: string | null;
   status: string | null;
   created_at: string | null;
+  feedback_token?: string | null;
+  trade_type?: string | null;
+  service_type?: string | null;
+  categories?: string[] | null;
 };
 
 type Contractor = {
@@ -44,6 +58,9 @@ type Contractor = {
   phone: string | null;
   website: string | null;
   bio: string | null;
+  service_area_state?: string | null;
+  service_area_counties?: string[] | null;
+  ironclad_accepted?: boolean | null;
 };
 
 type Referral = {
@@ -65,6 +82,15 @@ function normalizeWebsiteUrl(website: string) {
 
 function normalizePhoneHref(phone: string) {
   return `tel:${phone.replace(/[^0-9+]/g, '')}`;
+}
+
+function formatDate(value: string | null) {
+  if (!value) return 'Unknown date';
+  return new Date(value).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 export default function RequestorDashboardPage() {
@@ -133,6 +159,22 @@ export default function RequestorDashboardPage() {
     return value;
   }
 
+  function getProjectType(job: JobRequest) {
+    if (job.trade_type) return job.trade_type;
+    if (job.service_type) return job.service_type;
+    if (Array.isArray(job.categories) && job.categories.length > 0) return job.categories[0];
+    return 'General home service request';
+  }
+
+  function getServiceArea(contractor: Contractor | null) {
+    if (!contractor) return 'Service area pending';
+    if (Array.isArray(contractor.service_area_counties) && contractor.service_area_counties.length > 0) {
+      return `${contractor.service_area_counties.slice(0, 2).join(', ')}${contractor.service_area_counties.length > 2 ? ' +' : ''}`;
+    }
+    if (contractor.service_area_state) return contractor.service_area_state;
+    return 'Service area shared after connection';
+  }
+
   return (
     <PageShell surface="dark">
       <Navigation />
@@ -145,10 +187,13 @@ export default function RequestorDashboardPage() {
                 Requestor Dashboard
               </p>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
-                My Requests
+                Relationship Dashboard
               </h1>
               <p className="text-muted-foreground text-base md:text-lg">
-                View your contractor referrals and request history.
+                Your clients trust you. We help protect that trust.
+              </p>
+              <p className="text-muted-foreground text-sm mt-2">
+                Built to help realtors, homeowners, and property managers move faster with less chaos.
               </p>
             </div>
 
@@ -183,6 +228,21 @@ export default function RequestorDashboardPage() {
             </Card>
           </div>
 
+          <Card className="p-6 mb-8 bg-lw-rust/10 border-lw-rust/30">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-1">Keep your best contractors close.</p>
+                <p className="text-sm text-muted-foreground">
+                  Request trusted help without starting from scratch every time.
+                </p>
+              </div>
+              <Button className="bg-lw-rust hover:bg-lw-rust-hover text-white md:w-auto w-full">
+                <Heart className="h-4 w-4 mr-2" />
+                Save Your Favorites
+              </Button>
+            </div>
+          </Card>
+
           {loading ? (
             <Card className="p-10">
               <div className="flex items-center justify-center text-muted-foreground">
@@ -201,6 +261,12 @@ export default function RequestorDashboardPage() {
             </Card>
           ) : (
             <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-foreground mb-2">Request History</h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Organize referrals, track outcomes, and keep every project tied to the right relationship.
+                </p>
+              </div>
               {jobRequests.map((job) => {
                 const jobReferrals = referralsByRequest.get(job.id) || [];
 
@@ -214,6 +280,10 @@ export default function RequestorDashboardPage() {
 
                         <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
                           <span className="inline-flex items-center gap-1">
+                            <ClipboardList className="h-4 w-4" />
+                            {getProjectType(job)}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
                             <MapPin className="h-4 w-4" />
                             {job.property_county}
                           </span>
@@ -225,17 +295,14 @@ export default function RequestorDashboardPage() {
                             <User2 className="h-4 w-4" />
                             {job.requester_type}
                           </span>
+                          <Badge variant="secondary" className="bg-lw-rust/10 text-lw-rust border border-lw-rust/20">
+                            {job.status || 'Pending'}
+                          </Badge>
                         </div>
                       </div>
 
                       <div className="text-sm text-muted-foreground">
-                        {job.created_at
-                          ? new Date(job.created_at).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })
-                          : ''}
+                        {formatDate(job.created_at)}
                       </div>
                     </div>
 
@@ -250,7 +317,7 @@ export default function RequestorDashboardPage() {
 
                     <div>
                       <p className="text-sm uppercase tracking-wide text-muted-foreground mb-3">
-                        Matched Contractors
+                        Referred Contractors
                       </p>
 
                       {jobReferrals.length === 0 ? (
@@ -290,6 +357,20 @@ export default function RequestorDashboardPage() {
                                 </div>
 
                                 <div className="space-y-2 text-sm text-muted-foreground">
+                                  <div className="inline-flex items-center gap-1">
+                                    <ClipboardList className="h-4 w-4 shrink-0" />
+                                    <span>{getProjectType(job)}</span>
+                                  </div>
+                                  <div className="inline-flex items-center gap-1">
+                                    <MapPin className="h-4 w-4 shrink-0" />
+                                    <span>{getServiceArea(contractor)}</span>
+                                  </div>
+                                  <div className="inline-flex items-center gap-1">
+                                    <ShieldCheck className="h-4 w-4 shrink-0" />
+                                    <span>
+                                      {contractor?.ironclad_accepted ? 'IronClad Verified' : 'Trust status in review'}
+                                    </span>
+                                  </div>
                                   {contractor?.owner_name && (
                                     <div className="inline-flex items-center gap-1">
                                       <Building2 className="h-4 w-4 shrink-0" />
@@ -337,11 +418,30 @@ export default function RequestorDashboardPage() {
                                 </div>
 
                                 {contractor?.id && (
-                                  <Link href={profileHref} className="block mt-4">
-                                    <Button className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white">
-                                      View Full Profile
+                                  <div className="grid grid-cols-1 gap-2 mt-4">
+                                    <Link href={profileHref} className="block">
+                                      <Button className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white">
+                                        View Profile
+                                      </Button>
+                                    </Link>
+                                    <Button variant="outline" className="w-full border-lw-rust/30 text-foreground hover:bg-lw-rust/10">
+                                      <BookmarkCheck className="h-4 w-4 mr-2" />
+                                      Save Contractor
                                     </Button>
-                                  </Link>
+                                    {job.feedback_token ? (
+                                      <Link href={`/feedback/${job.feedback_token}`} className="block">
+                                        <Button variant="outline" className="w-full border-lw-rust/30 text-foreground hover:bg-lw-rust/10">
+                                          <MessageSquare className="h-4 w-4 mr-2" />
+                                          Give Feedback
+                                        </Button>
+                                      </Link>
+                                    ) : (
+                                      <Button variant="outline" className="w-full border-lw-rust/20 text-muted-foreground" disabled>
+                                        <MessageSquare className="h-4 w-4 mr-2" />
+                                        Give Feedback (Coming Soon)
+                                      </Button>
+                                    )}
+                                  </div>
                                 )}
                               </div>
                             );
@@ -349,9 +449,117 @@ export default function RequestorDashboardPage() {
                         </div>
                       )}
                     </div>
+                    <div className="mt-5 flex justify-end">
+                      <Button variant="outline" className="border-lw-rust/30 text-foreground hover:bg-lw-rust/10">
+                        View Request Details
+                      </Button>
+                    </div>
                   </Card>
                 );
               })}
+
+              <div className="grid lg:grid-cols-2 gap-6 pt-4">
+                <Card className="p-6">
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-foreground">Saved Contractors</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Keep your trusted pros organized for faster repeat requests.
+                      </p>
+                    </div>
+                    <Heart className="h-5 w-5 text-lw-rust" />
+                  </div>
+                  <div className="rounded-xl border border-dashed border-border p-4 bg-muted/20">
+                    <p className="text-sm text-muted-foreground mb-3">
+                      No saved contractors yet.
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      TODO: Wire this section to persisted favorites once backend support is available.
+                    </p>
+                    <Button variant="outline" className="border-lw-rust/30 text-foreground hover:bg-lw-rust/10">
+                      Request Again
+                    </Button>
+                  </div>
+                </Card>
+
+                <Card className="p-6">
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-foreground">Feedback</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Track who followed through so future referrals get even stronger.
+                      </p>
+                    </div>
+                    <Star className="h-5 w-5 text-lw-rust" />
+                  </div>
+                  <div className="space-y-3 rounded-xl border border-border p-4 bg-muted/20">
+                    <label className="flex items-center gap-2 text-sm text-foreground">
+                      <input type="checkbox" disabled className="accent-lw-rust" />
+                      Contacted me
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-foreground">
+                      <input type="checkbox" disabled className="accent-lw-rust" />
+                      Showed up
+                    </label>
+                    <div>
+                      <p className="text-sm text-foreground mb-1">Communication rating</p>
+                      <div className="text-xs text-muted-foreground">TODO: Add rating control + backend wiring.</div>
+                    </div>
+                    <label className="flex items-center gap-2 text-sm text-foreground">
+                      <input type="checkbox" disabled className="accent-lw-rust" />
+                      Would recommend
+                    </label>
+                    <div>
+                      <p className="text-sm text-foreground mb-1">Private notes</p>
+                      <div className="rounded-md border border-border bg-background p-2 text-xs text-muted-foreground">
+                        TODO: Save private requestor notes for this contractor/referral.
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              <Card className="p-6">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-foreground">Invite a Contractor You Trust</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Invite the contractors you already trust and help strengthen the ListWorx network.
+                    </p>
+                  </div>
+                  <Link href="/apply">
+                    <Button className="bg-lw-rust hover:bg-lw-rust-hover text-white w-full md:w-auto">
+                      <Users className="h-4 w-4 mr-2" />
+                      Share Contractor Invite
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+
+              <Card className="p-6">
+                <h3 className="text-xl font-semibold text-foreground mb-1">Listing Prep Tools</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Ready-to-use checklists to coordinate projects and protect your client experience.
+                </p>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {[
+                    'Pre-listing repair checklist',
+                    'Inspection repair checklist',
+                    'Seller prep checklist',
+                    'Property manager turnover checklist',
+                  ].map((resource) => (
+                    <div key={resource} className="rounded-xl border border-border p-4 bg-muted/20">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-start gap-2">
+                          <Home className="h-4 w-4 mt-0.5 text-lw-rust" />
+                          <p className="text-sm text-foreground">{resource}</p>
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
             </div>
           )}
         </div>
