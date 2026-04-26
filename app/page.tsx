@@ -35,27 +35,29 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto text-center">
           <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
             <Shield className="h-3 w-3 mr-1" />
-            The IronClad Contractor Network — Nashville & Gallatin
+            Trusted referral network for contractors, realtors, homeowners, and property managers
           </Badge>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-            Vetted Contractors.<br className="hidden md:block" />
-            <span className="text-primary"> Trusted Referrals.</span>
+            Trusted Contractors. Stronger Businesses. Better Referrals.
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-            ListWorx connects realtors and homeowners with pre-screened, IronClad-certified contractors — no spam, no bidding wars, no surprises. You get up to 3 qualified matches. You choose who to call.
+            ListWorx connects contractors with realtors, homeowners, and property managers through a trusted referral network built on reputation, professionalism, and real relationships—not pay-per-lead chaos.
+          </p>
+          <p className="text-base md:text-lg text-foreground/80 mb-10 max-w-3xl mx-auto">
+            We help contractors grow. We help requestors move faster. We protect reputations on both sides.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-stretch sm:items-center">
-            <Link href="/request" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-lg shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90">
-                <Users className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                Request a Contractor — Free
-              </Button>
-            </Link>
             <Link href="/apply" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-lg border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
+              <Button size="lg" className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-lg shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90 text-white">
                 <Briefcase className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                 Apply as a Contractor
+              </Button>
+            </Link>
+            <Link href="/request" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-lg border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
+                <Users className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+                Request a Trusted Contractor
               </Button>
             </Link>
           </div>
@@ -97,23 +99,23 @@ export default function LandingPage() {
                   Limited Founding Spots Available
                 </Badge>
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                  Become a Founding Partner
+                  Built for contractors who take pride in their work.
                 </h2>
                 <p className="text-zinc-400 text-base md:text-lg leading-relaxed max-w-2xl">
-                  The first contractors to join the ListWorx network earn permanent Founding Partner status — a distinction that cannot be purchased later. Founding Partners receive priority early positioning, permanent recognition across the platform, and stronger visibility as the network grows.
+                  We do not sell random leads. We build trusted relationships. Founding Partners get early visibility, long-term recognition, and first-position credibility as the network grows in your market.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-4 justify-center lg:justify-start">
                   <div className="flex items-center gap-2 text-sm text-amber-400">
                     <Star className="h-4 w-4" />
-                    <span>Permanent founding recognition</span>
+                      <span>Permanent founding recognition</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-amber-400">
                     <Shield className="h-4 w-4" />
-                    <span>Priority early positioning</span>
+                      <span>Priority early positioning</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-amber-400">
                     <Award className="h-4 w-4" />
-                    <span>Limited availability</span>
+                      <span>Limited availability</span>
                   </div>
                 </div>
                 <div className="mt-6">
@@ -163,13 +165,13 @@ export default function LandingPage() {
                 <Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad Certified Partner" width={160} height={160} className="w-32 md:w-40 h-auto" />
               </div>
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-                What IronClad Standards Mean
+                IronClad Standards Are a Real Trust Standard
               </h2>
               <p className="text-xl md:text-2xl text-red-500 mb-3 font-semibold">
-                Vetted. Verified. Accountable.
+                Your reputation matters. So does ours.
               </p>
               <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-                IronClad Standards is the vetting and accountability framework every ListWorx contractor must meet and maintain. It's not a marketing badge — it's an enforced set of requirements covering licensing, insurance, communication, and conduct.
+                IronClad Standards is the accountability framework every ListWorx contractor must meet and keep. This is not badge marketing. It is enforced standards for licensing, insurance, communication, and professional conduct.
               </p>
             </div>
 
@@ -198,7 +200,7 @@ export default function LandingPage() {
                   </li>
                   <li className="flex items-start">
                     <AlertCircle className="h-5 w-5 text-red-500 mr-3 mt-1 flex-shrink-0" />
-                    <span>Contractors who won't stand behind their work</span>
+                    <span>Contractors who will not stand behind their work</span>
                   </li>
                 </ul>
               </div>
@@ -276,11 +278,11 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark-border mb-4">
-                Why Most Contractor Referrals Fail
+              <h2 className="text-3xl md:text-5xl font-bold text-lw-text mb-4">
+                Trusted contractors. Cleaner closings. Stronger reputations.
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-                Traditional lead marketplaces were built for volume, not quality. That's a problem for everyone.
+                For realtors, homeowners, and property managers: one bad contractor can cost you everything. We help protect that.
               </p>
             </div>
 
@@ -288,28 +290,28 @@ export default function LandingPage() {
               <Card className="p-6 md:p-8 bg-background border-2 border-destructive/20">
                 <h3 className="text-xl font-bold text-foreground mb-4 flex items-center">
                   <AlertCircle className="h-6 w-6 text-destructive mr-3" />
-                  Contractors Pay Per Lead — and Hate It
+                  Contractors Need Better Than Pay-Per-Lead Chaos
                 </h3>
                 <ul className="space-y-3 text-muted-foreground">
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>$15–$100+ per lead, regardless of outcome</span>
+                    <span>$15–$100+ per lead, win or lose</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>The same lead sold to 10–20 competitors</span>
+                    <span>The same lead sold to multiple competitors</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>Race to the bottom on price just to win work</span>
+                    <span>Race-to-the-bottom pricing pressure</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>Tire-kickers and fake requests mixed with real ones</span>
+                    <span>Low-intent and fake requests mixed with real projects</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>Unpredictable costs with no revenue guarantee</span>
+                    <span>Unpredictable spend with no relationship built</span>
                   </li>
                 </ul>
               </Card>
@@ -317,37 +319,37 @@ export default function LandingPage() {
               <Card className="p-6 md:p-8 bg-background border-2 border-destructive/20">
                 <h3 className="text-xl font-bold text-foreground mb-4 flex items-center">
                   <AlertCircle className="h-6 w-6 text-destructive mr-3" />
-                  Realtors Refer Contractors and Regret It
+                  Requestors Carry the Risk When Referrals Go Wrong
                 </h3>
                 <ul className="space-y-3 text-muted-foreground">
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>No way to verify licenses or insurance upfront</span>
+                    <span>Hard to verify licensing and insurance before sharing names</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>Contractors who go silent after getting the job</span>
+                    <span>Contractors who go silent after first contact</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>No accountability when the work falls short</span>
+                    <span>No accountability when communication or work quality slips</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>Your professional reputation tied to someone else's performance</span>
+                    <span>Your reputation tied to someone else’s performance</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">•</span>
-                    <span>Deals delayed or derailed by contractor failures</span>
+                    <span>Deals and turnovers delayed by missed timelines</span>
                   </li>
                 </ul>
               </Card>
             </div>
 
             <div className="bg-primary text-white rounded-lg p-6 md:p-8 text-center">
-              <h3 className="text-2xl md:text-3xl font-bold mb-3">The ListWorx Model is Different</h3>
+              <h3 className="text-2xl md:text-3xl font-bold mb-3">The ListWorx Model Is Relationship-First</h3>
               <p className="text-lg md:text-xl opacity-90 max-w-3xl mx-auto">
-                Contractors pay a flat monthly subscription — not per lead — for visibility and access to quality referrals. Realtors use it free. Every contractor is vetted before approval and held to IronClad Standards throughout their membership.
+                We help good contractors get seen by people who actually need them. Requestors get up to 3 trusted referrals, not a random list. Contractors grow with visibility, stronger reputation, and long-term support as the network expands.
               </p>
             </div>
           </div>
@@ -358,13 +360,13 @@ export default function LandingPage() {
       <section id="how-it-works" className="bg-card py-16 md:py-20 border-y border-border">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              How It Works
-            </h2>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Submit a request, receive up to 3 vetted matches, choose who to contact. Simple and fast.
-            </p>
-          </div>
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              A premium 3-referral process by design
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Every request returns exactly 3 vetted referrals max, so you can move quickly with confidence instead of sorting through noisy directories.
+              </p>
+            </div>
 
           <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
             <Card className="p-6 md:p-8 rounded-lg shadow-sm hover:shadow-lg transition-all border border-border bg-card">
@@ -372,9 +374,9 @@ export default function LandingPage() {
                 <Search className="h-6 w-6 md:h-7 md:w-7 text-primary" />
               </div>
               <div className="text-5xl md:text-6xl font-bold text-primary/20 mb-3 md:mb-4">01</div>
-              <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">Submit Your Request</h3>
+              <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">Tell Us What You Need</h3>
               <p className="text-sm md:text-base text-muted-foreground">
-                Tell us the property location, service type, and your timeline. Takes under 2 minutes and costs nothing.
+                Share location, project type, and timeline in a quick request. We focus on fit, not lead volume.
               </p>
             </Card>
 
@@ -385,7 +387,7 @@ export default function LandingPage() {
               <div className="text-5xl md:text-6xl font-bold text-primary/20 mb-3 md:mb-4">02</div>
               <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">Receive Up to 3 Matches</h3>
               <p className="text-sm md:text-base text-muted-foreground">
-                We match you with up to 3 IronClad-certified contractors based on trade, location, and availability. No bidding wars. No junk lists.
+                We hand-select up to 3 IronClad contractors based on trade, location, and availability. No bidding wars. No junk blasts.
               </p>
             </Card>
 
@@ -396,7 +398,7 @@ export default function LandingPage() {
               <div className="text-5xl md:text-6xl font-bold text-primary/20 mb-3 md:mb-4">03</div>
               <h3 className="text-lg md:text-xl font-bold text-foreground mb-2 md:mb-3">You Choose Who to Contact</h3>
               <p className="text-sm md:text-base text-muted-foreground">
-                Review your matches and reach out on your terms. Contractors respond within 24 hours. No pressure, no spam.
+                Review, connect, and keep moving. You stay in control while every contractor is held to professional standards.
               </p>
             </Card>
           </div>
@@ -409,19 +411,19 @@ export default function LandingPage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-                For Realtors
+                For Realtors, Homeowners, and Property Managers
               </h2>
               <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                Stop relying on whoever picks up the phone. Get access to a curated bench of vetted professionals — free, fast, and reliable.
+                Protect listings, reduce contractor headaches, and keep client trust strong with a reliable network you can actually stand behind.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <Card className="p-6 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all">
                 <Clock className="h-10 w-10 mb-4 text-white" />
-                <h3 className="text-xl font-semibold mb-2 text-white">No More Cold Calling</h3>
+                <h3 className="text-xl font-semibold mb-2 text-white">Move Faster Under Pressure</h3>
                 <p className="text-white/90">
-                  One request gets you up to 3 qualified matches. No callbacks from random contractors. No chasing.
+                  One request gives you three vetted options so listing prep, repairs, and turnovers do not stall.
                 </p>
               </Card>
 
@@ -429,23 +431,23 @@ export default function LandingPage() {
                 <Shield className="h-10 w-10 mb-4 text-white" />
                 <h3 className="text-xl font-semibold mb-2 text-white">Protect Your Reputation</h3>
                 <p className="text-white/90">
-                  Every contractor is licensed, insured, and held to IronClad Standards. Refer them with confidence. Your name stays clean.
+                  Every contractor is vetted and held to IronClad Standards, so your recommendations stay trustworthy.
                 </p>
               </Card>
 
               <Card className="p-6 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all">
                 <Users className="h-10 w-10 mb-4 text-white" />
-                <h3 className="text-xl font-semibold mb-2 text-white">You Stay in Control</h3>
+                <h3 className="text-xl font-semibold mb-2 text-white">Build Long-Term Relationships</h3>
                 <p className="text-white/90">
-                  You receive the matches. You decide who to contact. No contractor gets your client's information until you share it.
+                  Keep a reliable bench of pros for repeat projects instead of starting from scratch every time.
                 </p>
               </Card>
 
               <Card className="p-6 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all">
                 <Zap className="h-10 w-10 mb-4 text-white" />
-                <h3 className="text-xl font-semibold mb-2 text-white">Always Free for Realtors</h3>
+                <h3 className="text-xl font-semibold mb-2 text-white">Stay Efficient Across Properties</h3>
                 <p className="text-white/90">
-                  No fees, no subscriptions, no hidden costs. Contractors fund the network — you get the value.
+                  Better response expectations, better communication, and fewer surprises for closings and turnovers.
                 </p>
               </Card>
             </div>
@@ -453,7 +455,7 @@ export default function LandingPage() {
             <div className="text-center mt-12">
               <Link href="/request">
                 <Button size="lg" className="text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl bg-white text-primary hover:bg-white/90">
-                  Submit a Request — It's Free
+                  Request a Trusted Contractor
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -471,7 +473,7 @@ export default function LandingPage() {
                 For Contractors
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Stop paying per lead. Subscribe to the ListWorx network and receive quality referrals from realtors and homeowners who are ready to move forward.
+                Built for contractors who take pride in their work. Grow with better visibility, stronger referrals, and a reputation that compounds over time.
               </p>
             </div>
 
@@ -483,7 +485,7 @@ export default function LandingPage() {
                 <ul className="text-sm text-muted-foreground space-y-2 text-left">
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Public profile in the contractor directory</span>
+                    <span>Public profile visibility in the trusted network</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
@@ -491,11 +493,11 @@ export default function LandingPage() {
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Standard placement in referral rotation</span>
+                    <span>Consistent referral opportunity without pay-per-lead waste</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Credential tracking and compliance tools</span>
+                    <span>Credential tracking and IronClad compliance support</span>
                   </li>
                 </ul>
               </Card>
@@ -516,7 +518,7 @@ export default function LandingPage() {
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Enhanced visibility with logo in your listing</span>
+                    <span>Enhanced visibility with logo placement</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
@@ -551,6 +553,9 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center">
+              <p className="text-base text-foreground mb-4">
+                As ListWorx grows, contractors gain access to deeper support like education, marketing tools, hiring support, and mentorship.
+              </p>
               <Link href="/apply">
                 <Button size="lg" className="text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl bg-primary hover:bg-primary/90">
                   Apply to Join the Network
@@ -569,20 +574,20 @@ export default function LandingPage() {
       <section className="py-20 bg-card border-y border-border">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-            Ready to Get Started?
+            Built by people who understand this work.
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Realtors and homeowners get vetted contractor matches free. Contractors apply to join a network built for professionals.
+            ListWorx was built for real-world contractor referrals, real listing pressure, and real accountability. We help good contractors grow and help requestors protect what they have worked hard to build.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/request">
-              <Button size="lg" className="text-lg px-8 py-6 rounded-lg bg-primary hover:bg-primary/90">
-                Request a Contractor — Free
+            <Link href="/apply">
+              <Button size="lg" className="text-lg px-8 py-6 rounded-lg bg-primary hover:bg-primary/90 text-white">
+                Apply as a Contractor
               </Button>
             </Link>
-            <Link href="/apply">
+            <Link href="/request">
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-lg border-2 border-primary text-primary hover:bg-primary hover:text-white">
-                Apply as a Contractor
+                Request a Trusted Contractor
               </Button>
             </Link>
           </div>
