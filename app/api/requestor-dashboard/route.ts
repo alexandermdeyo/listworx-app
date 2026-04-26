@@ -109,7 +109,9 @@ export async function GET(request: NextRequest) {
     if (contractorIds.length > 0) {
       const { data: contractorProfiles, error: contractorProfilesError } = await supabase
         .from('contractor_profiles')
-        .select('id, company_name, owner_name, email, phone, website, bio')
+        .select(
+          'id, company_name, owner_name, email, phone, website, bio, service_area_state, service_area_counties, ironclad_accepted'
+        )
         .in('id', contractorIds);
 
       if (contractorProfilesError) {
