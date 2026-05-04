@@ -39,7 +39,7 @@ export default function LandingPage() {
             className="w-full h-full object-cover"
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-lw-dark/88" />
+          <div className="absolute inset-0 bg-lw-dark/50" />
         </div>
         <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
