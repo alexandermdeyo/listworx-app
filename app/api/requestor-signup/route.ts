@@ -87,6 +87,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Send welcome email to new requestor (non-blocking)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const BASE_URL = process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://listworx.co';
+
+    const roleLabel = requestorRole === 'REALTOR' ? 'Realtor'
+      : requestorRole === 'HOMEOWNER' ? 'Homeowner'
+      : requestorRole === 'PROPERTY_MANAGER' ? 'Property Manager'
+      : 'Member';
+
+    fetch(`${supabaseUrl}/functions/v1/send-realtor-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({
+        type: 'job_submission',
+        to: normalizedEmail,
+        realtorName: name.trim(),
+        clientName: name.trim(),
+        propertyAddress: 'Ready to submit your first request',
+        services: [`${roleLabel} account activated`],
+      }),
+    }).catch((err) => console.error('[requestor-signup] welcome email failed:', err));
+
     return NextResponse.json({ success: true });
 
   } catch (err: any) {

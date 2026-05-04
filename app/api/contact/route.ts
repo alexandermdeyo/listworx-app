@@ -20,15 +20,7 @@ export async function POST(request: Request) {
 
     const { data, error } = await supabase
       .from('contact_submissions')
-      .insert([
-        {
-          name,
-          email,
-          phone: phone || null,
-          message,
-          status: 'new'
-        }
-      ])
+      .insert([{ name, email, phone: phone || null, message, status: 'new' }])
       .select()
       .single();
 
@@ -40,15 +32,35 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json(
-      { success: true, data },
-      { status: 200 }
-    );
+    // Notify admin of new contact submission
+    const adminEmail = process.env.ADMIN_EMAIL || 'adeyo@listworx.co';
+    const BASE_URL = process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://listworx.co';
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (serviceKey) {
+      fetch(`${supabaseUrl}/functions/v1/send-realtor-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceKey}`,
+        },
+        body: JSON.stringify({
+          type: 'admin_new_job_request',
+          to: adminEmail,
+          realtorName: name,
+          clientName: name,
+          clientEmail: email,
+          clientPhone: phone || 'Not provided',
+          propertyAddress: `Contact form message: ${message.slice(0, 80)}${message.length > 80 ? '...' : ''}`,
+          services: [],
+          matchedContractors: 0,
+        }),
+      }).catch((err) => console.error('[contact] admin notification failed:', err));
+    }
+
+    return NextResponse.json({ success: true, data }, { status: 200 });
   } catch (error) {
     console.error('Error processing contact form:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

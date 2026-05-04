@@ -19,14 +19,166 @@ function createAdminClient() {
 
 function normalizeUrgency(value: string | null | undefined) {
   const normalized = String(value || '').trim().toUpperCase();
-
   if (normalized === 'ASAP' || normalized === 'IMMEDIATE') return 'IMMEDIATE';
   if (normalized === 'URGENT' || normalized === 'WITHIN_WEEK') return 'WITHIN_WEEK';
   if (normalized === 'STANDARD' || normalized === 'WITHIN_MONTH') return 'WITHIN_MONTH';
   if (normalized === 'FLEXIBLE') return 'FLEXIBLE';
-
   return 'WITHIN_MONTH';
 }
+
+/* ─────────────────────────────────────────────────────────────
+   EMAIL HELPERS — called only AFTER all DB writes complete.
+   These do NOT modify any referral/matching logic.
+   ───────────────────────────────────────────────────────────── */
+
+async function sendContractorReferralEmails(
+  supabase: ReturnType<typeof createAdminClient>,
+  matchedContractors: Array<{
+    id: string;
+    company_name: string;
+    owner_name: string;
+    email: string;
+  }>,
+  jobData: {
+    jobCategory: string;
+    jobCounty: string;
+    jobState: string;
+    jobDescription: string;
+    requesterType: string;
+  }
+) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+  const results = await Promise.allSettled(
+    matchedContractors.map((contractor) =>
+      fetch(`${supabaseUrl}/functions/v1/send-contractor-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceKey}`,
+        },
+        body: JSON.stringify({
+          type: 'referral_notification',
+          to: contractor.email,
+          contractorName: contractor.owner_name,
+          companyName: contractor.company_name,
+          jobCategory: jobData.jobCategory,
+          jobCounty: jobData.jobCounty,
+          jobState: jobData.jobState,
+          jobDescription: jobData.jobDescription,
+          requesterType: jobData.requesterType,
+        }),
+      })
+    )
+  );
+
+  results.forEach((result, i) => {
+    if (result.status === 'rejected') {
+      console.error(`[job-request] contractor referral email failed for ${matchedContractors[i]?.id}:`, result.reason);
+    }
+  });
+}
+
+async function sendRequestorMatchEmail(
+  supabase: ReturnType<typeof createAdminClient>,
+  matchedContractors: Array<{
+    id: string;
+    company_name: string;
+    owner_name: string;
+    email: string;
+    phone: string;
+    website: string | null;
+    bio: string | null;
+  }>,
+  jobData: {
+    requesterName: string;
+    requesterEmail: string;
+    propertyAddress: string;
+    categoryNames: string[];
+    jobRequestId: string;
+  }
+) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const BASE_URL = process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://listworx.co';
+
+  // Fetch extra profile data (logo_url, slug, specialties) for contractor cards
+  const contractorIds = matchedContractors.map((c) => c.id);
+
+  const [{ data: profileExtras }, { data: categoryRows }] = await Promise.all([
+    supabase
+      .from('contractor_profiles')
+      .select('id, logo_url, slug')
+      .in('id', contractorIds),
+    supabase
+      .from('contractor_categories')
+      .select('contractor_id, categories(name)')
+      .in('contractor_id', contractorIds),
+  ]);
+
+  const logoMap: Record<string, string | null> = {};
+  const slugMap: Record<string, string | null> = {};
+  (profileExtras || []).forEach((p: any) => {
+    logoMap[p.id] = p.logo_url || null;
+    slugMap[p.id] = p.slug || null;
+  });
+
+  const specialtyMap: Record<string, string[]> = {};
+  (categoryRows || []).forEach((row: any) => {
+    const cId = row.contractor_id;
+    const name = row.categories?.name;
+    if (cId && name) {
+      if (!specialtyMap[cId]) specialtyMap[cId] = [];
+      specialtyMap[cId].push(name);
+    }
+  });
+
+  const contractorCards = matchedContractors.map((c) => ({
+    name: c.owner_name,
+    company: c.company_name,
+    phone: c.phone,
+    email: c.email,
+    website: c.website || undefined,
+    bio: c.bio || undefined,
+    logoUrl: logoMap[c.id] || null,
+    profileUrl: slugMap[c.id]
+      ? `${BASE_URL}/contractor/${slugMap[c.id]}`
+      : `${BASE_URL}/contractors/${c.id}`,
+    specialties: specialtyMap[c.id] || [],
+  }));
+
+  try {
+    const response = await fetch(`${supabaseUrl}/functions/v1/send-realtor-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({
+        type: 'contractor_match',
+        to: jobData.requesterEmail,
+        realtorName: jobData.requesterName,
+        propertyAddress: jobData.propertyAddress,
+        services: jobData.categoryNames,
+        contractors: contractorCards,
+        jobRequestId: jobData.jobRequestId,
+        matchedContractors: contractorCards.length,
+      }),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error('[job-request] requestor match email failed:', text);
+    }
+  } catch (err) {
+    console.error('[job-request] requestor match email error:', err);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MAIN HANDLER
+   ───────────────────────────────────────────────────────────── */
 
 export async function POST(request: NextRequest) {
   try {
@@ -176,6 +328,7 @@ export async function POST(request: NextRequest) {
       console.error('[job-request] category link failed:', categoryLinkError);
     }
 
+    // ── MATCHING LOGIC — untouched ──────────────────────────
     const matchedContractors = await findMatchedContractors(supabase, {
       countyId: propertyCountyId,
       categoryIds,
@@ -217,6 +370,37 @@ export async function POST(request: NextRequest) {
         matchedContractors.map((c) => c.id)
       );
     }
+    // ── END MATCHING LOGIC ──────────────────────────────────
+
+    // ── EMAIL NOTIFICATIONS — fired after all DB writes ────
+    // Fetch category names for email display
+    const { data: categoryNameRows } = await supabase
+      .from('categories')
+      .select('name')
+      .in('id', categoryIds);
+
+    const categoryNames = (categoryNameRows || []).map((r: any) => r.name).filter(Boolean);
+
+    if (matchedContractors.length > 0) {
+      // 1. Notify each contractor they've been referred (no requestor info)
+      sendContractorReferralEmails(supabase, matchedContractors, {
+        jobCategory: categoryNames[0] || 'General Services',
+        jobCounty: propertyCounty,
+        jobState: stateCode,
+        jobDescription: description.trim(),
+        requesterType: clientType,
+      }).catch((err) => console.error('[job-request] contractor email batch error:', err));
+
+      // 2. Send requestor their matched contractor cards
+      sendRequestorMatchEmail(supabase, matchedContractors, {
+        requesterName: clientName.trim(),
+        requesterEmail: clientEmail.trim().toLowerCase(),
+        propertyAddress: `${propertyAddressLine1.trim()}, ${propertyCity.trim()}, ${stateCode}`,
+        categoryNames,
+        jobRequestId: jobRequest.id,
+      }).catch((err) => console.error('[job-request] requestor email error:', err));
+    }
+    // ── END EMAIL NOTIFICATIONS ─────────────────────────────
 
     return NextResponse.json({
       success: true,

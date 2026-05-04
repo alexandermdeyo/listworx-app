@@ -51,32 +51,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Resolve best available email — check auth users table as fallback
+    let toEmail = profile.email || '';
+    if (!toEmail && profile.user_id) {
+      const { data: authUser } = await supabaseAdmin
+        .from('users')
+        .select('email')
+        .eq('id', profile.user_id)
+        .maybeSingle();
+      toEmail = authUser?.email || '';
+    }
+
     let emailError: string | null = null;
 
-    try {
-      const emailResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-          },
-          body: JSON.stringify({
-            type: 'application_approved',
-            to: profile.email,
-            contractorName: profile.owner_name,
-            companyName: profile.company_name,
-          }),
-        }
-      );
+    if (toEmail) {
+      try {
+        const emailResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+            },
+            body: JSON.stringify({
+              type: 'application_approved',
+              to: toEmail,
+              contractorName: profile.owner_name,
+              companyName: profile.company_name,
+            }),
+          }
+        );
 
-      if (!emailResponse.ok) {
-        const errorData = await emailResponse.json();
-        emailError = errorData.error || 'Email send failed';
+        if (!emailResponse.ok) {
+          const errorData = await emailResponse.json();
+          emailError = errorData.error || 'Email send failed';
+        }
+      } catch (err: any) {
+        emailError = err.message || 'Email send failed';
       }
-    } catch (err: any) {
-      emailError = err.message || 'Email send failed';
+    } else {
+      emailError = 'No email address found for contractor — approval saved but email not sent';
+      console.warn('[approve-application] no email found for contractor:', contractorProfileId);
     }
 
     return NextResponse.json({
