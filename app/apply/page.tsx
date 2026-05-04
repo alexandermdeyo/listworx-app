@@ -180,7 +180,7 @@ export default function ApplyPage() {
   }, [reloadTick, supabase]);
 
   return (
-    <div className="min-h-screen bg-lw-surface">
+    <div className="min-h-screen bg-background">
       <Navigation />
 
       <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -199,10 +199,10 @@ export default function ApplyPage() {
         ) : !state ? null : (
           <div>
             <div className="mb-8 text-center">
-              <h1 className="text-4xl sm:text-5xl font-bold text-lw-text mb-3 tracking-tight">
+              <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-3 tracking-tight">
                 Contractor Application
               </h1>
-              <p className="text-lg text-lw-text/60 max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Complete your IronClad partner application below. You can save your progress and update details while under review.
               </p>
             </div>

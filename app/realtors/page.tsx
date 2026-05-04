@@ -15,7 +15,17 @@ export default function RealtorsPage() {
       <Navigation />
 
       {/* HERO */}
-      <section className="container mx-auto px-4 py-16 md:py-24">
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1920&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-lw-dark/70" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
           <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
             <Star className="h-3 w-3 mr-1" />
@@ -52,6 +62,7 @@ export default function RealtorsPage() {
               <div className="text-sm text-muted-foreground">Contractor Response Time</div>
             </div>
           </div>
+        </div>
         </div>
       </section>
 
@@ -260,14 +271,14 @@ export default function RealtorsPage() {
       </section>
 
       {/* WHY IRONCLAD */}
-      <section className="py-16 bg-lw-surface border-y border-lw-dark-border">
+      <section className="py-16 bg-lw-dark border-y border-lw-dark-border">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <div className="flex justify-center mb-4">
                 <Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad Certified" width={80} height={80} className="w-16 h-auto" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-lw-text mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 What IronClad Certification Means for You
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

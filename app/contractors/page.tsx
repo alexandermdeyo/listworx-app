@@ -15,7 +15,17 @@ export default function ContractorsPage() {
       <Navigation />
 
       {/* HERO */}
-      <section className="container mx-auto px-4 py-16 md:py-24">
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1920&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-lw-dark/70" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
           <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
             <Briefcase className="h-3 w-3 mr-1" />
@@ -59,26 +69,27 @@ export default function ContractorsPage() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* BRAND MESSAGE */}
-      <section className="py-16 md:py-20 bg-lw-surface border-y border-lw-dark-border">
+      <section className="py-16 md:py-20 bg-background border-y border-lw-dark-border">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark mb-5">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-5">
                 We’re Building This With You
               </h2>
-              <p className="text-lg md:text-xl text-zinc-700 max-w-4xl mx-auto">
+              <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto">
                 ListWorx is built for contractors who take pride in their work.
               </p>
             </div>
 
-            <Card className="p-6 md:p-8 bg-white border border-zinc-200 mb-8">
-              <p className="text-base md:text-lg text-zinc-700 leading-relaxed">
+            <Card className="p-6 md:p-8 bg-card border border-border mb-8">
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
                 We’re not here to sell random leads, spam your phone, or throw you into a race-to-the-bottom bidding war. We’re building a trusted contractor network that helps serious home service pros get in front of realtors, homeowners, and property managers who need quality work done right.
               </p>
-              <p className="text-base md:text-lg text-zinc-700 leading-relaxed mt-5">
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed mt-5">
                 As ListWorx grows, our goal is to grow with you — helping contractors get more exposure, build stronger reputations, earn more referrals, and eventually access tools, education, hiring support, mentorship opportunities, and marketing resources that help your business scale.
               </p>
             </Card>
@@ -89,8 +100,8 @@ export default function ContractorsPage() {
                 'We don’t do race-to-the-bottom bidding.',
                 'We help good contractors get seen by people who actually need them.',
               ].map((line) => (
-                <div key={line} className="rounded-lg border border-primary/30 bg-white px-4 py-4 text-center shadow-sm">
-                  <p className="text-sm md:text-base font-semibold text-lw-text">{line}</p>
+                <div key={line} className="rounded-lg border border-primary/30 bg-card px-4 py-4 text-center shadow-sm">
+                  <p className="text-sm md:text-base font-semibold text-foreground">{line}</p>
                 </div>
               ))}
             </div>
@@ -99,14 +110,14 @@ export default function ContractorsPage() {
       </section>
 
       {/* HOW THE NETWORK WORKS */}
-      <section className="py-20 bg-lw-surface border-y border-lw-dark-border">
+      <section className="py-20 bg-lw-dark border-y border-lw-dark-border">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
                 How ListWorx Sends You Better Opportunities
               </h2>
-              <p className="text-lg md:text-xl text-zinc-600 max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
                 From application to first call, here’s exactly how we help the right customers find your business.
               </p>
             </div>
@@ -147,8 +158,8 @@ export default function ContractorsPage() {
                       {item.step}
                     </span>
                   </div>
-                  <h3 className="text-base font-bold text-lw-dark mb-2">{item.title}</h3>
-                  <p className="text-sm text-zinc-600">{item.desc}</p>
+                  <h3 className="text-base font-bold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -234,25 +245,25 @@ export default function ContractorsPage() {
       </section>
 
       {/* COMPARISON: PPL vs ListWorx */}
-      <section className="py-16 md:py-20 bg-lw-surface border-y border-lw-dark-border">
+      <section className="py-16 md:py-20 bg-background border-y border-lw-dark-border">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
                 Stop Paying for Dead-End Leads
               </h2>
-              <p className="text-lg md:text-xl text-zinc-600">
+              <p className="text-lg md:text-xl text-muted-foreground">
                 Here’s what changes when you stop buying random leads and join a trusted contractor network.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-              <Card className="p-6 md:p-8 bg-white border-2 border-destructive/30">
-                <h3 className="text-xl md:text-2xl font-bold text-lw-dark mb-4 flex items-center">
+              <Card className="p-6 md:p-8 bg-card border-2 border-destructive/30">
+                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center">
                   <AlertCircle className="h-6 w-6 text-destructive mr-3 flex-shrink-0" />
                   Traditional Lead Platforms
                 </h3>
-                <ul className="space-y-3 text-sm md:text-base text-zinc-700">
+                <ul className="space-y-3 text-sm md:text-base text-muted-foreground">
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">✗</span>
                     <span>Pay $15–$100+ per lead received</span>
@@ -390,7 +401,7 @@ export default function ContractorsPage() {
               </Card>
             </div>
 
-            <div className="bg-lw-dark border border-lw-dark rounded-lg p-8 text-center">
+            <div className="bg-lw-dark-card border border-lw-dark-border rounded-lg p-8 text-center">
               <Shield className="h-10 w-10 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-bold text-white mb-3">Standards Are Enforced — Not Just Stated</h3>
               <p className="text-gray-300 text-base max-w-2xl mx-auto">
@@ -402,23 +413,23 @@ export default function ContractorsPage() {
       </section>
 
       {/* WHO THIS IS FOR */}
-      <section className="py-16 md:py-20 bg-lw-surface border-y border-lw-dark-border">
+      <section className="py-16 md:py-20 bg-background border-y border-lw-dark-border">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
                 Is This the Right Fit?
               </h2>
-              <p className="text-lg md:text-xl text-zinc-700">
+              <p className="text-lg md:text-xl text-muted-foreground">
                 Built for contractors who take pride in their work — not everyone qualifies, and that’s by design.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-              <Card className="p-6 md:p-8 bg-white border-2 border-primary shadow-sm">
+              <Card className="p-6 md:p-8 bg-card border-2 border-primary shadow-sm">
                 <CheckCircle className="h-10 w-10 text-primary mb-4" />
-                <h3 className="text-xl md:text-2xl font-bold text-lw-dark mb-4">A Good Fit If You:</h3>
-                <ul className="space-y-3 text-sm md:text-base text-zinc-700">
+                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-4">A Good Fit If You:</h3>
+                <ul className="space-y-3 text-sm md:text-base text-muted-foreground">
                   <li className="flex items-start">
                     <CheckCircle className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
                     <span>Are licensed, insured, and have a track record</span>
@@ -446,10 +457,10 @@ export default function ContractorsPage() {
                 </ul>
               </Card>
 
-              <Card className="p-6 md:p-8 bg-white border border-zinc-200 shadow-sm">
+              <Card className="p-6 md:p-8 bg-card border border-border shadow-sm">
                 <AlertCircle className="h-10 w-10 text-zinc-500 mb-4" />
-                <h3 className="text-xl md:text-2xl font-bold text-lw-dark mb-4">Not the Right Fit If You:</h3>
-                <ul className="space-y-3 text-sm md:text-base text-zinc-700">
+                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-4">Not the Right Fit If You:</h3>
+                <ul className="space-y-3 text-sm md:text-base text-muted-foreground">
                   <li className="flex items-start">
                     <span className="text-zinc-500 mr-3 font-bold">✗</span>
                     <span>Are unlicensed or don’t carry proper insurance</span>
@@ -553,30 +564,30 @@ export default function ContractorsPage() {
       </section>
 
       {/* PARTNERSHIP TIERS */}
-      <section className="py-16 md:py-20 bg-lw-surface border-y border-lw-dark-border">
+      <section className="py-16 md:py-20 bg-background border-y border-lw-dark-border">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-lw-dark mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
                 Choose Your Spot in the Network
               </h2>
-              <p className="text-lg md:text-xl text-zinc-700 mb-2">
+              <p className="text-lg md:text-xl text-muted-foreground mb-2">
                 Flat monthly pricing. No per-lead surprises. Pick the level that matches where your business is headed.
               </p>
-              <p className="text-base md:text-lg font-semibold text-lw-dark">
+              <p className="text-base md:text-lg font-semibold text-foreground">
                 Your reputation matters. So does ours.
               </p>
-              <p className="text-sm text-zinc-600 italic mt-2">
+              <p className="text-sm text-muted-foreground italic mt-2">
                 All Partners must maintain active IronClad Standards compliance to remain in the network.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-12">
-              <Card className="p-6 rounded-lg shadow-sm hover:shadow-lg transition-all text-center border border-zinc-200 bg-white">
+              <Card className="p-6 rounded-lg shadow-sm hover:shadow-lg transition-all text-center border border-border bg-card">
                 <div className="text-4xl font-bold text-primary mb-2">$199</div>
-                <div className="text-sm text-zinc-600 mb-4">per month</div>
-                <h3 className="text-lg font-semibold mb-4 text-lw-dark">Basic Partner</h3>
-                <ul className="text-sm text-zinc-700 space-y-2 text-left mb-6">
+                <div className="text-sm text-muted-foreground mb-4">per month</div>
+                <h3 className="text-lg font-semibold mb-4 text-foreground">Basic Partner</h3>
+                <ul className="text-sm text-muted-foreground space-y-2 text-left mb-6">
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
                     <span>Public profile in the contractor directory</span>
@@ -601,12 +612,12 @@ export default function ContractorsPage() {
                 </Link>
               </Card>
 
-              <Card className="p-6 rounded-lg shadow-lg hover:shadow-xl transition-all text-center border-2 border-primary bg-white relative">
+              <Card className="p-6 rounded-lg shadow-lg hover:shadow-xl transition-all text-center border-2 border-primary bg-card relative">
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white">Most Popular</Badge>
                 <div className="text-4xl font-bold text-primary mb-2">$349</div>
-                <div className="text-sm text-zinc-600 mb-4">per month</div>
-                <h3 className="text-lg font-semibold mb-4 text-lw-dark">Preferred Partner</h3>
-                <ul className="text-sm text-zinc-700 space-y-2 text-left mb-6">
+                <div className="text-sm text-muted-foreground mb-4">per month</div>
+                <h3 className="text-lg font-semibold mb-4 text-foreground">Preferred Partner</h3>
+                <ul className="text-sm text-muted-foreground space-y-2 text-left mb-6">
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
                     <span>Everything in Basic</span>
@@ -631,11 +642,11 @@ export default function ContractorsPage() {
                 </Link>
               </Card>
 
-              <Card className="p-6 rounded-lg shadow-sm hover:shadow-lg transition-all text-center border border-zinc-200 bg-white">
+              <Card className="p-6 rounded-lg shadow-sm hover:shadow-lg transition-all text-center border border-border bg-card">
                 <div className="text-4xl font-bold text-primary mb-2">$599</div>
-                <div className="text-sm text-zinc-600 mb-4">per month</div>
-                <h3 className="text-lg font-semibold mb-4 text-lw-dark">Elite Partner</h3>
-                <ul className="text-sm text-zinc-700 space-y-2 text-left mb-6">
+                <div className="text-sm text-muted-foreground mb-4">per month</div>
+                <h3 className="text-lg font-semibold mb-4 text-foreground">Elite Partner</h3>
+                <ul className="text-sm text-muted-foreground space-y-2 text-left mb-6">
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
                     <span>Everything in Preferred</span>
@@ -661,7 +672,7 @@ export default function ContractorsPage() {
               </Card>
             </div>
 
-            <p className="text-center text-sm text-zinc-600">
+            <p className="text-center text-sm text-muted-foreground">
               All plans include credential tracking, compliance monitoring, and referral management tools.
             </p>
           </div>
