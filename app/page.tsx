@@ -31,7 +31,17 @@ export default function LandingPage() {
       <Navigation />
 
       {/* HERO */}
-      <section className="container mx-auto px-4 py-16 md:py-24 lg:py-32">
+      <section className="relative py-20 md:py-28 lg:py-36 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-lw-dark/88" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
           <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
             <Shield className="h-3 w-3 mr-1" />
@@ -76,6 +86,7 @@ export default function LandingPage() {
               <div className="text-xs md:text-sm text-muted-foreground">Response Commitment</div>
             </div>
           </div>
+        </div>
         </div>
       </section>
 
@@ -205,7 +216,7 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <div className="bg-red-950 border-2 border-red-900 rounded-lg p-8">
+              <div className="bg-red-950 border-2 border-red-700 rounded-lg p-8">
                 <h3 className="text-xl font-bold text-white mb-6 flex items-center">
                   <CheckCircle className="h-6 w-6 text-red-500 mr-3" />
                   What IronClad Requires
@@ -274,7 +285,7 @@ export default function LandingPage() {
       </section>
 
       {/* THE PROBLEM SECTION */}
-      <section className="py-16 md:py-20 bg-lw-surface border-y border-lw-dark-border">
+      <section className="py-16 md:py-20 bg-background border-y border-lw-dark-border">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
