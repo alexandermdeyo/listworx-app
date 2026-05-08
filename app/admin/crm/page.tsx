@@ -10,11 +10,13 @@ import {
   Loader as Loader2, CircleAlert as AlertCircle, ChartBar as BarChart3,
   LogOut, Mail, Send, Briefcase, TrendingUp, Activity,
   Shield, Bell, RefreshCw, Video, BookOpen, DatabaseZap,
+  LayoutDashboard, Settings, Home,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import Navigation from '@/components/Navigation';
+import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
 import Link from 'next/link';
 import { PageShell } from '@/components/design-system';
 
@@ -168,160 +170,130 @@ export default function AdminCRMPage() {
     ? Math.round((stats.referralsContacted / stats.totalReferrals) * 100)
     : 0;
 
+  const adminNavItems: NavItem[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/crm' },
+    { id: 'contractors', label: 'Contractors', icon: Users, href: '/admin/crm/contractors' },
+    { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications', badge: stats.pendingApplications || undefined },
+    { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
+    { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
+    { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
+  ];
+
   if (accessDenied) {
     return (
-      <PageShell surface="dark" className="flex items-center justify-center">
-        <Card className="p-8 max-w-md text-center bg-lw-dark-card border-lw-dark-border">
-          <div className="flex justify-center mb-4">
-            <div className="h-16 w-16 rounded-full bg-red-950/30 flex items-center justify-center">
-              <AlertCircle className="h-8 w-8 text-red-400" />
-            </div>
-          </div>
-          <h2 className="text-2xl font-bold mb-2 text-white">Access Denied</h2>
-          <p className="text-zinc-400 mb-6">Admin privileges required.</p>
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="max-w-md text-center p-8 rounded-xl border border-gray-200">
+          <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2 text-gray-900">Access Denied</h2>
+          <p className="text-gray-500 mb-6">Admin privileges required.</p>
           <div className="flex gap-3">
-            <Button onClick={() => router.push('/')} variant="outline" className="flex-1 border-lw-dark-border text-zinc-300">Go Home</Button>
-            <Button onClick={handleSignOut} className="flex-1 bg-lw-rust hover:bg-lw-rust-hover text-white">Sign Out</Button>
+            <Button onClick={() => router.push('/')} variant="outline" className="flex-1">Go Home</Button>
+            <Button onClick={handleSignOut} className="flex-1 text-white" style={{ backgroundColor: '#E8621A' }}>Sign Out</Button>
           </div>
-        </Card>
-      </PageShell>
+        </div>
+      </div>
     );
   }
 
   if (loading || !isAuthenticated) {
     return (
-      <PageShell surface="dark" className="flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="text-center">
           <Loader2 className="h-10 w-10 animate-spin text-lw-rust mx-auto mb-3" />
-          <p className="text-zinc-400 text-sm">Loading dashboard...</p>
+          <p className="text-gray-500 text-sm">Loading dashboard...</p>
         </div>
-      </PageShell>
+      </div>
     );
   }
 
   return (
-    <PageShell surface="dark">
-      <Navigation />
-
-      <div className="container mx-auto px-4 py-10 max-w-7xl">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+    <DashboardLayout
+      userName="Admin"
+      pageTitle="ADMIN CRM"
+      navItems={adminNavItems}
+      activeNavId="dashboard"
+      onLogout={handleSignOut}
+      hasNotifications={stats.pendingApplications > 0}
+    >
+      <div className="p-6 max-w-7xl">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white">Admin CRM</h1>
-            <p className="text-zinc-400 mt-1">System health, referral performance, and quick controls</p>
+            <p className="text-gray-500 text-sm">System health, referral performance, and quick controls</p>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={loadDashboardStats} variant="outline" size="sm" className="border-lw-dark-border text-zinc-300 hover:bg-lw-dark-surface">
-              <RefreshCw className="h-4 w-4 mr-2" /> Refresh
-            </Button>
-            <Button onClick={handleSignOut} variant="outline" className="border-lw-dark-border text-zinc-300 hover:bg-lw-dark-surface">
-              <LogOut className="h-4 w-4 mr-2" /> Sign Out
-            </Button>
-          </div>
+          <Button onClick={loadDashboardStats} variant="outline" size="sm" className="border-gray-300 text-gray-600 hover:bg-gray-50">
+            <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+          </Button>
         </div>
 
+        {/* Referral Performance */}
         <div className="mb-8">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-4">Referral Performance</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">Referral Performance</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="rounded-2xl border border-lw-dark-border/50 bg-lw-dark-card p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="h-9 w-9 rounded-lg bg-lw-rust/10 flex items-center justify-center">
-                  <Send className="h-4.5 w-4.5 text-lw-rust" />
-                </div>
-                <span className="text-xs text-zinc-500">All time</span>
-              </div>
-              <p className="text-2xl font-bold text-white">{stats.totalReferrals}</p>
-              <p className="text-xs text-zinc-400 mt-0.5">Total Referrals Sent</p>
-            </div>
-
-            <div className="rounded-2xl border border-lw-dark-border/50 bg-lw-dark-card p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="h-9 w-9 rounded-lg bg-blue-950/40 flex items-center justify-center">
-                  <Activity className="h-4.5 w-4.5 text-blue-400" />
-                </div>
-                <span className="text-xs text-zinc-500">7 days</span>
-              </div>
-              <p className="text-2xl font-bold text-white">{stats.referralsThisWeek}</p>
-              <p className="text-xs text-zinc-400 mt-0.5">Referrals This Week</p>
-            </div>
-
-            <div className="rounded-2xl border border-emerald-800/30 bg-emerald-950/10 p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="h-9 w-9 rounded-lg bg-emerald-950/40 flex items-center justify-center">
-                  <TrendingUp className="h-4.5 w-4.5 text-emerald-400" />
-                </div>
-                <span className="text-xs text-emerald-600">{contactRate}% rate</span>
-              </div>
-              <p className="text-2xl font-bold text-emerald-400">{stats.referralsContacted}</p>
-              <p className="text-xs text-zinc-400 mt-0.5">Client Contacted Contractor</p>
-            </div>
-
-            <div className="rounded-2xl border border-green-800/30 bg-green-950/10 p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="h-9 w-9 rounded-lg bg-green-950/40 flex items-center justify-center">
-                  <CheckCircle className="h-4.5 w-4.5 text-green-400" />
-                </div>
-                <span className="text-xs text-green-600">{conversionRate}% conv.</span>
-              </div>
-              <p className="text-2xl font-bold text-green-400">{stats.referralsHired}</p>
-              <p className="text-xs text-zinc-400 mt-0.5">Jobs Hired / Completed</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-4">System Health</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
-              { label: 'Pending Applications', value: stats.pendingApplications, color: stats.pendingApplications > 0 ? 'text-amber-400' : 'text-zinc-400', icon: Clock, alert: stats.pendingApplications > 0 },
-              { label: 'Active Contractors', value: stats.activeContractors, color: 'text-emerald-400', icon: CheckCircle },
-              { label: 'Paused Contractors', value: stats.pausedContractors, color: stats.pausedContractors > 0 ? 'text-amber-400' : 'text-zinc-400', icon: Shield },
-              { label: 'Emails Disabled', value: stats.emailsOffCount, color: stats.emailsOffCount > 0 ? 'text-amber-400' : 'text-zinc-400', icon: Bell, alert: stats.emailsOffCount > 0 },
-              { label: 'Job Requests (7d)', value: stats.recentJobRequests, color: 'text-blue-400', icon: FileText },
-              { label: 'Total Requesters', value: stats.totalRealtors, color: 'text-zinc-300', icon: Users },
+              { label: 'Total Referrals Sent', value: stats.totalReferrals, sub: 'All time', icon: Send, accent: false },
+              { label: 'Referrals This Week', value: stats.referralsThisWeek, sub: '7 days', icon: Activity, accent: false },
+              { label: 'Clients Contacted', value: stats.referralsContacted, sub: `${contactRate}% rate`, icon: TrendingUp, accent: true, accentColor: '#10b981' },
+              { label: 'Jobs Completed', value: stats.referralsHired, sub: `${conversionRate}% conv.`, icon: CheckCircle, accent: true, accentColor: '#22c55e' },
             ].map(item => (
-              <div key={item.label} className={`rounded-xl border p-4 bg-lw-dark-card ${item.alert ? 'border-amber-800/40' : 'border-lw-dark-border/50'}`}>
-                <item.icon className={`h-4 w-4 mb-2 ${item.color}`} />
-                <p className={`text-xl font-bold ${item.color}`}>{item.value}</p>
-                <p className="text-xs text-zinc-500 mt-0.5 leading-tight">{item.label}</p>
+              <div key={item.label} className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="h-9 w-9 rounded-lg bg-gray-50 flex items-center justify-center border border-gray-100">
+                    <item.icon className="h-4 w-4 text-lw-rust" />
+                  </div>
+                  <span className="text-xs text-gray-400">{item.sub}</span>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">{item.value}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{item.label}</p>
               </div>
             ))}
           </div>
         </div>
 
+        {/* System Health */}
         <div className="mb-8">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-4">Admin Tools</h2>
-          <div className="rounded-2xl border border-lw-dark-border/50 bg-lw-dark-card p-5">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">System Health</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              { label: 'Pending Apps', value: stats.pendingApplications, icon: Clock, warn: stats.pendingApplications > 0 },
+              { label: 'Active', value: stats.activeContractors, icon: CheckCircle, ok: true },
+              { label: 'Paused', value: stats.pausedContractors, icon: Shield, warn: stats.pausedContractors > 0 },
+              { label: 'Emails Off', value: stats.emailsOffCount, icon: Bell, warn: stats.emailsOffCount > 0 },
+              { label: 'Job Req (7d)', value: stats.recentJobRequests, icon: FileText },
+              { label: 'Requesters', value: stats.totalRealtors, icon: Users },
+            ].map(item => (
+              <div key={item.label} className={`rounded-lg border p-4 bg-white shadow-sm ${item.warn ? 'border-amber-200' : 'border-gray-200'}`}>
+                <item.icon className={`h-4 w-4 mb-2 ${item.warn ? 'text-amber-500' : item.ok ? 'text-emerald-500' : 'text-gray-400'}`} />
+                <p className={`text-xl font-bold ${item.warn ? 'text-amber-600' : item.ok ? 'text-emerald-600' : 'text-gray-900'}`}>{item.value}</p>
+                <p className="text-xs text-gray-500 mt-0.5 leading-tight">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Admin Tools */}
+        <div className="mb-8">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">Admin Tools</h2>
+          <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-start gap-3">
-                <div className="h-10 w-10 rounded-xl bg-blue-950/40 flex items-center justify-center flex-shrink-0">
-                  <DatabaseZap className="h-5 w-5 text-blue-400" />
+                <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 border border-blue-100">
+                  <DatabaseZap className="h-5 w-5 text-blue-500" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white text-sm">Backfill Subscriptions</h3>
-                  <p className="text-xs text-zinc-400 mt-0.5 leading-relaxed">
-                    Create missing subscription rows for all active contractors. Safe to run multiple times — skips contractors that already have a subscription.
+                  <h3 className="font-semibold text-gray-900 text-sm">Backfill Subscriptions</h3>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                    Create missing subscription rows for all active contractors. Safe to run multiple times.
                   </p>
                 </div>
               </div>
-              <Button
-                onClick={runBackfill}
-                disabled={backfillLoading}
-                className="bg-blue-700 hover:bg-blue-600 text-white text-sm flex-shrink-0"
-                size="sm"
-              >
-                {backfillLoading ? (
-                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Running...</>
-                ) : (
-                  <><DatabaseZap className="h-4 w-4 mr-2" /> Run Backfill</>
-                )}
+              <Button onClick={runBackfill} disabled={backfillLoading} className="bg-blue-600 hover:bg-blue-700 text-white text-sm flex-shrink-0" size="sm">
+                {backfillLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Running...</> : <><DatabaseZap className="h-4 w-4 mr-2" /> Run Backfill</>}
               </Button>
             </div>
 
             {backfillResult && (
-              <div className={`mt-4 rounded-xl p-4 border text-sm ${backfillResult.errors > 0 ? 'bg-red-950/20 border-red-800/40' : 'bg-emerald-950/20 border-emerald-800/40'}`}>
-                <p className={`font-medium mb-2 ${backfillResult.errors > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                  {backfillResult.message}
-                </p>
+              <div className={`mt-4 rounded-lg p-4 border text-sm ${backfillResult.errors > 0 ? 'bg-red-50 border-red-200' : 'bg-emerald-50 border-emerald-200'}`}>
+                <p className={`font-medium mb-2 ${backfillResult.errors > 0 ? 'text-red-700' : 'text-emerald-700'}`}>{backfillResult.message}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
                     { label: 'Active Contractors', value: backfillResult.active_contractors_found },
@@ -329,9 +301,9 @@ export default function AdminCRMPage() {
                     { label: 'Created', value: backfillResult.created_subscriptions },
                     { label: 'Errors', value: backfillResult.errors },
                   ].map(item => (
-                    <div key={item.label} className="bg-lw-dark-card/60 rounded-lg p-2.5 text-center">
-                      <p className="text-lg font-bold text-white">{item.value}</p>
-                      <p className="text-xs text-zinc-500">{item.label}</p>
+                    <div key={item.label} className="bg-white rounded-lg p-2.5 text-center border border-gray-100">
+                      <p className="text-lg font-bold text-gray-900">{item.value}</p>
+                      <p className="text-xs text-gray-500">{item.label}</p>
                     </div>
                   ))}
                 </div>
@@ -340,95 +312,38 @@ export default function AdminCRMPage() {
           </div>
         </div>
 
+        {/* Quick Navigation */}
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-4">Quick Navigation</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">Quick Navigation</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              {
-                href: '/admin/crm/applications',
-                icon: Clock,
-                title: 'Applications',
-                desc: 'Review pending contractor applications',
-                badge: stats.pendingApplications > 0 ? `${stats.pendingApplications} pending` : null,
-                badgeColor: 'bg-amber-950/40 text-amber-400 border-amber-800/40',
-              },
-              {
-                href: '/admin/crm/job-requests',
-                icon: FileText,
-                title: 'Job Requests',
-                desc: 'View requests, referrals, and update lead status',
-                badge: stats.recentJobRequests > 0 ? `${stats.recentJobRequests} this week` : null,
-                badgeColor: 'bg-blue-950/40 text-blue-400 border-blue-800/40',
-              },
-              {
-                href: '/admin/crm/contractors',
-                icon: Users,
-                title: 'Contractors',
-                desc: 'Manage status, performance, and email controls',
-                badge: stats.pausedContractors > 0 ? `${stats.pausedContractors} paused` : null,
-                badgeColor: 'bg-amber-950/40 text-amber-400 border-amber-800/40',
-              },
-              {
-                href: '/admin/crm/realtors',
-                icon: Briefcase,
-                title: 'Requesters',
-                desc: 'Manage homeowners, realtors, and property managers',
-                badge: null,
-                badgeColor: '',
-              },
-              {
-                href: '/admin/crm/reviews',
-                icon: Star,
-                title: 'Reviews',
-                desc: 'See client feedback and contractor ratings',
-                badge: null,
-                badgeColor: '',
-              },
-              {
-                href: '/admin/crm/contractors',
-                icon: Bell,
-                title: 'Email Controls',
-                desc: 'Toggle notifications and resend emails per contractor',
-                badge: stats.emailsOffCount > 0 ? `${stats.emailsOffCount} off` : null,
-                badgeColor: 'bg-amber-950/40 text-amber-400 border-amber-800/40',
-              },
-              {
-                href: '/admin/crm/media',
-                icon: Video,
-                title: 'Media Library',
-                desc: 'Manage YouTube videos, social content, and featured media',
-                badge: null,
-                badgeColor: '',
-              },
-              {
-                href: '/admin/crm/blog',
-                icon: BookOpen,
-                title: 'Blog',
-                desc: 'Write and publish articles, guides, and company updates',
-                badge: null,
-                badgeColor: '',
-              },
+              { href: '/admin/crm/applications', icon: Clock, title: 'Applications', desc: 'Review pending contractor applications', badge: stats.pendingApplications > 0 ? `${stats.pendingApplications} pending` : null },
+              { href: '/admin/crm/job-requests', icon: FileText, title: 'Job Requests', desc: 'View requests, referrals, and update lead status', badge: stats.recentJobRequests > 0 ? `${stats.recentJobRequests} this week` : null },
+              { href: '/admin/crm/contractors', icon: Users, title: 'Contractors', desc: 'Manage status, performance, and email controls', badge: stats.pausedContractors > 0 ? `${stats.pausedContractors} paused` : null },
+              { href: '/admin/crm/realtors', icon: Briefcase, title: 'Requesters', desc: 'Manage homeowners, realtors, and property managers', badge: null },
+              { href: '/admin/crm/reviews', icon: Star, title: 'Reviews', desc: 'See client feedback and contractor ratings', badge: null },
+              { href: '/admin/crm/media', icon: Video, title: 'Media Library', desc: 'Manage YouTube videos, social content, and featured media', badge: null },
             ].map(item => (
-              <Link key={item.href + item.title} href={item.href}>
-                <div className="rounded-2xl border border-lw-dark-border/50 bg-lw-dark-card p-5 hover:border-lw-rust/40 hover:bg-lw-dark-surface/50 transition-all cursor-pointer group h-full">
+              <Link key={item.title} href={item.href}>
+                <div className="rounded-lg border border-gray-200 bg-white p-5 hover:border-lw-rust/30 hover:shadow-md transition-all cursor-pointer group h-full shadow-sm">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="h-10 w-10 rounded-xl bg-lw-rust/10 flex items-center justify-center group-hover:bg-lw-rust/20 transition-colors">
+                    <div className="h-10 w-10 rounded-lg bg-lw-rust/5 flex items-center justify-center border border-lw-rust/10 group-hover:bg-lw-rust/10 transition-colors">
                       <item.icon className="h-5 w-5 text-lw-rust" />
                     </div>
                     {item.badge && (
-                      <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${item.badgeColor}`}>
+                      <span className="text-xs px-2 py-0.5 rounded-full border font-medium bg-amber-50 text-amber-600 border-amber-200">
                         {item.badge}
                       </span>
                     )}
                   </div>
-                  <h3 className="font-semibold text-white mb-1">{item.title}</h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed">{item.desc}</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
                 </div>
               </Link>
             ))}
           </div>
         </div>
       </div>
-    </PageShell>
+    </DashboardLayout>
   );
 }

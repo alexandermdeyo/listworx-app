@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Navigation from '@/components/Navigation';
+import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import { ContractorProfile, TIERS } from './types';
 import StatusCard from './StatusCard';
@@ -33,6 +34,11 @@ import {
   LayoutDashboard,
   Settings,
   ChartBar as BarChart3,
+  Inbox,
+  FileText,
+  Video,
+  Bell,
+  Star,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -608,15 +614,12 @@ export default function ContractorDashboard() {
 
   if (authChecking || loading) {
     return (
-      <div className="min-h-screen bg-lw-dark text-white">
-        <Navigation />
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="mx-auto mb-3 h-8 w-8 animate-spin text-lw-rust" />
-            <p className="text-sm text-zinc-500">
-              {authChecking ? 'Authenticating...' : 'Loading your dashboard...'}
-            </p>
-          </div>
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="text-center">
+          <Loader2 className="mx-auto mb-3 h-8 w-8 animate-spin text-lw-rust" />
+          <p className="text-sm text-gray-500">
+            {authChecking ? 'Authenticating...' : 'Loading your dashboard...'}
+          </p>
         </div>
       </div>
     );
@@ -624,11 +627,10 @@ export default function ContractorDashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-lw-dark text-white">
-        <Navigation />
-        <div className="container mx-auto max-w-2xl px-4 py-12">
-          <Alert className="mb-4 border-red-500/30 bg-red-500/10 text-red-200">
-            <AlertCircle className="h-4 w-4 text-red-400" />
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="w-full max-w-md px-4">
+          <Alert className="mb-4 border-red-200 bg-red-50 text-red-700">
+            <AlertCircle className="h-4 w-4 text-red-500" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
           <div className="flex gap-3">
@@ -639,14 +641,14 @@ export default function ContractorDashboard() {
                 setLoading(true);
                 void checkAuth();
               }}
-              className="border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               <RefreshCw className="mr-2 h-4 w-4" /> Retry
             </Button>
             <Button
               variant="ghost"
               onClick={handleLogout}
-              className="text-zinc-400 hover:text-white hover:bg-zinc-800"
+              className="text-gray-500 hover:text-gray-900"
             >
               <LogOut className="mr-2 h-4 w-4" /> Sign Out
             </Button>
@@ -662,35 +664,34 @@ export default function ContractorDashboard() {
 
   if (!profile || !hasFilledApplication) {
     return (
-      <div className="min-h-screen bg-lw-dark text-white">
-        <Navigation />
+      <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto max-w-3xl px-4 py-8">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white">Partner Application</h1>
-              <p className="mt-1 text-sm text-zinc-500">{userEmail}</p>
+              <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}>Partner Application</h1>
+              <p className="mt-1 text-sm text-gray-500">{userEmail}</p>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="text-zinc-400 hover:text-white hover:bg-zinc-800"
+              className="text-gray-500 hover:text-gray-900"
             >
               <LogOut className="mr-1.5 h-4 w-4" /> Sign Out
             </Button>
           </div>
 
-          <div className="mb-6 flex items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/10 p-4">
+          <div className="mb-6 flex items-start gap-3 rounded-lg border border-lw-rust/30 bg-lw-rust/5 p-4">
             <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-lw-rust" />
             <div>
-              <p className="text-sm font-semibold text-white">Complete Your Application</p>
-              <p className="mt-0.5 text-sm text-zinc-300">
+              <p className="text-sm font-semibold text-gray-900">Complete Your Application</p>
+              <p className="mt-0.5 text-sm text-gray-600">
                 Finish your application below to apply as a ListWorx IronClad partner.
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <ApplicationForm
               userId={userId!}
               userEmail={userEmail}
@@ -703,20 +704,129 @@ export default function ContractorDashboard() {
     );
   }
 
-  const tabs: { id: DashboardTab; label: string; icon: React.ElementType }[] = [
-    { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'profile', label: 'Profile', icon: Settings },
+  const isExpiringSoon = (dateStr: string | null | undefined) => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    const thirtyDays = new Date();
+    thirtyDays.setDate(thirtyDays.getDate() + 30);
+    return d <= thirtyDays && d > new Date();
+  };
+
+  const licenseExpiring = isExpiringSoon(profile.license_expiration_date);
+  const insuranceExpiring = isExpiringSoon(profile.insurance_expiration_date);
+  const hasExpiryWarning = licenseExpiring || insuranceExpiring;
+
+  const navItems: NavItem[] = [
+    {
+      id: 'overview',
+      label: 'Dashboard',
+      icon: LayoutDashboard,
+      onClick: () => setActiveTab('overview'),
+    },
+    {
+      id: 'referrals',
+      label: 'Referrals',
+      icon: Inbox,
+      onClick: () => setActiveTab('overview'),
+    },
+    {
+      id: 'profile',
+      label: 'My Profile',
+      icon: User,
+      onClick: () => setActiveTab('profile'),
+    },
+    {
+      id: 'documents',
+      label: 'Documents',
+      icon: FileText,
+      onClick: () => setActiveTab('profile'),
+    },
+    {
+      id: 'reviews',
+      label: 'Reviews',
+      icon: Star,
+      disabled: true,
+    },
+    {
+      id: 'promo',
+      label: 'Promo Videos',
+      icon: Video,
+      disabled: true,
+      badgeLabel: 'Elite',
+    },
+    {
+      id: 'subscription',
+      label: 'Subscription',
+      icon: CreditCard,
+      onClick: () => setActiveTab('overview'),
+    },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      icon: Bell,
+      disabled: true,
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      onClick: () => {
+        if (
+          profile.partner_status === PARTNER_STATUS.APPLIED ||
+          profile.partner_status === PARTNER_STATUS.UNDER_REVIEW
+        ) {
+          setActiveTab('settings');
+        }
+      },
+    },
   ];
 
-  if (profile.partner_status === PARTNER_STATUS.APPLIED || profile.partner_status === PARTNER_STATUS.UNDER_REVIEW) {
-    tabs.push({ id: 'settings', label: 'Edit Application', icon: BarChart3 });
-  }
+  const activeNavId =
+    activeTab === 'profile' ? 'profile' :
+    activeTab === 'settings' ? 'settings' :
+    'overview';
 
   return (
-    <div className="min-h-screen bg-lw-dark text-white">
-      <Navigation />
+    <DashboardLayout
+      userName={profile.owner_name || profile.company_name || userEmail}
+      tierBadge={profile.tier || null}
+      pageTitle={
+        activeTab === 'profile' ? 'My Profile' :
+        activeTab === 'settings' ? 'Edit Application' :
+        'Dashboard'
+      }
+      navItems={navItems}
+      activeNavId={activeNavId}
+      onLogout={handleLogout}
+      hasNotifications={false}
+    >
+      <div className="p-6 space-y-6">
+        {/* Expiry warning banner */}
+        {hasExpiryWarning && (
+          <div className="flex items-start gap-3 rounded-lg border border-lw-rust/40 bg-lw-rust/5 px-4 py-3">
+            <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-lw-rust" />
+            <div>
+              <p className="text-sm font-semibold text-lw-rust">Credential Expiring Soon</p>
+              <p className="text-sm text-gray-600">
+                {[
+                  licenseExpiring && 'Your contractor license expires within 30 days.',
+                  insuranceExpiring && 'Your insurance certificate expires within 30 days.',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                {' '}
+                <button
+                  onClick={() => setActiveTab('profile')}
+                  className="font-medium text-lw-rust underline hover:no-underline"
+                >
+                  Update Documents →
+                </button>
+              </p>
+            </div>
+          </div>
+        )}
 
-      <div className="container mx-auto max-w-7xl px-4 py-8">
+        {/* Status card */}
         <StatusCard
           profile={profile}
           userEmail={userEmail}
@@ -725,28 +835,8 @@ export default function ContractorDashboard() {
           onLogout={handleLogout}
         />
 
-        <div className="mt-6 flex items-center gap-1 border-b border-zinc-800">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-all ${
-                  activeTab === tab.id
-                    ? 'border-lw-rust text-lw-rust'
-                    : 'border-transparent text-zinc-500 hover:text-white'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="mt-8 space-y-10">
+        {/* Tab content */}
+        <div className="space-y-6">
           {activeTab === 'overview' && (
             <>
               <SubscriptionSection contractorProfileId={profile?.id} />
@@ -771,18 +861,19 @@ export default function ContractorDashboard() {
           )}
 
           {activeTab === 'profile' && (
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div className="grid gap-6 lg:grid-cols-3">
                 <div className="space-y-6 lg:col-span-2">
-                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+                  {/* Company Information */}
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                     <div className="mb-5 flex items-center justify-between">
-                      <h3 className="text-base font-bold text-white">Company Information</h3>
+                      <h3 className="text-base font-bold text-gray-900">Company Information</h3>
                       {!isEditingProfile ? (
                         <Button
                           onClick={handleEditProfile}
                           size="sm"
                           variant="outline"
-                          className="gap-1.5 border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+                          className="gap-1.5 border-gray-300 text-gray-700 hover:bg-gray-50"
                         >
                           <Settings className="h-3.5 w-3.5" />
                           Edit Profile
@@ -793,7 +884,7 @@ export default function ContractorDashboard() {
                             onClick={handleCancelEdit}
                             size="sm"
                             variant="ghost"
-                            className="text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                            className="text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                             disabled={savingProfile}
                           >
                             Cancel
@@ -802,7 +893,8 @@ export default function ContractorDashboard() {
                             onClick={handleSaveProfile}
                             size="sm"
                             disabled={savingProfile}
-                            className="gap-1.5 bg-lw-rust text-white hover:bg-lw-rust-hover"
+                            className="gap-1.5 text-white"
+                            style={{ backgroundColor: '#E8621A' }}
                           >
                             {savingProfile ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -816,23 +908,23 @@ export default function ContractorDashboard() {
                     </div>
 
                     {profileSaved && (
-                      <div className="mb-4 flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2">
-                        <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-400" />
-                        <p className="text-sm text-emerald-200">Profile saved successfully.</p>
+                      <div className="mb-4 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2">
+                        <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-600" />
+                        <p className="text-sm text-emerald-700">Profile saved successfully.</p>
                       </div>
                     )}
 
                     {saveProfileError && (
-                      <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2">
-                        <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-400" />
-                        <p className="text-sm text-red-200">{saveProfileError}</p>
+                      <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2">
+                        <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
+                        <p className="text-sm text-red-700">{saveProfileError}</p>
                       </div>
                     )}
 
                     {saveProfileInfo && (
-                      <div className="mb-4 flex items-start gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2">
-                        <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-400" />
-                        <p className="text-sm text-blue-200">{saveProfileInfo}</p>
+                      <div className="mb-4 flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+                        <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" />
+                        <p className="text-sm text-blue-700">{saveProfileInfo}</p>
                       </div>
                     )}
 
@@ -840,71 +932,53 @@ export default function ContractorDashboard() {
                       <div className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                           {[
-                            {
-                              label: 'Company Name',
-                              icon: Building2,
-                              value: profile.company_name,
-                            },
-                            {
-                              label: 'Owner / Contact Name',
-                              icon: User,
-                              value: profile.owner_name,
-                            },
-                            {
-                              label: 'Phone Number',
-                              icon: Phone,
-                              value: profile.phone,
-                            },
-                            {
-                              label: 'License Number',
-                              icon: Shield,
-                              value: profile.license_number || '—',
-                            },
+                            { label: 'Company Name', icon: Building2, value: profile.company_name },
+                            { label: 'Owner / Contact Name', icon: User, value: profile.owner_name },
+                            { label: 'Phone Number', icon: Phone, value: profile.phone },
+                            { label: 'License Number', icon: Shield, value: profile.license_number || '—' },
                           ].map((field) => (
                             <div key={field.label}>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
                                 {field.label}
                               </p>
                               <div className="flex items-center gap-2">
-                                <field.icon className="h-4 w-4 flex-shrink-0 text-zinc-500" />
-                                <p className="text-sm font-medium text-white">{field.value || '—'}</p>
+                                <field.icon className="h-4 w-4 flex-shrink-0 text-gray-400" />
+                                <p className="text-sm font-medium text-gray-900">{field.value || '—'}</p>
                               </div>
                             </div>
                           ))}
 
                           <div className="sm:col-span-2">
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
                               Email Address
                             </p>
                             <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4 flex-shrink-0 text-zinc-500" />
-                              <p className="text-sm text-zinc-300">{profile.email}</p>
+                              <Mail className="h-4 w-4 flex-shrink-0 text-gray-400" />
+                              <p className="text-sm text-gray-700">{profile.email}</p>
                             </div>
                           </div>
                         </div>
 
                         {profile.bio && (
                           <div>
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
-                              Bio
-                            </p>
-                            <p className="text-sm leading-relaxed text-zinc-300">{profile.bio}</p>
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Bio</p>
+                            <p className="text-sm leading-relaxed text-gray-700">{profile.bio}</p>
                           </div>
                         )}
 
                         {(profile as any).business_description && (
                           <div>
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
                               Business Description
                             </p>
-                            <p className="text-sm leading-relaxed text-zinc-300">{(profile as any).business_description}</p>
+                            <p className="text-sm leading-relaxed text-gray-700">{(profile as any).business_description}</p>
                           </div>
                         )}
 
                         <div className="grid gap-4 sm:grid-cols-2">
                           {profile.website && (
                             <div>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
                                 Business Website
                               </p>
                               <a
@@ -920,7 +994,7 @@ export default function ContractorDashboard() {
 
                           {(profile as any).google_business_url && (
                             <div>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
                                 Google Business Profile
                               </p>
                               <a
@@ -936,17 +1010,17 @@ export default function ContractorDashboard() {
 
                           {(profile as any).years_in_business > 0 && (
                             <div>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
                                 Years in Business
                               </p>
-                              <p className="text-sm font-medium text-white">{(profile as any).years_in_business}</p>
+                              <p className="text-sm font-medium text-gray-900">{(profile as any).years_in_business}</p>
                             </div>
                           )}
                         </div>
 
                         {(profile as any).profile_slug && (
                           <div>
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
                               Public Profile
                             </p>
                             <a
@@ -964,20 +1038,8 @@ export default function ContractorDashboard() {
                       <div className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                           {[
-                            {
-                              id: 'company_name',
-                              label: 'Company Name',
-                              icon: Building2,
-                              type: 'text',
-                              placeholder: 'Your company name',
-                            },
-                            {
-                              id: 'owner_name',
-                              label: 'Owner / Contact Name',
-                              icon: User,
-                              type: 'text',
-                              placeholder: 'Full name',
-                            },
+                            { id: 'company_name', label: 'Company Name', icon: Building2, type: 'text', placeholder: 'Your company name' },
+                            { id: 'owner_name', label: 'Owner / Contact Name', icon: User, type: 'text', placeholder: 'Full name' },
                             {
                               id: 'phone',
                               label: 'Phone Number',
@@ -991,20 +1053,14 @@ export default function ContractorDashboard() {
                                 return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
                               },
                             },
-                            {
-                              id: 'license_number',
-                              label: 'License Number',
-                              icon: Shield,
-                              type: 'text',
-                              placeholder: 'Optional',
-                            },
+                            { id: 'license_number', label: 'License Number', icon: Shield, type: 'text', placeholder: 'Optional' },
                           ].map((field) => (
                             <div key={field.id}>
-                              <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                              <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
                                 {field.label}
                               </Label>
                               <div className="relative">
-                                <field.icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                                <field.icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                                 <Input
                                   type={field.type}
                                   value={profileEdit[field.id as keyof typeof profileEdit]}
@@ -1014,82 +1070,74 @@ export default function ContractorDashboard() {
                                     setProfileEdit({ ...profileEdit, [field.id]: val });
                                   }}
                                   placeholder={field.placeholder}
-                                  className="border-zinc-700 bg-zinc-950 pl-9 text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                                  className="border-gray-300 bg-white pl-9 text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
                                 />
                               </div>
                             </div>
                           ))}
 
                           <div className="sm:col-span-2">
-                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
                               Email Address
                             </Label>
                             <div className="relative">
-                              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                               <Input
                                 type="email"
                                 value={profileEdit.email}
-                                onChange={(e) =>
-                                  setProfileEdit({ ...profileEdit, email: e.target.value })
-                                }
+                                onChange={(e) => setProfileEdit({ ...profileEdit, email: e.target.value })}
                                 placeholder="your@email.com"
-                                className="border-zinc-700 bg-zinc-950 pl-9 text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                                className="border-gray-300 bg-white pl-9 text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
                               />
                             </div>
-                            <p className="mt-1.5 text-xs text-zinc-500">
+                            <p className="mt-1.5 text-xs text-gray-500">
                               Changing your email will update your login credentials.
                             </p>
                           </div>
                         </div>
 
                         <div>
-                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
                             Short Bio
                           </Label>
                           <textarea
                             value={profileEdit.bio}
-                            onChange={(e) =>
-                              setProfileEdit({ ...profileEdit, bio: e.target.value })
-                            }
+                            onChange={(e) => setProfileEdit({ ...profileEdit, bio: e.target.value })}
                             placeholder="Brief tagline or summary..."
                             rows={2}
-                            className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/10"
+                            className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/10"
                           />
                         </div>
 
                         <div>
-                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
                             Business Description
                           </Label>
                           <textarea
                             value={profileEdit.business_description}
-                            onChange={(e) =>
-                              setProfileEdit({ ...profileEdit, business_description: e.target.value })
-                            }
+                            onChange={(e) => setProfileEdit({ ...profileEdit, business_description: e.target.value })}
                             placeholder="Detailed description of your business, experience, and services..."
                             rows={4}
-                            className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/10"
+                            className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/10"
                           />
                         </div>
 
                         <div className="grid gap-4 sm:grid-cols-2">
                           <div>
-                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
                               Business Website
                             </Label>
                             <Input
                               type="url"
                               value={profileEdit.website}
-                              onChange={(e) =>
-                                setProfileEdit({ ...profileEdit, website: e.target.value })
-                              }
+                              onChange={(e) => setProfileEdit({ ...profileEdit, website: e.target.value })}
                               placeholder="https://..."
-                              className="border-zinc-700 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                              className="border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
                             />
                           </div>
 
                           <div>
-                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
                               Years in Business
                             </Label>
                             <Input
@@ -1097,62 +1145,60 @@ export default function ContractorDashboard() {
                               min={0}
                               max={100}
                               value={profileEdit.years_in_business || ''}
-                              onChange={(e) =>
-                                setProfileEdit({ ...profileEdit, years_in_business: parseInt(e.target.value) || 0 })
-                              }
+                              onChange={(e) => setProfileEdit({ ...profileEdit, years_in_business: parseInt(e.target.value) || 0 })}
                               placeholder="e.g. 10"
-                              className="border-zinc-700 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                              className="border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
                             />
                           </div>
                         </div>
 
                         <div>
-                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
                             Google Business Profile URL
                           </Label>
                           <Input
                             type="url"
                             value={profileEdit.google_business_url}
-                            onChange={(e) =>
-                              setProfileEdit({ ...profileEdit, google_business_url: e.target.value })
-                            }
+                            onChange={(e) => setProfileEdit({ ...profileEdit, google_business_url: e.target.value })}
                             placeholder="https://g.page/..."
-                            className="border-zinc-700 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus:border-lw-rust"
+                            className="border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
                           />
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
-                    <h3 className="mb-4 text-base font-bold text-white">Service Areas</h3>
+                  {/* Service Areas */}
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h3 className="mb-4 text-base font-bold text-gray-900">Service Areas</h3>
                     {(profile as any)._liveCounties && (profile as any)._liveCounties.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {(profile as any)._liveCounties.map((county: any, idx: number) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-950 px-3 py-1 text-xs font-medium text-zinc-300"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-medium text-gray-700"
                           >
-                            <MapPin className="h-3 w-3 text-zinc-500" />
+                            <MapPin className="h-3 w-3 text-gray-400" />
                             {county.name}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-zinc-500">
+                      <p className="text-sm text-gray-500">
                         No service areas added yet. Complete your application to add counties.
                       </p>
                     )}
                   </div>
 
-                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
-                    <h3 className="mb-4 text-base font-bold text-white">Trade Specialties</h3>
+                  {/* Trade Specialties */}
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h3 className="mb-4 text-base font-bold text-gray-900">Trade Specialties</h3>
                     {(profile as any)._liveTrades && (profile as any)._liveTrades.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {(profile as any)._liveTrades.map((trade: any, idx: number) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-lw-rust/30 bg-lw-rust/10 px-3 py-1 text-xs font-medium text-lw-rust"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-lw-rust/20 bg-lw-rust/5 px-3 py-1 text-xs font-medium text-lw-rust"
                           >
                             <Briefcase className="h-3 w-3" />
                             {trade.name}
@@ -1160,7 +1206,7 @@ export default function ContractorDashboard() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-zinc-500">
+                      <p className="text-sm text-gray-500">
                         No trades selected yet. Complete your application to add specialties.
                       </p>
                     )}
@@ -1168,18 +1214,19 @@ export default function ContractorDashboard() {
                 </div>
 
                 <div className="space-y-6">
-                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
-                    <h3 className="mb-4 text-base font-bold text-white">Company Logo</h3>
+                  {/* Company Logo */}
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h3 className="mb-4 text-base font-bold text-gray-900">Company Logo</h3>
                     <div className="flex flex-col items-center gap-4">
                       {profile.logo_url ? (
                         <img
                           src={profile.logo_url}
                           alt="Company Logo"
-                          className="h-24 w-24 rounded-xl border border-zinc-700 bg-zinc-950 p-2 object-contain"
+                          className="h-24 w-24 rounded-lg border border-gray-200 bg-gray-50 p-2 object-contain"
                         />
                       ) : (
-                        <div className="flex h-24 w-24 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-950">
-                          <Building2 className="h-10 w-10 text-zinc-600" />
+                        <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-gray-200 bg-gray-50">
+                          <Building2 className="h-10 w-10 text-gray-300" />
                         </div>
                       )}
 
@@ -1197,7 +1244,7 @@ export default function ContractorDashboard() {
                         disabled={uploading}
                         variant="outline"
                         size="sm"
-                        className="w-full border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+                        className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
                       >
                         {uploading ? (
                           <>
@@ -1212,41 +1259,36 @@ export default function ContractorDashboard() {
                         )}
                       </Button>
 
-                      <p className="text-center text-xs text-zinc-500">
-                        PNG, JPG, WebP — max 5MB
-                      </p>
+                      <p className="text-center text-xs text-gray-400">PNG, JPG, WebP — max 5MB</p>
 
                       {uploadError && (
-                        <div className="flex w-full items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3">
-                          <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-400" />
-                          <p className="text-xs text-red-200">{uploadError}</p>
+                        <div className="flex w-full items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+                          <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
+                          <p className="text-xs text-red-700">{uploadError}</p>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
-                    <h3 className="mb-4 text-base font-bold text-white">Account Details</h3>
+                  {/* Account Details */}
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                    <h3 className="mb-4 text-base font-bold text-gray-900">Account Details</h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-zinc-500">Partner Status</span>
-                        <span className="font-medium capitalize text-white">
-                          {profile.partner_status}
-                        </span>
+                        <span className="text-gray-500">Partner Status</span>
+                        <span className="font-medium capitalize text-gray-900">{profile.partner_status}</span>
                       </div>
 
                       {profile.tier && (
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-zinc-500">Plan</span>
-                          <span className="font-medium capitalize text-lw-rust">
-                            {profile.tier}
-                          </span>
+                          <span className="text-gray-500">Plan</span>
+                          <span className="font-medium capitalize text-lw-rust">{profile.tier}</span>
                         </div>
                       )}
 
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-zinc-500">Member Since</span>
-                        <span className="font-medium text-white">
+                        <span className="text-gray-500">Member Since</span>
+                        <span className="font-medium text-gray-900">
                           {new Date(profile.created_at).toLocaleDateString('en-US', {
                             month: 'short',
                             year: 'numeric',
@@ -1255,12 +1297,12 @@ export default function ContractorDashboard() {
                       </div>
 
                       {profile.partner_status === PARTNER_STATUS.ACTIVE && (
-                        <div className="border-t border-zinc-800 pt-3">
+                        <div className="border-t border-gray-100 pt-3">
                           <Button
                             onClick={handleManageSubscription}
                             variant="outline"
                             size="sm"
-                            className="w-full border-zinc-700 text-zinc-200 hover:bg-zinc-800 hover:text-white"
+                            className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
                             disabled={portalLoading}
                           >
                             {portalLoading ? (
@@ -1288,17 +1330,17 @@ export default function ContractorDashboard() {
 
           {activeTab === 'settings' && (
             <div className="max-w-3xl">
-              <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-                <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-400" />
+              <div className="mb-6 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
                 <div>
-                  <p className="text-sm font-semibold text-amber-200">Edit Your Application</p>
-                  <p className="mt-0.5 text-sm text-zinc-300">
+                  <p className="text-sm font-semibold text-amber-800">Edit Your Application</p>
+                  <p className="mt-0.5 text-sm text-amber-700">
                     You can update your application details while it is under review.
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-xl">
+              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <ApplicationForm
                   userId={userId!}
                   userEmail={userEmail}
@@ -1310,6 +1352,6 @@ export default function ContractorDashboard() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

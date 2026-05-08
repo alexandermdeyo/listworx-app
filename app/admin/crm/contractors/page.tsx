@@ -9,15 +9,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Phone, Loader as Loader2, CircleAlert as AlertCircle, LogOut, Archive, Trash2, ShoppingCart, Plus, DollarSign, ChartBar as BarChart3, Pause, Play, UserX, Bell, BellOff, Send, CircleCheck as CheckCircle2, ChevronDown, ChevronUp, Shield, Briefcase, RefreshCw, Image as ImageIcon, Upload, Trash, Star, StarOff, Eye } from 'lucide-react';
+import { Mail, Phone, Loader as Loader2, CircleAlert as AlertCircle, LogOut, Archive, Trash2, ShoppingCart, Plus, DollarSign, ChartBar as BarChart3, Pause, Play, UserX, Bell, BellOff, Send, CircleCheck as CheckCircle2, ChevronDown, ChevronUp, Shield, Briefcase, RefreshCw, Image as ImageIcon, Upload, Trash, Star, StarOff, Eye, LayoutDashboard, Clock, FileText, Home, Settings, Users } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import Navigation from '@/components/Navigation';
+import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminContractorDocuments from './AdminContractorDocuments';
+import SubscriptionOverride from './SubscriptionOverride';
 
 interface Contractor {
   id: string;
@@ -85,6 +87,7 @@ export default function ContractorsPage() {
 
   const [logoUploading, setLogoUploading] = useState<string | null>(null);
   const [logoPreviewContractorId, setLogoPreviewContractorId] = useState<string | null>(null);
+  const [adminUserId, setAdminUserId] = useState('');
 
   const logoInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
@@ -110,6 +113,7 @@ export default function ContractorsPage() {
       else router.push('/login?redirect=/admin/crm/contractors');
       return;
     }
+    if (result.user?.id) setAdminUserId(result.user.id);
     setIsAuthenticated(true);
     loadContractors();
   };
@@ -414,53 +418,60 @@ export default function ContractorsPage() {
     return `${Math.round((c.jobs_completed / c.total_referrals_sent) * 100)}%`;
   };
 
+  const adminNavItems: NavItem[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/crm' },
+    { id: 'contractors', label: 'Contractors', icon: Users, href: '/admin/crm/contractors' },
+    { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications' },
+    { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
+    { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
+    { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
+  ];
+
   if (accessDenied) {
     return (
-      <div className="min-h-screen bg-lw-dark flex items-center justify-center">
-        <Card className="p-8 max-w-md text-center bg-lw-dark-card border-lw-dark-border">
-          <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2 text-white">Access Denied</h2>
-          <Button onClick={handleSignOut} className="mt-4">Sign Out</Button>
-        </Card>
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="max-w-md text-center p-8 rounded-xl border border-gray-200">
+          <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2 text-gray-900">Access Denied</h2>
+          <Button onClick={handleSignOut} className="mt-4 text-white" style={{ backgroundColor: '#E8621A' }}>Sign Out</Button>
+        </div>
       </div>
     );
   }
 
   if (loading || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-lw-dark flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <Loader2 className="h-10 w-10 animate-spin text-lw-rust" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-lw-dark">
-      <Navigation />
-
+    <DashboardLayout
+      userName="Admin"
+      pageTitle="CONTRACTORS"
+      navItems={adminNavItems}
+      activeNavId="contractors"
+      onLogout={handleSignOut}
+      hasNotifications={false}
+    >
       {toast && (
         <div className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-2 transition-all ${
           toast.type === 'success'
-            ? 'bg-emerald-900/90 border border-emerald-600/40 text-emerald-200'
-            : 'bg-red-900/90 border border-red-600/40 text-red-200'
+            ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+            : 'bg-red-50 border border-red-200 text-red-700'
         }`}>
           {toast.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
           {toast.msg}
         </div>
       )}
 
-      <div className="container mx-auto px-4 py-10 max-w-7xl">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+      <div className="p-6 max-w-7xl">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <Link href="/admin/crm" className="text-zinc-400 hover:text-white text-sm mb-2 inline-block transition-colors">
-              ← Back to Dashboard
-            </Link>
-            <h1 className="text-3xl font-bold text-white">Contractors</h1>
-            <p className="text-zinc-400 mt-1">{filtered.length} of {contractors.length} contractors</p>
+            <p className="text-gray-500 text-sm mt-1">{filtered.length} of {contractors.length} contractors</p>
           </div>
-          <Button onClick={handleSignOut} variant="outline" className="border-lw-dark-border text-zinc-300 hover:bg-lw-dark-surface">
-            <LogOut className="h-4 w-4 mr-2" /> Sign Out
-          </Button>
         </div>
 
         <div className="mb-6 flex flex-wrap gap-3">
@@ -468,13 +479,13 @@ export default function ContractorsPage() {
             placeholder="Search by name, company, email..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="max-w-xs bg-lw-dark-card border-lw-dark-border text-white placeholder:text-zinc-500"
+            className="max-w-xs bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
           />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-44 bg-lw-dark-card border-lw-dark-border text-white">
+            <SelectTrigger className="w-44 bg-white border-gray-300 text-gray-900">
               <SelectValue placeholder="All statuses" />
             </SelectTrigger>
-            <SelectContent className="bg-lw-dark-card border-lw-dark-border text-white">
+            <SelectContent className="bg-white border-gray-200 text-gray-900">
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="approved">Approved</SelectItem>
@@ -484,14 +495,14 @@ export default function ContractorsPage() {
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm" onClick={loadContractors} className="border-lw-dark-border text-zinc-300 hover:bg-lw-dark-surface">
+          <Button variant="outline" size="sm" onClick={loadContractors} className="border-gray-300 text-gray-600 hover:bg-gray-50">
             <RefreshCw className="h-4 w-4 mr-2" /> Refresh
           </Button>
         </div>
 
         {filtered.length === 0 ? (
-          <Card className="p-14 text-center bg-lw-dark-card border-lw-dark-border">
-            <p className="text-zinc-400 text-lg">No contractors match your filters.</p>
+          <Card className="p-14 text-center bg-white border-gray-200 shadow-sm">
+            <p className="text-gray-400 text-lg">No contractors match your filters.</p>
           </Card>
         ) : (
           <div className="space-y-4">
@@ -502,13 +513,13 @@ export default function ContractorsPage() {
               const convRate = parseFloat(conversionRate(contractor));
 
               return (
-                <Card key={contractor.id} className="bg-lw-dark-card border-lw-dark-border/60 overflow-hidden">
+                <Card key={contractor.id} className="bg-white border-gray-200 shadow-sm overflow-hidden">
                   <div className="p-5">
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-3 mb-1">
                           {contractor.logo_url && (
-                            <div className="w-8 h-8 rounded-md overflow-hidden bg-lw-dark-surface border border-lw-dark-border flex-shrink-0">
+                            <div className="w-8 h-8 rounded-md overflow-hidden bg-gray-50 border border-gray-200 flex-shrink-0">
                               <img
                                 src={contractor.logo_url}
                                 alt={contractor.company_name}
@@ -517,7 +528,7 @@ export default function ContractorsPage() {
                               />
                             </div>
                           )}
-                          <h3 className="text-lg font-bold text-white truncate">{contractor.company_name || '(No name)'}</h3>
+                          <h3 className="text-lg font-bold text-gray-900 truncate">{contractor.company_name || '(No name)'}</h3>
                           <Badge variant={statusBadgeVariant(contractor.partner_status)} className="capitalize text-xs">
                             {contractor.partner_status}
                           </Badge>
@@ -529,36 +540,36 @@ export default function ContractorsPage() {
                           {contractor.subscription_status && (
                             <Badge variant="outline" className={`text-xs capitalize ${
                               contractor.subscription_status === 'active'
-                                ? 'text-emerald-400 border-emerald-500/30 bg-emerald-950/30'
-                                : 'text-zinc-400 border-lw-dark-border/30 bg-lw-dark-surface/30'
+                                ? 'text-emerald-600 border-emerald-200 bg-emerald-50'
+                                : 'text-gray-500 border-gray-200 bg-gray-50'
                             }`}>
                               Billing: {contractor.subscription_status}
                             </Badge>
                           )}
                           {contractor.stripe_customer_id && (
-                            <Badge variant="outline" className="text-zinc-400 border-lw-dark-border/30 bg-lw-dark-surface/30 text-xs">
+                            <Badge variant="outline" className="text-gray-500 border-gray-200 bg-gray-50 text-xs">
                               Stripe
                             </Badge>
                           )}
                           {contractor.featured_on_homepage && (
-                            <Badge variant="outline" className="text-amber-400 border-amber-500/30 bg-amber-950/30 text-xs">
-                              <Star className="h-3 w-3 mr-1 fill-amber-400" /> Featured
+                            <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 text-xs">
+                              <Star className="h-3 w-3 mr-1 fill-amber-500" /> Featured
                             </Badge>
                           )}
                           {!contractor.email_notifications_enabled && (
-                            <Badge variant="outline" className="text-amber-400 border-amber-500/30 bg-amber-950/30 text-xs">
+                            <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 text-xs">
                               <BellOff className="h-3 w-3 mr-1" /> Emails Off
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-zinc-400">{contractor.owner_name}</p>
+                        <p className="text-sm text-gray-500">{contractor.owner_name}</p>
 
                         <div className="flex flex-wrap gap-x-5 gap-y-1 mt-2">
-                          <a href={`mailto:${email}`} className="text-xs text-zinc-400 hover:text-lw-rust flex items-center gap-1 transition-colors">
+                          <a href={`mailto:${email}`} className="text-xs text-gray-400 hover:text-lw-rust flex items-center gap-1 transition-colors">
                             <Mail className="h-3.5 w-3.5" /> {email}
                           </a>
                           {phone && (
-                            <a href={`tel:${phone}`} className="text-xs text-zinc-400 hover:text-lw-rust flex items-center gap-1 transition-colors">
+                            <a href={`tel:${phone}`} className="text-xs text-gray-400 hover:text-lw-rust flex items-center gap-1 transition-colors">
                               <Phone className="h-3.5 w-3.5" /> {phone}
                             </a>
                           )}
@@ -572,12 +583,12 @@ export default function ContractorsPage() {
                               </span>
                             ))}
                             {contractor.counties?.slice(0, 3).map((c) => (
-                              <span key={c.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-lw-dark-border/50 text-zinc-300 border border-lw-dark-border/30">
+                              <span key={c.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600 border border-gray-200">
                                 {c.name}, {c.state_code}
                               </span>
                             ))}
                             {(contractor.counties?.length > 3 || contractor.trades?.length > 4) && (
-                              <span className="text-xs text-zinc-500 px-1">+more</span>
+                              <span className="text-xs text-gray-400 px-1">+more</span>
                             )}
                           </div>
                         )}
@@ -585,24 +596,24 @@ export default function ContractorsPage() {
 
                       <div className="flex flex-wrap gap-2 items-center">
                         <div className="grid grid-cols-3 gap-3 text-center">
-                          <div className="bg-lw-dark-surface/60 rounded-lg px-3 py-2">
-                            <p className="text-xs text-zinc-500 mb-0.5">Referrals</p>
-                            <p className="text-base font-bold text-white">{contractor.total_referrals_sent}</p>
+                          <div className="bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">
+                            <p className="text-xs text-gray-400 mb-0.5">Referrals</p>
+                            <p className="text-base font-bold text-gray-900">{contractor.total_referrals_sent}</p>
                           </div>
-                          <div className="bg-lw-dark-surface/60 rounded-lg px-3 py-2">
-                            <p className="text-xs text-zinc-500 mb-0.5">Completed</p>
-                            <p className="text-base font-bold text-emerald-400">{contractor.jobs_completed}</p>
+                          <div className="bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">
+                            <p className="text-xs text-gray-400 mb-0.5">Completed</p>
+                            <p className="text-base font-bold text-emerald-600">{contractor.jobs_completed}</p>
                           </div>
-                          <div className="bg-lw-dark-surface/60 rounded-lg px-3 py-2">
-                            <p className="text-xs text-zinc-500 mb-0.5">Conv. Rate</p>
-                            <p className={`text-base font-bold ${convRate >= 50 ? 'text-emerald-400' : convRate >= 25 ? 'text-amber-400' : 'text-zinc-400'}`}>
+                          <div className="bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">
+                            <p className="text-xs text-gray-400 mb-0.5">Conv. Rate</p>
+                            <p className={`text-base font-bold ${convRate >= 50 ? 'text-emerald-600' : convRate >= 25 ? 'text-amber-500' : 'text-gray-400'}`}>
                               {conversionRate(contractor)}
                             </p>
                           </div>
                         </div>
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : contractor.id)}
-                          className="text-zinc-400 hover:text-white transition-colors p-1"
+                          className="text-gray-400 hover:text-gray-700 transition-colors p-1"
                         >
                           {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                         </button>
@@ -611,10 +622,10 @@ export default function ContractorsPage() {
                   </div>
 
                   {isExpanded && (
-                    <div className="border-t border-lw-dark-border/60 bg-lw-dark/30 p-5 space-y-6">
+                    <div className="border-t border-gray-200 bg-gray-50/50 p-5 space-y-6">
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                          <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-3 flex items-center gap-1.5">
+                          <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3 flex items-center gap-1.5">
                             <BarChart3 className="h-3.5 w-3.5" /> Performance
                           </h4>
                           <div className="space-y-2">
@@ -626,15 +637,15 @@ export default function ContractorsPage() {
                               { label: 'Avg Response Time', value: 'N/A (coming soon)' },
                             ].map(item => (
                               <div key={item.label} className="flex justify-between text-sm">
-                                <span className="text-zinc-400">{item.label}</span>
-                                <span className="font-medium text-white">{item.value}</span>
+                                <span className="text-gray-500">{item.label}</span>
+                                <span className="font-medium text-gray-900">{item.value}</span>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         <div>
-                          <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-3 flex items-center gap-1.5">
+                          <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3 flex items-center gap-1.5">
                             <Shield className="h-3.5 w-3.5" /> Status Controls
                           </h4>
                           <div className="space-y-2">
@@ -644,7 +655,7 @@ export default function ContractorsPage() {
                                 disabled={!!processing}
                                 variant="outline"
                                 size="sm"
-                                className="w-full border-amber-600/40 text-amber-400 hover:bg-amber-950/40"
+                                className="w-full border-amber-300 text-amber-600 hover:bg-amber-50"
                               >
                                 <Pause className="h-3.5 w-3.5 mr-2" /> Pause Contractor
                               </Button>
@@ -655,7 +666,7 @@ export default function ContractorsPage() {
                                 disabled={!!processing}
                                 variant="outline"
                                 size="sm"
-                                className="w-full border-emerald-600/40 text-emerald-400 hover:bg-emerald-950/40"
+                                className="w-full border-emerald-300 text-emerald-600 hover:bg-emerald-50"
                               >
                                 <Play className="h-3.5 w-3.5 mr-2" /> Activate Contractor
                               </Button>
@@ -665,7 +676,7 @@ export default function ContractorsPage() {
                               disabled={!!processing}
                               variant="outline"
                               size="sm"
-                              className="w-full border-red-600/40 text-red-400 hover:bg-red-950/40"
+                              className="w-full border-red-200 text-red-500 hover:bg-red-50"
                             >
                               <UserX className="h-3.5 w-3.5 mr-2" /> Remove Contractor
                             </Button>
@@ -674,7 +685,7 @@ export default function ContractorsPage() {
                               disabled={!!processing}
                               variant="outline"
                               size="sm"
-                              className="w-full border-lw-dark-border/80 text-zinc-400 hover:bg-lw-dark-surface"
+                              className="w-full border-gray-300 text-gray-500 hover:bg-gray-50"
                             >
                               <Archive className="h-3.5 w-3.5 mr-2" /> Archive
                             </Button>
@@ -683,8 +694,8 @@ export default function ContractorsPage() {
                       </div>
 
                       {/* LOGO MANAGEMENT */}
-                      <div className="border border-lw-dark-border/50 rounded-xl p-4 bg-lw-dark-surface/30">
-                        <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-4 flex items-center gap-1.5">
+                      <div className="border border-gray-200 rounded-xl p-4 bg-white">
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-4 flex items-center gap-1.5">
                           <ImageIcon className="h-3.5 w-3.5" /> Logo & Homepage Feature
                         </h4>
 
@@ -692,14 +703,14 @@ export default function ContractorsPage() {
                           <div className="flex-shrink-0">
                             {contractor.logo_url ? (
                               <div className="relative group">
-                                <div className="w-24 h-16 rounded-lg border border-lw-dark-border/80 bg-white overflow-hidden flex items-center justify-center">
+                                <div className="w-24 h-16 rounded-lg border border-gray-200 bg-white overflow-hidden flex items-center justify-center">
                                   <img
                                     src={contractor.logo_url}
                                     alt={contractor.company_name}
                                     className="max-w-full max-h-full object-contain p-1"
                                     onError={(e) => {
                                       (e.target as HTMLImageElement).parentElement!.innerHTML =
-                                        '<div class="text-zinc-500 text-xs text-center p-2">Image error</div>';
+                                        '<div class="text-gray-400 text-xs text-center p-2">Image error</div>';
                                     }}
                                   />
                                 </div>
@@ -708,22 +719,22 @@ export default function ContractorsPage() {
                                     onClick={() => setLogoPreviewContractorId(
                                       logoPreviewContractorId === contractor.id ? null : contractor.id
                                     )}
-                                    className="text-xs flex items-center gap-1 text-zinc-400 hover:text-white transition-colors px-2 py-1 rounded border border-lw-dark-border hover:border-zinc-500"
+                                    className="text-xs flex items-center gap-1 text-gray-500 hover:text-gray-900 transition-colors px-2 py-1 rounded border border-gray-200 hover:border-gray-400"
                                   >
                                     <Eye className="h-3 w-3" /> Preview
                                   </button>
                                   <button
                                     onClick={() => handleLogoDelete(contractor)}
                                     disabled={logoUploading === contractor.id}
-                                    className="text-xs flex items-center gap-1 text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded border border-red-900/40 hover:border-red-700/60"
+                                    className="text-xs flex items-center gap-1 text-red-500 hover:text-red-600 transition-colors px-2 py-1 rounded border border-red-200 hover:border-red-300"
                                   >
                                     <Trash className="h-3 w-3" /> Delete
                                   </button>
                                 </div>
                               </div>
                             ) : (
-                              <div className="w-24 h-16 rounded-lg border-2 border-dashed border-lw-dark-border flex items-center justify-center">
-                                <ImageIcon className="h-6 w-6 text-zinc-600" />
+                              <div className="w-24 h-16 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
+                                <ImageIcon className="h-6 w-6 text-gray-300" />
                               </div>
                             )}
                           </div>
@@ -746,7 +757,7 @@ export default function ContractorsPage() {
                                 variant="outline"
                                 disabled={logoUploading === contractor.id}
                                 onClick={() => logoInputRefs.current[contractor.id]?.click()}
-                                className="border-lw-dark-border/80 text-zinc-300 hover:bg-zinc-700"
+                                className="border-gray-300 text-gray-600 hover:bg-gray-50"
                               >
                                 {logoUploading === contractor.id ? (
                                   <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
@@ -755,7 +766,7 @@ export default function ContractorsPage() {
                                 )}
                                 {contractor.logo_url ? 'Replace Logo' : 'Upload Logo'}
                               </Button>
-                              <p className="text-xs text-zinc-600 mt-1.5">JPG, PNG, or WebP — max 5MB</p>
+                              <p className="text-xs text-gray-400 mt-1.5">JPG, PNG, or WebP — max 5MB</p>
                             </div>
 
                             <div className="flex items-center gap-3">
@@ -764,14 +775,14 @@ export default function ContractorsPage() {
                                 disabled={processing === contractor.id + '-featured'}
                                 className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-lg border transition-all ${
                                   contractor.featured_on_homepage
-                                    ? 'bg-amber-950/50 border-amber-600/40 text-amber-400 hover:bg-amber-950/70'
-                                    : 'bg-lw-dark-surface/60 border-lw-dark-border/80 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200'
+                                    ? 'bg-amber-50 border-amber-200 text-amber-600 hover:bg-amber-100'
+                                    : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700'
                                 }`}
                               >
                                 {processing === contractor.id + '-featured' ? (
                                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
                                 ) : contractor.featured_on_homepage ? (
-                                  <Star className="h-3.5 w-3.5 fill-amber-400" />
+                                  <Star className="h-3.5 w-3.5 fill-amber-500" />
                                 ) : (
                                   <StarOff className="h-3.5 w-3.5" />
                                 )}
@@ -794,8 +805,8 @@ export default function ContractorsPage() {
                         </div>
 
                         {logoPreviewContractorId === contractor.id && contractor.logo_url && (
-                          <div className="mt-4 p-4 bg-white rounded-lg border border-slate-200">
-                            <p className="text-xs text-zinc-500 mb-3 font-medium">Homepage preview (on white background)</p>
+                          <div className="mt-4 p-4 bg-white rounded-lg border border-gray-200">
+                            <p className="text-xs text-gray-400 mb-3 font-medium">Homepage preview (on white background)</p>
                             <div className="flex items-center gap-8 overflow-x-auto pb-2">
                               <img
                                 src={contractor.logo_url}
@@ -810,7 +821,7 @@ export default function ContractorsPage() {
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                          <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-3 flex items-center gap-1.5">
+                          <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3 flex items-center gap-1.5">
                             <Bell className="h-3.5 w-3.5" /> Email Controls
                           </h4>
                           <div className="space-y-2">
@@ -820,8 +831,8 @@ export default function ContractorsPage() {
                               variant="outline"
                               size="sm"
                               className={`w-full ${contractor.email_notifications_enabled
-                                ? 'border-amber-600/40 text-amber-400 hover:bg-amber-950/40'
-                                : 'border-emerald-600/40 text-emerald-400 hover:bg-emerald-950/40'}`}
+                                ? 'border-amber-300 text-amber-600 hover:bg-amber-50'
+                                : 'border-emerald-300 text-emerald-600 hover:bg-emerald-50'}`}
                             >
                               {contractor.email_notifications_enabled ? (
                                 <><BellOff className="h-3.5 w-3.5 mr-2" /> Disable Email Notifications</>
@@ -834,7 +845,7 @@ export default function ContractorsPage() {
                               disabled={processing?.startsWith(contractor.id + '-email')}
                               variant="outline"
                               size="sm"
-                              className="w-full border-lw-dark-border/80 text-zinc-300 hover:bg-lw-dark-surface"
+                              className="w-full border-gray-300 text-gray-600 hover:bg-gray-50"
                             >
                               {processing === contractor.id + '-email-approval'
                                 ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
@@ -846,7 +857,7 @@ export default function ContractorsPage() {
                               disabled={processing?.startsWith(contractor.id + '-email')}
                               variant="outline"
                               size="sm"
-                              className="w-full border-lw-dark-border/80 text-zinc-300 hover:bg-lw-dark-surface"
+                              className="w-full border-gray-300 text-gray-600 hover:bg-gray-50"
                             >
                               {processing === contractor.id + '-email-welcome'
                                 ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
@@ -857,19 +868,19 @@ export default function ContractorsPage() {
                         </div>
 
                         <div>
-                          <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-3">Admin Notes</h4>
+                          <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Admin Notes</h4>
                           {contractor.admin_notes ? (
-                            <p className="text-sm text-zinc-300 bg-lw-dark-surface/60 rounded-lg p-3 mb-2 leading-relaxed">
+                            <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 mb-2 leading-relaxed border border-gray-200">
                               {contractor.admin_notes}
                             </p>
                           ) : (
-                            <p className="text-sm text-zinc-500 mb-2">No notes yet.</p>
+                            <p className="text-sm text-gray-400 mb-2">No notes yet.</p>
                           )}
                           <Button
                             onClick={() => openNotesDialog(contractor)}
                             variant="outline"
                             size="sm"
-                            className="border-lw-dark-border/80 text-zinc-300 hover:bg-lw-dark-surface"
+                            className="border-gray-300 text-gray-600 hover:bg-gray-50"
                           >
                             Edit Notes
                           </Button>
@@ -878,29 +889,29 @@ export default function ContractorsPage() {
 
                       <div>
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 flex items-center gap-1.5">
+                          <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 flex items-center gap-1.5">
                             <ShoppingCart className="h-3.5 w-3.5" /> Purchases ({contractor.purchases.length})
                           </h4>
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => openPurchaseDialog(contractor)}
-                            className="border-lw-dark-border/80 text-zinc-300 hover:bg-lw-dark-surface"
+                            className="border-gray-300 text-gray-600 hover:bg-gray-50"
                           >
                             <Plus className="h-3.5 w-3.5 mr-1" /> Add
                           </Button>
                         </div>
                         {contractor.purchases.length === 0 ? (
-                          <p className="text-sm text-zinc-500">No purchases recorded.</p>
+                          <p className="text-sm text-gray-400">No purchases recorded.</p>
                         ) : (
                           <div className="grid sm:grid-cols-2 gap-2">
                             {contractor.purchases.slice(0, 6).map(p => (
-                              <div key={p.id} className="p-3 rounded-lg bg-lw-dark-surface/50 border border-lw-dark-border/40 text-sm">
+                              <div key={p.id} className="p-3 rounded-lg bg-white border border-gray-200 text-sm">
                                 <div className="flex justify-between items-center mb-1">
-                                  <span className="font-medium text-white">{p.item_name}</span>
+                                  <span className="font-medium text-gray-900">{p.item_name}</span>
                                   <Badge variant="outline" className="text-xs">{p.status}</Badge>
                                 </div>
-                                <div className="flex justify-between text-xs text-zinc-400">
+                                <div className="flex justify-between text-xs text-gray-400">
                                   <span>Qty: {p.quantity}</span>
                                   <span>${p.price.toFixed(2)}</span>
                                 </div>
@@ -910,9 +921,17 @@ export default function ContractorsPage() {
                         )}
                       </div>
 
-                      <div className="border-t border-lw-dark-border/40 pt-4">
+                      <div className="border-t border-gray-200 pt-4">
                         <AdminContractorDocuments contractorId={contractor.id} />
                       </div>
+
+                      <SubscriptionOverride
+                        contractorId={contractor.id}
+                        contractorName={contractor.company_name}
+                        currentStatus={contractor.partner_status}
+                        currentTier={contractor.tier || null}
+                        adminUserId={adminUserId}
+                      />
                     </div>
                   )}
                 </Card>
@@ -923,18 +942,18 @@ export default function ContractorsPage() {
       </div>
 
       <Dialog open={purchaseDialogOpen} onOpenChange={setPurchaseDialogOpen}>
-        <DialogContent className="bg-lw-dark-card border-lw-dark-border">
+        <DialogContent className="bg-white border-gray-200">
           <DialogHeader>
-            <DialogTitle className="text-white">Add Purchase — {selectedContractor?.company_name}</DialogTitle>
+            <DialogTitle className="text-gray-900">Add Purchase — {selectedContractor?.company_name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-medium uppercase tracking-wide text-zinc-400 mb-2 block">Purchase Type *</label>
+              <label className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2 block">Purchase Type *</label>
               <Select value={purchaseType} onValueChange={setPurchaseType}>
-                <SelectTrigger className="bg-lw-dark-surface border-lw-dark-border text-white">
+                <SelectTrigger className="bg-white border-gray-300 text-gray-900">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
-                <SelectContent className="bg-lw-dark-card border-lw-dark-border text-white">
+                <SelectContent className="bg-white border-gray-200 text-gray-900">
                   <SelectItem value="badge">Badge</SelectItem>
                   <SelectItem value="decal">Decal</SelectItem>
                   <SelectItem value="marketing_kit">Marketing Kit</SelectItem>
@@ -946,26 +965,26 @@ export default function ContractorsPage() {
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium uppercase tracking-wide text-zinc-400 mb-2 block">Item Name *</label>
-              <Input value={itemName} onChange={e => setItemName(e.target.value)} placeholder="e.g., IronClad Certified Badge" className="bg-lw-dark-surface border-lw-dark-border text-white" />
+              <label className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2 block">Item Name *</label>
+              <Input value={itemName} onChange={e => setItemName(e.target.value)} placeholder="e.g., IronClad Certified Badge" className="bg-white border-gray-300 text-gray-900" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium uppercase tracking-wide text-zinc-400 mb-2 block">Quantity</label>
-                <Input type="number" min="1" value={quantity} onChange={e => setQuantity(parseInt(e.target.value) || 1)} className="bg-lw-dark-surface border-lw-dark-border text-white" />
+                <label className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2 block">Quantity</label>
+                <Input type="number" min="1" value={quantity} onChange={e => setQuantity(parseInt(e.target.value) || 1)} className="bg-white border-gray-300 text-gray-900" />
               </div>
               <div>
-                <label className="text-xs font-medium uppercase tracking-wide text-zinc-400 mb-2 block">Price ($)</label>
-                <Input type="number" min="0" step="0.01" value={price} onChange={e => setPrice(parseFloat(e.target.value) || 0)} className="bg-lw-dark-surface border-lw-dark-border text-white" />
+                <label className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2 block">Price ($)</label>
+                <Input type="number" min="0" step="0.01" value={price} onChange={e => setPrice(parseFloat(e.target.value) || 0)} className="bg-white border-gray-300 text-gray-900" />
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium uppercase tracking-wide text-zinc-400 mb-2 block">Status</label>
+              <label className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2 block">Status</label>
               <Select value={purchaseStatus} onValueChange={setPurchaseStatus}>
-                <SelectTrigger className="bg-lw-dark-surface border-lw-dark-border text-white">
+                <SelectTrigger className="bg-white border-gray-300 text-gray-900">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-lw-dark-card border-lw-dark-border text-white">
+                <SelectContent className="bg-white border-gray-200 text-gray-900">
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="shipped">Shipped</SelectItem>
@@ -975,10 +994,10 @@ export default function ContractorsPage() {
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium uppercase tracking-wide text-zinc-400 mb-2 block">Notes</label>
-              <Textarea value={purchaseNotes} onChange={e => setPurchaseNotes(e.target.value)} rows={3} className="bg-lw-dark-surface border-lw-dark-border text-white" />
+              <label className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2 block">Notes</label>
+              <Textarea value={purchaseNotes} onChange={e => setPurchaseNotes(e.target.value)} rows={3} className="bg-white border-gray-300 text-gray-900" />
             </div>
-            <Button onClick={addPurchase} disabled={!!processing} className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white">
+            <Button onClick={addPurchase} disabled={!!processing} className="w-full text-white" style={{ backgroundColor: '#E8621A' }}>
               {processing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
               Add Purchase
             </Button>
@@ -987,9 +1006,9 @@ export default function ContractorsPage() {
       </Dialog>
 
       <Dialog open={notesDialogOpen} onOpenChange={setNotesDialogOpen}>
-        <DialogContent className="bg-lw-dark-card border-lw-dark-border">
+        <DialogContent className="bg-white border-gray-200">
           <DialogHeader>
-            <DialogTitle className="text-white">Admin Notes — {selectedContractor?.company_name}</DialogTitle>
+            <DialogTitle className="text-gray-900">Admin Notes — {selectedContractor?.company_name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Textarea
@@ -997,15 +1016,15 @@ export default function ContractorsPage() {
               onChange={e => setAdminNotesDraft(e.target.value)}
               rows={6}
               placeholder="Internal notes about this contractor (not visible to them)..."
-              className="bg-lw-dark-surface border-lw-dark-border text-white placeholder:text-zinc-500"
+              className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
             />
-            <Button onClick={saveAdminNotes} disabled={savingNotes} className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white">
+            <Button onClick={saveAdminNotes} disabled={savingNotes} className="w-full text-white" style={{ backgroundColor: '#E8621A' }}>
               {savingNotes ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
               Save Notes
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardLayout>
   );
 }
