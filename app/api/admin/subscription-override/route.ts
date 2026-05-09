@@ -58,15 +58,7 @@ export async function POST(req: NextRequest) {
     const isSuspend = actionType === 'suspend';
     const newStatus = isSuspend ? 'suspended' : 'active';
 
-    // 1. Update contractor_profiles.partner_status
-    const { error: profileErr } = await supabaseAdmin
-      .from('contractor_profiles')
-      .update({ partner_status: newStatus, updated_at: new Date().toISOString() })
-      .eq('id', contractorId);
-
-    if (profileErr) throw new Error(`Profile update failed: ${profileErr.message}`);
-
-    // 2. Resolve tier_id if tier name given
+    // 1. Resolve tier_id if tier name given (needed before profile update)
     let tierId: string | null = null;
     if (tier && !isSuspend) {
       const { data: tierRow } = await supabaseAdmin
@@ -76,6 +68,21 @@ export async function POST(req: NextRequest) {
         .maybeSingle();
       tierId = tierRow?.id ?? null;
     }
+
+    // 2. Update contractor_profiles — status AND tier so feature gating works immediately
+    const profileUpdate: Record<string, any> = {
+      partner_status: newStatus,
+      updated_at: new Date().toISOString(),
+    };
+    if (!isSuspend && tier) profileUpdate.tier = tier;
+    if (isSuspend) profileUpdate.tier = null;
+
+    const { error: profileErr } = await supabaseAdmin
+      .from('contractor_profiles')
+      .update(profileUpdate)
+      .eq('id', contractorId);
+
+    if (profileErr) throw new Error(`Profile update failed: ${profileErr.message}`);
 
     // 3. Compute period_end
     let periodEnd: string | null = null;
