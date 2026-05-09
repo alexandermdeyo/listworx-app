@@ -122,7 +122,7 @@ export default function RequestorDashboardPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user?.email) setUserName(user.email.split('@')[0]);
-    } catch {
+    } catch (_e) {
       // ignore
     }
   }
@@ -130,7 +130,7 @@ export default function RequestorDashboardPage() {
   async function handleLogout() {
     try {
       await supabase.auth.signOut({ scope: 'global' });
-    } catch { /* ignore */ }
+    } catch (_e) { /* ignore */ }
     window.location.href = '/login';
   }
 
