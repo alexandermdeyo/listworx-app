@@ -96,6 +96,31 @@ function formatDate(value: string | null) {
   });
 }
 
+function formatUrgency(value: string | null) {
+  if (!value) return '';
+  if (value === 'IMMEDIATE') return 'Immediate';
+  if (value === 'WITHIN_WEEK') return 'Within 1 week';
+  if (value === 'WITHIN_MONTH') return 'Within 1 month';
+  if (value === 'FLEXIBLE') return 'Flexible';
+  return value;
+}
+
+function getProjectType(job: JobRequest) {
+  if (job.trade_type) return job.trade_type;
+  if (job.service_type) return job.service_type;
+  if (Array.isArray(job.categories) && job.categories.length > 0) return job.categories[0];
+  return 'General home service request';
+}
+
+function getServiceArea(contractor: Contractor | null) {
+  if (!contractor) return 'Service area pending';
+  if (Array.isArray(contractor.service_area_counties) && contractor.service_area_counties.length > 0) {
+    return `${contractor.service_area_counties.slice(0, 2).join(', ')}${contractor.service_area_counties.length > 2 ? ' +' : ''}`;
+  }
+  if (contractor.service_area_state) return contractor.service_area_state;
+  return 'Service area shared after connection';
+}
+
 const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/requestor-dashboard' },
   { id: 'submit', label: 'Submit Request', icon: Plus, href: '/request' },
@@ -180,31 +205,6 @@ export default function RequestorDashboardPage() {
   const contractorSelected = jobRequests.filter(
     (r) => (referralsByRequest.get(r.id) || []).length > 0
   ).length;
-
-  function formatUrgency(value: string | null) {
-    if (!value) return '';
-    if (value === 'IMMEDIATE') return 'Immediate';
-    if (value === 'WITHIN_WEEK') return 'Within 1 week';
-    if (value === 'WITHIN_MONTH') return 'Within 1 month';
-    if (value === 'FLEXIBLE') return 'Flexible';
-    return value;
-  }
-
-  function getProjectType(job: JobRequest) {
-    if (job.trade_type) return job.trade_type;
-    if (job.service_type) return job.service_type;
-    if (Array.isArray(job.categories) && job.categories.length > 0) return job.categories[0];
-    return 'General home service request';
-  }
-
-  function getServiceArea(contractor: Contractor | null) {
-    if (!contractor) return 'Service area pending';
-    if (Array.isArray(contractor.service_area_counties) && contractor.service_area_counties.length > 0) {
-      return `${contractor.service_area_counties.slice(0, 2).join(', ')}${contractor.service_area_counties.length > 2 ? ' +' : ''}`;
-    }
-    if (contractor.service_area_state) return contractor.service_area_state;
-    return 'Service area shared after connection';
-  }
 
   return (
     <DashboardLayout
@@ -574,7 +574,6 @@ export default function RequestorDashboardPage() {
               </Card>
             </div>
           )}
-        </div>
       </div>
     </DashboardLayout>
   );
