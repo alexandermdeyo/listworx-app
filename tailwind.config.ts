@@ -63,6 +63,10 @@ const config: Config = {
         lw: {
           rust: '#C65A1E',
           'rust-hover': '#a84d18',
+          orange: '#E8621A',
+          'orange-hover': '#cf5516',
+          gray: '#4A4A4A',
+          sidebar: '#181818',
           dark: '#1F1F1F',
           'dark-surface': '#242424',
           'dark-card': '#292929',

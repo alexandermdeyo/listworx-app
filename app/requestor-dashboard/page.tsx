@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
+import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/design-system';
+import { createClient } from '@/lib/supabase-browser';
 import {
   Loader as Loader2,
   Plus,
@@ -27,6 +29,10 @@ import {
   Users,
   ExternalLink,
   Star,
+  LayoutDashboard,
+  FileText,
+  Settings,
+  LogOut,
 } from 'lucide-react';
 
 type JobRequest = {
@@ -94,14 +100,34 @@ function formatDate(value: string | null) {
 }
 
 export default function RequestorDashboardPage() {
+  const supabaseRef = useRef(createClient());
+  const supabase = supabaseRef.current;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [jobRequests, setJobRequests] = useState<JobRequest[]>([]);
   const [referrals, setReferrals] = useState<Referral[]>([]);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     void loadDashboard();
+    void loadUser();
   }, []);
+
+  async function loadUser() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) setUserName(user.email.split('@')[0]);
+    } catch {
+      // ignore
+    }
+  }
+
+  async function handleLogout() {
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch { /* ignore */ }
+    window.location.href = '/login';
+  }
 
   async function loadDashboard() {
     setLoading(true);
@@ -175,35 +201,41 @@ export default function RequestorDashboardPage() {
     return 'Service area shared after connection';
   }
 
+  const navItems: NavItem[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/requestor-dashboard' },
+    { id: 'submit', label: 'Submit Request', icon: Plus, href: '/request' },
+    { id: 'requests', label: 'My Requests', icon: ClipboardList, href: '/requestor-dashboard' },
+    { id: 'profile', label: 'Profile', icon: User2, disabled: true },
+    { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
+  ];
+
   return (
-    <PageShell surface="dark">
-      <Navigation />
-
-      <main className="container mx-auto px-4 py-12">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
-            <div>
-              <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-2">
-                Requestor Dashboard
-              </p>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
-                Relationship Dashboard
-              </h1>
-              <p className="text-muted-foreground text-base md:text-lg">
-                Your clients trust you. We help protect that trust.
-              </p>
-              <p className="text-muted-foreground text-sm mt-2">
-                Built to help realtors, homeowners, and property managers move faster with less chaos.
-              </p>
-            </div>
-
-            <Link href="/request" className="w-full md:w-auto">
-              <Button className="w-full md:w-auto bg-lw-rust hover:bg-lw-rust-hover text-white">
-                <Plus className="h-4 w-4 mr-2" />
-                New Request
-              </Button>
-            </Link>
+    <DashboardLayout
+      userName={userName || 'User'}
+      pageTitle="DASHBOARD"
+      navItems={navItems}
+      activeNavId="dashboard"
+      onLogout={handleLogout}
+      hasNotifications={false}
+    >
+      <div className="p-6 max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}>
+              Relationship Dashboard
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Your clients trust you. We help protect that trust.
+            </p>
           </div>
+
+          <Link href="/request">
+            <Button className="text-white font-semibold" style={{ backgroundColor: '#E8621A' }}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Request
+            </Button>
+          </Link>
+        </div>
 
           {error && (
             <Alert className="mb-6 bg-red-50 border-red-200">
@@ -211,37 +243,20 @@ export default function RequestorDashboardPage() {
             </Alert>
           )}
 
-          <div className="grid md:grid-cols-3 gap-4 mb-8">
-            <Card className="p-6">
-              <div className="text-sm text-muted-foreground mb-2">Total Requests</div>
-              <div className="text-5xl font-bold text-foreground">{totalRequests}</div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="text-sm text-muted-foreground mb-2">Active</div>
-              <div className="text-5xl font-bold text-foreground">{activeRequests}</div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="text-sm text-muted-foreground mb-2">Contractor Matches</div>
-              <div className="text-5xl font-bold text-foreground">{contractorSelected}</div>
-            </Card>
-          </div>
-
-          <Card className="p-6 mb-8 bg-lw-rust/10 border-lw-rust/30">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold text-foreground mb-1">Keep your best contractors close.</p>
-                <p className="text-sm text-muted-foreground">
-                  Request trusted help without starting from scratch every time.
-                </p>
+          {/* Stat cards */}
+          <div className="grid md:grid-cols-4 gap-4 mb-6">
+            {[
+              { label: 'Requests Submitted', value: totalRequests },
+              { label: 'Active Matches', value: activeRequests },
+              { label: 'Contractors Contacted', value: contractorSelected },
+              { label: 'Jobs Completed', value: jobRequests.filter(r => r.status?.toUpperCase() === 'COMPLETED').length },
+            ].map((stat) => (
+              <div key={stat.label} className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2">{stat.label}</p>
+                <p className="text-4xl font-bold text-gray-900">{stat.value}</p>
               </div>
-              <Button className="bg-lw-rust hover:bg-lw-rust-hover text-white md:w-auto w-full">
-                <Heart className="h-4 w-4 mr-2" />
-                Save Your Favorites
-              </Button>
-            </div>
-          </Card>
+            ))}
+          </div>
 
           {loading ? (
             <Card className="p-10">
@@ -563,7 +578,7 @@ export default function RequestorDashboardPage() {
             </div>
           )}
         </div>
-      </main>
-    </PageShell>
+      </div>
+    </DashboardLayout>
   );
 }
