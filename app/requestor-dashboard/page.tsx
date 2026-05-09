@@ -2,13 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import Navigation from '@/components/Navigation';
-import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
+import DashboardLayout from '@/components/DashboardLayout';
+import type { NavItem } from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { PageShell } from '@/components/design-system';
 import { createClient } from '@/lib/supabase-browser';
 import {
   Loader as Loader2,
@@ -30,9 +29,7 @@ import {
   ExternalLink,
   Star,
   LayoutDashboard,
-  FileText,
   Settings,
-  LogOut,
 } from 'lucide-react';
 
 type JobRequest = {
