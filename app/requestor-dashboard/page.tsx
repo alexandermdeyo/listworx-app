@@ -96,6 +96,14 @@ function formatDate(value: string | null) {
   });
 }
 
+const NAV_ITEMS: NavItem[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/requestor-dashboard' },
+  { id: 'submit', label: 'Submit Request', icon: Plus, href: '/request' },
+  { id: 'requests', label: 'My Requests', icon: ClipboardList, href: '/requestor-dashboard' },
+  { id: 'profile', label: 'Profile', icon: User2, disabled: true },
+  { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
+];
+
 export default function RequestorDashboardPage() {
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
@@ -198,19 +206,11 @@ export default function RequestorDashboardPage() {
     return 'Service area shared after connection';
   }
 
-  const navItems: NavItem[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/requestor-dashboard' },
-    { id: 'submit', label: 'Submit Request', icon: Plus, href: '/request' },
-    { id: 'requests', label: 'My Requests', icon: ClipboardList, href: '/requestor-dashboard' },
-    { id: 'profile', label: 'Profile', icon: User2, disabled: true },
-    { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
-  ];
-
   return (
     <DashboardLayout
       userName={userName || 'User'}
       pageTitle="DASHBOARD"
-      navItems={navItems}
+      navItems={NAV_ITEMS}
       activeNavId="dashboard"
       onLogout={handleLogout}
       hasNotifications={false}
