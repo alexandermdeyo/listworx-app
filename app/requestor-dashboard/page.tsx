@@ -574,7 +574,6 @@ export default function RequestorDashboardPage() {
               </Card>
             </div>
           )}
-        </div>
       </div>
     </DashboardLayout>
   );
