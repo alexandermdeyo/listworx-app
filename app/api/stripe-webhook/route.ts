@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { PARTNER_STATUS } from '@/lib/partner-status';
+import { createStripeServerClient } from '@/lib/stripe-server';
+import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getStripe() {
+  return createStripeServerClient();
+}
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+function getSupabase() {
+  return createSupabaseAdminClient();
+}
 
 export async function POST(request: NextRequest) {
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
   try {
     const body = await request.text();
     const signature = request.headers.get('stripe-signature');
@@ -24,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     let event;
     try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+      event = getStripe().webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err: any) {
       console.error('Webhook signature verification failed:', err.message);
       return NextResponse.json(
@@ -87,8 +90,7 @@ async function resolveTierId(tierSlugOrId: string): Promise<string | null> {
 
   const tierName = slugToNameMap[normalizedSlug] || tierSlugOrId;
 
-  const { data: tier } = await supabase
-    .from('tiers')
+  const { data: tier } = await getSupabase().from('tiers')
     .select('id')
     .ilike('name', tierName)
     .maybeSingle();
@@ -130,8 +132,7 @@ async function handleCheckoutCompleted(session: any) {
     return;
   }
 
-  const { error: customerUpdateError } = await supabase
-    .from('contractor_profiles')
+  const { error: customerUpdateError } = await getSupabase().from('contractor_profiles')
     .update({ stripe_customer_id: session.customer })
     .eq('id', contractorId);
 
@@ -139,15 +140,13 @@ async function handleCheckoutCompleted(session: any) {
     console.error('[stripe-webhook] Error updating contractor stripe_customer_id:', customerUpdateError);
   }
 
-  const { data: profileData } = await supabase
-    .from('contractor_profiles')
+  const { data: profileData } = await getSupabase().from('contractor_profiles')
     .select('partner_status')
     .eq('id', contractorId)
     .maybeSingle();
 
   if (profileData && profileData.partner_status === PARTNER_STATUS.APPROVED) {
-    const { error: statusError } = await supabase
-      .from('contractor_profiles')
+    const { error: statusError } = await getSupabase().from('contractor_profiles')
       .update({ partner_status: PARTNER_STATUS.ACTIVE })
       .eq('id', contractorId);
 
@@ -183,8 +182,7 @@ async function handleCheckoutCompleted(session: any) {
 
   console.log('[stripe-webhook] Upserting subscription row:', subscriptionPayload);
 
-  const { data: upsertedSub, error: subscriptionError } = await supabase
-    .from('subscriptions')
+  const { data: upsertedSub, error: subscriptionError } = await getSupabase().from('subscriptions')
     .upsert(subscriptionPayload, { onConflict: 'contractor_id' })
     .select();
 
@@ -243,15 +241,13 @@ async function handleSubscriptionUpdated(subscription: any) {
     ? new Date(subscription.current_period_end * 1000).toISOString()
     : null;
 
-  const { data: existingRow } = await supabase
-    .from('subscriptions')
+  const { data: existingRow } = await getSupabase().from('subscriptions')
     .select('id')
     .eq('stripe_subscription_id', subscription.id)
     .maybeSingle();
 
   if (existingRow) {
-    const { error: subscriptionError } = await supabase
-      .from('subscriptions')
+    const { error: subscriptionError } = await getSupabase().from('subscriptions')
       .update({
         status: subscriptionStatus,
         current_period_start: periodStart,
@@ -289,8 +285,7 @@ async function handleSubscriptionUpdated(subscription: any) {
 
       console.log('[stripe-webhook] No existing row — inserting subscription via upsert:', subscriptionPayload);
 
-      const { data: upsertedSub, error: upsertError } = await supabase
-        .from('subscriptions')
+      const { data: upsertedSub, error: upsertError } = await getSupabase().from('subscriptions')
         .upsert(subscriptionPayload, { onConflict: 'contractor_id' })
         .select();
 
@@ -304,8 +299,7 @@ async function handleSubscriptionUpdated(subscription: any) {
   }
 
   if (contractorId && periodEnd) {
-    await supabase
-      .from('contractor_profiles')
+    await getSupabase().from('contractor_profiles')
       .update({
         subscription_status: subscriptionStatus,
         subscription_current_period_end: periodEnd,
@@ -314,15 +308,13 @@ async function handleSubscriptionUpdated(subscription: any) {
   }
 
   if (subscription.status === 'active') {
-    const { data: profileData } = await supabase
-      .from('contractor_profiles')
+    const { data: profileData } = await getSupabase().from('contractor_profiles')
       .select('partner_status')
       .eq('id', contractorId)
       .maybeSingle();
 
     if (profileData && profileData.partner_status === PARTNER_STATUS.APPROVED) {
-      const { error: statusError } = await supabase
-        .from('contractor_profiles')
+      const { error: statusError } = await getSupabase().from('contractor_profiles')
         .update({ partner_status: PARTNER_STATUS.ACTIVE })
         .eq('id', contractorId);
 
@@ -333,15 +325,13 @@ async function handleSubscriptionUpdated(subscription: any) {
       }
     }
   } else if (subscription.status === 'past_due' || subscription.status === 'canceled') {
-    const { data: profileData } = await supabase
-      .from('contractor_profiles')
+    const { data: profileData } = await getSupabase().from('contractor_profiles')
       .select('partner_status')
       .eq('id', contractorId)
       .maybeSingle();
 
     if (profileData && profileData.partner_status === PARTNER_STATUS.ACTIVE) {
-      await supabase
-        .from('contractor_profiles')
+      await getSupabase().from('contractor_profiles')
         .update({ partner_status: PARTNER_STATUS.PAUSED })
         .eq('id', contractorId);
 
@@ -363,8 +353,7 @@ async function handleSubscriptionDeleted(subscription: any) {
     return;
   }
 
-  const { error: subscriptionError } = await supabase
-    .from('subscriptions')
+  const { error: subscriptionError } = await getSupabase().from('subscriptions')
     .update({
       status: 'cancelled',
       cancelled_at: new Date().toISOString(),
@@ -380,15 +369,13 @@ async function handleSubscriptionDeleted(subscription: any) {
 
   console.log(`[stripe-webhook] Subscription cancelled for stripe_subscription_id=${subscription.id}`);
 
-  const { data: profileData } = await supabase
-    .from('contractor_profiles')
+  const { data: profileData } = await getSupabase().from('contractor_profiles')
     .select('partner_status')
     .eq('id', contractorId)
     .maybeSingle();
 
   if (profileData && profileData.partner_status === PARTNER_STATUS.ACTIVE) {
-    await supabase
-      .from('contractor_profiles')
+    await getSupabase().from('contractor_profiles')
       .update({ partner_status: PARTNER_STATUS.PAUSED })
       .eq('id', contractorId);
 
@@ -405,7 +392,7 @@ async function handlePaymentSucceeded(invoice: any) {
   }
 
   try {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
     const contractorId = subscription.metadata?.contractorId;
 
     if (!contractorId) {
@@ -415,8 +402,7 @@ async function handlePaymentSucceeded(invoice: any) {
 
     const invoiceNumber = `INV-${invoice.number || invoice.id.slice(-8).toUpperCase()}`;
 
-    const { error: invoiceError } = await supabase
-      .from('invoices')
+    const { error: invoiceError } = await getSupabase().from('invoices')
       .upsert({
         contractor_id: contractorId,
         stripe_invoice_id: invoice.id,
@@ -451,15 +437,14 @@ async function handlePaymentFailed(invoice: any) {
   }
 
   try {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
     const contractorId = subscription.metadata?.contractorId;
 
     if (!contractorId) {
       return;
     }
 
-    const { error: subscriptionError } = await supabase
-      .from('subscriptions')
+    const { error: subscriptionError } = await getSupabase().from('subscriptions')
       .update({
         status: 'past_due',
         updated_at: new Date().toISOString(),
@@ -484,8 +469,7 @@ async function sendSubscriptionConfirmationEmail(
   billingPeriod: string
 ) {
   try {
-    const { data: contractor } = await supabase
-      .from('contractor_profiles')
+    const { data: contractor } = await getSupabase().from('contractor_profiles')
       .select(`
         owner_name,
         company_name,
@@ -531,8 +515,7 @@ async function sendSubscriptionConfirmationEmail(
 
 async function sendPaymentFailedEmail(contractorId: string, amountDue: number) {
   try {
-    const { data: contractor } = await supabase
-      .from('contractor_profiles')
+    const { data: contractor } = await getSupabase().from('contractor_profiles')
       .select(`
         owner_name,
         company_name,
@@ -576,8 +559,7 @@ async function sendPaymentFailedEmail(contractorId: string, amountDue: number) {
 
 async function sendAddOnConfirmationEmail(contractorId: string, addOnName: string) {
   try {
-    const { data: contractor } = await supabase
-      .from('contractor_profiles')
+    const { data: contractor } = await getSupabase().from('contractor_profiles')
       .select(`
         owner_name,
         company_name,
@@ -620,8 +602,7 @@ async function sendAddOnConfirmationEmail(contractorId: string, addOnName: strin
 
 async function sendSubscriptionActivatedWelcomeEmail(contractorId: string, tierName: string) {
   try {
-    const { data: contractor } = await supabase
-      .from('contractor_profiles')
+    const { data: contractor } = await getSupabase().from('contractor_profiles')
       .select(`
         owner_name,
         company_name,
@@ -666,8 +647,7 @@ async function sendSubscriptionActivatedWelcomeEmail(contractorId: string, tierN
 
 async function sendInvoiceEmail(contractorId: string, invoice: any) {
   try {
-    const { data: contractor } = await supabase
-      .from('contractor_profiles')
+    const { data: contractor } = await getSupabase().from('contractor_profiles')
       .select(`
         owner_name,
         company_name,

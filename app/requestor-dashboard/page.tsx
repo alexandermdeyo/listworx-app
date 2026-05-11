@@ -1,7 +1,6 @@
 'use client';
 
-import { createElement, useEffect, useMemo, useRef, useState } from 'react';
-import type { ComponentType } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/DashboardLayout';
 import type { NavItem } from '@/components/DashboardLayout';
@@ -105,14 +104,6 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
 ];
 
-const RequestorDashboardLayout = DashboardLayout as unknown as ComponentType<{
-  userName: string;
-  pageTitle: string;
-  navItems: NavItem[];
-  activeNavId: string;
-  onLogout: () => Promise<void>;
-  hasNotifications: boolean;
-}>;
 
 export default function RequestorDashboardPage() {
   const supabaseRef = useRef(createClient());
@@ -123,28 +114,18 @@ export default function RequestorDashboardPage() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [userName, setUserName] = useState('');
 
-  useEffect(() => {
-    void loadDashboard();
-    void loadUser();
-  }, []);
-
-  async function loadUser() {
+  const loadUser = useCallback(async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user?.email) setUserName(user.email.split('@')[0]);
     } catch {
-      // ignore
+      // User display name is non-critical for dashboard rendering.
     }
-  }
+  }, [supabase]);
 
-  async function handleLogout() {
-    try {
-      await supabase.auth.signOut({ scope: 'global' });
-    } catch { /* ignore */ }
-    window.location.href = '/login';
-  }
-
-  async function loadDashboard() {
+  const loadDashboard = useCallback(async () => {
     setLoading(true);
     setError('');
 
@@ -162,11 +143,25 @@ export default function RequestorDashboardPage() {
 
       setJobRequests(Array.isArray(data?.requests) ? data.requests : []);
       setReferrals(Array.isArray(data?.referrals) ? data.referrals : []);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load dashboard.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load dashboard.');
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    void loadDashboard();
+    void loadUser();
+  }, [loadDashboard, loadUser]);
+
+  async function handleLogout() {
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch {
+      // Continue redirecting even if the remote sign-out call fails.
+    }
+    window.location.href = '/login';
   }
 
   const referralsByRequest = useMemo(() => {
@@ -216,8 +211,16 @@ export default function RequestorDashboardPage() {
     return 'Service area shared after connection';
   }
 
-  const dashboardContent = (
-    <div className="p-6 max-w-5xl mx-auto">
+  return (
+    <DashboardLayout
+      userName={userName || 'User'}
+      pageTitle="DASHBOARD"
+      navItems={NAV_ITEMS}
+      activeNavId="dashboard"
+      onLogout={handleLogout}
+      hasNotifications={false}
+    >
+      <div className="p-6 max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}>
@@ -576,19 +579,7 @@ export default function RequestorDashboardPage() {
           </Card>
         </div>
         )}
-    </div>
-  );
-
-  return createElement(
-    RequestorDashboardLayout,
-    {
-      userName: userName || 'User',
-      pageTitle: 'DASHBOARD',
-      navItems: NAV_ITEMS,
-      activeNavId: 'dashboard',
-      onLogout: handleLogout,
-      hasNotifications: false,
-    },
-    dashboardContent
+      </div>
+    </DashboardLayout>
   );
 }

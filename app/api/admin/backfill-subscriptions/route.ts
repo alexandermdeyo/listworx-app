@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createServerClient } from '@/lib/supabase-server';
-import { createClient } from '@supabase/supabase-js';
-
-const serviceClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
 async function verifyAdminFromRequest(request: NextRequest): Promise<boolean> {
   try {
+    const serviceClient = createSupabaseAdminClient();
     const authHeader = request.headers.get('authorization');
 
     if (authHeader?.startsWith('Bearer ')) {
@@ -42,6 +38,7 @@ async function verifyAdminFromRequest(request: NextRequest): Promise<boolean> {
 }
 
 export async function POST(request: NextRequest) {
+  const serviceClient = createSupabaseAdminClient();
   const isAdmin = await verifyAdminFromRequest(request);
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
