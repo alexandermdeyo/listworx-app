@@ -109,8 +109,8 @@ export default function RequestorDashboardPage() {
   const supabase = supabaseRef.current;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [jobRequests, setJobRequests] = useState<JobRequest[]>([]);
-  const [referrals, setReferrals] = useState<Referral[]>([]);
+  const [jobRequests, setJobRequests] = useState([] as JobRequest[]);
+  const [referrals, setReferrals] = useState([] as Referral[]);
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
@@ -160,7 +160,7 @@ export default function RequestorDashboardPage() {
   }
 
   const referralsByRequest = useMemo(() => {
-    const map = new Map<string, Referral[]>();
+    const map = new Map() as Map<string, Referral[]>;
 
     for (const referral of referrals) {
       const existing = map.get(referral.job_request_id) || [];
@@ -200,7 +200,10 @@ export default function RequestorDashboardPage() {
   function getServiceArea(contractor: Contractor | null) {
     if (!contractor) return 'Service area pending';
     if (Array.isArray(contractor.service_area_counties) && contractor.service_area_counties.length > 0) {
-      return `${contractor.service_area_counties.slice(0, 2).join(', ')}${contractor.service_area_counties.length > 2 ? ' +' : ''}`;
+      const counties = contractor.service_area_counties;
+      const base = counties.slice(0, 2).join(', ');
+      const suffix = counties.length > 2 ? ' +' : '';
+      return base + suffix;
     }
     if (contractor.service_area_state) return contractor.service_area_state;
     return 'Service area shared after connection';

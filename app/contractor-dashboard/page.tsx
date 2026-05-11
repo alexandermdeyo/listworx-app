@@ -6,7 +6,8 @@ import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Navigation from '@/components/Navigation';
-import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
+import DashboardLayout from '@/components/DashboardLayout';
+import type { NavItem } from '@/components/DashboardLayout';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import { ContractorProfile, TIERS } from './types';
 import StatusCard from './StatusCard';
@@ -606,7 +607,7 @@ export default function ContractorDashboard() {
   async function handleLogout() {
     try {
       await supabase.auth.signOut({ scope: 'global' });
-    } catch {
+    } catch (_e) {
       // still redirect on error
     }
     window.location.href = '/login';
