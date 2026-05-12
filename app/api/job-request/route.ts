@@ -103,13 +103,13 @@ async function sendRequestorMatchEmail(
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
   const BASE_URL = process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://listworx.co';
 
-  // Fetch extra profile data (logo_url, slug, specialties) for contractor cards
+  // Fetch extra profile data (logo_url, profile_slug, specialties) for contractor cards
   const contractorIds = matchedContractors.map((c) => c.id);
 
   const [{ data: profileExtras }, { data: categoryRows }] = await Promise.all([
     supabase
       .from('contractor_profiles')
-      .select('id, logo_url, slug')
+      .select('id, logo_url, profile_slug')
       .in('id', contractorIds),
     supabase
       .from('contractor_categories')
@@ -121,7 +121,7 @@ async function sendRequestorMatchEmail(
   const slugMap: Record<string, string | null> = {};
   (profileExtras || []).forEach((p: any) => {
     logoMap[p.id] = p.logo_url || null;
-    slugMap[p.id] = p.slug || null;
+    slugMap[p.id] = p.profile_slug || null;
   });
 
   const specialtyMap: Record<string, string[]> = {};
@@ -143,7 +143,7 @@ async function sendRequestorMatchEmail(
     bio: c.bio || undefined,
     logoUrl: logoMap[c.id] || null,
     profileUrl: slugMap[c.id]
-      ? `${BASE_URL}/contractor/${slugMap[c.id]}`
+      ? `${BASE_URL}/contractors/${slugMap[c.id]}`
       : `${BASE_URL}/contractors/${c.id}`,
     specialties: specialtyMap[c.id] || [],
   }));

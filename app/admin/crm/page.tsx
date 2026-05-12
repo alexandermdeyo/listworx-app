@@ -266,7 +266,7 @@ export default function AdminCRMPage() {
               <div key={item.label} className={`rounded-lg border p-4 bg-white shadow-sm ${item.warn ? 'border-amber-200' : 'border-gray-200'}`}>
                 <item.icon className={`h-4 w-4 mb-2 ${item.warn ? 'text-amber-500' : item.ok ? 'text-emerald-500' : 'text-gray-400'}`} />
                 <p className={`text-xl font-bold ${item.warn ? 'text-amber-600' : item.ok ? 'text-emerald-600' : 'text-gray-900'}`}>{item.value}</p>
-                <p className="text-xs text-gray-500 mt-0.5 leading-tight">{item.label}</p>
+                <p className="text-xs text-gray-500 mt-0.5 referraling-tight">{item.label}</p>
               </div>
             ))}
           </div>
@@ -283,7 +283,7 @@ export default function AdminCRMPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 text-sm">Backfill Subscriptions</h3>
-                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                  <p className="text-xs text-gray-500 mt-0.5 referraling-relaxed">
                     Create missing subscription rows for all active contractors. Safe to run multiple times.
                   </p>
                 </div>
@@ -320,7 +320,7 @@ export default function AdminCRMPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { href: '/admin/crm/applications', icon: Clock, title: 'Applications', desc: 'Review pending contractor applications', badge: stats.pendingApplications > 0 ? `${stats.pendingApplications} pending` : null },
-              { href: '/admin/crm/job-requests', icon: FileText, title: 'Job Requests', desc: 'View requests, referrals, and update lead status', badge: stats.recentJobRequests > 0 ? `${stats.recentJobRequests} this week` : null },
+              { href: '/admin/crm/job-requests', icon: FileText, title: 'Job Requests', desc: 'View requests, referrals, and update referral status', badge: stats.recentJobRequests > 0 ? `${stats.recentJobRequests} this week` : null },
               { href: '/admin/crm/contractors', icon: Users, title: 'Contractors', desc: 'Manage status, performance, and email controls', badge: stats.pausedContractors > 0 ? `${stats.pausedContractors} paused` : null },
               { href: '/admin/crm/realtors', icon: Briefcase, title: 'Requesters', desc: 'Manage homeowners, realtors, and property managers', badge: null },
               { href: '/admin/crm/reviews', icon: Star, title: 'Reviews', desc: 'See client feedback and contractor ratings', badge: null },
@@ -339,7 +339,7 @@ export default function AdminCRMPage() {
                     )}
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                  <p className="text-xs text-gray-500 referraling-relaxed">{item.desc}</p>
                 </div>
               </Link>
             ))}

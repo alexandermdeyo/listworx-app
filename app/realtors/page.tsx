@@ -31,7 +31,7 @@ export default function RealtorsPage() {
             <Star className="h-3 w-3 mr-1" />
             Built for Real Estate Professionals
           </Badge>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 referraling-tight">
             Refer Contractors<br className="hidden md:block" />
             <span className="text-primary"> With Confidence.</span>
           </h1>
@@ -72,10 +72,10 @@ export default function RealtorsPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                Not a Directory. Not a Lead Marketplace.
+                Not a Directory. Not a Referral Marketplace.
               </h2>
               <p className="text-lg md:text-xl text-zinc-300 max-w-3xl mx-auto">
-                Random contractor directories give you names. Spammy lead platforms give everyone your contact info. ListWorx gives you a curated shortlist of vetted professionals who have already been approved and are ready to respond.
+                Random contractor directories give you names. Spammy referral platforms give everyone your contact info. ListWorx gives you a curated shortlist of vetted professionals who have already been approved and are ready to respond.
               </p>
             </div>
 

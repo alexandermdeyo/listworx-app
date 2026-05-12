@@ -5,11 +5,11 @@ import { ContractorProfile } from './types';
 import { TrendingUp, Users, CircleCheck as CheckCircle2, Clock, ChartBar as BarChart3, Lock, ArrowUpRight, Activity } from 'lucide-react';
 
 interface PerformanceData {
-  totalLeads: number;
-  leadsThisMonth: number;
-  leadsLast30Days: number;
-  acceptedLeads: number;
-  declinedLeads: number;
+  totalReferrals: number;
+  referralsThisMonth: number;
+  referralsLast30Days: number;
+  acceptedReferrals: number;
+  declinedReferrals: number;
   completedJobs: number;
 }
 
@@ -53,15 +53,15 @@ export default function PerformanceSection({
 }: PerformanceSectionProps) {
   const isActive = profile.partner_status === PARTNER_STATUS.ACTIVE;
   const conversionRate =
-    performanceData.totalLeads > 0
-      ? Math.round((performanceData.acceptedLeads / performanceData.totalLeads) * 100)
+    performanceData.totalReferrals > 0
+      ? Math.round((performanceData.acceptedReferrals / performanceData.totalReferrals) * 100)
       : 0;
   const acceptanceRate =
-    performanceData.totalLeads > 0
+    performanceData.totalReferrals > 0
       ? Math.round(
-          ((performanceData.acceptedLeads + performanceData.declinedLeads > 0
-            ? performanceData.acceptedLeads /
-              (performanceData.acceptedLeads + performanceData.declinedLeads)
+          ((performanceData.acceptedReferrals + performanceData.declinedReferrals > 0
+            ? performanceData.acceptedReferrals /
+              (performanceData.acceptedReferrals + performanceData.declinedReferrals)
             : 0) *
             100)
         )
@@ -74,7 +74,7 @@ export default function PerformanceSection({
           <div>
             <h2 className="text-xl font-bold text-lw-text">Performance Analytics</h2>
             <p className="text-lw-text/50 text-sm mt-0.5">
-              Track your referrals, leads, and conversion metrics
+              Track your referrals, referrals, and conversion metrics
             </p>
           </div>
         </div>
@@ -89,12 +89,12 @@ export default function PerformanceSection({
             </h3>
             <p className="text-lw-text/60 text-sm max-w-xs">
               Activate a subscription to access your full performance dashboard including
-              leads, referrals, and conversion metrics.
+              referrals, referrals, and conversion metrics.
             </p>
           </div>
 
           <div className="p-6 grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-30 pointer-events-none select-none">
-            <MetricCard label="Total Leads" value="—" icon={Users} color="text-blue-500" />
+            <MetricCard label="Total Referrals" value="—" icon={Users} color="text-blue-500" />
             <MetricCard label="This Month" value="—" icon={TrendingUp} color="text-emerald-500" />
             <MetricCard label="Accepted" value="—" icon={CheckCircle2} color="text-green-500" />
             <MetricCard label="Conversion" value="—%" icon={BarChart3} color="text-amber-500" />
@@ -110,7 +110,7 @@ export default function PerformanceSection({
         <div>
           <h2 className="text-xl font-bold text-lw-text">Performance Analytics</h2>
           <p className="text-lw-text/50 text-sm mt-0.5">
-            Your referral and lead performance overview
+            Your referral and referral performance overview
           </p>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-full">
@@ -121,22 +121,22 @@ export default function PerformanceSection({
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
         <MetricCard
-          label="Total Leads"
-          value={performanceData.totalLeads}
+          label="Total Referrals"
+          value={performanceData.totalReferrals}
           icon={Users}
           color="text-blue-500"
           sublabel="All time"
         />
         <MetricCard
           label="This Month"
-          value={performanceData.leadsThisMonth}
+          value={performanceData.referralsThisMonth}
           icon={TrendingUp}
           color="text-emerald-500"
           sublabel="Current month"
         />
         <MetricCard
           label="Accepted"
-          value={performanceData.acceptedLeads}
+          value={performanceData.acceptedReferrals}
           icon={CheckCircle2}
           color="text-green-500"
           sublabel={`${acceptanceRate}% acceptance`}
@@ -146,7 +146,7 @@ export default function PerformanceSection({
           value={`${conversionRate}%`}
           icon={BarChart3}
           color="text-amber-500"
-          sublabel="Lead to job rate"
+          sublabel="Referral to job rate"
         />
       </div>
 
@@ -154,14 +154,14 @@ export default function PerformanceSection({
         <div className="bg-white text-gray-900 rounded-xl border border-lw-border-light p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <p className="text-lw-text/50 text-xs font-medium uppercase tracking-wide">
-              Lead Activity
+              Referral Activity
             </p>
             <ArrowUpRight className="h-4 w-4 text-emerald-500" />
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-lw-text/70">Last 30 days</span>
-              <span className="text-lw-text font-semibold">{performanceData.leadsLast30Days}</span>
+              <span className="text-lw-text font-semibold">{performanceData.referralsLast30Days}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-lw-text/70">Completed jobs</span>
@@ -169,7 +169,7 @@ export default function PerformanceSection({
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-lw-text/70">Declined</span>
-              <span className="text-lw-text font-semibold">{performanceData.declinedLeads}</span>
+              <span className="text-lw-text font-semibold">{performanceData.declinedReferrals}</span>
             </div>
           </div>
         </div>

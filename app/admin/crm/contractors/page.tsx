@@ -184,7 +184,7 @@ export default function ContractorsPage() {
 
   const handleStatusAction = async (contractorId: string, action: string) => {
     const labels: Record<string, string> = {
-      pause: 'Pause this contractor? They will stop receiving leads.',
+      pause: 'Pause this contractor? They will stop receiving referrals.',
       activate: 'Activate this contractor?',
       remove: 'Remove this contractor from the system? This cannot be easily undone.',
     };
@@ -872,7 +872,7 @@ export default function ContractorsPage() {
                         <div>
                           <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Admin Notes</h4>
                           {contractor.admin_notes ? (
-                            <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 mb-2 leading-relaxed border border-gray-200">
+                            <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 mb-2 referraling-relaxed border border-gray-200">
                               {contractor.admin_notes}
                             </p>
                           ) : (
