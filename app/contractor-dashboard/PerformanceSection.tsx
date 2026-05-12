@@ -32,7 +32,7 @@ function MetricCard({
   sublabel?: string;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-lw-border-light p-5 shadow-sm">
+    <div className="bg-white text-gray-900 rounded-xl border border-lw-border-light p-5 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-lw-text/50 text-xs font-medium uppercase tracking-wide">{label}</p>
@@ -79,8 +79,8 @@ export default function PerformanceSection({
           </div>
         </div>
 
-        <div className="relative rounded-2xl border border-lw-border-light bg-white overflow-hidden shadow-sm">
-          <div className="absolute inset-0 backdrop-blur-sm bg-white/70 z-10 flex flex-col items-center justify-center p-8 text-center">
+        <div className="relative rounded-2xl border border-lw-border-light bg-white text-gray-900 overflow-hidden shadow-sm">
+          <div className="absolute inset-0 backdrop-blur-sm bg-white/70 text-gray-900 z-10 flex flex-col items-center justify-center p-8 text-center">
             <div className="p-3 rounded-full bg-lw-surface border border-lw-border-light mb-4">
               <Lock className="h-6 w-6 text-lw-text/40" />
             </div>
@@ -151,7 +151,7 @@ export default function PerformanceSection({
       </div>
 
       <div className="grid sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-lw-border-light p-5 shadow-sm">
+        <div className="bg-white text-gray-900 rounded-xl border border-lw-border-light p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <p className="text-lw-text/50 text-xs font-medium uppercase tracking-wide">
               Lead Activity
@@ -174,7 +174,7 @@ export default function PerformanceSection({
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-lw-border-light p-5 shadow-sm">
+        <div className="bg-white text-gray-900 rounded-xl border border-lw-border-light p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <p className="text-lw-text/50 text-xs font-medium uppercase tracking-wide">
               Response Standards
@@ -197,7 +197,7 @@ export default function PerformanceSection({
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-lw-border-light p-5 shadow-sm">
+        <div className="bg-white text-gray-900 rounded-xl border border-lw-border-light p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <p className="text-lw-text/50 text-xs font-medium uppercase tracking-wide">
               Tips for Growth

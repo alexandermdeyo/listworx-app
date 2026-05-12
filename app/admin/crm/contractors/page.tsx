@@ -9,13 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Phone, Loader as Loader2, CircleAlert as AlertCircle, LogOut, Archive, Trash2, ShoppingCart, Plus, DollarSign, ChartBar as BarChart3, Pause, Play, UserX, Bell, BellOff, Send, CircleCheck as CheckCircle2, ChevronDown, ChevronUp, Shield, Briefcase, RefreshCw, Image as ImageIcon, Upload, Trash, Star, StarOff, Eye, LayoutDashboard, Clock, FileText, Home, Settings, Users } from 'lucide-react';
+import { Mail, Phone, Loader as Loader2, CircleAlert as AlertCircle, LogOut, Archive, Trash2, ShoppingCart, Plus, DollarSign, ChartBar as BarChart3, Pause, Play, UserX, Bell, BellOff, Send, CircleCheck as CheckCircle2, ChevronDown, ChevronUp, Shield, Briefcase, RefreshCw, Image as ImageIcon, Upload, Trash, Star, StarOff, Eye, MonitorCog, LayoutDashboard, Clock, FileText, Home, Settings, Users } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import Navigation from '@/components/Navigation';
-import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
+import DashboardLayout from '@/components/DashboardLayout';
+import type { NavItem } from '@/components/DashboardLayout';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminContractorDocuments from './AdminContractorDocuments';
@@ -420,6 +421,7 @@ export default function ContractorsPage() {
 
   const adminNavItems: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/crm' },
+    { id: 'site-editor', label: 'Site Editor', icon: MonitorCog, href: '/admin/crm/site-editor' },
     { id: 'contractors', label: 'Contractors', icon: Users, href: '/admin/crm/contractors' },
     { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications' },
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },

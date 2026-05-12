@@ -10,13 +10,14 @@ import {
   Loader as Loader2, CircleAlert as AlertCircle, ChartBar as BarChart3,
   LogOut, Mail, Send, Briefcase, TrendingUp, Activity,
   Shield, Bell, RefreshCw, Video, BookOpen, DatabaseZap,
-  LayoutDashboard, Settings, Home,
+  MonitorCog, LayoutDashboard, Settings, Home,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import Navigation from '@/components/Navigation';
-import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
+import DashboardLayout from '@/components/DashboardLayout';
+import type { NavItem } from '@/components/DashboardLayout';
 import Link from 'next/link';
 import { PageShell } from '@/components/design-system';
 
@@ -172,6 +173,7 @@ export default function AdminCRMPage() {
 
   const adminNavItems: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/crm' },
+    { id: 'site-editor', label: 'Site Editor', icon: MonitorCog, href: '/admin/crm/site-editor' },
     { id: 'contractors', label: 'Contractors', icon: Users, href: '/admin/crm/contractors' },
     { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications', badge: stats.pendingApplications || undefined },
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
