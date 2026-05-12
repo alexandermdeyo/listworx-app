@@ -578,7 +578,6 @@ export default function RequestorDashboardPage() {
             </div>
           )}
         </div>
-      </div>
     </DashboardLayout>
   );
 }
