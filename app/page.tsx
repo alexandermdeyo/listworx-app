@@ -1,4 +1,4 @@
-'use client';
+
 
 import Link from 'next/link';
 import { BadgeCheck, CheckCircle, Filter, Shield, Star, ArrowRight, Crown } from 'lucide-react';
@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
 import FeaturedContractorsLogoBar from '@/components/site/FeaturedContractorsLogoBar';
-import { getContent, getSiteContent, isVisible } from '@/lib/site-content';
 
 const founderBenefits = [
   '12 months of included network access after $149 activation',
