@@ -642,7 +642,7 @@ export default function ContractorDashboard() {
                 setLoading(true);
                 void checkAuth();
               }}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
               <RefreshCw className="mr-2 h-4 w-4" /> Retry
             </Button>
@@ -692,7 +692,7 @@ export default function ContractorDashboard() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
             <ApplicationForm
               userId={userId!}
               userEmail={userEmail}
@@ -801,7 +801,7 @@ export default function ContractorDashboard() {
       onLogout={handleLogout}
       hasNotifications={false}
     >
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6 text-gray-900">
         {/* Expiry warning banner */}
         {hasExpiryWarning && (
           <div className="flex items-start gap-3 rounded-lg border border-lw-rust/40 bg-lw-rust/5 px-4 py-3">
@@ -866,7 +866,7 @@ export default function ContractorDashboard() {
               <div className="grid gap-6 lg:grid-cols-3">
                 <div className="space-y-6 lg:col-span-2">
                   {/* Company Information */}
-                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
                     <div className="mb-5 flex items-center justify-between">
                       <h3 className="text-base font-bold text-gray-900">Company Information</h3>
                       {!isEditingProfile ? (
@@ -874,7 +874,7 @@ export default function ContractorDashboard() {
                           onClick={handleEditProfile}
                           size="sm"
                           variant="outline"
-                          className="gap-1.5 border-gray-300 text-gray-700 hover:bg-gray-50"
+                          className="gap-1.5 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                         >
                           <Settings className="h-3.5 w-3.5" />
                           Edit Profile
@@ -894,8 +894,7 @@ export default function ContractorDashboard() {
                             onClick={handleSaveProfile}
                             size="sm"
                             disabled={savingProfile}
-                            className="gap-1.5 text-white"
-                            style={{ backgroundColor: '#E8621A' }}
+                            className="gap-1.5 bg-orange-600 text-white hover:bg-orange-700"
                           >
                             {savingProfile ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -939,7 +938,7 @@ export default function ContractorDashboard() {
                             { label: 'License Number', icon: Shield, value: profile.license_number || '—' },
                           ].map((field) => (
                             <div key={field.label}>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                              <p className="mb-1 text-sm font-medium text-gray-700">
                                 {field.label}
                               </p>
                               <div className="flex items-center gap-2">
@@ -950,7 +949,7 @@ export default function ContractorDashboard() {
                           ))}
 
                           <div className="sm:col-span-2">
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                            <p className="mb-1 text-sm font-medium text-gray-700">
                               Email Address
                             </p>
                             <div className="flex items-center gap-2">
@@ -962,14 +961,14 @@ export default function ContractorDashboard() {
 
                         {profile.bio && (
                           <div>
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Bio</p>
+                            <p className="mb-1 text-sm font-medium text-gray-700">Bio</p>
                             <p className="text-sm leading-relaxed text-gray-700">{profile.bio}</p>
                           </div>
                         )}
 
                         {(profile as any).business_description && (
                           <div>
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                            <p className="mb-1 text-sm font-medium text-gray-700">
                               Business Description
                             </p>
                             <p className="text-sm leading-relaxed text-gray-700">{(profile as any).business_description}</p>
@@ -979,7 +978,7 @@ export default function ContractorDashboard() {
                         <div className="grid gap-4 sm:grid-cols-2">
                           {profile.website && (
                             <div>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                              <p className="mb-1 text-sm font-medium text-gray-700">
                                 Business Website
                               </p>
                               <a
@@ -995,7 +994,7 @@ export default function ContractorDashboard() {
 
                           {(profile as any).google_business_url && (
                             <div>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                              <p className="mb-1 text-sm font-medium text-gray-700">
                                 Google Business Profile
                               </p>
                               <a
@@ -1011,7 +1010,7 @@ export default function ContractorDashboard() {
 
                           {(profile as any).years_in_business > 0 && (
                             <div>
-                              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                              <p className="mb-1 text-sm font-medium text-gray-700">
                                 Years in Business
                               </p>
                               <p className="text-sm font-medium text-gray-900">{(profile as any).years_in_business}</p>
@@ -1021,7 +1020,7 @@ export default function ContractorDashboard() {
 
                         {(profile as any).profile_slug && (
                           <div>
-                            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                            <p className="mb-1 text-sm font-medium text-gray-700">
                               Public Profile
                             </p>
                             <a
@@ -1057,7 +1056,7 @@ export default function ContractorDashboard() {
                             { id: 'license_number', label: 'License Number', icon: Shield, type: 'text', placeholder: 'Optional' },
                           ].map((field) => (
                             <div key={field.id}>
-                              <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
+                              <Label className="mb-1.5 block text-sm font-medium text-gray-700">
                                 {field.label}
                               </Label>
                               <div className="relative">
@@ -1071,14 +1070,14 @@ export default function ContractorDashboard() {
                                     setProfileEdit({ ...profileEdit, [field.id]: val });
                                   }}
                                   placeholder={field.placeholder}
-                                  className="border-gray-300 bg-white pl-9 text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
+                                  className="border border-gray-300 bg-white pl-9 text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-orange-500"
                                 />
                               </div>
                             </div>
                           ))}
 
                           <div className="sm:col-span-2">
-                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
+                            <Label className="mb-1.5 block text-sm font-medium text-gray-700">
                               Email Address
                             </Label>
                             <div className="relative">
@@ -1088,7 +1087,7 @@ export default function ContractorDashboard() {
                                 value={profileEdit.email}
                                 onChange={(e) => setProfileEdit({ ...profileEdit, email: e.target.value })}
                                 placeholder="your@email.com"
-                                className="border-gray-300 bg-white pl-9 text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
+                                className="border border-gray-300 bg-white pl-9 text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-orange-500"
                               />
                             </div>
                             <p className="mt-1.5 text-xs text-gray-500">
@@ -1098,7 +1097,7 @@ export default function ContractorDashboard() {
                         </div>
 
                         <div>
-                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
+                          <Label className="mb-1.5 block text-sm font-medium text-gray-700">
                             Short Bio
                           </Label>
                           <textarea
@@ -1106,12 +1105,12 @@ export default function ContractorDashboard() {
                             onChange={(e) => setProfileEdit({ ...profileEdit, bio: e.target.value })}
                             placeholder="Brief tagline or summary..."
                             rows={2}
-                            className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/10"
+                            className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                           />
                         </div>
 
                         <div>
-                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
+                          <Label className="mb-1.5 block text-sm font-medium text-gray-700">
                             Business Description
                           </Label>
                           <textarea
@@ -1119,13 +1118,13 @@ export default function ContractorDashboard() {
                             onChange={(e) => setProfileEdit({ ...profileEdit, business_description: e.target.value })}
                             placeholder="Detailed description of your business, experience, and services..."
                             rows={4}
-                            className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/10"
+                            className="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                           />
                         </div>
 
                         <div className="grid gap-4 sm:grid-cols-2">
                           <div>
-                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
+                            <Label className="mb-1.5 block text-sm font-medium text-gray-700">
                               Business Website
                             </Label>
                             <Input
@@ -1133,12 +1132,12 @@ export default function ContractorDashboard() {
                               value={profileEdit.website}
                               onChange={(e) => setProfileEdit({ ...profileEdit, website: e.target.value })}
                               placeholder="https://..."
-                              className="border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
+                              className="border border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-orange-500"
                             />
                           </div>
 
                           <div>
-                            <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
+                            <Label className="mb-1.5 block text-sm font-medium text-gray-700">
                               Years in Business
                             </Label>
                             <Input
@@ -1148,13 +1147,13 @@ export default function ContractorDashboard() {
                               value={profileEdit.years_in_business || ''}
                               onChange={(e) => setProfileEdit({ ...profileEdit, years_in_business: parseInt(e.target.value) || 0 })}
                               placeholder="e.g. 10"
-                              className="border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
+                              className="border border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-orange-500"
                             />
                           </div>
                         </div>
 
                         <div>
-                          <Label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500">
+                          <Label className="mb-1.5 block text-sm font-medium text-gray-700">
                             Google Business Profile URL
                           </Label>
                           <Input
@@ -1162,7 +1161,7 @@ export default function ContractorDashboard() {
                             value={profileEdit.google_business_url}
                             onChange={(e) => setProfileEdit({ ...profileEdit, google_business_url: e.target.value })}
                             placeholder="https://g.page/..."
-                            className="border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-lw-rust"
+                            className="border border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:ring-orange-500"
                           />
                         </div>
                       </div>
@@ -1170,7 +1169,7 @@ export default function ContractorDashboard() {
                   </div>
 
                   {/* Service Areas */}
-                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
                     <h3 className="mb-4 text-base font-bold text-gray-900">Service Areas</h3>
                     {(profile as any)._liveCounties && (profile as any)._liveCounties.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
@@ -1192,7 +1191,7 @@ export default function ContractorDashboard() {
                   </div>
 
                   {/* Trade Specialties */}
-                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
                     <h3 className="mb-4 text-base font-bold text-gray-900">Trade Specialties</h3>
                     {(profile as any)._liveTrades && (profile as any)._liveTrades.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
@@ -1216,7 +1215,7 @@ export default function ContractorDashboard() {
 
                 <div className="space-y-6">
                   {/* Company Logo */}
-                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
                     <h3 className="mb-4 text-base font-bold text-gray-900">Company Logo</h3>
                     <div className="flex flex-col items-center gap-4">
                       {profile.logo_url ? (
@@ -1245,7 +1244,7 @@ export default function ContractorDashboard() {
                         disabled={uploading}
                         variant="outline"
                         size="sm"
-                        className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+                        className="w-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                       >
                         {uploading ? (
                           <>
@@ -1272,7 +1271,7 @@ export default function ContractorDashboard() {
                   </div>
 
                   {/* Account Details */}
-                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
                     <h3 className="mb-4 text-base font-bold text-gray-900">Account Details</h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between text-sm">
@@ -1303,7 +1302,7 @@ export default function ContractorDashboard() {
                             onClick={handleManageSubscription}
                             variant="outline"
                             size="sm"
-                            className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+                            className="w-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                             disabled={portalLoading}
                           >
                             {portalLoading ? (
@@ -1341,7 +1340,7 @@ export default function ContractorDashboard() {
                 </div>
               </div>
 
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
                 <ApplicationForm
                   userId={userId!}
                   userEmail={userEmail}

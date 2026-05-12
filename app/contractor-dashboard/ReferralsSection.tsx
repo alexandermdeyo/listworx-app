@@ -94,7 +94,7 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-lw-border-light bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-lw-border-light bg-white p-6 text-gray-900 shadow-sm">
         <h3 className="mb-4 text-base font-bold text-lw-text">Recent Referrals</h3>
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
@@ -107,7 +107,7 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
 
   if (referrals.length === 0) {
     return (
-      <div className="rounded-2xl border border-lw-border-light bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-lw-border-light bg-white p-6 text-gray-900 shadow-sm">
         <h3 className="mb-4 text-base font-bold text-lw-text">Recent Referrals</h3>
         <div className="flex flex-col items-center gap-3 py-10 text-center">
           <Inbox className="h-10 w-10 text-lw-text/20" />
@@ -121,7 +121,7 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
   }
 
   return (
-    <div className="rounded-2xl border border-lw-border-light bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-lw-border-light bg-white p-6 text-gray-900 shadow-sm">
       <div className="mb-5 flex items-center justify-between">
         <h3 className="text-base font-bold text-lw-text">Recent Referrals</h3>
         <span className="rounded-full bg-lw-rust/10 px-2.5 py-0.5 text-xs font-semibold text-lw-rust">
@@ -159,7 +159,7 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
                       </span>
                     ))
                   ) : (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-lw-border-light bg-white px-2.5 py-0.5 text-xs font-medium text-lw-text/50">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-lw-border-light bg-white px-2.5 py-0.5 text-xs font-medium text-gray-700">
                       <Briefcase className="h-3 w-3" />
                       General Services
                     </span>
