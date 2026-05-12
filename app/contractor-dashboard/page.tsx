@@ -83,9 +83,9 @@ export default function ContractorDashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
 
-  const [leadCount, setLeadCount] = useState(0);
-  const [totalLeads, setTotalLeads] = useState(0);
-  const [leadsLast30, setLeadsLast30] = useState(0);
+  const [referralCount, setReferralCount] = useState(0);
+  const [totalReferrals, setTotalReferrals] = useState(0);
+  const [referralsLast30, setReferralsLast30] = useState(0);
 
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -270,7 +270,7 @@ export default function ContractorDashboard() {
       };
 
       setProfile(enrichedProfile as any);
-      await loadLeadData(data.id);
+      await loadReferralData(data.id);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -308,7 +308,7 @@ export default function ContractorDashboard() {
         setProfile({ ...data, _liveCounties: liveCounties, _liveTrades: liveTrades } as any);
 
         if (data.id) {
-          await loadLeadData(data.id);
+          await loadReferralData(data.id);
         }
       } else if (!data) {
         setProfile(null);
@@ -320,7 +320,7 @@ export default function ContractorDashboard() {
     }
   }
 
-  async function loadLeadData(profileId: string) {
+  async function loadReferralData(profileId: string) {
     try {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
@@ -346,11 +346,11 @@ export default function ContractorDashboard() {
           .gte('created_at', thirtyDaysAgo.toISOString()),
       ]);
 
-      setLeadCount(thisMonthResult.count || 0);
-      setTotalLeads(totalResult.count || 0);
-      setLeadsLast30(last30Result.count || 0);
+      setReferralCount(thisMonthResult.count || 0);
+      setTotalReferrals(totalResult.count || 0);
+      setReferralsLast30(last30Result.count || 0);
     } catch (err) {
-      console.error('Lead data error:', err);
+      console.error('Referral data error:', err);
     }
   }
 
@@ -578,7 +578,7 @@ export default function ContractorDashboard() {
   async function handleCancelSubscription() {
     if (
       !confirm(
-        'Cancel your subscription? You will stop receiving leads at the end of your billing period.'
+        'Cancel your subscription? You will stop receiving referrals at the end of your billing period.'
       )
     ) {
       return;
@@ -843,12 +843,12 @@ export default function ContractorDashboard() {
               <PerformanceSection
                 profile={profile}
                 performanceData={{
-                  totalLeads,
-                  leadsThisMonth: leadCount,
-                  leadsLast30Days: leadsLast30,
-                  acceptedLeads: Math.round(totalLeads * 0.75),
-                  declinedLeads: Math.round(totalLeads * 0.15),
-                  completedJobs: Math.round(totalLeads * 0.5),
+                  totalReferrals,
+                  referralsThisMonth: referralCount,
+                  referralsLast30Days: referralsLast30,
+                  acceptedReferrals: Math.round(totalReferrals * 0.75),
+                  declinedReferrals: Math.round(totalReferrals * 0.15),
+                  completedJobs: Math.round(totalReferrals * 0.5),
                 }}
               />
               <ReferralsSection contractorProfileId={profile.id} />
@@ -962,7 +962,7 @@ export default function ContractorDashboard() {
                         {profile.bio && (
                           <div>
                             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Bio</p>
-                            <p className="text-sm leading-relaxed text-gray-700">{profile.bio}</p>
+                            <p className="text-sm referraling-relaxed text-gray-700">{profile.bio}</p>
                           </div>
                         )}
 
@@ -971,7 +971,7 @@ export default function ContractorDashboard() {
                             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
                               Business Description
                             </p>
-                            <p className="text-sm leading-relaxed text-gray-700">{(profile as any).business_description}</p>
+                            <p className="text-sm referraling-relaxed text-gray-700">{(profile as any).business_description}</p>
                           </div>
                         )}
 

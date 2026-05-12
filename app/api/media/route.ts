@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function GET(request: NextRequest) {
+  const supabaseAdmin = createSupabaseAdminClient();
   const { searchParams } = new URL(request.url);
   const featuredOnly = searchParams.get('featured') === 'true';
   const platform = searchParams.get('platform');
@@ -36,6 +33,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const supabaseAdmin = createSupabaseAdminClient();
   const body = await request.json();
   const { title, platform, url, thumbnail_url, description, is_featured, display_order } = body;
 
@@ -66,6 +64,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const supabaseAdmin = createSupabaseAdminClient();
   const body = await request.json();
   const { id, ...updates } = body;
 
@@ -88,6 +87,7 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const supabaseAdmin = createSupabaseAdminClient();
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 

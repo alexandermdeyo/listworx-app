@@ -200,10 +200,10 @@ export default function ApplyPage() {
           <div>
             <div className="mb-8 text-center">
               <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-3 tracking-tight">
-                Contractor Application
+                Apply to Join the ListWorx Network
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Complete your IronClad partner application below. You can save your progress and update details while under review.
+                Applications are reviewed by our team within 72 hours. We vet every contractor before approving network access. After approval, you will receive instructions to complete your subscription and claim your Founding Partner spot if one is still available in your trade and county.
               </p>
             </div>
 

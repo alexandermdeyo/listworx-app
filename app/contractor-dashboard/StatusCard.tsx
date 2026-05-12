@@ -22,7 +22,7 @@ function getStatusConfig(status: string) {
         bg: 'bg-amber-50',
         border: 'border-amber-200',
         badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-        headline: 'Application Submitted',
+        headline: 'IronClad Standards: Action Required — Application Under Review',
         message: 'Our team is reviewing your application. You\'ll hear back within 24–48 hours.',
         nextStep: 'Sit tight — we\'re vetting your credentials and will reach out shortly.',
       };
@@ -33,9 +33,9 @@ function getStatusConfig(status: string) {
         bg: 'bg-emerald-50',
         border: 'border-emerald-200',
         badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-        headline: 'Approved – Choose a Plan',
+        headline: 'IronClad Standards: Action Required — Subscription Required',
         message: 'Congratulations! Your application has been approved.',
-        nextStep: 'Select a subscription plan below to activate your account and start receiving leads.',
+        nextStep: 'Select a subscription plan below to activate your account and start receiving referrals.',
       };
     case PARTNER_STATUS.ACTIVE:
       return {
@@ -44,8 +44,8 @@ function getStatusConfig(status: string) {
         bg: 'bg-orange-50',
         border: 'border-orange-200',
         badgeClass: 'bg-orange-100 text-lw-rust border-orange-300',
-        headline: 'Active Partner',
-        message: 'Your account is active and you are receiving qualified leads.',
+        headline: 'IronClad Standards: Active ✓',
+        message: 'Your IronClad status is active. You are eligible to receive referrals.',
         nextStep: 'Keep your profile and service areas up to date for best results.',
       };
     case PARTNER_STATUS.PAUSED:
@@ -55,9 +55,9 @@ function getStatusConfig(status: string) {
         bg: 'bg-amber-50',
         border: 'border-amber-200',
         badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-        headline: 'Subscription Paused',
+        headline: 'IronClad Standards: Suspended — Contact support to resolve',
         message: 'Your subscription is past due or was paused.',
-        nextStep: 'Update your payment method to resume receiving leads immediately.',
+        nextStep: 'Contact support or update billing to resolve your IronClad status.',
       };
     case PARTNER_STATUS.REJECTED:
       return {

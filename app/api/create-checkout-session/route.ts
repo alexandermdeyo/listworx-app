@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+import { createStripeServerClient } from '@/lib/stripe-server';
+import { getFounderActivationPriceId } from '@/lib/stripe-prices';
 
 function getTierPriceId(tierId: string, billingPeriod: string) {
   const normalizedTierId = (tierId || '').trim().toLowerCase();
@@ -89,6 +89,8 @@ function getAddOnPriceId(addOnId: string, billingPeriod: string) {
 }
 
 export async function POST(request: NextRequest) {
+  const stripe = createStripeServerClient();
+
   try {
     const body = await request.json();
 
@@ -99,13 +101,14 @@ export async function POST(request: NextRequest) {
       billingPeriod,
       isAddOn = false,
       addOnId,
+      isFounderActivation = false,
     } = body;
 
     if (!contractorId) {
       return NextResponse.json({ error: 'Missing contractorId' }, { status: 400 });
     }
 
-    if (!isAddOn && !tierId) {
+    if (!isAddOn && !isFounderActivation && !tierId) {
       return NextResponse.json({ error: 'Missing tierId' }, { status: 400 });
     }
 
@@ -121,7 +124,13 @@ export async function POST(request: NextRequest) {
     let resolvedPriceId = '';
     let sessionMode: 'payment' | 'subscription' = 'subscription';
 
-    if (isAddOn) {
+    if (isFounderActivation) {
+      resolvedPriceId = getFounderActivationPriceId() || '';
+      sessionMode = 'payment';
+      if (!resolvedPriceId) {
+        return NextResponse.json({ error: 'Missing founder activation price ID' }, { status: 500 });
+      }
+    } else if (isAddOn) {
       const addOnResult = getAddOnPriceId(addOnId, billingPeriod);
       resolvedPriceId = addOnResult.priceId;
       sessionMode = addOnResult.mode;
@@ -194,6 +203,7 @@ export async function POST(request: NextRequest) {
       tierName: tierName || '',
       billingPeriod: billingPeriod || '',
       isAddOn: String(isAddOn),
+      isFounderActivation: String(isFounderActivation),
       addOnId: addOnId || '',
     };
 
