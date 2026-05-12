@@ -41,9 +41,13 @@ export interface Trade {
 }
 
 export interface ApplicationFormState {
+  first_name: string;
+  last_name: string;
   company_name: string;
   owner_name: string;
   phone: string;
+  years_in_business: string;
+  primary_county: string;
   website: string;
   bio: string;
   license_number: string;
@@ -55,6 +59,7 @@ export interface ApplicationFormState {
   agreed_to_standards: boolean;
   agreed_to_communications: boolean;
   agreed_to_privacy_policy: boolean;
+  volume_acknowledged: boolean;
 }
 
 export interface TierDisplay {

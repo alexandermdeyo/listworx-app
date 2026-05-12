@@ -95,7 +95,7 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
   if (loading) {
     return (
       <div className="rounded-2xl border border-lw-border-light bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-bold text-lw-text">Recent Referrals</h3>
+        <h3 className="mb-4 text-base font-bold text-lw-text">Your Referrals</h3>
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
             <div key={i} className="h-20 animate-pulse rounded-xl bg-lw-surface" />
@@ -108,12 +108,12 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
   if (referrals.length === 0) {
     return (
       <div className="rounded-2xl border border-lw-border-light bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-bold text-lw-text">Recent Referrals</h3>
+        <h3 className="mb-4 text-base font-bold text-lw-text">Your Referrals</h3>
         <div className="flex flex-col items-center gap-3 py-10 text-center">
           <Inbox className="h-10 w-10 text-lw-text/20" />
           <p className="text-sm font-medium text-lw-text/50">No referrals yet</p>
           <p className="max-w-xs text-xs text-lw-text/40">
-            When a homeowner or realtor requests a contractor in your service area, you will appear here with full details.
+            No referrals yet this month. As the network grows in your area, referral volume increases. Make sure your profile is complete and your IronClad status is active.
           </p>
         </div>
       </div>
@@ -123,7 +123,7 @@ export default function ReferralsSection({ contractorProfileId }: ReferralsSecti
   return (
     <div className="rounded-2xl border border-lw-border-light bg-white p-6 shadow-sm">
       <div className="mb-5 flex items-center justify-between">
-        <h3 className="text-base font-bold text-lw-text">Recent Referrals</h3>
+        <h3 className="text-base font-bold text-lw-text">Your Referrals</h3>
         <span className="rounded-full bg-lw-rust/10 px-2.5 py-0.5 text-xs font-semibold text-lw-rust">
           {referrals.length} total
         </span>
