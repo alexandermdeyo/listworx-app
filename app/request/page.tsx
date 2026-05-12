@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown } from 'lucide-react';
+import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown, ExternalLink } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Navigation from '@/components/Navigation';
 import { createClient } from '@/lib/supabase-browser';
@@ -382,6 +382,15 @@ export default function RequestPage() {
                     {contractor.bio && (
                       <p className="text-muted-foreground pt-2">{contractor.bio}</p>
                     )}
+                    <a
+                      href={`/contractors/${contractor.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex w-full items-center justify-center rounded-md bg-lw-rust px-3 py-2 text-sm font-medium text-white hover:bg-lw-rust-hover"
+                    >
+                      View Full Profile
+                      <ExternalLink className="ml-2 h-3.5 w-3.5" />
+                    </a>
                   </div>
                 </Card>
               ))}
