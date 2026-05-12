@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { CheckCircle, Crown, Shield, AlertTriangle } from 'lucide-react';
+import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -40,12 +41,21 @@ export default function FoundingPartnerPage() {
   return (
     <PageShell surface="dark">
       <Navigation />
-      <section className="container mx-auto px-4 py-20 text-center">
-        <Crown className="mx-auto mb-5 h-12 w-12 text-amber-400" />
+      <section className="relative overflow-hidden py-20 text-center">
+        <img
+          src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1920&q=80"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+        <div className="relative z-10 container mx-auto px-4">
+        <Image src="/ironclad_founder_shield_logo.png" alt="IronClad Founding Partner" width={132} height={132} className="mx-auto mb-5 h-28 w-auto" />
         <h1 className="mb-6 text-5xl md:text-7xl font-bold text-white">Become a Founding Partner</h1>
         <p className="mx-auto max-w-4xl text-lg text-zinc-300 leading-relaxed">
           This is not a discount. This is a founder opportunity. A limited number of contractors will lock in permanent pricing, territory reservation, and Founding Partner status before we open to the public. Once your trade fills in your county — it&apos;s done.
         </p>
+        </div>
       </section>
 
       <section className="container mx-auto px-4 py-12">

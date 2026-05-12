@@ -28,9 +28,17 @@ export default function PricingPage() {
         <p className="font-semibold">⚡ Founding Partner spots are open in Nashville and Sumner County. Limited per trade. Reserve yours before your county fills. <a href="#founder" className="underline">See Founding Partner pricing →</a></p>
       </section>
 
-      <section className="container mx-auto px-4 py-16">
+      <section className="relative overflow-hidden py-16">
+        <img
+          src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1920&q=80"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="relative z-10 container mx-auto px-4">
         <h1 className="mb-2 text-5xl font-bold text-white">Standard Contractor Pricing</h1>
-        <p className="mb-8 text-zinc-400">For contractors joining after Founding Partner spots close.</p>
+        <p className="mb-8 text-zinc-100">For contractors joining after Founding Partner spots close.</p>
         <div className="grid gap-6 md:grid-cols-3">
           {standardPlans.map(([name, price, features, cta]) => (
             <Card key={name as string} className="border-zinc-800 bg-zinc-950 p-6">
@@ -40,6 +48,7 @@ export default function PricingPage() {
               <Link href="/apply"><Button className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white">{cta}</Button></Link>
             </Card>
           ))}
+        </div>
         </div>
       </section>
 
