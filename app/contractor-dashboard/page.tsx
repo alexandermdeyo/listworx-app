@@ -642,7 +642,7 @@ export default function ContractorDashboard() {
                 setLoading(true);
                 void checkAuth();
               }}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
               <RefreshCw className="mr-2 h-4 w-4" /> Retry
             </Button>
@@ -692,7 +692,7 @@ export default function ContractorDashboard() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
             <ApplicationForm
               userId={userId!}
               userEmail={userEmail}
@@ -801,7 +801,7 @@ export default function ContractorDashboard() {
       onLogout={handleLogout}
       hasNotifications={false}
     >
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6 text-gray-900">
         {/* Expiry warning banner */}
         {hasExpiryWarning && (
           <div className="flex items-start gap-3 rounded-lg border border-lw-rust/40 bg-lw-rust/5 px-4 py-3">
@@ -885,7 +885,7 @@ export default function ContractorDashboard() {
                 </div>
               </div>
 
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
                 <ApplicationForm
                   userId={userId!}
                   userEmail={userEmail}

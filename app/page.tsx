@@ -6,6 +6,8 @@ import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
+import FeaturedContractorsLogoBar from '@/components/site/FeaturedContractorsLogoBar';
+import { getContent, getSiteContent, isVisible } from '@/lib/site-content';
 
 const founderBenefits = [
   '12 months of included network access after $149 activation',
@@ -153,8 +155,8 @@ export default function LandingPage() {
             </Link>
             <p className="mt-4 text-sm text-zinc-300">$149 one-time activation. 12 months included. Then $99–$349/month depending on tier — locked for life.</p>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-4xl">

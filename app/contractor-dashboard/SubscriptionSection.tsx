@@ -452,7 +452,7 @@ export default function SubscriptionSection({
             <Button
               onClick={handleManageBilling}
               disabled={portalLoading}
-              className="bg-lw-rust hover:bg-lw-rust-hover text-white gap-2"
+              className="bg-orange-600 text-white hover:bg-orange-700 gap-2"
             >
               {portalLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -479,7 +479,7 @@ export default function SubscriptionSection({
 
     return (
       <div className="space-y-8">
-        <div className="rounded-2xl border border-lw-border-light bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-lw-border-light bg-white p-6 text-gray-900 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="p-3 rounded-xl bg-lw-rust/10 border border-lw-rust/20 flex-shrink-0">
@@ -508,7 +508,7 @@ export default function SubscriptionSection({
                 disabled={portalLoading}
                 variant="outline"
                 size="sm"
-                className="border-lw-border-light text-lw-text hover:bg-lw-surface hover:text-lw-rust gap-2"
+                className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 gap-2"
               >
                 {portalLoading ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -526,7 +526,7 @@ export default function SubscriptionSection({
                     if (nextTier) handleSelectTier(nextTier);
                   }}
                   size="sm"
-                  className="bg-lw-rust hover:bg-lw-rust-hover text-white gap-2"
+                  className="bg-orange-600 text-white hover:bg-orange-700 gap-2"
                   disabled={!!checkoutLoading}
                 >
                   {checkoutLoading ? (
@@ -593,7 +593,7 @@ export default function SubscriptionSection({
               return (
                 <div
                   key={addOn.id}
-                  className={`rounded-2xl border p-5 bg-white ${
+                  className={`rounded-2xl border bg-white p-5 text-gray-900 ${
                     canAccess ? 'border-lw-border-light' : 'border-lw-border-light opacity-60'
                   }`}
                 >
@@ -625,8 +625,8 @@ export default function SubscriptionSection({
                   <Button
                     className={`w-full text-sm ${
                       canAccess
-                        ? 'bg-lw-rust hover:bg-lw-rust-hover text-white'
-                        : 'border-lw-border-light text-lw-text/40'
+                        ? 'bg-orange-600 text-white hover:bg-orange-700'
+                        : 'border border-gray-300 bg-white text-gray-400 hover:bg-gray-50'
                     }`}
                     size="sm"
                     disabled={!canAccess || loadingThisAddOn}
@@ -669,7 +669,7 @@ export default function SubscriptionSection({
               </p>
             </div>
 
-            <div className="flex items-center gap-3 border border-lw-border-light rounded-lg px-3 py-2 bg-white self-start">
+            <div className="flex items-center gap-3 border border-lw-border-light rounded-lg bg-white px-3 py-2 text-gray-900 self-start">
               <Label
                 htmlFor="dashboard-billing-toggle"
                 className={!isAnnual ? 'text-lw-text font-medium text-sm' : 'text-lw-text/50 text-sm'}
@@ -713,7 +713,7 @@ export default function SubscriptionSection({
             return (
               <div
                 key={tier.id}
-                className={`relative rounded-2xl border p-6 bg-white ${
+                className={`relative rounded-2xl border bg-white p-6 text-gray-900 ${
                   tier.highlight
                     ? 'border-lw-rust shadow-md'
                     : 'border-lw-border-light shadow-sm'
@@ -757,7 +757,7 @@ export default function SubscriptionSection({
                 <Button
                   className={`w-full mb-5 font-semibold ${
                     tier.highlight
-                      ? 'bg-lw-rust hover:bg-lw-rust-hover text-white'
+                      ? 'bg-orange-600 text-white hover:bg-orange-700'
                       : 'bg-lw-text hover:bg-[#1a1a1a] text-white'
                   }`}
                   disabled={loadingThisTier}

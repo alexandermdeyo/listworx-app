@@ -177,7 +177,7 @@ export default function MarketingSection({
           return (
             <div
               key={opportunity.id}
-              className={`relative rounded-xl border bg-white p-5 flex flex-col transition-all shadow-sm ${
+              className={`relative rounded-xl border bg-white p-5 text-gray-900 flex flex-col transition-all shadow-sm ${
                 opportunity.previewOnly
                   ? 'border-lw-border-light opacity-60'
                   : 'border-lw-border-light hover:border-lw-rust/30 hover:shadow-md'
@@ -221,7 +221,7 @@ export default function MarketingSection({
               {opportunity.eligible ? (
                 <Button
                   size="sm"
-                  className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white text-xs"
+                  className="w-full bg-orange-600 text-white hover:bg-orange-700 text-xs"
                   onClick={() => handleOpportunityClick(opportunity)}
                   disabled={!!checkoutLoading}
                 >
@@ -232,7 +232,7 @@ export default function MarketingSection({
                 <Button
                   size="sm"
                   disabled
-                  className="w-full bg-lw-surface text-lw-text/30 border border-lw-border-light text-xs cursor-not-allowed"
+                  className="w-full bg-gray-100 text-gray-400 border border-gray-300 text-xs cursor-not-allowed"
                 >
                   <Lock className="h-3 w-3 mr-1.5" />
                   {opportunity.actionLabel}

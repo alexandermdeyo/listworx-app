@@ -354,7 +354,7 @@ export default function ComplianceDocuments({
           return (
             <div
               key={type}
-              className="bg-white rounded-2xl border border-lw-border-light overflow-hidden flex flex-col shadow-sm"
+              className="bg-white text-gray-900 rounded-2xl border border-lw-border-light overflow-hidden flex flex-col shadow-sm"
             >
               <div className="px-5 pt-5 pb-4 border-b border-lw-border-light">
                 <div className="flex items-start gap-3">
@@ -408,7 +408,7 @@ export default function ComplianceDocuments({
                             ? 'bg-red-50 border-red-200 text-red-700'
                             : expiringSoon
                             ? 'bg-amber-50 border-amber-200 text-amber-700'
-                            : 'bg-lw-surface border-lw-border-light text-lw-text/50'
+                            : 'bg-gray-100 border-gray-300 text-gray-700'
                         }`}
                       >
                         <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" />
@@ -457,7 +457,7 @@ export default function ComplianceDocuments({
                       variant="outline"
                       onClick={() => handleOpenDocument(doc, false)}
                       disabled={isViewLoading || isDlLoading}
-                      className="border-lw-border-light text-lw-text/60 hover:bg-lw-surface hover:text-lw-text text-xs flex-1"
+                      className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 text-xs flex-1"
                     >
                       {isViewLoading ? (
                         <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
@@ -471,7 +471,7 @@ export default function ComplianceDocuments({
                       variant="outline"
                       onClick={() => handleOpenDocument(doc, true)}
                       disabled={isViewLoading || isDlLoading}
-                      className="border-lw-border-light text-lw-text/60 hover:bg-lw-surface hover:text-lw-text text-xs flex-1"
+                      className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 text-xs flex-1"
                     >
                       {isDlLoading ? (
                         <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
@@ -499,8 +499,8 @@ export default function ComplianceDocuments({
                   disabled={isUploading}
                   className={`text-xs ${
                     doc
-                      ? 'bg-lw-surface hover:bg-lw-border-light text-lw-text border border-lw-border-light flex-1'
-                      : 'bg-lw-rust hover:bg-lw-rust-hover text-white w-full'
+                      ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300 flex-1'
+                      : 'bg-orange-600 text-white hover:bg-orange-700 w-full'
                   }`}
                 >
                   {isUploading ? (
