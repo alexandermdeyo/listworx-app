@@ -114,8 +114,8 @@ export default function MarketingSection({
       icon: Zap,
       title: 'Upgrade to Preferred',
       description:
-        'Get priority placement, enhanced profile visibility, and stronger lead routing priority.',
-      value: 'More visibility and better lead priority',
+        'Get priority placement, enhanced profile visibility, and stronger referral routing priority.',
+      value: 'More visibility and better referral priority',
       badge: 'Recommended',
       badgeColor: 'bg-lw-rust/10 text-lw-rust border-lw-rust/20',
       eligible: isApproved && profile.tier === 'basic',
@@ -209,7 +209,7 @@ export default function MarketingSection({
                 </div>
               </div>
 
-              <p className="text-lw-text/60 text-xs leading-relaxed mb-3 flex-1">
+              <p className="text-lw-text/60 text-xs referraling-relaxed mb-3 flex-1">
                 {opportunity.description}
               </p>
 

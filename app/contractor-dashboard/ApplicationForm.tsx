@@ -175,9 +175,13 @@ export default function ApplicationForm({
 
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<ApplicationFormState>({
+    first_name: existingProfile?.owner_name?.split(' ')?.[0] || '',
+    last_name: existingProfile?.owner_name?.split(' ')?.slice(1).join(' ') || '',
     company_name: existingProfile?.company_name || '',
     owner_name: existingProfile?.owner_name || '',
     phone: existingProfile?.phone || '',
+    years_in_business: existingProfile?.years_in_business ? String(existingProfile.years_in_business) : '',
+    primary_county: existingProfile?.service_area_counties?.[0] || '',
     website: existingProfile?.website || '',
     bio: existingProfile?.bio || '',
     license_number: existingProfile?.license_number || '',
@@ -189,6 +193,7 @@ export default function ApplicationForm({
     agreed_to_standards: existingProfile?.agreed_to_standards || false,
     agreed_to_communications: existingProfile?.agreed_to_communications || false,
     agreed_to_privacy_policy: existingProfile?.agreed_to_privacy_policy || false,
+    volume_acknowledged: existingProfile?.volume_acknowledged || false,
   });
 
   const [serviceStates, setServiceStates] = useState<{ code: string; name: string }[]>([]);
@@ -343,9 +348,11 @@ export default function ApplicationForm({
 
   function validateStep(s: number): string {
     if (s === 1) {
-      if (!form.company_name.trim()) return 'Company name is required.';
-      if (!form.owner_name.trim()) return 'Owner / contact name is required.';
+      if (!form.first_name.trim()) return 'First name is required.';
+      if (!form.last_name.trim()) return 'Last name is required.';
+      if (!form.company_name.trim()) return 'Business name is required.';
       if (!form.phone.trim()) return 'Phone number is required.';
+      if (!form.years_in_business.trim()) return 'Years in business is required.';
     }
     if (s === 2) {
       if (!form.insurance_expiration_date) return 'Insurance expiration date is required.';
@@ -361,6 +368,7 @@ export default function ApplicationForm({
       if (!form.agreed_to_standards) return 'You must agree to IronClad Standards.';
       if (!form.agreed_to_communications) return 'You must agree to the Terms of Service.';
       if (!form.agreed_to_privacy_policy) return 'You must agree to the Privacy Policy.';
+      if (!form.volume_acknowledged) return 'You must acknowledge that referral volume is not guaranteed.';
     }
     return '';
   }
@@ -390,7 +398,7 @@ export default function ApplicationForm({
 
     const profileUpdates = {
       company_name: form.company_name.trim(),
-      owner_name: form.owner_name.trim(),
+      owner_name: `${form.first_name.trim()} ${form.last_name.trim()}`.trim(),
       phone: form.phone.trim(),
       website: form.website.trim() || null,
       bio: form.bio.trim() || null,
@@ -460,6 +468,24 @@ export default function ApplicationForm({
         if (insertCategoriesErr) throw insertCategoriesErr;
       }
 
+      await fetch('/api/contractor-applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name: form.first_name.trim(),
+          last_name: form.last_name.trim(),
+          email: userEmail,
+          phone: form.phone.trim(),
+          business_name: form.company_name.trim(),
+          trade: trades.find((trade) => trade.id === form.selectedTrades[0])?.name || 'Other',
+          years_in_business: Number(form.years_in_business) || null,
+          primary_county: selectedCountyNames[0] || form.primary_county || 'Other',
+          business_description: form.bio.trim(),
+          ironclad_acknowledged: form.agreed_to_standards,
+          volume_acknowledged: form.volume_acknowledged,
+        }),
+      }).catch((applicationError) => console.error('contractor_applications insert error:', applicationError));
+
       fetch(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,
         {
@@ -494,10 +520,10 @@ export default function ApplicationForm({
         </div>
         <h2 className="text-xl font-bold text-[#2F2F2F] mb-2">Application Submitted</h2>
         <p className="text-[#2F2F2F]/60 text-sm max-w-md mx-auto">
-          Thank you. Your application has been submitted and is now under review.
+          Your application has been received. Our team reviews every application personally and will contact you within 72 hours.
         </p>
         <p className="text-[#2F2F2F]/50 text-sm max-w-md mx-auto mt-2">
-          We&apos;ll email you when your application is approved.
+          In the meantime, follow us on Facebook and Instagram @listworx for network updates.
         </p>
         <div className="mt-6">
           <Button
@@ -528,10 +554,9 @@ export default function ApplicationForm({
             <Shield className="h-5 w-5 text-lw-rust" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-lw-text">IronClad Partner Application</h2>
+            <h2 className="text-lg font-bold text-lw-text">Apply to Join the ListWorx Network</h2>
             <p className="text-lw-text/50 text-sm mt-0.5">
-              Apply to join the ListWorx network of vetted professionals. Review takes 24–48 hours.
-              Approval unlocks your subscription and dashboard.
+              Applications are reviewed by our team within 72 hours. We vet every contractor before approving network access. After approval, you will receive instructions to complete your subscription and claim your Founding Partner spot if one is still available in your trade and county.
             </p>
           </div>
         </div>
@@ -558,7 +583,23 @@ export default function ApplicationForm({
               description="Your company details shown on your contractor profile"
             />
             <div className="grid sm:grid-cols-2 gap-4">
-              <FormField label="Company Name" required>
+              <FormField label="First Name" required>
+                <Input
+                  value={form.first_name}
+                  onChange={e => set('first_name', e.target.value)}
+                  placeholder="John"
+                  className={inputClass}
+                />
+              </FormField>
+              <FormField label="Last Name" required>
+                <Input
+                  value={form.last_name}
+                  onChange={e => set('last_name', e.target.value)}
+                  placeholder="Smith"
+                  className={inputClass}
+                />
+              </FormField>
+              <FormField label="Business Name" required>
                 <Input
                   value={form.company_name}
                   onChange={e => set('company_name', e.target.value)}
@@ -566,13 +607,8 @@ export default function ApplicationForm({
                   className={inputClass}
                 />
               </FormField>
-              <FormField label="Owner / Contact Name" required>
-                <Input
-                  value={form.owner_name}
-                  onChange={e => set('owner_name', e.target.value)}
-                  placeholder="John Smith"
-                  className={inputClass}
-                />
+              <FormField label="Email Address" required>
+                <Input value={userEmail} disabled className={inputClass} />
               </FormField>
               <FormField label="Phone Number" required>
                 <Input
@@ -580,6 +616,16 @@ export default function ApplicationForm({
                   value={form.phone}
                   onChange={e => set('phone', e.target.value)}
                   placeholder="(615) 000-0000"
+                  className={inputClass}
+                />
+              </FormField>
+              <FormField label="Years in Business" required>
+                <Input
+                  type="number"
+                  min="0"
+                  value={form.years_in_business}
+                  onChange={e => set('years_in_business', e.target.value)}
+                  placeholder="10"
                   className={inputClass}
                 />
               </FormField>
@@ -925,7 +971,7 @@ export default function ApplicationForm({
               {[
                 {
                   field: 'agreed_to_standards' as keyof ApplicationFormState,
-                  label: 'I agree to uphold',
+                  label: 'I understand ListWorx requires IronClad Standards compliance including 24-hour response, valid insurance, and professional conduct. I agree to uphold',
                   linkText: 'IronClad Standards',
                   linkHref: '/ironclad',
                   suffix: 'for all work performed through the ListWorx network.',
@@ -944,6 +990,13 @@ export default function ApplicationForm({
                   linkHref: '/privacy',
                   suffix: '',
                 },
+                {
+                  field: 'volume_acknowledged' as keyof ApplicationFormState,
+                  label: 'I understand referral volume is not guaranteed.',
+                  linkText: '',
+                  linkHref: '',
+                  suffix: '',
+                },
               ].map(item => (
                 <label key={item.field} className="flex items-start gap-3 cursor-pointer group">
                   <div
@@ -958,16 +1011,18 @@ export default function ApplicationForm({
                   </div>
                   <span className="text-lw-text/70 text-sm leading-relaxed">
                     {item.label}{' '}
-                    <a
-                      href={item.linkHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-lw-rust hover:text-lw-rust-hover underline-offset-2 hover:underline inline-flex items-center gap-0.5"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      {item.linkText}
-                      <ExternalLink className="h-3 w-3 inline" />
-                    </a>{' '}
+                    {item.linkText && (
+                      <a
+                        href={item.linkHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lw-rust hover:text-lw-rust-hover underline-offset-2 hover:underline inline-flex items-center gap-0.5"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        {item.linkText}
+                        <ExternalLink className="h-3 w-3 inline" />
+                      </a>
+                    )}{' '}
                     {item.suffix}
                   </span>
                 </label>
@@ -979,10 +1034,10 @@ export default function ApplicationForm({
                 What happens next
               </p>
               {[
-                'Our team reviews your application within 24–48 business hours.',
+                'Our team reviews your application within 72 hours.',
                 "You'll receive an email notification with the decision.",
                 'Approved applicants unlock subscription plans and full dashboard access.',
-                'Referral tools and lead delivery activate automatically after your first payment.',
+                'Referral tools activate after approval and subscription setup.',
               ].map((line, i) => (
                 <div key={i} className="flex items-start gap-2 text-xs text-lw-text/50">
                   <ChevronRight className="h-3.5 w-3.5 text-lw-rust flex-shrink-0 mt-0.5" />
@@ -1043,7 +1098,7 @@ export default function ApplicationForm({
               ) : (
                 <>
                   <FileText className="mr-2 h-4 w-4" />
-                  Submit Application
+                  Submit My Application
                 </>
               )}
             </Button>

@@ -403,7 +403,7 @@ export default function SubscriptionSection({
           </div>
           <div>
             <h3 className="font-bold text-lw-text text-base mb-1">Subscription Locked</h3>
-            <p className="text-lw-text/70 text-sm leading-relaxed">
+            <p className="text-lw-text/70 text-sm referraling-relaxed">
               Your application is currently under review. Once our team approves your application, you'll receive an email with instructions to sign in and choose your partnership plan.
             </p>
             <p className="text-amber-700 text-sm font-medium mt-3">
@@ -424,7 +424,7 @@ export default function SubscriptionSection({
           </div>
           <div>
             <h3 className="font-bold text-lw-text text-base mb-1">Application Not Approved</h3>
-            <p className="text-lw-text/70 text-sm leading-relaxed">
+            <p className="text-lw-text/70 text-sm referraling-relaxed">
               Your application was not approved at this time. Contact{' '}
               <a href="mailto:adeyo@listworx.co" className="text-lw-rust hover:underline">
                 adeyo@listworx.co
@@ -446,8 +446,8 @@ export default function SubscriptionSection({
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-lw-text text-base mb-1">Subscription Paused</h3>
-            <p className="text-lw-text/70 text-sm leading-relaxed mb-4">
-              Your subscription is past due or was paused. Update your payment method to resume receiving leads immediately.
+            <p className="text-lw-text/70 text-sm referraling-relaxed mb-4">
+              Your subscription is past due or was paused. Update your payment method to resume receiving referrals immediately.
             </p>
             <Button
               onClick={handleManageBilling}
@@ -602,7 +602,7 @@ export default function SubscriptionSection({
                       <Icon className="h-5 w-5 text-lw-rust" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-lw-text text-sm leading-snug">{addOn.name}</h4>
+                      <h4 className="font-bold text-lw-text text-sm referraling-snug">{addOn.name}</h4>
                       {addOn.hasSubscription ? (
                         <p className="font-bold text-lw-text mt-0.5">
                           ${isAnnual ? Math.round((addOn.annualPrice || 0) / 12) : addOn.monthlyPrice}
@@ -732,7 +732,7 @@ export default function SubscriptionSection({
                     <Icon className="h-5 w-5 text-lw-rust" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lw-text text-base leading-snug">{tier.name}</h3>
+                    <h3 className="font-bold text-lw-text text-base referraling-snug">{tier.name}</h3>
                     {tier.badgeText && (
                       <span className="text-xs text-lw-text/50 font-medium">{tier.badgeText}</span>
                     )}

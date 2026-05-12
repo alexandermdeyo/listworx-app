@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -17,7 +17,7 @@ interface SubscriptionOverrideProps {
 interface AuditEntry {
   id: string;
   action: string;
-  changes: Record<string, any>;
+  changes: Record<string, string | number | boolean | null | undefined>;
   created_at: string;
   admin_name?: string;
   admin_email?: string;
@@ -62,9 +62,8 @@ export default function SubscriptionOverride({
   currentTier,
   adminUserId,
 }: SubscriptionOverrideProps) {
-  if (!adminUserId) return null;
-
-  const supabase = createClient();
+  const supabaseRef = useRef(createClient());
+  const supabase = supabaseRef.current;
 
   const [overrideType, setOverrideType] = useState('');
   const [tier, setTier] = useState(currentTier || '');
@@ -78,11 +77,7 @@ export default function SubscriptionOverride({
   const [auditLogs, setAuditLogs] = useState<AuditEntry[]>([]);
   const [loadingAudit, setLoadingAudit] = useState(true);
 
-  useEffect(() => {
-    loadData();
-  }, [contractorId]);
-
-  async function loadData() {
+  const loadData = useCallback(async () => {
     setLoadingAudit(true);
     try {
       const [subRes, auditRes] = await Promise.all([
@@ -122,7 +117,11 @@ export default function SubscriptionOverride({
     } finally {
       setLoadingAudit(false);
     }
-  }
+  }, [contractorId, supabase]);
+
+  useEffect(() => {
+    void loadData();
+  }, [loadData]);
 
   async function handleSubmit(actionType: 'activate' | 'override' | 'suspend') {
     if (!adminNote.trim()) {
@@ -158,8 +157,11 @@ export default function SubscriptionOverride({
       setResult({ ok: true, msg: data.message || 'Override applied successfully.' });
       setAdminNote('');
       await loadData();
-    } catch (err: any) {
-      setResult({ ok: false, msg: err.message || 'Something went wrong.' });
+    } catch (err: unknown) {
+      setResult({
+        ok: false,
+        msg: err instanceof Error ? err.message : 'Something went wrong.',
+      });
     } finally {
       setSubmitting(false);
     }
@@ -189,6 +191,8 @@ export default function SubscriptionOverride({
   }
 
   const subscriptionSource = subscription?.stripe_subscription_id ? 'Stripe' : subscription ? 'Manual' : 'None';
+
+  if (!adminUserId) return null;
 
   return (
     <div className="mt-6 space-y-6">
@@ -376,7 +380,7 @@ export default function SubscriptionOverride({
                       )}
                     </div>
                     {log.changes?.note && (
-                      <p className="text-xs text-gray-600 mt-1 italic">"{log.changes.note}"</p>
+                      <p className="text-xs text-gray-600 mt-1 italic">&ldquo;{log.changes.note}&rdquo;</p>
                     )}
                     {log.admin_email && (
                       <p className="text-xs text-gray-400 mt-0.5">by {log.admin_email}</p>

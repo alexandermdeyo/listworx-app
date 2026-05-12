@@ -31,7 +31,7 @@ export default function ContractorsPage() {
             <Briefcase className="h-3 w-3 mr-1" />
             IronClad Partner Network
           </Badge>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 referraling-tight">
             Built for Contractors<br className="hidden md:block" />
             <span className="text-primary">Who Take Pride in Their Work.</span>
           </h1>
@@ -61,7 +61,7 @@ export default function ContractorsPage() {
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">Flat</div>
-              <div className="text-sm text-muted-foreground">Monthly Rate — No Per-Lead Fees</div>
+              <div className="text-sm text-muted-foreground">Monthly Rate — No Per-Referral Fees</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">Vetted</div>
@@ -86,17 +86,17 @@ export default function ContractorsPage() {
             </div>
 
             <Card className="p-6 md:p-8 bg-card border border-border mb-8">
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                We’re not here to sell random leads, spam your phone, or throw you into a race-to-the-bottom bidding war. We’re building a trusted contractor network that helps serious home service pros get in front of realtors, homeowners, and property managers who need quality work done right.
+              <p className="text-base md:text-lg text-muted-foreground referraling-relaxed">
+                We’re not here to sell random referrals, spam your phone, or throw you into a race-to-the-bottom bidding war. We’re building a trusted contractor network that helps serious home service pros get in front of realtors, homeowners, and property managers who need quality work done right.
               </p>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed mt-5">
+              <p className="text-base md:text-lg text-muted-foreground referraling-relaxed mt-5">
                 As ListWorx grows, our goal is to grow with you — helping contractors get more exposure, build stronger reputations, earn more referrals, and eventually access tools, education, hiring support, mentorship opportunities, and marketing resources that help your business scale.
               </p>
             </Card>
 
             <div className="grid sm:grid-cols-3 gap-4">
               {[
-                'We don’t do lead spam.',
+                'We don’t do referral spam.',
                 'We don’t do race-to-the-bottom bidding.',
                 'We help good contractors get seen by people who actually need them.',
               ].map((line) => (
@@ -140,7 +140,7 @@ export default function ContractorsPage() {
                   step: '03',
                   icon: DollarSign,
                   title: 'Subscribe',
-                  desc: 'Pay a flat monthly fee. No per-lead charges. Your subscription tier determines your placement priority.',
+                  desc: 'Pay a flat monthly fee. No per-referral charges. Your subscription tier determines your placement priority.',
                 },
                 {
                   step: '04',
@@ -176,7 +176,7 @@ export default function ContractorsPage() {
                 <Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad Standards" width={120} height={120} className="w-24 h-auto" />
               </div>
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                Why This Is Different From Pay-Per-Lead
+                Why This Is Different From Referral Marketplaces
               </h2>
               <p className="text-lg md:text-xl text-zinc-300 max-w-3xl mx-auto">
                 Angi, HomeAdvisor, and Thumbtack sell your contact info to as many contractors as they can. ListWorx is built around the opposite model.
@@ -220,7 +220,7 @@ export default function ContractorsPage() {
                   <div>
                     <h3 className="text-xl font-bold text-white mb-2">Predictable Business Costs</h3>
                     <p className="text-zinc-300">
-                      One flat monthly rate — no per-lead fees, no surprise charges, no bidding for priority. Know your marketing spend up front and build your business around it.
+                      One flat monthly rate — no per-referral fees, no surprise charges, no bidding for priority. Know your marketing spend up front and build your business around it.
                     </p>
                   </div>
                 </div>
@@ -250,10 +250,10 @@ export default function ContractorsPage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-                Stop Paying for Dead-End Leads
+                Stop Paying for Dead-End Referrals
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground">
-                Here’s what changes when you stop buying random leads and join a trusted contractor network.
+                Here’s what changes when you stop chasing random contacts and join a trusted contractor network.
               </p>
             </div>
 
@@ -261,16 +261,16 @@ export default function ContractorsPage() {
               <Card className="p-6 md:p-8 bg-card border-2 border-destructive/30">
                 <h3 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center">
                   <AlertCircle className="h-6 w-6 text-destructive mr-3 flex-shrink-0" />
-                  Traditional Lead Platforms
+                  Traditional Referral Platforms
                 </h3>
                 <ul className="space-y-3 text-sm md:text-base text-muted-foreground">
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">✗</span>
-                    <span>Pay $15–$100+ per lead received</span>
+                    <span>Pay $15–$100+ per shared contact received</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">✗</span>
-                    <span>Same lead sold to 10–20 other contractors</span>
+                    <span>Same referral sold to 10–20 other contractors</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">✗</span>
@@ -299,7 +299,7 @@ export default function ContractorsPage() {
                 <ul className="space-y-3 text-sm md:text-base">
                   <li className="flex items-start">
                     <span className="mr-3 font-bold">✓</span>
-                    <span>Flat monthly subscription — no per-lead fees, ever</span>
+                    <span>Flat monthly subscription — no per-referral fees, ever</span>
                   </li>
                   <li className="flex items-start">
                     <span className="mr-3 font-bold">✓</span>
@@ -572,7 +572,7 @@ export default function ContractorsPage() {
                 Choose Your Spot in the Network
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground mb-2">
-                Flat monthly pricing. No per-lead surprises. Pick the level that matches where your business is headed.
+                Flat monthly pricing. No per-referral surprises. Pick the level that matches where your business is headed.
               </p>
               <p className="text-base md:text-lg font-semibold text-foreground">
                 Your reputation matters. So does ours.
@@ -690,7 +690,7 @@ export default function ContractorsPage() {
               Apply to Become an IronClad Partner
             </h2>
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Stop buying leads. Start building a referral pipeline with predictable costs and quality clients. Applications are reviewed within 48 hours.
+              Stop chasing bad contacts. Start building a referral pipeline with predictable costs and quality clients. Applications are reviewed within 48 hours.
             </p>
             <Link href="/apply">
               <Button size="lg" className="text-lg px-8 md:px-10 py-6 rounded-lg shadow-lg hover:shadow-xl bg-white text-primary hover:bg-white/90">

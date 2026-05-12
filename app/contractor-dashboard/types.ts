@@ -7,6 +7,20 @@ export interface ContractorProfile {
   phone: string;
   website?: string;
   bio?: string;
+  tagline?: string;
+  business_description?: string;
+  business_website?: string;
+  google_business_url?: string;
+  profile_photo_url?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  tiktok_url?: string;
+  linkedin_url?: string;
+  youtube_url?: string;
+  show_phone_public?: boolean;
+  show_email_public?: boolean;
+  profile_slug?: string;
+  years_in_business?: number;
   license_number?: string;
   license_expiration_date?: string;
   insurance_expiration_date?: string;
@@ -18,6 +32,10 @@ export interface ContractorProfile {
   tier?: string;
   stripe_customer_id?: string;
   logo_url?: string;
+  founder_status?: boolean;
+  founding_partner?: boolean;
+  founding_partner_badge?: boolean;
+  ironclad_certified?: boolean;
   agreed_to_standards?: boolean;
   agreed_to_communications?: boolean;
   agreed_to_privacy_policy?: boolean;
@@ -41,9 +59,13 @@ export interface Trade {
 }
 
 export interface ApplicationFormState {
+  first_name: string;
+  last_name: string;
   company_name: string;
   owner_name: string;
   phone: string;
+  years_in_business: string;
+  primary_county: string;
   website: string;
   bio: string;
   license_number: string;
@@ -55,6 +77,7 @@ export interface ApplicationFormState {
   agreed_to_standards: boolean;
   agreed_to_communications: boolean;
   agreed_to_privacy_policy: boolean;
+  volume_acknowledged: boolean;
 }
 
 export interface TierDisplay {

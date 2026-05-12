@@ -40,7 +40,7 @@ export default function TermsPage() {
               Subscription tiers (Basic $199/mo, Preferred $349/mo, Elite $599/mo – plus add-ons) for directory listing, referral eligibility, priority weighting, badges, logos, video perks (annual Elite only). We vet applications (license/insurance verification); approval not guaranteed.
             </p>
             <p className="text-muted-foreground mb-4">
-              Matching algorithm uses submitted data; we do not guarantee leads, volume, or conversions.
+              Matching algorithm uses submitted data; we do not guarantee referrals, volume, or conversions.
             </p>
 
             <h3 className="text-xl font-semibold text-foreground mb-3 mt-6">IronClad Standards</h3>

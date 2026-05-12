@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader as Loader2, Phone, Mail, Globe, User } from 'lucide-react';
+import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown, ExternalLink } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Navigation from '@/components/Navigation';
 import { createClient } from '@/lib/supabase-browser';
@@ -46,6 +46,11 @@ interface Contractor {
   phone: string;
   website: string | null;
   bio?: string | null;
+  trade?: string | null;
+  years_in_business?: number | null;
+  response_time?: string | null;
+  ironclad_accepted?: boolean | null;
+  founder_status?: boolean | null;
 }
 
 function formatPhoneNumber(value: string) {
@@ -307,13 +312,15 @@ export default function RequestPage() {
             </h1>
             <p className="text-muted-foreground">
               {contractors.length > 0
-                ? `We found ${contractors.length} contractor${contractors.length > 1 ? 's' : ''} for your request.`
+                ? `You're all set. We're matching you with three vetted contractors in your area and will send their information to ${formData.clientEmail} shortly. Questions? Contact us at support@listworx.co.`
                 : 'Your request was saved successfully, but no active contractors matched yet.'}
             </p>
           </div>
 
           {contractors.length > 0 ? (
-            <div className="grid md:grid-cols-3 gap-6 mb-10">
+            <>
+              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-lw-rust/10 p-4 text-sm text-zinc-200">These three contractors have been vetted by ListWorx and hold active IronClad Standards certification. Contact them directly — ListWorx does not manage scheduling or payments.</div>
+              <div className="grid md:grid-cols-3 gap-6 mb-6">
               {contractors.map((contractor, index) => (
                 <Card key={contractor.id} className="p-6">
                   <div className="mb-4">
@@ -321,6 +328,18 @@ export default function RequestPage() {
                       Referral {index + 1}
                     </div>
                     <h3 className="text-xl font-bold">{contractor.company_name}</h3>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {contractor.ironclad_accepted !== false && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-xs text-emerald-500">
+                          <Shield className="h-3 w-3" /> IronClad
+                        </span>
+                      )}
+                      {contractor.founder_status && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-1 text-xs text-amber-500">
+                          <Crown className="h-3 w-3" /> Founding Partner
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <User className="h-3 w-3" />
                       {contractor.owner_name}
@@ -328,6 +347,9 @@ export default function RequestPage() {
                   </div>
 
                   <div className="space-y-3 text-sm">
+                    <p className="text-muted-foreground">Trade: {contractor.trade || 'Home service'}</p>
+                    <p className="text-muted-foreground">Years in business: {contractor.years_in_business ?? 'Available on request'}</p>
+                    <p className="text-muted-foreground">Response time: {contractor.response_time || 'Typically within 24 hours'}</p>
                     <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4 text-primary" />
                       <a href={`tel:${contractor.phone}`} className="hover:text-primary">
@@ -360,10 +382,21 @@ export default function RequestPage() {
                     {contractor.bio && (
                       <p className="text-muted-foreground pt-2">{contractor.bio}</p>
                     )}
+                    <a
+                      href={`/contractors/${contractor.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex w-full items-center justify-center rounded-md bg-lw-rust px-3 py-2 text-sm font-medium text-white hover:bg-lw-rust-hover"
+                    >
+                      View Full Profile
+                      <ExternalLink className="ml-2 h-3.5 w-3.5" />
+                    </a>
                   </div>
                 </Card>
               ))}
-            </div>
+              </div>
+              <p className="mb-10 text-center text-sm text-zinc-400">Didn&apos;t hear back within 24 hours? Let us know at support@listworx.co and we&apos;ll follow up with the contractor on your behalf.</p>
+            </>
           ) : (
             <Card className="p-8 text-center mb-10">
               <p className="text-muted-foreground">
@@ -394,9 +427,9 @@ export default function RequestPage() {
       <Navigation />
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-10">
-          <h1 className="text-5xl font-bold mb-4">Request a Contractor</h1>
+          <h1 className="text-5xl font-bold mb-4">Request a Contractor Referral</h1>
           <p className="text-xl text-muted-foreground">
-            Get matched with up to 3 vetted contractors in minutes.
+            Submit your job details below. We&apos;ll return exactly three vetted, IronClad-certified contractors in your area — typically within a few hours. No account required.
           </p>
         </div>
 
@@ -548,7 +581,7 @@ export default function RequestPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Services Needed *</h2>
+              <h2 className="text-2xl font-bold mb-4">Job Type / Trade Needed *</h2>
               <div className="grid md:grid-cols-2 gap-3">
                 {categories.map((category) => (
                   <div key={category.id} className="flex items-center gap-2">
@@ -578,9 +611,10 @@ export default function RequestPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Standard">Standard (1-2 weeks)</SelectItem>
-                      <SelectItem value="Urgent">Urgent (Within 1 week)</SelectItem>
-                      <SelectItem value="ASAP">ASAP (Within 48 hours)</SelectItem>
+                      <SelectItem value="Flexible">Flexible</SelectItem>
+                      <SelectItem value="Urgent">Within 1 week</SelectItem>
+                      <SelectItem value="ASAP">Within 48 hours</SelectItem>
+                      <SelectItem value="Emergency">Emergency</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -606,7 +640,7 @@ export default function RequestPage() {
                 disabled={loading || selectedCategories.length === 0}
                 className="bg-lw-rust hover:bg-lw-rust-hover text-white"
               >
-                {loading ? 'Submitting...' : 'Get Matched with Contractors'}
+                {loading ? 'Submitting...' : 'Request a Referral'}
               </Button>
             </div>
           </form>
