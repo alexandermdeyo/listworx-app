@@ -1,16 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
 
 type AllowedRole =
   | 'ADMIN'
@@ -20,6 +10,7 @@ type AllowedRole =
   | 'PROPERTY_MANAGER';
 
 export async function POST(request: NextRequest) {
+  const supabase = createSupabaseAdminClient();
   try {
     const body = await request.json();
     const { id, email, name, role } = body as {

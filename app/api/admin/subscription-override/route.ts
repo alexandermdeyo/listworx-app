@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient as createServerClient } from '@supabase/supabase-js';
 import { createServerClient as createSsrClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-
-const supabaseAdmin = createServerClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
 async function getCallerRole(): Promise<{ userId: string; role: string } | null> {
   try {
+    const supabaseAdmin = createSupabaseAdminClient();
     const cookieStore = cookies();
     const supabase = createSsrClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,6 +35,7 @@ async function getCallerRole(): Promise<{ userId: string; role: string } | null>
 
 export async function POST(req: NextRequest) {
   try {
+    const supabaseAdmin = createSupabaseAdminClient();
     const caller = await getCallerRole();
     if (!caller || caller.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

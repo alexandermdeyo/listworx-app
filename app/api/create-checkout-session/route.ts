@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+import { createStripeServerClient } from '@/lib/stripe-server';
 
 function getTierPriceId(tierId: string, billingPeriod: string) {
   const normalizedTierId = (tierId || '').trim().toLowerCase();
@@ -89,6 +88,8 @@ function getAddOnPriceId(addOnId: string, billingPeriod: string) {
 }
 
 export async function POST(request: NextRequest) {
+  const stripe = createStripeServerClient();
+
   try {
     const body = await request.json();
 
