@@ -96,7 +96,7 @@ export default function StatusCard({
   const label = STATUS_LABELS[profile.partner_status] || profile.partner_status;
 
   return (
-    <div className="bg-white rounded-2xl border border-lw-border-light overflow-hidden shadow-sm">
+    <div className="bg-white text-gray-900 rounded-2xl border border-lw-border-light overflow-hidden shadow-sm">
       <div className="p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-start gap-6">
           <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -136,7 +136,7 @@ export default function StatusCard({
               size="sm"
               onClick={onRefresh}
               disabled={refreshing}
-              className="text-lw-text/50 hover:text-lw-text hover:bg-lw-surface"
+              className="text-gray-700 hover:text-gray-900 hover:bg-gray-50"
             >
               <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
               <span className="ml-1.5 text-xs">Refresh</span>
@@ -145,7 +145,7 @@ export default function StatusCard({
               variant="ghost"
               size="sm"
               onClick={onLogout}
-              className="text-lw-text/50 hover:text-lw-rust hover:bg-lw-surface"
+              className="text-gray-700 hover:text-gray-900 hover:bg-gray-50"
             >
               <LogOut className="h-4 w-4" />
               <span className="ml-1.5 text-xs">Sign Out</span>
