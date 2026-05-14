@@ -1,12 +1,10 @@
 
-
 import Link from 'next/link';
 import { BadgeCheck, CheckCircle, Filter, Shield, Star, ArrowRight, Crown } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
-import FeaturedContractorsLogoBar from '@/components/site/FeaturedContractorsLogoBar';
 
 const founderBenefits = [
   '12 months of included network access after $149 activation',
@@ -37,15 +35,7 @@ export default function LandingPage() {
     <PageShell surface="dark">
       <Navigation />
 
-      <section className="relative overflow-hidden py-20 text-center md:py-28">
-        <img
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover"
-          aria-hidden="true"
-        />
-        <div className="absolute inset-0 bg-black/65" />
-        <div className="relative z-10 container mx-auto px-4">
+      <section className="container mx-auto px-4 py-20 md:py-28 text-center">
         <div className="mx-auto max-w-5xl">
           <div className="mb-6 inline-flex items-center rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-2 text-sm font-semibold text-lw-rust">
             <Shield className="mr-2 h-4 w-4" />
@@ -70,40 +60,9 @@ export default function LandingPage() {
               </Button>
             </Link>
           </div>
-          <p className="text-sm text-zinc-100">
+          <p className="text-sm text-zinc-400">
             Trusted by realtors and homeowners in Nashville, Sumner County, and Minneapolis.
           </p>
-        </div>
-        </div>
-      </section>
-
-
-      <section className="py-12 md:py-16 bg-gradient-to-br from-zinc-950 via-lw-dark to-black border-y border-lw-rust/30">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-6xl rounded-2xl border border-lw-rust/30 bg-zinc-950/90 p-6 md:p-10 shadow-2xl shadow-black/30">
-            <div className="grid gap-8 lg:grid-cols-[180px_1fr] lg:items-center">
-              <div className="flex justify-center lg:justify-start">
-                <img src="/ironclad_founder_shield_logo.png" alt="IronClad Founding Partner" className="h-36 w-auto md:h-40" />
-              </div>
-              <div>
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-lw-rust">Limited Availability — Founding Partner Program</p>
-                <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">Lock In Your Territory Before Someone Else Does</h2>
-                <p className="max-w-4xl text-base leading-relaxed text-zinc-100 md:text-lg">
-                  Founding Partners pay a one-time $149 activation fee and get their first 12 months of network access included. After year one, your renewal locks in at as low as $99/month — for life. Standard pricing runs up to $199/month. That&apos;s over $1,200 in savings every year once you&apos;re locked in. Founding Partner spots close permanently once each trade fills per county. There is no second round.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {['Founding Partner badge (permanent)', 'Territory reservation by trade and county', 'Priority positioning at launch', 'IronClad decal package', 'Locked renewal pricing for life'].map(item => (
-                    <span key={item} className="rounded-full border border-lw-rust/30 bg-lw-rust/10 px-3 py-1.5 text-xs font-semibold text-zinc-100">{item}</span>
-                  ))}
-                </div>
-                <Link href="/founding-partner" className="mt-7 inline-flex">
-                  <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">
-                    Claim Your Founding Partner Spot <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -198,7 +157,6 @@ export default function LandingPage() {
 
       <section className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-4xl">
-          <img src="/Ironclad_Standards_Logo.png" alt="IronClad Standards" className="mb-5 h-24 w-auto" />
           <h2 className="mb-4 text-4xl font-bold text-white">What IronClad Standards Mean</h2>
           <p className="mb-8 text-lg text-zinc-300">
             Every contractor in the ListWorx network is held to IronClad Standards. This is not a suggestion. It is the cost of being in the network.
