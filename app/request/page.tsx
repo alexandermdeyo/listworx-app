@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown, ExternalLink } from 'lucide-react';
+import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Navigation from '@/components/Navigation';
 import { createClient } from '@/lib/supabase-browser';
