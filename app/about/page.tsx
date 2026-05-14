@@ -11,8 +11,15 @@ export default function AboutPage() {
       <Navigation />
 
       {/* HERO */}
-      <section className="pt-24 pb-20 md:pt-32 md:pb-28">
-        <div className="mx-auto px-6" style={{ maxWidth: '1200px' }}>
+      <section className="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-28">
+        <img
+          src="https://images.unsplash.com/photo-1545419913-775e92d10e17?auto=format&fit=crop&w=1920&q=80"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="relative z-10 mx-auto px-6" style={{ maxWidth: '1200px' }}>
           <div className="mx-auto text-center" style={{ maxWidth: '820px' }}>
             <p className="text-[#f97316] text-sm font-semibold uppercase tracking-widest mb-5">
               About ListWorx

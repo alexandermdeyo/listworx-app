@@ -12,6 +12,7 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { PageShell } from '@/components/design-system';
+import Navigation from '@/components/Navigation';
 
 type Role =
   | 'ADMIN'
@@ -216,7 +217,9 @@ export default function LoginPage() {
   }
 
   return (
-    <PageShell surface="dark" className="flex items-center justify-center p-4">
+    <PageShell surface="dark">
+      <Navigation />
+      <div className="flex items-center justify-center p-4 py-12">
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="mb-8 text-center">
           <Link href="/">
@@ -332,6 +335,7 @@ export default function LoginPage() {
           </Link>
         </div>
       </Card>
+      </div>
     </PageShell>
   );
 }

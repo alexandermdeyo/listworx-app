@@ -33,6 +33,8 @@ interface DashboardStats {
   activeContractors: number;
   pausedContractors: number;
   emailsOffCount: number;
+  ironcladViolations: number;
+  unmatchedJobRequests: number;
 }
 
 export default function AdminCRMPage() {
@@ -61,6 +63,8 @@ export default function AdminCRMPage() {
     activeContractors: 0,
     pausedContractors: 0,
     emailsOffCount: 0,
+    ironcladViolations: 0,
+    unmatchedJobRequests: 0,
   });
   const router = useRouter();
 
@@ -103,6 +107,8 @@ export default function AdminCRMPage() {
         weekReferralsRes,
         contactedReferralsRes,
         hiredReferralsRes,
+        ironcladViolationsRes,
+        unmatchedJobRequestsRes,
       ] = await Promise.all([
         supabase.from('contractor_applications').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('job_requests').select('id', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
@@ -115,6 +121,8 @@ export default function AdminCRMPage() {
         supabase.from('referrals').select('id', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
         supabase.from('referrals').select('id', { count: 'exact', head: true }).in('status', ['CONTACTED', 'CLOSED']),
         supabase.from('referrals').select('id', { count: 'exact', head: true }).eq('status', 'CLOSED'),
+        supabase.from('contractor_profiles').select('id', { count: 'exact', head: true }).eq('archived', false).eq('ironclad_certified', false).in('partner_status', ['approved', 'active']),
+        supabase.from('job_requests').select('id', { count: 'exact', head: true }).eq('archived', false).eq('status', 'PENDING'),
       ]);
 
       setStats({
@@ -129,6 +137,8 @@ export default function AdminCRMPage() {
         referralsThisWeek: weekReferralsRes.count || 0,
         referralsContacted: contactedReferralsRes.count || 0,
         referralsHired: hiredReferralsRes.count || 0,
+        ironcladViolations: ironcladViolationsRes.count || 0,
+        unmatchedJobRequests: unmatchedJobRequestsRes.count || 0,
       });
     } catch (err) {
       console.error('Error loading stats:', err);
@@ -225,6 +235,33 @@ export default function AdminCRMPage() {
           <Button onClick={loadDashboardStats} variant="outline" size="sm" className="border-gray-300 text-gray-600 hover:bg-gray-50">
             <RefreshCw className="h-4 w-4 mr-2" /> Refresh
           </Button>
+        </div>
+
+
+        {/* Pending Alerts */}
+        <div className="mb-8">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">Pending Alerts</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              { href: '/admin/crm/applications', label: 'Pending contractor applications', value: stats.pendingApplications, icon: Clock, tone: 'amber' },
+              { href: '/admin/crm/contractors', label: 'IronClad violations flagged', value: stats.ironcladViolations, icon: Shield, tone: 'red' },
+              { href: '/admin/crm/job-requests', label: 'Open job requests unmatched', value: stats.unmatchedJobRequests, icon: FileText, tone: 'blue' },
+            ].map(item => (
+              <Link key={item.label} href={item.href}>
+                <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-lw-rust/40 hover:shadow-md">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-3xl font-bold text-gray-900">{item.value}</p>
+                      <p className="mt-1 text-sm font-medium text-gray-600">{item.label}</p>
+                    </div>
+                    <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-lw-rust/20 bg-lw-rust/10">
+                      <item.icon className="h-5 w-5 text-lw-rust" />
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Referral Performance */}

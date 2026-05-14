@@ -234,6 +234,24 @@ export default function JobRequestsPage() {
     }
   };
 
+
+  const updateJobRequestStatus = async (requestId: string, status: string) => {
+    try {
+      setProcessing(requestId + '-status');
+      const { error } = await supabase
+        .from('job_requests')
+        .update({ status })
+        .eq('id', requestId);
+      if (error) throw error;
+      showToast(status === 'COMPLETED' ? 'Job request marked completed' : 'Job request closed');
+      await loadJobRequests();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to update job request', 'error');
+    } finally {
+      setProcessing(null);
+    }
+  };
+
   const archiveRequest = async (requestId: string) => {
     if (!confirm('Archive this job request?')) return;
     try {
@@ -570,6 +588,31 @@ export default function JobRequestsPage() {
                           <span className="text-xs text-emerald-400 flex items-center gap-1 px-3 py-1.5 rounded-lg border border-emerald-800/30 bg-emerald-950/30">
                             <CheckCircle2 className="h-3.5 w-3.5" /> Feedback Requested
                           </span>
+                        )}
+
+
+                        {req.status !== 'COMPLETED' && (
+                          <Button
+                            onClick={() => updateJobRequestStatus(req.id, 'COMPLETED')}
+                            disabled={processing === req.id + '-status'}
+                            variant="outline"
+                            size="sm"
+                            className="border-emerald-800/40 text-emerald-400 hover:bg-emerald-950/40"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5 mr-2" /> Mark Completed
+                          </Button>
+                        )}
+
+                        {req.status !== 'CANCELLED' && (
+                          <Button
+                            onClick={() => updateJobRequestStatus(req.id, 'CANCELLED')}
+                            disabled={processing === req.id + '-status'}
+                            variant="outline"
+                            size="sm"
+                            className="border-zinc-700 text-zinc-300 hover:bg-lw-dark-surface"
+                          >
+                            <Archive className="h-3.5 w-3.5 mr-2" /> Close Request
+                          </Button>
                         )}
 
                         <Button
