@@ -17,6 +17,7 @@ import MarketingSection from './MarketingSection';
 import ApplicationForm from './ApplicationForm';
 import ContractorProfileEditor from './ContractorProfileEditor';
 import ReferralsSection from './ReferralsSection';
+import ComplianceDocuments from './ComplianceDocuments';
 import {
   Loader as Loader2,
   CircleAlert as AlertCircle,
