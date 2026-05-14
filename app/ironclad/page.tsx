@@ -71,7 +71,14 @@ export default function IronCladStandardsPage() {
 
       {/* HERO */}
       <section className="relative overflow-hidden bg-black">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(220,38,38,0.06)_0%,_transparent_65%)] pointer-events-none" />
+        <img
+          src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1920&q=80"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(220,38,38,0.12)_0%,_transparent_65%)] pointer-events-none" />
         <div className="relative container mx-auto px-4 py-20 md:py-28">
           <div className="max-w-3xl mx-auto text-center">
             <div className="flex justify-center mb-8">

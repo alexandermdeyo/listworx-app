@@ -1,4 +1,3 @@
-'use client';
 
 import Link from 'next/link';
 import { BadgeCheck, CheckCircle, Filter, Shield, Star, ArrowRight, Crown } from 'lucide-react';

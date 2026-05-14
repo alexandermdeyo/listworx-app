@@ -9,13 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Phone, Loader as Loader2, CircleAlert as AlertCircle, LogOut, Archive, Trash2, ShoppingCart, Plus, DollarSign, ChartBar as BarChart3, Pause, Play, UserX, Bell, BellOff, Send, CircleCheck as CheckCircle2, ChevronDown, ChevronUp, Shield, Briefcase, RefreshCw, Image as ImageIcon, Upload, Trash, Star, StarOff, Eye, LayoutDashboard, Clock, FileText, Home, Settings, Users } from 'lucide-react';
+import { Mail, Phone, Loader as Loader2, CircleAlert as AlertCircle, LogOut, Archive, Trash2, ShoppingCart, Plus, DollarSign, ChartBar as BarChart3, Pause, Play, UserX, Bell, BellOff, Send, CircleCheck as CheckCircle2, ChevronDown, ChevronUp, Shield, Briefcase, RefreshCw, Image as ImageIcon, Upload, Trash, Star, StarOff, Eye, MonitorCog, LayoutDashboard, Clock, FileText, Home, Settings, Users } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import Navigation from '@/components/Navigation';
-import DashboardLayout, { NavItem } from '@/components/DashboardLayout';
+import DashboardLayout from '@/components/DashboardLayout';
+import type { NavItem } from '@/components/DashboardLayout';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminContractorDocuments from './AdminContractorDocuments';
@@ -40,6 +41,8 @@ interface Contractor {
   archived: boolean;
   logo_url: string | null;
   featured_on_homepage: boolean;
+  ironclad_certified?: boolean;
+  ironclad_accepted?: boolean;
   users: { email: string; phone: string } | null;
   purchases: Array<{
     id: string;
@@ -201,6 +204,27 @@ export default function ContractorsPage() {
       await loadContractors();
     } catch (err: any) {
       showToast(err.message || 'Failed to update status', 'error');
+    } finally {
+      setProcessing(null);
+    }
+  };
+
+
+  const handleToggleIronClad = async (contractor: Contractor) => {
+    const next = !contractor.ironclad_certified;
+    if (!confirm(`${next ? 'Mark' : 'Remove'} IronClad certification for ${contractor.company_name}?`)) return;
+
+    try {
+      setProcessing(contractor.id + '-ironclad');
+      const { error } = await supabase
+        .from('contractor_profiles')
+        .update({ ironclad_certified: next })
+        .eq('id', contractor.id);
+      if (error) throw error;
+      showToast(next ? 'IronClad certification marked compliant' : 'IronClad certification removed');
+      await loadContractors();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to update IronClad status', 'error');
     } finally {
       setProcessing(null);
     }
@@ -420,6 +444,7 @@ export default function ContractorsPage() {
 
   const adminNavItems: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/crm' },
+    { id: 'site-editor', label: 'Site Editor', icon: MonitorCog, href: '/admin/crm/site-editor' },
     { id: 'contractors', label: 'Contractors', icon: Users, href: '/admin/crm/contractors' },
     { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications' },
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
@@ -561,6 +586,9 @@ export default function ContractorsPage() {
                               <BellOff className="h-3 w-3 mr-1" /> Emails Off
                             </Badge>
                           )}
+                          <Badge variant="outline" className={`text-xs ${contractor.ironclad_certified ? 'text-emerald-600 border-emerald-200 bg-emerald-50' : 'text-red-600 border-red-200 bg-red-50'}`}>
+                            <Shield className="h-3 w-3 mr-1" /> {contractor.ironclad_certified ? 'IronClad' : 'IronClad Review'}
+                          </Badge>
                         </div>
                         <p className="text-sm text-gray-500">{contractor.owner_name}</p>
 
@@ -649,6 +677,16 @@ export default function ContractorsPage() {
                             <Shield className="h-3.5 w-3.5" /> Status Controls
                           </h4>
                           <div className="space-y-2">
+                            <Button
+                              onClick={() => handleToggleIronClad(contractor)}
+                              disabled={!!processing}
+                              variant="outline"
+                              size="sm"
+                              className="w-full border-lw-rust/40 text-lw-rust hover:bg-lw-rust/10"
+                            >
+                              <Shield className="h-3.5 w-3.5 mr-2" />
+                              {contractor.ironclad_certified ? 'Remove IronClad Compliance' : 'Mark IronClad Compliant'}
+                            </Button>
                             {contractor.partner_status !== 'paused' && (
                               <Button
                                 onClick={() => handleStatusAction(contractor.id, 'pause')}
