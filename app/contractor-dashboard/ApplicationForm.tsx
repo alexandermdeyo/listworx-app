@@ -64,9 +64,9 @@ const STEPS = [
 ];
 
 const inputClass =
-  'bg-white border-lw-border-light text-lw-text placeholder:text-lw-text/30 focus:border-lw-rust focus:ring-lw-rust/20 h-10';
+  'border bg-white text-gray-900 border-gray-300 placeholder:text-gray-400 focus:border-orange-500 focus:ring-orange-500 h-10';
 const textareaClass =
-  'w-full rounded-md border bg-white border-lw-border-light text-lw-text placeholder:text-lw-text/30 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/20 focus:border-lw-rust resize-none min-h-[80px]';
+  'w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none min-h-[80px]';
 
 function SectionHeader({
   icon: Icon,
@@ -104,7 +104,7 @@ function FormField({
   return (
     <div>
       <div className="flex items-center gap-1 mb-1.5">
-        <Label className="text-lw-text/70 text-sm font-medium">
+        <Label className="text-gray-700 text-sm font-medium">
           {label}
           {required && <span className="text-red-500 ml-0.5">*</span>}
         </Label>
@@ -137,7 +137,7 @@ function StepIndicator({ current }: { current: number }) {
                     ? 'bg-emerald-500 border-emerald-500 text-white'
                     : active
                     ? 'bg-lw-rust border-lw-rust text-white'
-                    : 'bg-lw-surface border-lw-border-light text-lw-text/40'
+                    : 'bg-gray-100 border-gray-300 text-gray-500'
                 }`}
               >
                 {done ? <CheckCircle2 className="h-3.5 w-3.5" /> : step.id}
@@ -514,7 +514,7 @@ export default function ApplicationForm({
 
   if (success) {
     return (
-      <div className="bg-white rounded-2xl border border-emerald-200 p-10 text-center shadow-sm">
+      <div className="bg-white text-gray-900 rounded-2xl border border-emerald-200 p-10 text-center shadow-sm">
         <div className="h-16 w-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-4">
           <CheckCircle2 className="h-8 w-8 text-emerald-500" />
         </div>
@@ -528,7 +528,7 @@ export default function ApplicationForm({
         <div className="mt-6">
           <Button
             type="button"
-            className="bg-lw-rust hover:bg-lw-rust-hover text-white"
+            className="bg-orange-600 text-white hover:bg-orange-700"
             onClick={() => window.location.assign('/')}
           >
             Return to Home
@@ -547,7 +547,7 @@ export default function ApplicationForm({
     .map(c => c.name);
 
   return (
-    <div className="bg-white rounded-2xl border border-lw-border-light overflow-hidden shadow-sm">
+    <div className="bg-white text-gray-900 rounded-2xl border border-lw-border-light overflow-hidden shadow-sm">
       <div className="px-6 py-5 border-b border-lw-border-light bg-gradient-to-r from-lw-rust/5 to-transparent">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-lw-rust/10 border border-lw-rust/20">
@@ -710,7 +710,7 @@ export default function ApplicationForm({
             />
 
             <div className="mb-4">
-              <Label className="text-lw-text/70 text-sm font-medium mb-2 block">
+              <Label className="text-gray-700 text-sm font-medium mb-2 block">
                 Service State <span className="text-red-500">*</span>
               </Label>
               <div className="relative">
@@ -723,7 +723,7 @@ export default function ApplicationForm({
                       selectedCounties: [],
                     }));
                   }}
-                  className="w-full appearance-none bg-white border border-lw-border-light text-lw-text rounded-md px-3 py-2.5 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/20 focus:border-lw-rust transition-colors"
+                  className="w-full appearance-none bg-white border border-gray-300 text-gray-900 rounded-md px-3 py-2.5 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                 >
                   <option value="" className="text-lw-text/40">Select a state...</option>
                   {serviceStates.map(state => (
@@ -739,7 +739,7 @@ export default function ApplicationForm({
             {form.selectedState && (
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <Label className="text-lw-text/70 text-sm font-medium">
+                  <Label className="text-gray-700 text-sm font-medium">
                     Counties <span className="text-red-500">*</span>
                     {loadingCounties && (
                       <span className="text-xs text-lw-text/40 ml-2 inline-flex items-center gap-1">
@@ -807,7 +807,7 @@ export default function ApplicationForm({
                       placeholder="Search counties..."
                       value={countySearch}
                       onChange={e => setCountySearch(e.target.value)}
-                      className="w-full bg-white border border-lw-border-light text-lw-text placeholder:text-lw-text/30 rounded-md pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/20 focus:border-lw-rust transition-colors"
+                      className="w-full bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 rounded-md pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                     />
                   </div>
                 )}
@@ -916,7 +916,7 @@ export default function ApplicationForm({
                 placeholder="Search trades..."
                 value={tradeSearch}
                 onChange={e => setTradeSearch(e.target.value)}
-                className="w-full bg-white border border-lw-border-light text-lw-text placeholder:text-lw-text/30 rounded-md pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/20 focus:border-lw-rust transition-colors"
+                className="w-full bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 rounded-md pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
               />
             </div>
 
@@ -939,7 +939,7 @@ export default function ApplicationForm({
                       className={`flex items-center gap-2.5 cursor-pointer text-sm p-2.5 rounded-lg border transition-all ${
                         selected
                           ? 'border-lw-rust/30 bg-lw-rust/8 text-lw-text'
-                          : 'border-lw-border-light bg-white text-lw-text/60 hover:border-lw-border-light hover:text-lw-text'
+                          : 'border-gray-300 bg-white text-gray-700 hover:border-gray-300 hover:text-gray-900'
                       }`}
                       onClick={() => toggleTrade(trade.id)}
                     >
@@ -1055,7 +1055,7 @@ export default function ApplicationForm({
             variant="ghost"
             onClick={handleBack}
             disabled={step === 1}
-            className="text-lw-text/40 hover:text-lw-text disabled:opacity-30"
+            className="text-gray-700 hover:text-gray-900 disabled:text-gray-400 disabled:opacity-100"
           >
             Back
           </Button>
@@ -1079,7 +1079,7 @@ export default function ApplicationForm({
             <Button
               type="button"
               onClick={handleNext}
-              className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold"
+              className="bg-orange-600 text-white hover:bg-orange-700 font-semibold"
             >
               Continue
               <ChevronRight className="ml-1.5 h-4 w-4" />
@@ -1087,7 +1087,7 @@ export default function ApplicationForm({
           ) : (
             <Button
               type="submit"
-              className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold h-10 px-6"
+              className="bg-orange-600 text-white hover:bg-orange-700 font-semibold h-10 px-6"
               disabled={submitting}
             >
               {submitting ? (

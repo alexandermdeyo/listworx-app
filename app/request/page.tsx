@@ -382,6 +382,15 @@ export default function RequestPage() {
                     {contractor.bio && (
                       <p className="text-muted-foreground pt-2">{contractor.bio}</p>
                     )}
+                    <a
+                      href={`/contractors/${contractor.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex w-full items-center justify-center rounded-md bg-lw-rust px-3 py-2 text-sm font-medium text-white hover:bg-lw-rust-hover"
+                    >
+                      View Full Profile
+                      <ExternalLink className="ml-2 h-3.5 w-3.5" />
+                    </a>
                   </div>
                 </Card>
               ))}
@@ -416,7 +425,15 @@ export default function RequestPage() {
   return (
     <PageShell surface="dark">
       <Navigation />
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <section className="relative overflow-hidden py-16">
+        <img
+          src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1920&q=80"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="relative z-10 container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-10">
           <h1 className="text-5xl font-bold mb-4">Request a Contractor Referral</h1>
           <p className="text-xl text-muted-foreground">
@@ -636,7 +653,8 @@ export default function RequestPage() {
             </div>
           </form>
         </Card>
-      </div>
+        </div>
+      </section>
     </PageShell>
   );
 }

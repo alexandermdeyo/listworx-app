@@ -14,6 +14,33 @@ export default function ContractorsPage() {
     <PageShell surface="dark">
       <Navigation />
 
+      <section className="bg-gradient-to-br from-zinc-950 via-lw-dark to-black border-b border-lw-rust/30 py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto grid max-w-6xl gap-8 rounded-2xl border border-lw-rust/30 bg-zinc-950/90 p-6 shadow-2xl shadow-black/30 md:p-10 lg:grid-cols-[170px_1fr] lg:items-center">
+            <div className="flex justify-center lg:justify-start">
+              <Image src="/ironclad_founder_shield_logo.png" alt="IronClad Founding Partner" width={152} height={152} className="h-36 w-auto" />
+            </div>
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-lw-rust">Limited Founding Partner Availability</p>
+              <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">Founding Partners Lock In Their County. Everyone Else Pays Full Price.</h2>
+              <p className="max-w-4xl text-base leading-relaxed text-zinc-100 md:text-lg">
+                Pay a one-time $149 activation fee. Get your first 12 months included. Your renewal locks in at as low as $99/month for life — while standard pricing runs up to $199/month. That&apos;s over $1,200 in savings every year after year one. Once your trade fills in your county, Founding Partner pricing closes permanently. There is no second round.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {['Territory reservation', 'Founding Partner badge (permanent)', 'Priority rotation', 'Locked pricing for life', 'IronClad decal package'].map(item => (
+                  <span key={item} className="rounded-full border border-lw-rust/30 bg-lw-rust/10 px-3 py-1.5 text-xs font-semibold text-zinc-100">{item}</span>
+                ))}
+              </div>
+              <Link href="/founding-partner" className="mt-7 inline-flex">
+                <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">
+                  Reserve My Founding Partner Spot <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* HERO */}
       <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
