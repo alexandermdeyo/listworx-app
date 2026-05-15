@@ -18,7 +18,7 @@ interface Subscriber {
   name: string | null;
   source: string | null;
   active: boolean;
-  created_at: string;
+  subscribed_at: string;
 }
 
 export default function NewsletterAdminPage() {
@@ -57,7 +57,7 @@ export default function NewsletterAdminPage() {
     const { data } = await supabase
       .from('newsletter_subscribers')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('subscribed_at', { ascending: false });
     setSubscribers(data || []);
     setLoading(false);
   };
@@ -70,7 +70,7 @@ export default function NewsletterAdminPage() {
         s.name || '',
         s.source || '',
         s.active ? 'Yes' : 'No',
-        new Date(s.created_at).toLocaleDateString(),
+        new Date(s.subscribed_at).toLocaleDateString(),
       ]),
     ];
     const csv = rows.map((r) => r.map((v) => `"${v}"`).join(',')).join('\n');
@@ -171,7 +171,7 @@ export default function NewsletterAdminPage() {
                   <tr key={s.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-gray-900">{s.email}</td>
                     <td className="px-4 py-3 text-gray-600">{s.name || '—'}</td>
-                    <td className="px-4 py-3 text-gray-500">{new Date(s.created_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-gray-500">{new Date(s.subscribed_at).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-gray-500">{s.source || '—'}</td>
                     <td className="px-4 py-3">
                       {/* TODO: wire toggle to update active field via admin Supabase client */}

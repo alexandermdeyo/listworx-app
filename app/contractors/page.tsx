@@ -24,7 +24,7 @@ export default function ContractorsPage() {
               <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-lw-rust">Limited Founding Partner Availability</p>
               <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">Founding Partners Lock In Their County. Everyone Else Pays Full Price.</h2>
               <p className="max-w-4xl text-base leading-relaxed text-zinc-100 md:text-lg">
-                Pay a one-time $149 activation fee. Get your first 12 months included. Your renewal locks in at as low as $99/month for life — while standard pricing runs up to $199/month. That&apos;s over $1,200 in savings every year after year one. Once your trade fills in your county, Founding Partner pricing closes permanently. There is no second round.
+                Pay a one-time $199 activation fee. Get your first 12 months included. Your renewal locks in at as low as $159/month for life — while standard pricing runs up to $599/month. That&apos;s over $480 in savings every year after year one. Once your trade fills in your county, Founding Partner pricing closes permanently. There is no second round.
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {['Territory reservation', 'Founding Partner badge (permanent)', 'Priority rotation', 'Locked pricing for life', 'IronClad decal package'].map(item => (
