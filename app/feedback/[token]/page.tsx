@@ -30,6 +30,12 @@ export default function FeedbackPage() {
   const [wouldRecommend, setWouldRecommend] = useState('yes');
   const [comments, setComments] = useState('');
 
+  const [ironcladResponded24h, setIroncladResponded24h] = useState('');
+  const [ironcladShowedUp, setIroncladShowedUp] = useState('');
+  const [ironcladQualityRating, setIroncladQualityRating] = useState(0);
+  const [ironcladProfessionalismRating, setIroncladProfessionalismRating] = useState(0);
+  const [ironcladWouldRequestAgain, setIroncladWouldRequestAgain] = useState('');
+
   useEffect(() => {
     loadFeedbackData();
   }, [token]);
@@ -80,6 +86,11 @@ export default function FeedbackPage() {
           professionalismRating,
           wouldRecommend: wouldRecommend === 'yes',
           comments,
+          ironcladResponded24h,
+          ironcladShowedUp,
+          ironcladQualityRating,
+          ironcladProfessionalismRating,
+          ironcladWouldRequestAgain,
         }),
       });
 
@@ -229,6 +240,79 @@ export default function FeedbackPage() {
                   <Label htmlFor="no">No</Label>
                 </div>
               </RadioGroup>
+            </div>
+
+            <div className="border-t pt-6 mt-6 space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold">IronClad Standards Review</h3>
+                <p className="text-sm text-muted-foreground">Help us maintain our network quality.</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Did the contractor respond to your initial inquiry within 24 hours?</Label>
+                <RadioGroup value={ironcladResponded24h} onValueChange={setIroncladResponded24h}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="ic-responded-yes" />
+                    <Label htmlFor="ic-responded-yes">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="ic-responded-no" />
+                    <Label htmlFor="ic-responded-no">No</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no_response" id="ic-responded-nr" />
+                    <Label htmlFor="ic-responded-nr">Did not respond</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Did the contractor show up as scheduled?</Label>
+                <RadioGroup value={ironcladShowedUp} onValueChange={setIroncladShowedUp}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="ic-showed-yes" />
+                    <Label htmlFor="ic-showed-yes">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="ic-showed-no" />
+                    <Label htmlFor="ic-showed-no">No</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="not_yet" id="ic-showed-ny" />
+                    <Label htmlFor="ic-showed-ny">Job not yet complete</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <StarRating
+                value={ironcladQualityRating}
+                onChange={setIroncladQualityRating}
+                label="How would you rate the quality of the work?"
+              />
+
+              <StarRating
+                value={ironcladProfessionalismRating}
+                onChange={setIroncladProfessionalismRating}
+                label="How would you rate the contractor's professionalism and communication?"
+              />
+
+              <div className="space-y-2">
+                <Label>Would you request this contractor again through ListWorx?</Label>
+                <RadioGroup value={ironcladWouldRequestAgain} onValueChange={setIroncladWouldRequestAgain}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="ic-again-yes" />
+                    <Label htmlFor="ic-again-yes">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="ic-again-no" />
+                    <Label htmlFor="ic-again-no">No</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="maybe" id="ic-again-maybe" />
+                    <Label htmlFor="ic-again-maybe">Maybe</Label>
+                  </div>
+                </RadioGroup>
+              </div>
             </div>
 
             <div className="space-y-2">

@@ -43,7 +43,7 @@ export async function PATCH(request: NextRequest) {
       .from('referrals')
       .update(updatePayload)
       .eq('id', referralId)
-      .select('contractor_id')
+      .select('contractor_id, job_request_id')
       .single();
 
     if (error) throw error;
@@ -58,6 +58,34 @@ export async function PATCH(request: NextRequest) {
         .from('contractor_profiles')
         .update({ jobs_completed: (current?.jobs_completed || 0) + 1 })
         .eq('id', referral.contractor_id);
+
+      try {
+        const jobRequestId = (referral as any).job_request_id;
+        if (jobRequestId) {
+          const { data: jr } = await supabase
+            .from('job_requests')
+            .select('id, feedback_token, feedback_requested_at')
+            .eq('id', jobRequestId)
+            .single();
+
+          if (jr && jr.feedback_token && !jr.feedback_requested_at) {
+            const baseUrl =
+              process.env.APP_BASE_URL ||
+              process.env.NEXT_PUBLIC_BASE_URL ||
+              'https://listworx.co';
+
+            await fetch(`${baseUrl}/api/send-feedback-request`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ jobRequestId: jr.id }),
+            }).catch((err) => {
+              console.error('Auto-trigger feedback request failed:', err);
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Auto-trigger feedback error:', err);
+      }
     }
 
     return NextResponse.json({ success: true });

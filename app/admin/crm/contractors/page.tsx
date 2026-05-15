@@ -60,6 +60,12 @@ interface Contractor {
   };
   counties: Array<{ id: string; name: string; state_code: string }>;
   trades: Array<{ id: string; name: string }>;
+  ironclad_stats?: {
+    avg_quality: string;
+    avg_professionalism: string;
+    would_request_again_pct: string;
+    responded_24h_pct: string;
+  };
 }
 
 export default function ContractorsPage() {
@@ -139,7 +145,7 @@ export default function ContractorsPage() {
 
       const enriched = await Promise.all(
         data.map(async (c) => {
-          const [purchasesRes, referralStatsRes, countiesRes, tradesRes] = await Promise.all([
+          const [purchasesRes, referralStatsRes, countiesRes, tradesRes, feedbackRes] = await Promise.all([
             supabase
               .from('contractor_purchases')
               .select('*')
@@ -157,6 +163,10 @@ export default function ContractorsPage() {
               .from('contractor_categories')
               .select('category_id, categories(id, name)')
               .eq('contractor_id', c.id),
+            supabase
+              .from('job_feedback')
+              .select('ironclad_quality_rating, ironclad_professionalism_rating, ironclad_would_request_again, ironclad_responded_24h')
+              .eq('contractor_id', c.id),
           ]);
 
           const refs = referralStatsRes.data || [];
@@ -166,12 +176,42 @@ export default function ContractorsPage() {
           const counties = (countiesRes.data || []).map((row: any) => row.counties).filter(Boolean);
           const trades = (tradesRes.data || []).map((row: any) => row.categories).filter(Boolean);
 
+          const feedbackRows = feedbackRes.data || [];
+          let ironclad_stats: Contractor['ironclad_stats'];
+          if (feedbackRows.length > 0) {
+            const qualityNums = feedbackRows.map(r => r.ironclad_quality_rating).filter((v): v is number => v != null);
+            const profNums = feedbackRows.map(r => r.ironclad_professionalism_rating).filter((v): v is number => v != null);
+            const againRows = feedbackRows.filter(r => r.ironclad_would_request_again != null);
+            const respondedRows = feedbackRows.filter(r => r.ironclad_responded_24h != null);
+
+            const avgQ = qualityNums.length > 0
+              ? (qualityNums.reduce((a, b) => a + b, 0) / qualityNums.length).toFixed(1) + ' / 5'
+              : '–';
+            const avgP = profNums.length > 0
+              ? (profNums.reduce((a, b) => a + b, 0) / profNums.length).toFixed(1) + ' / 5'
+              : '–';
+            const againPct = againRows.length > 0
+              ? Math.round(againRows.filter(r => r.ironclad_would_request_again === 'yes').length / againRows.length * 100) + '%'
+              : '–';
+            const respondedPct = respondedRows.length > 0
+              ? Math.round(respondedRows.filter(r => r.ironclad_responded_24h === 'yes').length / respondedRows.length * 100) + '%'
+              : '–';
+
+            ironclad_stats = {
+              avg_quality: avgQ,
+              avg_professionalism: avgP,
+              would_request_again_pct: againPct,
+              responded_24h_pct: respondedPct,
+            };
+          }
+
           return {
             ...c,
             purchases: purchasesRes.data || [],
             referral_stats: { total: refs.length, contacted, hired },
             counties,
             trades,
+            ironclad_stats,
           } as Contractor;
         })
       );
@@ -663,7 +703,10 @@ export default function ContractorsPage() {
                               { label: 'Client Contacted Contractor', value: contractor.referral_stats.contacted },
                               { label: 'Jobs Hired/Completed', value: contractor.referral_stats.hired },
                               { label: 'Conversion Rate', value: conversionRate(contractor) },
-                              { label: 'Avg Response Time', value: 'N/A (coming soon)' },
+                              { label: 'Avg Quality Rating', value: contractor.ironclad_stats?.avg_quality ?? '–' },
+                              { label: 'Avg Professionalism', value: contractor.ironclad_stats?.avg_professionalism ?? '–' },
+                              { label: 'Would Request Again', value: contractor.ironclad_stats?.would_request_again_pct ?? '–' },
+                              { label: 'Responded Within 24h', value: contractor.ironclad_stats?.responded_24h_pct ?? '–' },
                             ].map(item => (
                               <div key={item.label} className="flex justify-between text-sm">
                                 <span className="text-gray-500">{item.label}</span>

@@ -13,6 +13,11 @@ export async function POST(request: NextRequest) {
       professionalismRating,
       wouldRecommend,
       comments,
+      ironcladResponded24h,
+      ironcladShowedUp,
+      ironcladQualityRating,
+      ironcladProfessionalismRating,
+      ironcladWouldRequestAgain,
     } = body;
 
     if (!token || !rating) {
@@ -79,6 +84,11 @@ export async function POST(request: NextRequest) {
         professionalism_rating: professionalismRating || null,
         would_recommend: wouldRecommend,
         comments: comments || null,
+        ironclad_responded_24h: ironcladResponded24h || null,
+        ironclad_showed_up: ironcladShowedUp || null,
+        ironclad_quality_rating: ironcladQualityRating || null,
+        ironclad_professionalism_rating: ironcladProfessionalismRating || null,
+        ironclad_would_request_again: ironcladWouldRequestAgain || null,
       });
 
     if (insertError) {
