@@ -7,9 +7,9 @@ import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
 
 const founderBenefits = [
-  '12 months of included network access after $149 activation',
+  '12 months of included network access after $199 activation',
   'Founding Partner badge on your profile — permanent',
-  'Locked renewal pricing for life, as low as $99/month after year one',
+  'Locked renewal pricing for life, as low as $159/month after year one',
   'Territory reservation for your trade and county',
   'Priority positioning during platform launch',
   'IronClad decal package',
@@ -150,7 +150,7 @@ export default function LandingPage() {
             <Link href="/founding-partner">
               <Button size="lg" className="bg-amber-500 text-black hover:bg-amber-400">Reserve My Founding Partner Spot</Button>
             </Link>
-            <p className="mt-4 text-sm text-zinc-300">$149 one-time activation. 12 months included. Then $99–$349/month depending on tier — locked for life.</p>
+            <p className="mt-4 text-sm text-zinc-300">$199 one-time activation. 12 months included. Then $159–$479/month depending on tier — locked for life.</p>
           </div>
         </div>
       </section>
