@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createStripeServerClient } from '@/lib/stripe-server';
-import { getFounderActivationPriceId } from '@/lib/stripe-prices';
+import { getFounderActivationPriceId, getAddonPriceId, getAddonMode, type TierId } from '@/lib/stripe-prices';
 
 function getTierPriceId(tierId: string, billingPeriod: string) {
   const normalizedTierId = (tierId || '').trim().toLowerCase();
@@ -131,9 +131,12 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Missing founder activation price ID' }, { status: 500 });
       }
     } else if (isAddOn) {
-      const addOnResult = getAddOnPriceId(addOnId, billingPeriod);
-      resolvedPriceId = addOnResult.priceId;
-      sessionMode = addOnResult.mode;
+      const addonPriceId = getAddonPriceId(addOnId, tierId as TierId | undefined);
+      if (!addonPriceId) {
+        return NextResponse.json({ error: 'Unknown add-on' }, { status: 400 });
+      }
+      resolvedPriceId = addonPriceId;
+      sessionMode = getAddonMode(addOnId);
     } else {
       resolvedPriceId = getTierPriceId(tierId, billingPeriod);
       sessionMode = 'subscription';

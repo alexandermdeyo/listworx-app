@@ -46,7 +46,8 @@ export type AddOn = {
     | 'social_content_pack'
     | 'reputation_management'
     | 'ai_marketing_toolkit'
-    | 'featured_spotlight';
+    | 'featured_spotlight'
+    | 'flyer_builder';
   name: string;
   description: string;
   type: AddOnType;
@@ -292,7 +293,7 @@ export const ADDON_LIST: AddOn[] = [
     name: 'Profile Boost',
     description: 'Your profile moves to the top of the referral rotation for your trade and county for the entire month.',
     type: 'monthly',
-    price: 49,
+    price: 79,
     includedIn: ['elite'],
     quarterlyIncludedIn: ['preferred'],
     stripeMonthlyEnvVar: 'STRIPE_ADDON_PROFILE_BOOST_MONTHLY',
@@ -313,8 +314,8 @@ export const ADDON_LIST: AddOn[] = [
     name: 'Social Media Content Pack',
     description: 'Four branded, ready-to-post social media graphics per month. Your logo, your trade, your jobs.',
     type: 'monthly',
-    price: 99,
-    elitePrice: 79,
+    price: 149,
+    elitePrice: 119,
     partialIncludedIn: ['elite'],
     partialNote: '2 posts included with Elite, add more at $79/mo',
     stripeMonthlyEnvVar: 'STRIPE_ADDON_SOCIAL_CONTENT_MONTHLY',
@@ -350,12 +351,21 @@ export const ADDON_LIST: AddOn[] = [
   {
     id: 'featured_spotlight',
     name: 'Featured Partner Spotlight',
-    description: 'Featured placement in ListWorx email newsletters and social media that month.',
+    description: 'Monthly content marketing program. Contractor of the Week on the ListWorx homepage, featured section in the monthly newsletter, and at least one dedicated social post per month using your photos and project media.',
     type: 'monthly',
-    price: 299,
+    price: 249,
     includedIn: [],
-    stripeMonthlyEnvVar: 'STRIPE_ADDON_FEATURED_SPOTLIGHT_MONTHLY',
-    stripeAnnualEnvVar: 'STRIPE_ADDON_FEATURED_SPOTLIGHT_ANNUAL',
+    stripeEnvVar: 'STRIPE_ADDON_FEATURED_SPOTLIGHT_MONTHLY',
+    highlight: true,
+  },
+  {
+    id: 'flyer_builder',
+    name: 'Marketing Flyer Builder',
+    description: 'Template-based marketing document creator. Choose templates, add your photos, change text, upload logo, download as PDF. ListWorx and IronClad badges included on every template.',
+    type: 'monthly',
+    price: 29,
+    includedIn: ['preferred', 'elite'],
+    stripeEnvVar: 'STRIPE_ADDON_FLYER_BUILDER_BASIC_MONTHLY',
     highlight: false,
   },
 ];
