@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, ChevronDown, ChevronRight, ExternalLink, FileText, Home, Image as ImageIcon, LayoutDashboard, Loader as Loader2, MonitorCog, Settings, Trash2, Upload, Users, Clock, Copy, Video } from 'lucide-react';
+import { AlertCircle, ChevronDown, ChevronRight, ExternalLink, FileText, Home, Image as ImageIcon, LayoutDashboard, Loader as Loader2, Mail, MonitorCog, Settings, Trash2, Upload, Users, Clock, Copy, Video } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
@@ -102,6 +102,7 @@ export default function SiteEditorPage() {
     { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications' },
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
     { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
+    { id: 'newsletter', label: 'Newsletter', icon: Mail, href: '/admin/crm/newsletter' },
     { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
   ], []);
 

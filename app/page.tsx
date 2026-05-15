@@ -5,6 +5,7 @@ import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
+import NewsletterSignupForm from '@/components/NewsletterSignupForm';
 
 const founderBenefits = [
   '12 months of included network access after $199 activation',
@@ -197,6 +198,18 @@ export default function LandingPage() {
           <Link href="/request"><Button size="lg" variant="outline" className="border-lw-rust text-lw-rust hover:bg-lw-rust hover:text-white">Request a Referral</Button></Link>
         </div>
         <p className="text-zinc-400">Realtors and homeowners use ListWorx free. Contractors — Founding Partner spots are limited. Apply now.</p>
+      </section>
+
+      <section className="bg-zinc-950 py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="mb-3 text-3xl md:text-4xl font-bold text-white">Stay in the Loop</h2>
+          <p className="mb-8 text-zinc-400 max-w-xl mx-auto">
+            Get monthly updates on featured contractors, IronClad Standards news, and what&apos;s happening in the ListWorx network. No spam. Unsubscribe any time.
+          </p>
+          <div className="mx-auto max-w-md">
+            <NewsletterSignupForm />
+          </div>
+        </div>
       </section>
     </PageShell>
   );
