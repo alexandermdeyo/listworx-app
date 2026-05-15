@@ -7,7 +7,7 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('contractor_profiles')
-      .select('id, company_name, logo_url')
+      .select('id, company_name, logo_url, owner_name, business_description, years_in_business, ironclad_certified, founding_partner, service_area_counties')
       .eq('partner_status', 'active')
       .eq('featured_on_homepage', true)
       .not('logo_url', 'is', null)

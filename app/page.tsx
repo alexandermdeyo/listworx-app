@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
+import ContractorOfTheWeek from '@/components/site/ContractorOfTheWeek';
 
 const founderBenefits = [
   '12 months of included network access after $199 activation',
@@ -175,6 +176,8 @@ export default function LandingPage() {
           </p>
         </div>
       </section>
+
+      <ContractorOfTheWeek />
 
       <section className="container mx-auto px-4 py-16">
         <h2 className="mb-8 text-center text-4xl font-bold text-white">What Contractors Are Saying</h2>

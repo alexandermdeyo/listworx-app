@@ -41,6 +41,7 @@ import {
   Video,
   Bell,
   Star,
+  Zap,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -755,6 +756,18 @@ export default function ContractorDashboard() {
       icon: Video,
       disabled: true,
       badgeLabel: 'Elite',
+    },
+    {
+      id: 'ai-toolkit',
+      label: 'AI Toolkit',
+      icon: Zap,
+      onClick: () => router.push('/contractor-dashboard/ai-toolkit'),
+    },
+    {
+      id: 'flyers',
+      label: 'Flyer Builder',
+      icon: FileText,
+      onClick: () => router.push('/contractor-dashboard/flyers'),
     },
     {
       id: 'subscription',
