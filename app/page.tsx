@@ -37,8 +37,16 @@ export default function LandingPage() {
     <PageShell surface="dark">
       <Navigation />
 
-      <section className="container mx-auto px-4 py-20 md:py-28 text-center">
-        <div className="mx-auto max-w-5xl">
+      <section className="relative overflow-hidden py-20 text-center md:py-28">
+        <img
+          src="/Hero_Handshake.png"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="relative z-10 container mx-auto px-4">
+          <div className="mx-auto max-w-5xl">
           <div className="mb-6 inline-flex items-center rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-2 text-sm font-semibold text-lw-rust">
             <Shield className="mr-2 h-4 w-4" />
             IronClad-certified referral network
@@ -66,7 +74,8 @@ export default function LandingPage() {
             Trusted by realtors and homeowners in Nashville, Sumner County, and Minneapolis.
           </p>
         </div>
-      </section>
+      </div>
+    </section>
 
       <section className="container mx-auto px-4 py-16">
         <div className="grid gap-6 md:grid-cols-3">
