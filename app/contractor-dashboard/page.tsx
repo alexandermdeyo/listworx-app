@@ -855,6 +855,11 @@ export default function ContractorDashboard() {
           {activeTab === 'overview' && (
             <>
               <SubscriptionSection contractorProfileId={profile?.id} />
+              <MarketingSection
+                profile={profile}
+                onCheckout={handleCheckout}
+                checkoutLoading={checkoutLoading}
+              />
               <PerformanceSection
                 profile={profile}
                 performanceData={{
@@ -867,11 +872,6 @@ export default function ContractorDashboard() {
                 }}
               />
               <ReferralsSection contractorProfileId={profile.id} />
-              <MarketingSection
-                profile={profile}
-                onCheckout={handleCheckout}
-                checkoutLoading={checkoutLoading}
-              />
             </>
           )}
 

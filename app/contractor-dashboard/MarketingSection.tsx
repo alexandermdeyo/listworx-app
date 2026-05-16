@@ -178,11 +178,11 @@ export default function MarketingSection({
   }
 
   return (
-    <section>
+    <div className="rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 shadow-lg">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-xl font-bold text-lw-text">Marketing Opportunities</h2>
-          <p className="text-lw-text/50 text-sm mt-0.5">
+          <h2 className="text-xl font-bold text-white">Marketing Opportunities</h2>
+          <p className="text-zinc-400 text-sm mt-0.5">
             Add-ons, upgrades, and promotions available for your account
           </p>
         </div>
@@ -195,27 +195,27 @@ export default function MarketingSection({
           return (
             <div
               key={opportunity.id}
-              className={`relative rounded-xl border bg-white p-5 text-gray-900 flex flex-col transition-all shadow-sm ${
+              className={`relative rounded-xl border bg-zinc-900/60 p-5 text-white flex flex-col transition-all shadow-sm ${
                 opportunity.previewOnly
-                  ? 'border-lw-border-light opacity-60'
-                  : 'border-lw-border-light hover:border-lw-rust/30 hover:shadow-md'
+                  ? 'border-zinc-700 opacity-60'
+                  : 'border-zinc-700 hover:border-lw-rust/50 hover:shadow-md'
               }`}
             >
               {opportunity.previewOnly && (
                 <div className="absolute top-3 right-3">
-                  <span className="text-xs text-lw-text/40 flex items-center gap-1">
+                  <span className="text-xs text-zinc-500 flex items-center gap-1">
                     <Lock className="h-3 w-3" /> Preview
                   </span>
                 </div>
               )}
 
               <div className="flex items-start gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-lw-surface border border-lw-border-light flex-shrink-0">
-                  <Icon className="h-4 w-4 text-lw-text/60" />
+                <div className="p-2 rounded-lg bg-zinc-800 border border-zinc-700 flex-shrink-0">
+                  <Icon className="h-4 w-4 text-zinc-400" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-semibold text-lw-text text-sm">{opportunity.title}</h3>
+                    <h3 className="font-semibold text-white text-sm">{opportunity.title}</h3>
                     {opportunity.badge && (
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full border ${opportunity.badgeColor}`}
@@ -227,11 +227,11 @@ export default function MarketingSection({
                 </div>
               </div>
 
-              <p className="text-lw-text/60 text-xs referraling-relaxed mb-3 flex-1">
+              <p className="text-zinc-400 text-xs referraling-relaxed mb-3 flex-1">
                 {opportunity.description}
               </p>
 
-              <div className="flex items-center gap-1.5 text-xs text-emerald-700 mb-4">
+              <div className="flex items-center gap-1.5 text-xs text-emerald-400 mb-4">
                 <Sparkles className="h-3 w-3" />
                 {opportunity.value}
               </div>
@@ -250,7 +250,7 @@ export default function MarketingSection({
                 <Button
                   size="sm"
                   disabled
-                  className="w-full bg-gray-100 text-gray-400 border border-gray-300 text-xs cursor-not-allowed"
+                  className="w-full bg-zinc-800 text-zinc-400 border border-zinc-700 text-xs cursor-not-allowed"
                 >
                   <Lock className="h-3 w-3 mr-1.5" />
                   {opportunity.actionLabel}
@@ -260,6 +260,6 @@ export default function MarketingSection({
           );
         })}
       </div>
-    </section>
+    </div>
   );
 }

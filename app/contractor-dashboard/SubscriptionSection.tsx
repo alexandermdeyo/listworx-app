@@ -801,8 +801,7 @@ export default function SubscriptionSection({
         <div className="mb-8 rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 shadow-lg">
           <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <div className="mb-1 inline-flex items-center gap-2">
-                <Crown className="h-5 w-5 text-lw-rust" />
+              <div className="mb-2">
                 <span className="text-xs font-bold uppercase tracking-wide text-lw-rust">
                   Limited Founding Partner Availability
                 </span>
@@ -813,9 +812,16 @@ export default function SubscriptionSection({
                 Lock in founder renewal pricing for life.
               </p>
             </div>
-            <div className="rounded-xl bg-zinc-900/60 border border-lw-rust/40 px-5 py-3 text-center">
-              <div className="text-3xl font-bold text-lw-rust">$199</div>
-              <div className="text-xs text-zinc-400">one-time activation</div>
+            <div className="flex flex-col items-center gap-3">
+              <img
+                src="/ironclad_founder_shield_logo.png"
+                alt="IronClad Founding Partner Badge"
+                className="h-24 w-auto md:h-28 drop-shadow-lg"
+              />
+              <div className="rounded-xl bg-zinc-900/60 border border-lw-rust/40 px-5 py-3 text-center">
+                <div className="text-3xl font-bold text-lw-rust">$199</div>
+                <div className="text-xs text-zinc-400">one-time activation</div>
+              </div>
             </div>
           </div>
 
