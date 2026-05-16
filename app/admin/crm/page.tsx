@@ -110,7 +110,7 @@ export default function AdminCRMPage() {
         ironcladViolationsRes,
         unmatchedJobRequestsRes,
       ] = await Promise.all([
-        supabase.from('contractor_applications').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('contractor_profiles').select('id', { count: 'exact', head: true }).eq('archived', false).eq('partner_status', 'applied'),
         supabase.from('job_requests').select('id', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
         supabase.from('realtor_profiles').select('id', { count: 'exact', head: true }),
         supabase.from('contractor_profiles').select('id', { count: 'exact', head: true }).eq('archived', false),

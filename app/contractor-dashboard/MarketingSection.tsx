@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { PARTNER_STATUS } from '@/lib/partner-status';
+import { ADDON_LIST } from '@/lib/tiers-config';
 import { ContractorProfile } from './types';
 import {
   Sparkles,
@@ -11,7 +12,6 @@ import {
   Lock,
   ArrowRight,
   BadgeCheck,
-  Megaphone,
 } from 'lucide-react';
 
 interface MarketingOpportunity {
@@ -27,7 +27,7 @@ interface MarketingOpportunity {
   actionLabel: string;
   actionType: 'upgrade' | 'email' | 'preview';
   tierId?: 'basic' | 'preferred' | 'elite';
-  addOnId?: 'featured_spotlight' | 'ironclad_badge_kit';
+  addOnId?: string;
 }
 
 interface MarketingSectionProps {
@@ -81,20 +81,6 @@ export default function MarketingSection({
       addOnId: 'featured_spotlight',
     },
     {
-      id: 'holiday-boost',
-      icon: Megaphone,
-      title: 'Holiday Promotion Boost',
-      description:
-        'Get featured during high-demand seasonal periods like spring prep, summer service demand, fall maintenance, and holiday cleanup.',
-      value: 'Increased visibility during peak seasons',
-      badge: 'Seasonal',
-      badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      eligible: isActive,
-      previewOnly: !isActive,
-      actionLabel: 'Learn More',
-      actionType: 'email',
-    },
-    {
       id: 'ironclad-badge',
       icon: BadgeCheck,
       title: 'IronClad Badge Kit',
@@ -141,7 +127,39 @@ export default function MarketingSection({
     },
   ];
 
-  const visibleOpportunities = opportunities.filter(
+  const hardcodedAddonIds = new Set(['featured_spotlight', 'ironclad_badge_kit']);
+
+  const tierCheck = (includedIn: string[]) => {
+    if (!profile.tier) return false;
+    return includedIn.includes(profile.tier);
+  };
+
+  const additionalAddons: MarketingOpportunity[] = ADDON_LIST
+    .filter((addon) => !hardcodedAddonIds.has(addon.id))
+    .map((addon) => {
+      const includedInTier = addon.includedIn && tierCheck(addon.includedIn as string[]);
+      const priceLabel =
+        addon.type === 'onetime'
+          ? `$${addon.price} one-time`
+          : `$${addon.price}/month`;
+      return {
+        id: `addon-${addon.id}`,
+        icon: Sparkles,
+        title: addon.name,
+        description: addon.description,
+        value: priceLabel,
+        badge: includedInTier ? 'Included with your plan' : 'Available add-on',
+        badgeColor: includedInTier
+          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+          : 'bg-lw-rust/10 text-lw-rust border-lw-rust/20',
+        eligible: isActive && !includedInTier,
+        previewOnly: !isActive,
+        actionLabel: includedInTier ? 'Included' : 'Contact to Purchase',
+        actionType: 'email' as const,
+      };
+    });
+
+  const visibleOpportunities = [...opportunities, ...additionalAddons].filter(
     (opportunity) => opportunity.eligible || opportunity.previewOnly
   );
 
