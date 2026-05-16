@@ -177,6 +177,12 @@ export default function Navigation() {
           >
             IronClad Standards
           </Link>
+          <Link
+            href="/faq"
+            className="text-zinc-300 hover:text-white transition-colors"
+          >
+            FAQ
+          </Link>
         </nav>
 
         <div className="flex items-center gap-3">

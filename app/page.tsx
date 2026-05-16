@@ -38,13 +38,14 @@ export default function LandingPage() {
       <Navigation />
 
       <section className="relative overflow-hidden py-20 text-center md:py-28">
+        <div className="absolute inset-0 bg-lw-dark" aria-hidden="true" />
         <img
           src="/Hero_Handshake.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="absolute inset-0 mx-auto h-full w-auto max-w-full object-contain object-center opacity-90"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-black/75" />
+        <div className="absolute inset-0 bg-black/70" />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -169,6 +170,22 @@ export default function LandingPage() {
               <Button size="lg" className="bg-amber-500 text-black hover:bg-amber-400">Reserve My Founding Partner Spot</Button>
             </Link>
             <p className="mt-4 text-sm text-zinc-300">$199 one-time activation. 12 months included. Then $159–$479/month depending on tier — locked for life.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-lw-dark-border bg-zinc-900/50">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div>
+              <p className="text-base font-semibold text-white">Have questions about how ListWorx works?</p>
+              <p className="text-sm text-zinc-400">See answers to common questions from contractors, realtors, and homeowners.</p>
+            </div>
+            <Link href="/faq">
+              <Button variant="outline" className="border-lw-rust text-lw-rust hover:bg-lw-rust hover:text-white whitespace-nowrap">
+                Read the FAQ →
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

@@ -41,7 +41,11 @@ export default function FoundingPartnerPage() {
     <PageShell surface="dark">
       <Navigation />
       <section className="container mx-auto px-4 py-20 text-center">
-        <Crown className="mx-auto mb-5 h-12 w-12 text-amber-400" />
+        <img
+          src="/ironclad_founder_shield_logo.png"
+          alt="ListWorx Founding Partner"
+          className="mx-auto mb-5 h-24 md:h-32 w-auto drop-shadow-lg"
+        />
         <h1 className="mb-6 text-5xl md:text-7xl font-bold text-white">Become a Founding Partner</h1>
         <p className="mx-auto max-w-4xl text-lg text-zinc-300 leading-relaxed">
           This is not a discount. This is a founder opportunity. A limited number of contractors will lock in permanent pricing, territory reservation, and Founding Partner status before we open to the public. Once your trade fills in your county — it&apos;s done.
@@ -76,6 +80,24 @@ export default function FoundingPartnerPage() {
         </div>
       </section>
 
+      <section className="container mx-auto px-4 py-12 text-center">
+        <div className="mx-auto max-w-3xl rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-zinc-900 to-zinc-800 p-8 md:p-12 shadow-lg">
+          <img
+            src="/ironclad_founder_shield_logo.png"
+            alt=""
+            className="mx-auto mb-4 h-20 w-auto drop-shadow-md"
+            aria-hidden="true"
+          />
+          <h3 className="mb-3 text-2xl md:text-3xl font-bold text-white">Lock in Founding Partner Pricing</h3>
+          <p className="mb-6 text-zinc-300">Spots are limited per trade and county. Once your trade fills, founder pricing closes permanently.</p>
+          <Link href="/apply">
+            <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">
+              Apply as a Founding Partner →
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       <section className="container mx-auto px-4 py-12">
         <h2 className="mb-6 text-4xl font-bold text-white">Spots Remaining in Your Area</h2>
         {/* TODO: wire this to Supabase founder_spots table */}
@@ -105,6 +127,12 @@ export default function FoundingPartnerPage() {
       </section>
 
       <section className="container mx-auto px-4 py-20 text-center">
+        <img
+          src="/ironclad_founder_shield_logo.png"
+          alt=""
+          className="mx-auto mb-4 h-20 w-auto drop-shadow-md"
+          aria-hidden="true"
+        />
         <h2 className="mb-4 text-4xl font-bold text-white">Ready to Reserve Your Spot?</h2>
         <Link href="/apply"><Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">Apply as a Founding Partner</Button></Link>
         <p className="mt-4 text-zinc-400">Applications are reviewed within 72 hours. Founding Partner pricing is only available after admin approval.</p>
