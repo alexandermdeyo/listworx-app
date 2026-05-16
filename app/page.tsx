@@ -44,7 +44,14 @@ export default function LandingPage() {
           className="absolute inset-0 h-full w-full object-cover object-center"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-black/65" />
+        <div className="absolute inset-0 bg-black/75" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to right, rgba(10,10,10,1) 0%, rgba(10,10,10,0.4) 25%, rgba(10,10,10,0.4) 75%, rgba(10,10,10,1) 100%)'
+          }}
+          aria-hidden="true"
+        />
         <div className="relative z-10 container mx-auto px-4">
           <div className="mx-auto max-w-5xl">
           <div className="mb-6 inline-flex items-center rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-2 text-sm font-semibold text-lw-rust">

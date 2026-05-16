@@ -46,19 +46,12 @@ export default function DashboardLayout({
       >
         {/* Logo */}
         <div className="flex h-16 items-center px-5 border-b border-white/10">
-          <Link href="/" className="flex items-center gap-0.5">
-            <span
-              className="text-2xl font-bold tracking-tight text-white"
-              style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}
-            >
-              LIST
-            </span>
-            <span
-              className="text-2xl font-bold tracking-tight"
-              style={{ color: '#E8621A', fontFamily: "'Barlow Condensed', Arial, sans-serif" }}
-            >
-              WORX
-            </span>
+          <Link href="/" className="flex items-center">
+            <img
+              src="/Listworx_wordmark_logo.png"
+              alt="ListWorx"
+              className="h-8 w-auto"
+            />
           </Link>
         </div>
 

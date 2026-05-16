@@ -136,21 +136,14 @@ export default function Navigation() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-lw-dark-border bg-lw-dark/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-lw-dark-border bg-zinc-900/95 backdrop-blur">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-0.5" aria-label="ListWorx home">
-          <span
-            className="text-4xl font-bold tracking-tight text-white"
-            style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}
-          >
-            LIST
-          </span>
-          <span
-            className="text-4xl font-bold tracking-tight"
-            style={{ color: '#E8621A', fontFamily: "'Barlow Condensed', Arial, sans-serif" }}
-          >
-            WORX
-          </span>
+        <Link href="/" className="flex items-center" aria-label="ListWorx home">
+          <img
+            src="/Listworx_wordmark_logo.png"
+            alt="ListWorx"
+            className="h-8 md:h-10 w-auto"
+          />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">

@@ -41,9 +41,12 @@ export default function Footer() {
       <div className="container mx-auto px-4 pt-14 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
           <div className="md:col-span-4">
-            <Link href="/" className="mb-4 flex items-center gap-0.5" aria-label="ListWorx home">
-              <span className="text-4xl font-bold tracking-tight text-white" style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}>LIST</span>
-              <span className="text-4xl font-bold tracking-tight" style={{ color: '#E8621A', fontFamily: "'Barlow Condensed', Arial, sans-serif" }}>WORX</span>
+            <Link href="/" className="mb-4 flex items-center" aria-label="ListWorx home">
+              <img
+                src="/Listworx_wordmark_logo.png"
+                alt="ListWorx"
+                className="h-8 w-auto"
+              />
             </Link>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">{tagline}</p>
 
