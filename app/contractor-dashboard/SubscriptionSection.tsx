@@ -798,7 +798,7 @@ export default function SubscriptionSection({
         </div>
 
         {/* Founding Partner Activation */}
-        <div className="mb-8 rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-amber-50 to-orange-50 p-6 shadow-sm">
+        <div className="mb-8 rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 shadow-lg">
           <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <div className="mb-1 inline-flex items-center gap-2">
@@ -807,20 +807,20 @@ export default function SubscriptionSection({
                   Limited Founding Partner Availability
                 </span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900">Become a Founding Partner</h3>
-              <p className="mt-1 text-sm text-gray-700">
+              <h3 className="text-2xl font-bold text-white">Become a Founding Partner</h3>
+              <p className="mt-1 text-sm text-zinc-300">
                 One-time $199 activation fee. 12 months of network access included.
                 Lock in founder renewal pricing for life.
               </p>
             </div>
-            <div className="rounded-xl bg-white border border-lw-rust/30 px-5 py-3 text-center">
+            <div className="rounded-xl bg-zinc-900/60 border border-lw-rust/40 px-5 py-3 text-center">
               <div className="text-3xl font-bold text-lw-rust">$199</div>
-              <div className="text-xs text-gray-600">one-time activation</div>
+              <div className="text-xs text-zinc-400">one-time activation</div>
             </div>
           </div>
 
           <div className="mb-4">
-            <p className="mb-2 text-sm font-semibold text-gray-900">
+            <p className="mb-2 text-sm font-semibold text-white">
               Choose your locked founder tier (renewal rate after year 1):
             </p>
             <div className="grid gap-3 md:grid-cols-3">
@@ -833,18 +833,18 @@ export default function SubscriptionSection({
                     onClick={() => setSelectedFounderTier(tier.id as 'basic' | 'preferred' | 'elite')}
                     className={`rounded-lg border-2 p-4 text-left transition ${
                       isSelected
-                        ? 'border-lw-rust bg-white shadow-sm'
-                        : 'border-gray-200 bg-white/60 hover:border-lw-rust/50'
+                        ? 'border-lw-rust bg-zinc-900/80 shadow-md'
+                        : 'border-zinc-700 bg-zinc-900/40 hover:border-lw-rust/60'
                     }`}
                   >
-                    <div className="font-bold text-gray-900">{tier.name}</div>
+                    <div className="font-bold text-white">{tier.name}</div>
                     <div className="mt-1 text-xl font-bold text-lw-rust">
                       ${tier.renewalRate}/mo
                     </div>
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-zinc-400">
                       after year 1 • save ${tier.savings}/mo
                     </div>
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 text-xs text-zinc-400">
                       {tier.spots} spots / county
                     </div>
                   </button>
@@ -864,7 +864,7 @@ export default function SubscriptionSection({
               : `Activate as ${FOUNDER_TIERS.find((t) => t.id === selectedFounderTier)?.name} — $199`}
           </Button>
 
-          <p className="mt-3 text-center text-xs text-gray-600">
+          <p className="mt-3 text-center text-xs text-zinc-400">
             Once your trade fills in your county, Founding Partner pricing closes permanently.
           </p>
         </div>

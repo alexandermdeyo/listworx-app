@@ -262,12 +262,56 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
   }
 
   if (contractor?.email) {
-    const renewalAmount = founderTier === 'elite' ? '$349' : founderTier === 'preferred' ? '$199' : '$99';
+    const renewalAmount = founderTier === 'elite' ? '$479' : founderTier === 'preferred' ? '$279' : '$159';
     const territory = [contractor.service_area_counties?.[0], contractor.service_area_state].filter(Boolean).join(', ') || 'your approved service area';
     await sendEmail({
       to: contractor.email,
       subject: "Welcome to ListWorx — You're a Founding Partner",
-      html: `<p>Welcome to ListWorx. You are now a Founding Partner.</p><p>Tier: <strong>${founderTier}</strong></p><p>Territory: <strong>${territory}</strong></p><p>Your first 12 months are included. Billing begins ${new Date(trialEndsAt).toLocaleDateString('en-US')} at ${renewalAmount}/month.</p><p>IronClad Standards still apply. Respond within 24 hours. Keep insurance current. Communicate like a pro.</p><p><a href="${process.env.NEXT_PUBLIC_BASE_URL || process.env.APP_BASE_URL || 'https://listworx.co'}/contractor-dashboard">Open your dashboard</a></p>`,
+      html: `<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#F5F5F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F5F4;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <!-- Header with logo and accent bar -->
+        <tr><td style="background:#1a1a1a;padding:24px 32px;text-align:center;">
+          <img src="https://listworx.co/LW_LOGO.png" alt="ListWorx" width="120" style="display:inline-block;max-width:120px;height:auto;" />
+        </td></tr>
+        <tr><td style="height:4px;background:#E85000;line-height:4px;font-size:0;">&nbsp;</td></tr>
+        <!-- Body -->
+        <tr><td style="padding:36px 32px 16px;">
+          <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#E85000;">ListWorx IronClad Partner Network</p>
+          <h1 style="margin:0 0 16px;font-size:28px;font-weight:700;color:#111111;line-height:1.2;">Welcome, Founding Partner</h1>
+          <p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#333333;">Your activation is complete. You are officially a ListWorx Founding Partner.</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 16px;background:#FAFAF9;border:1px solid #E5E5E5;border-radius:8px;">
+            <tr><td style="padding:18px 22px;">
+              <p style="margin:0 0 6px;font-size:13px;color:#666666;">Locked Founder Tier</p>
+              <p style="margin:0 0 14px;font-size:18px;font-weight:700;color:#111111;text-transform:capitalize;">${founderTier} Founder</p>
+              <p style="margin:0 0 6px;font-size:13px;color:#666666;">Territory</p>
+              <p style="margin:0 0 14px;font-size:16px;font-weight:600;color:#111111;">${territory}</p>
+              <p style="margin:0 0 6px;font-size:13px;color:#666666;">First 12 months</p>
+              <p style="margin:0 0 14px;font-size:16px;font-weight:600;color:#111111;">Included — no monthly charge until ${new Date(trialEndsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+              <p style="margin:0 0 6px;font-size:13px;color:#666666;">Locked renewal rate</p>
+              <p style="margin:0;font-size:16px;font-weight:600;color:#111111;">${renewalAmount}/month — for life</p>
+            </td></tr>
+          </table>
+          <p style="margin:0 0 8px;font-size:16px;line-height:1.55;color:#333333;">IronClad Standards still apply: respond within 24 hours, keep insurance current, communicate like a pro. Violations may result in losing Founding Partner status.</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 8px;">
+            <tr><td align="center">
+              <a href="${process.env.NEXT_PUBLIC_BASE_URL || process.env.APP_BASE_URL || 'https://listworx.co'}/contractor-dashboard" target="_blank" style="display:inline-block;background:#E85000;color:#ffffff;font-family:-apple-system,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.3px;text-decoration:none;padding:14px 34px;border-radius:7px;line-height:1.4;">Open Your Dashboard →</a>
+            </td></tr>
+          </table>
+          <p style="margin:8px 0 0;font-size:12px;color:#888888;text-align:center;">Questions? Reply to this email or contact Alexander Deyo, Founder — adeyo@listworx.co | 615-362-4996</p>
+        </td></tr>
+        <!-- Footer with IronClad shield -->
+        <tr><td style="background:#1a1a1a;padding:24px 32px;text-align:center;">
+          <img src="https://listworx.co/Ironclad_Standards_Logo.png" alt="IronClad Standards" width="64" style="display:inline-block;max-width:64px;height:auto;opacity:0.95;" />
+          <p style="margin:12px 0 0;font-size:11px;color:#999999;letter-spacing:0.5px;">ListWorx LLC — 2147 Springdale Ln F104, Gallatin, TN 37066</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`,
       text: `Welcome to ListWorx. You are now a Founding Partner. Tier: ${founderTier}. Territory: ${territory}. Billing begins ${new Date(trialEndsAt).toLocaleDateString('en-US')} at ${renewalAmount}/month. IronClad Standards still apply.`,
     }).catch((emailError) => console.error('[stripe-webhook] Founding Partner email failed', emailError));
   }
