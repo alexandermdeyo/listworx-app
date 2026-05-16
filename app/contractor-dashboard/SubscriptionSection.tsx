@@ -121,6 +121,54 @@ const ADD_ONS: AddOn[] = [
   },
 ];
 
+const FOUNDER_TIERS = [
+  {
+    id: 'basic',
+    name: 'Basic Founder',
+    renewalRate: 159,
+    standardRate: 199,
+    savings: 40,
+    spots: 10,
+    features: [
+      'Public profile in the contractor directory',
+      'Eligible for referral matching in your service area',
+      'Standard placement in referral rotation',
+      'Credential tracking and compliance tools',
+      'Email notifications for new referrals',
+    ],
+  },
+  {
+    id: 'preferred',
+    name: 'Preferred Founder',
+    renewalRate: 279,
+    standardRate: 349,
+    savings: 70,
+    spots: 5,
+    features: [
+      'Everything in Basic',
+      'Priority placement in referral matching',
+      'Enhanced visibility with logo in your listing',
+      'IronClad Certified Partner badge',
+      'Referral analytics and reporting',
+    ],
+  },
+  {
+    id: 'elite',
+    name: 'Elite Founder',
+    renewalRate: 479,
+    standardRate: 599,
+    savings: 120,
+    spots: 2,
+    features: [
+      'Everything in Preferred',
+      'Top-priority referral positioning',
+      'Premium placement and Elite IronClad badge',
+      'Advanced analytics dashboard',
+      'Priority phone support',
+    ],
+  },
+] as const;
+
 type SubscriptionSectionProps = {
   contractorProfileId?: string | null;
 };
@@ -129,6 +177,7 @@ export default function SubscriptionSection({
   contractorProfileId: contractorProfileIdProp = null,
 }: SubscriptionSectionProps) {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [selectedFounderTier, setSelectedFounderTier] = useState<'basic' | 'preferred' | 'elite'>('preferred');
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -355,6 +404,51 @@ export default function SubscriptionSection({
       setCheckoutLoading(null);
     }
   };
+
+  async function handleFounderActivation() {
+    try {
+      setErrorMessage(null);
+
+      if (!contractorProfileId) {
+        setErrorMessage('Unable to identify contractor profile. Refresh and try again.');
+        return;
+      }
+
+      setCheckoutLoading('founder-activation');
+
+      const founderTier = FOUNDER_TIERS.find((t) => t.id === selectedFounderTier);
+
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contractorId: contractorProfileId,
+          tierId: selectedFounderTier,
+          tierName: founderTier?.name || 'Basic Founder',
+          isFounderActivation: true,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(data.error || 'Unable to create checkout session.');
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      setErrorMessage('No checkout URL was returned.');
+    } catch (error) {
+      console.error('Founder activation error:', error);
+      setErrorMessage('Unexpected error. Please try again.');
+    } finally {
+      setCheckoutLoading(null);
+    }
+  }
 
   const handleManageBilling = async () => {
     setPortalLoading(true);
@@ -701,6 +795,85 @@ export default function SubscriptionSection({
               </div>
             </div>
           )}
+        </div>
+
+        {/* Founding Partner Activation */}
+        <div className="mb-8 rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-amber-50 to-orange-50 p-6 shadow-sm">
+          <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div className="mb-1 inline-flex items-center gap-2">
+                <Crown className="h-5 w-5 text-lw-rust" />
+                <span className="text-xs font-bold uppercase tracking-wide text-lw-rust">
+                  Limited Founding Partner Availability
+                </span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Become a Founding Partner</h3>
+              <p className="mt-1 text-sm text-gray-700">
+                One-time $199 activation fee. 12 months of network access included.
+                Lock in founder renewal pricing for life.
+              </p>
+            </div>
+            <div className="rounded-xl bg-white border border-lw-rust/30 px-5 py-3 text-center">
+              <div className="text-3xl font-bold text-lw-rust">$199</div>
+              <div className="text-xs text-gray-600">one-time activation</div>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <p className="mb-2 text-sm font-semibold text-gray-900">
+              Choose your locked founder tier (renewal rate after year 1):
+            </p>
+            <div className="grid gap-3 md:grid-cols-3">
+              {FOUNDER_TIERS.map((tier) => {
+                const isSelected = selectedFounderTier === tier.id;
+                return (
+                  <button
+                    key={tier.id}
+                    type="button"
+                    onClick={() => setSelectedFounderTier(tier.id as 'basic' | 'preferred' | 'elite')}
+                    className={`rounded-lg border-2 p-4 text-left transition ${
+                      isSelected
+                        ? 'border-lw-rust bg-white shadow-sm'
+                        : 'border-gray-200 bg-white/60 hover:border-lw-rust/50'
+                    }`}
+                  >
+                    <div className="font-bold text-gray-900">{tier.name}</div>
+                    <div className="mt-1 text-xl font-bold text-lw-rust">
+                      ${tier.renewalRate}/mo
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      after year 1 • save ${tier.savings}/mo
+                    </div>
+                    <div className="mt-2 text-xs text-gray-500">
+                      {tier.spots} spots / county
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            onClick={handleFounderActivation}
+            disabled={checkoutLoading === 'founder-activation'}
+            className="w-full bg-lw-rust text-white hover:bg-lw-rust/90 text-base font-bold py-6"
+          >
+            {checkoutLoading === 'founder-activation'
+              ? 'Loading checkout...'
+              : `Activate as ${FOUNDER_TIERS.find((t) => t.id === selectedFounderTier)?.name} — $199`}
+          </Button>
+
+          <p className="mt-3 text-center text-xs text-gray-600">
+            Once your trade fills in your county, Founding Partner pricing closes permanently.
+          </p>
+        </div>
+
+        {/* Divider */}
+        <div className="mb-6 flex items-center gap-3 text-xs uppercase tracking-wide text-lw-text/50">
+          <div className="flex-1 border-t border-lw-border-light" />
+          <span>or choose standard monthly</span>
+          <div className="flex-1 border-t border-lw-border-light" />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
