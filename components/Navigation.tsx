@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, LogIn, LogOut } from 'lucide-react';
+import { LayoutDashboard, LogIn, LogOut, Menu, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 
@@ -27,6 +27,7 @@ export default function Navigation() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dashboardHref, setDashboardHref] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -217,8 +218,69 @@ export default function Navigation() {
               </Button>
             </Link>
           )}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden inline-flex items-center justify-center rounded-md p-2 text-zinc-300 hover:bg-lw-dark-card hover:text-white focus:outline-none focus:ring-2 focus:ring-lw-rust"
+            aria-label="Open menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
         </div>
       </div>
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-lw-dark-border bg-zinc-900">
+          <nav className="container mx-auto flex flex-col gap-1 px-4 py-4">
+            <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-md px-3 py-3 text-base font-medium text-zinc-300 hover:bg-lw-dark-card hover:text-white transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-md px-3 py-3 text-base font-medium text-zinc-300 hover:bg-lw-dark-card hover:text-white transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href="/realtors"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-md px-3 py-3 text-base font-medium text-zinc-300 hover:bg-lw-dark-card hover:text-white transition-colors"
+            >
+              For Realtors & Homeowners
+            </Link>
+            <Link
+              href="/contractors"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-md px-3 py-3 text-base font-medium text-zinc-300 hover:bg-lw-dark-card hover:text-white transition-colors"
+            >
+              For Contractors
+            </Link>
+            <Link
+              href="/ironclad"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-md px-3 py-3 text-base font-medium text-lw-rust hover:bg-lw-dark-card hover:text-orange-300 transition-colors"
+            >
+              IronClad Standards
+            </Link>
+            <Link
+              href="/faq"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-md px-3 py-3 text-base font-medium text-zinc-300 hover:bg-lw-dark-card hover:text-white transition-colors"
+            >
+              FAQ
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
