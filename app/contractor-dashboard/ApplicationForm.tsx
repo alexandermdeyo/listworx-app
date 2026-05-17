@@ -380,11 +380,14 @@ export default function ApplicationForm({
         .from('contractor-documents')
         .upload(path, file, { upsert: true, contentType: file.type });
       if (uploadError) throw uploadError;
-      const { data: urlData } = supabase.storage
+      const { data: signedData, error: signedErr } = await supabase.storage
         .from('contractor-documents')
-        .getPublicUrl(path);
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (signedErr || !signedData?.signedUrl) {
+        throw new Error(signedErr?.message || 'Could not generate document link.');
+      }
       const fieldKey = docType === 'license' ? 'license_document_url' : 'insurance_document_url';
-      setForm(prev => ({ ...prev, [fieldKey]: urlData.publicUrl }));
+      setForm(prev => ({ ...prev, [fieldKey]: signedData.signedUrl }));
     } catch (err: any) {
       setDocUploadError(err.message || 'Upload failed. Please try again.');
     } finally {
