@@ -261,6 +261,22 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
     return;
   }
 
+  // Persist bundled add-on purchases (for tracking what they bought)
+  const bundledAddonIdsRaw = session.metadata?.bundledAddonIds || '';
+  const bundledAddonIds = bundledAddonIdsRaw.split(',').filter(Boolean);
+  if (bundledAddonIds.length > 0) {
+    try {
+      await supabase
+        .from('contractor_profiles')
+        .update({
+          purchased_addons: bundledAddonIds,
+        })
+        .eq('id', contractorId);
+    } catch (err) {
+      console.error('Failed to persist bundled addons:', err);
+    }
+  }
+
   if (contractor?.email) {
     const renewalAmount = founderTier === 'elite' ? '$479' : founderTier === 'preferred' ? '$279' : '$159';
     const territory = [contractor.service_area_counties?.[0], contractor.service_area_state].filter(Boolean).join(', ') || 'your approved service area';

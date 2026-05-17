@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { CircleCheck as CheckCircle, Circle as CircleIcon, Shield, Zap, Crown, Truck, Star, CircleAlert as AlertCircle, Loader as Loader2, Lock, CreditCard, CircleArrowUp as ArrowUpCircle } from 'lucide-react';
 import { PARTNER_STATUS } from '@/lib/partner-status';
+import { ADDON_LIST } from '@/lib/tiers-config';
 
 interface Tier {
   id: 'basic' | 'preferred' | 'elite';
@@ -178,6 +179,7 @@ export default function SubscriptionSection({
 }: SubscriptionSectionProps) {
   const [isAnnual, setIsAnnual] = useState(false);
   const [selectedFounderTier, setSelectedFounderTier] = useState<'basic' | 'preferred' | 'elite'>('preferred');
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -191,6 +193,31 @@ export default function SubscriptionSection({
   const [subscriptionStartDate, setSubscriptionStartDate] = useState<Date | null>(null);
   const [isAnnualSubscription, setIsAnnualSubscription] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<string | null>(null);
+
+  // Filter ADDON_LIST to one-time add-ons not already included in selected tier
+  const bundleableAddons = ADDON_LIST.filter((addon) => {
+    if (addon.type !== 'onetime') return false;
+    if (addon.includedIn?.includes(selectedFounderTier)) return false;
+    return true;
+  });
+
+  // Compute selected add-on prices (using elitePrice if available and tier is elite)
+  const addonsTotalCents = selectedAddons.reduce((sum, addonId) => {
+    const addon = ADDON_LIST.find((a) => a.id === addonId);
+    if (!addon) return sum;
+    const price = selectedFounderTier === 'elite' && (addon as any).elitePrice
+      ? (addon as any).elitePrice
+      : addon.price;
+    return sum + price;
+  }, 0);
+
+  const founderTotalCents = 199 + addonsTotalCents;
+
+  function toggleAddon(addonId: string) {
+    setSelectedAddons((prev) =>
+      prev.includes(addonId) ? prev.filter((id) => id !== addonId) : [...prev, addonId]
+    );
+  }
 
   useEffect(() => {
     fetchSubscriptionState();
@@ -426,6 +453,7 @@ export default function SubscriptionSection({
           tierId: selectedFounderTier,
           tierName: founderTier?.name || 'Basic Founder',
           isFounderActivation: true,
+          bundledAddonIds: selectedAddons,
         }),
       });
 
@@ -859,6 +887,59 @@ export default function SubscriptionSection({
             </div>
           </div>
 
+          {/* Customize Your Founder Kit */}
+          {bundleableAddons.length > 0 && (
+            <div className="mt-6 border-t border-zinc-700 pt-6">
+              <div className="mb-4">
+                <h4 className="text-lg font-bold text-white">Customize Your Founder Kit (optional)</h4>
+                <p className="text-sm text-zinc-400">
+                  Bundle these one-time add-ons with your $199 activation.
+                  Monthly services like Profile Boost can be added anytime after activation.
+                </p>
+              </div>
+              <div className="space-y-3">
+                {bundleableAddons.map((addon) => {
+                  const isChecked = selectedAddons.includes(addon.id);
+                  const price = selectedFounderTier === 'elite' && (addon as any).elitePrice
+                    ? (addon as any).elitePrice
+                    : addon.price;
+                  return (
+                    <label
+                      key={addon.id}
+                      className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition ${
+                        isChecked
+                          ? 'border-lw-rust bg-zinc-900/80'
+                          : 'border-zinc-700 bg-zinc-900/40 hover:border-lw-rust/60'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleAddon(addon.id)}
+                        className="mt-1 h-5 w-5 rounded border-zinc-600 bg-zinc-900 text-lw-rust focus:ring-lw-rust focus:ring-2"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-baseline justify-between gap-3">
+                          <span className="font-semibold text-white">{addon.name}</span>
+                          <span className="font-bold text-lw-rust">${price}</span>
+                        </div>
+                        <p className="mt-1 text-sm text-zinc-400">{addon.description}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+              {addonsTotalCents > 0 && (
+                <div className="mt-4 rounded-lg border border-lw-rust/40 bg-zinc-900/60 p-3 text-center">
+                  <p className="text-sm text-zinc-300">
+                    $199 activation + ${addonsTotalCents} add-ons =
+                    <span className="ml-1 font-bold text-white">${founderTotalCents} total</span>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
           <Button
             type="button"
             onClick={handleFounderActivation}
@@ -867,11 +948,15 @@ export default function SubscriptionSection({
           >
             {checkoutLoading === 'founder-activation'
               ? 'Loading checkout...'
-              : `Activate as ${FOUNDER_TIERS.find((t) => t.id === selectedFounderTier)?.name} — $199`}
+              : `Activate as ${FOUNDER_TIERS.find((t) => t.id === selectedFounderTier)?.name} — $${founderTotalCents}`}
           </Button>
 
           <p className="mt-3 text-center text-xs text-zinc-400">
             Once your trade fills in your county, Founding Partner pricing closes permanently.
+          </p>
+          <p className="mt-2 text-center text-xs text-zinc-500">
+            Want monthly services like Profile Boost or Featured Spotlight?
+            Add them anytime from your dashboard after activation.
           </p>
         </div>
 

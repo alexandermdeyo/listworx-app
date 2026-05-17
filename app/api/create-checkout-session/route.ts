@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
       isAddOn = false,
       addOnId,
       isFounderActivation = false,
+      bundledAddonIds = [] as string[],
     } = body;
 
     if (!contractorId) {
@@ -123,12 +124,27 @@ export async function POST(request: NextRequest) {
 
     let resolvedPriceId = '';
     let sessionMode: 'payment' | 'subscription' = 'subscription';
+    let addonLineItems: any[] = [];
 
     if (isFounderActivation) {
       resolvedPriceId = getFounderActivationPriceId() || '';
       sessionMode = 'payment';
       if (!resolvedPriceId) {
         return NextResponse.json({ error: 'Missing founder activation price ID' }, { status: 500 });
+      }
+
+      // Look up bundled add-on prices
+      const { ADDON_LIST: ADDON_LIST_LIB } = await import('@/lib/tiers-config');
+      for (const addonId of bundledAddonIds) {
+        const addon = ADDON_LIST_LIB.find((a) => a.id === addonId);
+        if (!addon || addon.type !== 'onetime') continue;
+        const addonPriceId = getAddonPriceId(addonId, tierId === 'elite' ? 'elite' : 'standard');
+        if (addonPriceId) {
+          addonLineItems.push({
+            price: addonPriceId,
+            quantity: 1,
+          });
+        }
       }
     } else if (isAddOn) {
       const addonPriceId = getAddonPriceId(addOnId, tierId as TierId | undefined);
@@ -208,6 +224,7 @@ export async function POST(request: NextRequest) {
       isAddOn: String(isAddOn),
       isFounderActivation: String(isFounderActivation),
       addOnId: addOnId || '',
+      bundledAddonIds: bundledAddonIds.join(','),
     };
 
     const sessionConfig: any = {
@@ -217,6 +234,7 @@ export async function POST(request: NextRequest) {
           price: resolvedPriceId,
           quantity: 1,
         },
+        ...addonLineItems,
       ],
       mode: sessionMode,
       success_url: `${baseUrl}/contractor-dashboard?success=true&session_id={CHECKOUT_SESSION_ID}`,
