@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
       for (const addonId of bundledAddonIds) {
         const addon = ADDON_LIST_LIB.find((a) => a.id === addonId);
         if (!addon || addon.type !== 'onetime') continue;
-        const addonPriceId = getAddonPriceId(addonId, tierId === 'elite' ? 'elite' : 'standard');
+        const addonPriceId = getAddonPriceId(addonId, tierId === 'elite' ? 'elite' : undefined);
         if (addonPriceId) {
           addonLineItems.push({
             price: addonPriceId,
