@@ -39,6 +39,11 @@ export interface ContractorProfile {
   agreed_to_standards?: boolean;
   agreed_to_communications?: boolean;
   agreed_to_privacy_policy?: boolean;
+  license_document_url?: string;
+  insurance_document_url?: string;
+  google_review_url?: string;
+  yelp_url?: string;
+  bbb_url?: string;
   subscription_status?: string;
   subscription_current_period_end?: string;
   service_area_state?: string;
@@ -71,6 +76,13 @@ export interface ApplicationFormState {
   license_number: string;
   license_expiration_date: string;
   insurance_expiration_date: string;
+  license_document_url: string;
+  insurance_document_url: string;
+  google_review_url: string;
+  yelp_url: string;
+  bbb_url: string;
+  facebook_url: string;
+  instagram_url: string;
   selectedCounties: string[];
   selectedTrades: string[];
   selectedState: string;

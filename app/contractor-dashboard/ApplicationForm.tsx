@@ -14,6 +14,7 @@ import {
   Briefcase,
   FileText,
   Shield,
+  Star,
   CircleAlert as AlertCircle,
   CircleCheck as CheckCircle2,
   Loader as Loader2,
@@ -22,6 +23,7 @@ import {
   ExternalLink,
   Search,
   ChevronRight,
+  Upload,
   X,
 } from 'lucide-react';
 
@@ -60,7 +62,8 @@ const STEPS = [
   { id: 2, label: 'Compliance' },
   { id: 3, label: 'Service Area' },
   { id: 4, label: 'Trades' },
-  { id: 5, label: 'Agreements' },
+  { id: 5, label: 'Reviews' },
+  { id: 6, label: 'Agreements' },
 ];
 
 const inputClass =
@@ -187,6 +190,13 @@ export default function ApplicationForm({
     license_number: existingProfile?.license_number || '',
     license_expiration_date: existingProfile?.license_expiration_date || '',
     insurance_expiration_date: existingProfile?.insurance_expiration_date || '',
+    license_document_url: existingProfile?.license_document_url || '',
+    insurance_document_url: existingProfile?.insurance_document_url || '',
+    google_review_url: existingProfile?.google_review_url || '',
+    yelp_url: existingProfile?.yelp_url || '',
+    bbb_url: existingProfile?.bbb_url || '',
+    facebook_url: existingProfile?.facebook_url || '',
+    instagram_url: existingProfile?.instagram_url || '',
     selectedCounties: [],
     selectedTrades: [],
     selectedState: existingProfile?.service_area_state || '',
@@ -203,6 +213,8 @@ export default function ApplicationForm({
   const [countyLoadError, setCountyLoadError] = useState('');
   const [loadingTrades, setLoadingTrades] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingDoc, setUploadingDoc] = useState<'license' | 'insurance' | null>(null);
+  const [docUploadError, setDocUploadError] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [countySearch, setCountySearch] = useState('');
@@ -346,6 +358,41 @@ export default function ApplicationForm({
     setForm(prev => ({ ...prev, [field]: value }));
   }
 
+  async function handleDocumentUpload(
+    e: React.ChangeEvent<HTMLInputElement>,
+    docType: 'license' | 'insurance'
+  ) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setDocUploadError('File must be under 10MB.');
+      e.target.value = '';
+      return;
+    }
+    setDocUploadError('');
+    setUploadingDoc(docType);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.id) throw new Error('Not authenticated');
+      const ext = file.name.split('.').pop() || 'pdf';
+      const path = `${user.id}/applications/${docType}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from('contractor-documents')
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage
+        .from('contractor-documents')
+        .getPublicUrl(path);
+      const fieldKey = docType === 'license' ? 'license_document_url' : 'insurance_document_url';
+      setForm(prev => ({ ...prev, [fieldKey]: urlData.publicUrl }));
+    } catch (err: any) {
+      setDocUploadError(err.message || 'Upload failed. Please try again.');
+    } finally {
+      setUploadingDoc(null);
+      e.target.value = '';
+    }
+  }
+
   function validateStep(s: number): string {
     if (s === 1) {
       if (!form.first_name.trim()) return 'First name is required.';
@@ -356,6 +403,8 @@ export default function ApplicationForm({
     }
     if (s === 2) {
       if (!form.insurance_expiration_date) return 'Insurance expiration date is required.';
+      if (!form.license_document_url) return 'Please upload your contractor license document.';
+      if (!form.insurance_document_url) return 'Please upload your insurance certificate.';
     }
     if (s === 3) {
       if (!form.selectedState) return 'Please select a service state.';
@@ -365,6 +414,9 @@ export default function ApplicationForm({
       if (form.selectedTrades.length === 0) return 'Please select at least one trade specialty.';
     }
     if (s === 5) {
+      if (!form.google_review_url.trim()) return 'Please provide at least your Google Reviews link.';
+    }
+    if (s === 6) {
       if (!form.agreed_to_standards) return 'You must agree to IronClad Standards.';
       if (!form.agreed_to_communications) return 'You must agree to the Terms of Service.';
       if (!form.agreed_to_privacy_policy) return 'You must agree to the Privacy Policy.';
@@ -387,7 +439,7 @@ export default function ApplicationForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const msg = validateStep(5);
+    const msg = validateStep(6);
     if (msg) { setError(msg); return; }
     setError('');
     setSubmitting(true);
@@ -405,6 +457,13 @@ export default function ApplicationForm({
       license_number: form.license_number.trim() || null,
       license_expiration_date: form.license_expiration_date || null,
       insurance_expiration_date: form.insurance_expiration_date || null,
+      license_document_url: form.license_document_url || null,
+      insurance_document_url: form.insurance_document_url || null,
+      google_review_url: form.google_review_url.trim() || null,
+      yelp_url: form.yelp_url.trim() || null,
+      bbb_url: form.bbb_url.trim() || null,
+      facebook_url: form.facebook_url.trim() || null,
+      instagram_url: form.instagram_url.trim() || null,
       agreed_to_standards: form.agreed_to_standards,
       agreed_to_communications: form.agreed_to_communications,
       agreed_to_privacy_policy: form.agreed_to_privacy_policy,
@@ -480,7 +539,19 @@ export default function ApplicationForm({
           trade: trades.find((trade) => trade.id === form.selectedTrades[0])?.name || 'Other',
           years_in_business: Number(form.years_in_business) || null,
           primary_county: selectedCountyNames[0] || form.primary_county || 'Other',
+          primary_state: form.selectedState || null,
           business_description: form.bio.trim(),
+          website: form.website.trim() || null,
+          license_number: form.license_number.trim() || null,
+          license_expiration_date: form.license_expiration_date || null,
+          insurance_expiration_date: form.insurance_expiration_date || null,
+          license_document_url: form.license_document_url || null,
+          insurance_document_url: form.insurance_document_url || null,
+          google_review_url: form.google_review_url.trim() || null,
+          yelp_url: form.yelp_url.trim() || null,
+          bbb_url: form.bbb_url.trim() || null,
+          facebook_url: form.facebook_url.trim() || null,
+          instagram_url: form.instagram_url.trim() || null,
           ironclad_acknowledged: form.agreed_to_standards,
           volume_acknowledged: form.volume_acknowledged,
         }),
@@ -689,13 +760,105 @@ export default function ApplicationForm({
                 />
               </FormField>
             </div>
-            <div className="mt-3 flex items-start gap-2 text-xs text-lw-text/50 bg-lw-surface rounded-lg p-3 border border-lw-border-light">
-              <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5 text-lw-rust" />
-              <p>
-                You will be asked to upload your actual license and insurance documents after your
-                application is submitted. Document upload is available in your dashboard under
-                Compliance &amp; Documents.
-              </p>
+            {docUploadError && (
+              <div className="mt-3 flex items-start gap-2 text-xs text-red-700 bg-red-50 rounded-lg p-3 border border-red-200">
+                <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5 text-red-500" />
+                <p>{docUploadError}</p>
+              </div>
+            )}
+
+            <div className="mt-4 space-y-4">
+              {/* License document upload */}
+              <div className="rounded-lg border border-lw-border-light bg-lw-surface p-4">
+                <p className="text-sm font-medium text-lw-text mb-2">
+                  Contractor License Document <span className="text-red-500">*</span>
+                </p>
+                {form.license_document_url ? (
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                    <a
+                      href={form.license_document_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-lw-rust hover:underline truncate"
+                    >
+                      License uploaded — click to view
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => set('license_document_url', '')}
+                      className="ml-auto text-xs text-lw-text/40 hover:text-lw-text"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex items-center gap-2 cursor-pointer w-fit">
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      className="hidden"
+                      onChange={(e) => handleDocumentUpload(e, 'license')}
+                      disabled={uploadingDoc !== null}
+                    />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-lw-rust text-lw-rust text-xs font-medium hover:bg-lw-rust/5 transition-colors">
+                      {uploadingDoc === 'license' ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Upload className="h-3.5 w-3.5" />
+                      )}
+                      {uploadingDoc === 'license' ? 'Uploading...' : 'Upload License'}
+                    </span>
+                    <span className="text-xs text-lw-text/40">PDF, JPG, or PNG — max 10MB</span>
+                  </label>
+                )}
+              </div>
+
+              {/* Insurance document upload */}
+              <div className="rounded-lg border border-lw-border-light bg-lw-surface p-4">
+                <p className="text-sm font-medium text-lw-text mb-2">
+                  Insurance Certificate <span className="text-red-500">*</span>
+                </p>
+                {form.insurance_document_url ? (
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                    <a
+                      href={form.insurance_document_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-lw-rust hover:underline truncate"
+                    >
+                      Insurance uploaded — click to view
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => set('insurance_document_url', '')}
+                      className="ml-auto text-xs text-lw-text/40 hover:text-lw-text"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex items-center gap-2 cursor-pointer w-fit">
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      className="hidden"
+                      onChange={(e) => handleDocumentUpload(e, 'insurance')}
+                      disabled={uploadingDoc !== null}
+                    />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-lw-rust text-lw-rust text-xs font-medium hover:bg-lw-rust/5 transition-colors">
+                      {uploadingDoc === 'insurance' ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Upload className="h-3.5 w-3.5" />
+                      )}
+                      {uploadingDoc === 'insurance' ? 'Uploading...' : 'Upload Insurance'}
+                    </span>
+                    <span className="text-xs text-lw-text/40">PDF, JPG, or PNG — max 10MB</span>
+                  </label>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -959,8 +1122,66 @@ export default function ApplicationForm({
           </div>
         )}
 
-        {/* STEP 5: Agreements */}
+        {/* STEP 5: Reviews & References */}
         {step === 5 && (
+          <div>
+            <SectionHeader
+              icon={Star}
+              title="Reviews & References"
+              description="Help us verify your reputation — at least your Google Reviews link is required"
+            />
+            <div className="space-y-4">
+              <FormField label="Google Reviews Link" required hint="Your Google Business review page — e.g. https://g.page/r/your-profile/review">
+                <Input
+                  type="url"
+                  value={form.google_review_url}
+                  onChange={e => set('google_review_url', e.target.value)}
+                  placeholder="https://g.page/r/your-profile/review"
+                  className={inputClass}
+                />
+              </FormField>
+              <FormField label="Yelp Profile" hint="Your Yelp business page">
+                <Input
+                  type="url"
+                  value={form.yelp_url}
+                  onChange={e => set('yelp_url', e.target.value)}
+                  placeholder="https://yelp.com/biz/your-business"
+                  className={inputClass}
+                />
+              </FormField>
+              <FormField label="Better Business Bureau (BBB)" hint="Your BBB listing, if applicable">
+                <Input
+                  type="url"
+                  value={form.bbb_url}
+                  onChange={e => set('bbb_url', e.target.value)}
+                  placeholder="https://bbb.org/us/your-listing"
+                  className={inputClass}
+                />
+              </FormField>
+              <FormField label="Facebook Business Page">
+                <Input
+                  type="url"
+                  value={form.facebook_url}
+                  onChange={e => set('facebook_url', e.target.value)}
+                  placeholder="https://facebook.com/your-business"
+                  className={inputClass}
+                />
+              </FormField>
+              <FormField label="Instagram">
+                <Input
+                  type="url"
+                  value={form.instagram_url}
+                  onChange={e => set('instagram_url', e.target.value)}
+                  placeholder="https://instagram.com/your-business"
+                  className={inputClass}
+                />
+              </FormField>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 6: Agreements */}
+        {step === 6 && (
           <div>
             <SectionHeader
               icon={Shield}

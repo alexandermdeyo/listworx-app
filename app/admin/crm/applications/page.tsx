@@ -43,6 +43,13 @@ interface ContractorProfile {
   license_number: string | null;
   license_expiration_date: string | null;
   insurance_expiration_date: string | null;
+  license_document_url: string | null;
+  insurance_document_url: string | null;
+  google_review_url: string | null;
+  yelp_url: string | null;
+  bbb_url: string | null;
+  facebook_url: string | null;
+  instagram_url: string | null;
   partner_status: string;
   created_at: string;
   agreed_to_standards: boolean;
@@ -100,7 +107,7 @@ export default function ApplicationsPage() {
 
       const { data: profilesData, error } = await supabase
         .from('contractor_profiles')
-        .select('id, user_id, company_name, owner_name, email, phone, website, bio, service_area_state, license_number, license_expiration_date, insurance_expiration_date, partner_status, created_at, agreed_to_standards, agreed_to_communications, agreed_to_privacy_policy')
+        .select('id, user_id, company_name, owner_name, email, phone, website, bio, service_area_state, license_number, license_expiration_date, insurance_expiration_date, license_document_url, insurance_document_url, google_review_url, yelp_url, bbb_url, facebook_url, instagram_url, partner_status, created_at, agreed_to_standards, agreed_to_communications, agreed_to_privacy_policy')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -365,6 +372,47 @@ export default function ApplicationsPage() {
               <div>
                 <h4 className="font-semibold mb-2 text-white">Business Description</h4>
                 <p className="text-sm text-zinc-400">{profile.bio}</p>
+              </div>
+            )}
+
+            {(profile.license_document_url || profile.insurance_document_url) && (
+              <div>
+                <h4 className="font-semibold mb-2 text-white">Compliance Documents</h4>
+                <div className="space-y-1 text-sm">
+                  {profile.license_document_url && (
+                    <a href={profile.license_document_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-lw-rust hover:underline">
+                      <Shield className="h-3.5 w-3.5" /> License Document
+                    </a>
+                  )}
+                  {profile.insurance_document_url && (
+                    <a href={profile.insurance_document_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-lw-rust hover:underline">
+                      <Shield className="h-3.5 w-3.5" /> Insurance Document
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {(profile.google_review_url || profile.yelp_url || profile.bbb_url || profile.facebook_url || profile.instagram_url) && (
+              <div>
+                <h4 className="font-semibold mb-2 text-white">Online Presence</h4>
+                <div className="space-y-1 text-sm">
+                  {profile.google_review_url && (
+                    <a href={profile.google_review_url} target="_blank" rel="noopener noreferrer" className="block text-lw-rust hover:underline truncate">Google Reviews</a>
+                  )}
+                  {profile.yelp_url && (
+                    <a href={profile.yelp_url} target="_blank" rel="noopener noreferrer" className="block text-lw-rust hover:underline truncate">Yelp</a>
+                  )}
+                  {profile.bbb_url && (
+                    <a href={profile.bbb_url} target="_blank" rel="noopener noreferrer" className="block text-lw-rust hover:underline truncate">BBB</a>
+                  )}
+                  {profile.facebook_url && (
+                    <a href={profile.facebook_url} target="_blank" rel="noopener noreferrer" className="block text-lw-rust hover:underline truncate">Facebook</a>
+                  )}
+                  {profile.instagram_url && (
+                    <a href={profile.instagram_url} target="_blank" rel="noopener noreferrer" className="block text-lw-rust hover:underline truncate">Instagram</a>
+                  )}
+                </div>
               </div>
             )}
 

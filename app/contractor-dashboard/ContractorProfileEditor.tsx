@@ -34,6 +34,7 @@ import {
   Plus,
   Save,
   Shield,
+  Star,
   Trash2,
   Upload,
   User,
@@ -107,6 +108,9 @@ const socialFields = [
   { key: 'linkedin_url', label: 'LinkedIn', host: 'linkedin.com', icon: Linkedin, placeholder: 'https://linkedin.com/company/your-business' },
   { key: 'youtube_url', label: 'YouTube Channel', host: 'youtube.com', icon: Youtube, placeholder: 'https://youtube.com/@your-business' },
   { key: 'google_business_url', label: 'Google Business Profile — highly recommended', host: 'google.com', icon: Globe, placeholder: 'https://g.page/r/your-profile' },
+  { key: 'google_review_url', label: 'Google Reviews link', host: 'google.com', icon: Star, placeholder: 'https://g.page/r/your-profile/review' },
+  { key: 'yelp_url', label: 'Yelp', host: 'yelp.com', icon: Star, placeholder: 'https://yelp.com/biz/your-business' },
+  { key: 'bbb_url', label: 'Better Business Bureau (BBB)', host: 'bbb.org', icon: Shield, placeholder: 'https://bbb.org/us/your-listing' },
 ] as const;
 
 function normalizeWebsiteUrl(url: string) {
