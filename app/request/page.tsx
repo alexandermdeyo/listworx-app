@@ -435,6 +435,12 @@ export default function RequestPage() {
         <div className="absolute inset-0 bg-black/65" />
         <div className="relative z-10 container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-10">
+          <img
+            src="/Ironclad_Standards_Logo.png"
+            alt=""
+            className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
+            aria-hidden="true"
+          />
           <h1 className="text-5xl font-bold mb-4">Request a Contractor Referral</h1>
           <p className="text-xl text-muted-foreground">
             Submit your job details below. We&apos;ll return exactly three vetted, IronClad-certified contractors in your area — typically within a few hours. No account required.

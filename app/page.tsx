@@ -192,7 +192,15 @@ export default function LandingPage() {
 
       <section className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-4xl">
-          <h2 className="mb-4 text-4xl font-bold text-white">What IronClad Standards Mean</h2>
+          <div className="text-center">
+            <img
+              src="/Ironclad_Standards_Logo.png"
+              alt=""
+              className="mx-auto mb-6 h-24 md:h-32 w-auto drop-shadow-lg"
+              aria-hidden="true"
+            />
+            <h2 className="mb-4 text-4xl font-bold text-white">What IronClad Standards Mean</h2>
+          </div>
           <p className="mb-8 text-lg text-zinc-300">
             Every contractor in the ListWorx network is held to IronClad Standards. This is not a suggestion. It is the cost of being in the network.
           </p>

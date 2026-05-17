@@ -199,6 +199,12 @@ export default function ApplyPage() {
         ) : !state ? null : (
           <div>
             <div className="mb-8 text-center">
+              <img
+                src="/Ironclad_Standards_Logo.png"
+                alt=""
+                className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
+                aria-hidden="true"
+              />
               <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-3 tracking-tight">
                 Apply to Join the ListWorx Network
               </h1>

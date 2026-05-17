@@ -244,7 +244,15 @@ export default function FeedbackPage() {
 
             <div className="border-t pt-6 mt-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold">IronClad Standards Review</h3>
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <img
+                    src="/Ironclad_Standards_Logo.png"
+                    alt=""
+                    className="h-8 w-auto"
+                    aria-hidden="true"
+                  />
+                  IronClad Standards Review
+                </h3>
                 <p className="text-sm text-muted-foreground">Help us maintain our network quality.</p>
               </div>
 
