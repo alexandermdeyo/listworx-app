@@ -1,92 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createStripeServerClient } from '@/lib/stripe-server';
-import { getFounderActivationPriceId, getAddonPriceId, getAddonMode, type TierId } from '@/lib/stripe-prices';
-
-function getTierPriceId(tierId: string, billingPeriod: string) {
-  const normalizedTierId = (tierId || '').trim().toLowerCase();
-  const normalizedBilling = (billingPeriod || '').trim().toLowerCase();
-
-  const tierPriceMap: Record<string, { monthly?: string; annual?: string }> = {
-    basic: {
-      monthly: process.env.STRIPE_PRICE_BASIC_MONTHLY,
-      annual: process.env.STRIPE_PRICE_BASIC_ANNUAL,
-    },
-    preferred: {
-      monthly: process.env.STRIPE_PRICE_PREFERRED_MONTHLY,
-      annual: process.env.STRIPE_PRICE_PREFERRED_ANNUAL,
-    },
-    elite: {
-      monthly: process.env.STRIPE_PRICE_ELITE_MONTHLY,
-      annual: process.env.STRIPE_PRICE_ELITE_ANNUAL,
-    },
-  };
-
-  const tierConfig = tierPriceMap[normalizedTierId];
-
-  if (!tierConfig) {
-    throw new Error(`Unknown tierId: ${tierId}`);
-  }
-
-  const priceId = normalizedBilling === 'annual' ? tierConfig.annual : tierConfig.monthly;
-
-  if (!priceId) {
-    throw new Error(
-      `Missing Stripe price ID for tierId "${tierId}" with billing period "${billingPeriod}"`
-    );
-  }
-
-  return priceId;
-}
-
-function getAddOnPriceId(addOnId: string, billingPeriod: string) {
-  const normalizedAddOn = (addOnId || '').trim().toLowerCase();
-  const normalizedBilling = (billingPeriod || '').trim().toLowerCase();
-
-  const addOnPriceMap: Record<
-    string,
-    { one_time?: string; monthly?: string; annual?: string; mode: 'payment' | 'subscription' }
-  > = {
-    ironclad_badge_kit: {
-      one_time: process.env.STRIPE_ADDON_IRONCLAD_BADGE_KIT_ONETIME,
-      mode: 'payment',
-    },
-    featured_spotlight: {
-      monthly: process.env.STRIPE_ADDON_FEATURED_SPOTLIGHT_MONTHLY,
-      annual: process.env.STRIPE_ADDON_FEATURED_SPOTLIGHT_ANNUAL,
-      mode: 'subscription',
-    },
-  };
-
-  const addOnConfig = addOnPriceMap[normalizedAddOn];
-
-  if (!addOnConfig) {
-    throw new Error(`Unknown add-on ID: ${addOnId}`);
-  }
-
-  if (addOnConfig.mode === 'payment') {
-    if (!addOnConfig.one_time) {
-      throw new Error(`Missing Stripe one-time price ID for add-on "${addOnId}"`);
-    }
-
-    return {
-      priceId: addOnConfig.one_time,
-      mode: 'payment' as const,
-    };
-  }
-
-  const priceId = normalizedBilling === 'annual' ? addOnConfig.annual : addOnConfig.monthly;
-
-  if (!priceId) {
-    throw new Error(
-      `Missing Stripe subscription price ID for add-on "${addOnId}" with billing period "${billingPeriod}"`
-    );
-  }
-
-  return {
-    priceId,
-    mode: 'subscription' as const,
-  };
-}
+import {
+  STRIPE_PRICES,
+  getTierPriceId,
+  getFounderActivationPriceId,
+  getAddonPriceId,
+  getAddonMode,
+  type TierId,
+  type BillingPeriod,
+} from '@/lib/stripe-prices';
 
 export async function POST(request: NextRequest) {
   const stripe = createStripeServerClient();
@@ -154,7 +76,15 @@ export async function POST(request: NextRequest) {
       resolvedPriceId = addonPriceId;
       sessionMode = getAddonMode(addOnId);
     } else {
-      resolvedPriceId = getTierPriceId(tierId, billingPeriod);
+      const normalizedTierId = (tierId || '').trim().toLowerCase() as TierId;
+      const normalizedBilling: BillingPeriod =
+        (billingPeriod || '').trim().toLowerCase() === 'annual' ? 'annual' : 'monthly';
+      resolvedPriceId = getTierPriceId(normalizedTierId, normalizedBilling);
+      if (!resolvedPriceId) {
+        throw new Error(
+          `Missing Stripe price ID for tierId "${tierId}" with billing period "${billingPeriod}"`
+        );
+      }
       sessionMode = 'subscription';
     }
 
@@ -174,15 +104,15 @@ export async function POST(request: NextRequest) {
           ? 'TEST'
           : 'UNKNOWN',
       envSnapshot: {
-        basicMonthly: process.env.STRIPE_PRICE_BASIC_MONTHLY,
-        basicAnnual: process.env.STRIPE_PRICE_BASIC_ANNUAL,
-        preferredMonthly: process.env.STRIPE_PRICE_PREFERRED_MONTHLY,
-        preferredAnnual: process.env.STRIPE_PRICE_PREFERRED_ANNUAL,
-        eliteMonthly: process.env.STRIPE_PRICE_ELITE_MONTHLY,
-        eliteAnnual: process.env.STRIPE_PRICE_ELITE_ANNUAL,
-        spotlightMonthly: process.env.STRIPE_ADDON_FEATURED_SPOTLIGHT_MONTHLY,
-        spotlightAnnual: process.env.STRIPE_ADDON_FEATURED_SPOTLIGHT_ANNUAL,
-        badgeKitOneTime: process.env.STRIPE_ADDON_IRONCLAD_BADGE_KIT_ONETIME,
+        basicMonthly: STRIPE_PRICES.tiers.basic.monthly,
+        basicAnnual: STRIPE_PRICES.tiers.basic.annual,
+        preferredMonthly: STRIPE_PRICES.tiers.preferred.monthly,
+        preferredAnnual: STRIPE_PRICES.tiers.preferred.annual,
+        eliteMonthly: STRIPE_PRICES.tiers.elite.monthly,
+        eliteAnnual: STRIPE_PRICES.tiers.elite.annual,
+        spotlightMonthly: STRIPE_PRICES.addons.monthly.featured_spotlight,
+        spotlightAnnual: null,
+        badgeKitOneTime: STRIPE_PRICES.addons.onetime.ironclad_badge_kit,
       },
     });
 
