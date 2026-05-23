@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Award, Briefcase, FileText, Clock, Target, CheckCheck, Phone, CircleAlert as AlertCircle, ArrowRight, Lock, Star, Crown } from 'lucide-react';
+import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Award, Briefcase, FileText, Clock, Target, CheckCheck, Phone, CircleAlert as AlertCircle, ArrowRight, Lock, Star, Crown, Wrench, Camera, Video, Film, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
@@ -14,29 +14,152 @@ export default function ContractorsPage() {
     <PageShell surface="dark">
       <Navigation />
 
-      <section className="bg-gradient-to-br from-zinc-950 via-lw-dark to-black border-b border-lw-rust/30 py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto grid max-w-6xl gap-8 rounded-2xl border border-lw-rust/30 bg-zinc-950/90 p-6 shadow-2xl shadow-black/30 md:p-10 lg:grid-cols-[170px_1fr] lg:items-center">
-            <div className="flex justify-center lg:justify-start">
-              <Image src="/ironclad_founder_shield_logo.png" alt="IronClad Founding Partner" width={152} height={152} className="h-36 w-auto" />
+      {/* FOUNDING PARTNER — REDESIGNED */}
+      <section className="bg-zinc-950 border-b border-zinc-800">
+        <div className="border-l-[6px] border-lw-rust py-16 md:py-20">
+          <div className="container mx-auto px-4">
+
+            {/* Badge */}
+            <div className="mb-8 text-center">
+              <span className="inline-block rounded-full bg-lw-rust px-5 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
+                Founding Partner Program — Limited Spots
+              </span>
             </div>
-            <div>
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-lw-rust">Limited Founding Partner Availability</p>
-              <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">Founding Partners Lock In Their County. Everyone Else Pays Full Price.</h2>
-              <p className="max-w-4xl text-base leading-relaxed text-zinc-100 md:text-lg">
-                Here&apos;s the deal — $199 gets you in as a Founding Partner. That&apos;s it. One time. From that point your monthly rate locks in at as low as $159/month and stays there forever. Standard pricing runs up to $599/month for contractors who join later. You&apos;d be saving up to $440 every single month compared to what the next guy pays. Do that math over a couple years.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {['Territory reservation', 'Founding Partner badge (permanent)', 'Priority rotation', 'Locked pricing for life', 'IronClad decal package'].map(item => (
-                  <span key={item} className="rounded-full border border-lw-rust/30 bg-lw-rust/10 px-3 py-1.5 text-xs font-semibold text-zinc-100">{item}</span>
-                ))}
+
+            {/* Heading */}
+            <h2 className="mb-4 text-center text-4xl font-bold text-white md:text-6xl">
+              Get in before the price changes.
+            </h2>
+
+            {/* Subheading */}
+            <p className="mx-auto mb-12 max-w-2xl text-center text-lg text-zinc-400">
+              The Founding Partner program is still open. When the spots are gone it closes permanently and standard pricing takes over. This is not a marketing tactic — it is just how it works.
+            </p>
+
+            {/* Tier cards */}
+            <div className="mx-auto mb-8 grid max-w-5xl gap-6 md:grid-cols-3">
+
+              {/* Basic Founder */}
+              <div className="rounded-2xl border border-zinc-700 bg-zinc-900 p-7 text-center">
+                <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-zinc-400">Basic Founder</h3>
+                <div className="mb-1 text-5xl font-bold text-white">
+                  $159<span className="text-xl font-normal text-zinc-500">/mo</span>
+                </div>
+                <p className="mb-2 text-sm text-zinc-500">vs $199/mo standard</p>
+                <p className="mb-5 text-sm font-semibold text-lw-rust">Save $40 every month forever</p>
+                <p className="mb-6 text-xs text-zinc-600">$199 one-time activation</p>
+                <Link href="/founding-partner" className="block">
+                  <Button className="w-full border border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700">
+                    Claim Your Spot
+                  </Button>
+                </Link>
               </div>
-              <Link href="/founding-partner" className="mt-7 inline-flex">
-                <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">
-                  Reserve My Founding Partner Spot <ArrowRight className="ml-2 h-4 w-4" />
+
+              {/* Preferred Founder — highlighted */}
+              <div className="relative rounded-2xl border-2 border-lw-rust bg-zinc-900 p-7 text-center shadow-xl shadow-lw-rust/10">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                  <span className="rounded-full bg-lw-rust px-4 py-1 text-xs font-bold text-white">Most Popular</span>
+                </div>
+                <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-zinc-400">Preferred Founder</h3>
+                <div className="mb-1 text-5xl font-bold text-white">
+                  $279<span className="text-xl font-normal text-zinc-500">/mo</span>
+                </div>
+                <p className="mb-2 text-sm text-zinc-500">vs $349/mo standard</p>
+                <p className="mb-5 text-sm font-semibold text-lw-rust">Save $70 every month forever</p>
+                <p className="mb-6 text-xs text-zinc-600">$199 one-time activation</p>
+                <Link href="/founding-partner" className="block">
+                  <Button className="w-full bg-lw-rust text-white hover:bg-lw-rust-hover">
+                    Claim Your Spot
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Elite Founder */}
+              <div className="rounded-2xl border border-zinc-700 bg-zinc-900 p-7 text-center">
+                <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-zinc-400">Elite Founder</h3>
+                <div className="mb-1 text-5xl font-bold text-white">
+                  $479<span className="text-xl font-normal text-zinc-500">/mo</span>
+                </div>
+                <p className="mb-2 text-sm text-zinc-500">vs $599/mo standard</p>
+                <p className="mb-5 text-sm font-semibold text-lw-rust">Save $120 every month forever</p>
+                <p className="mb-6 text-xs text-zinc-600">$199 one-time activation</p>
+                <Link href="/founding-partner" className="block">
+                  <Button className="w-full border border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700">
+                    Claim Your Spot
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Below-cards copy */}
+            <div className="text-center">
+              <p className="mb-3 text-sm text-zinc-400">
+                $199 activation. Billing starts immediately at your locked rate. No trial. No games.
+              </p>
+              <p className="mx-auto max-w-xl text-sm text-zinc-500">
+                Every Founding Partner profile displays the IronClad Founding Partner badge — a permanent marker that you were here from the beginning.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* CONTRACTOR STUDIO — COMING SOON */}
+      <section className="border-b border-zinc-800 bg-zinc-900 py-16 md:py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-4xl">
+
+            {/* Badge */}
+            <div className="mb-8 text-center">
+              <span className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-800 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-zinc-300">
+                <Wrench className="h-3 w-3" />
+                Coming Soon — Contractor Studio
+              </span>
+            </div>
+
+            {/* Heading */}
+            <h2 className="mb-6 text-center text-3xl font-bold text-white md:text-5xl">
+              We are building your marketing department.
+            </h2>
+
+            {/* Body */}
+            <p className="mx-auto mb-4 max-w-2xl text-center text-lg text-zinc-400">
+              Most contractors are great at the work and terrible at talking about it. Not because they do not care — because nobody ever built them the right tools. That is changing.
+            </p>
+            <p className="mx-auto mb-10 max-w-2xl text-center text-lg text-zinc-400">
+              Contractor Studio is coming to ListWorx. It is a set of marketing tools built specifically for the trades — not generic social media stuff repurposed from some influencer platform. Built for contractors, by people who actually respect what you do.
+            </p>
+
+            {/* Feature list */}
+            <div className="mb-10 grid gap-4 sm:grid-cols-2">
+              {[
+                { icon: Camera, text: 'Before and after post generator — upload your job photos and walk away with a ready-to-post social media post that shows your work' },
+                { icon: Star, text: 'Review request templates — text-ready messages you send to clients after a job to ask for a Google review without feeling awkward about it' },
+                { icon: FileText, text: 'Seasonal promotion posts — HVAC tune-up specials, spring cleaning packages, whatever fits your trade' },
+                { icon: Video, text: 'Job site video scripts — short scripts written for phone-filmed job site clips that actually get watched' },
+                { icon: Film, text: 'Slideshow videos — your job photos turned into a shareable video automatically' },
+                { icon: MessageSquare, text: 'Business profile copy — a bio written for your Google Business page, Facebook, and Nextdoor that sounds like you wrote it yourself' },
+              ].map(({ icon: Icon, text }) => (
+                <div key={text} className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-4">
+                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+                  <p className="text-sm text-zinc-300">{text}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom copy + CTA */}
+            <p className="mb-6 text-center text-sm text-zinc-400">
+              Contractor Studio will be included in Preferred and Elite tiers. Basic subscribers can add it for a small monthly fee.
+            </p>
+            <div className="text-center">
+              <Link href="/contact">
+                <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800 hover:text-white">
+                  I want early access
                 </Button>
               </Link>
             </div>
+
           </div>
         </div>
       </section>
