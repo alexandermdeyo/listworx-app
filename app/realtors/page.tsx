@@ -350,7 +350,7 @@ export default function RealtorsPage() {
             <h3 className="text-xl font-bold text-white mb-2">And there&apos;s more coming.</h3>
             <p className="text-zinc-400 mb-8">Neighborhood guides. Slideshow videos. AI voiceovers. Automated social campaigns. We&apos;re building it fast and Listing Studio subscribers get it first.</p>
 
-            <Link href="/pricing">
+            <Link href="/listing-studio">
               <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">
                 See what&apos;s included
                 <ArrowRight className="ml-2 h-5 w-5" />
