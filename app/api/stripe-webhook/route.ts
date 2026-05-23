@@ -216,14 +216,11 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
     return;
   }
 
-  const trialEnd = Math.floor(Date.now() / 1000) + 365 * 24 * 60 * 60;
-  const trialEndsAt = new Date(trialEnd * 1000).toISOString();
   const customerId = session.customer;
 
   const subscription = await stripe.subscriptions.create({
     customer: customerId,
     items: [{ price: renewalPriceId }],
-    trial_end: trialEnd,
     metadata: {
       contractor_id: contractorId,
       contractorId,
@@ -244,13 +241,13 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
     .update({
       stripe_customer_id: customerId,
       stripe_subscription_id: subscription.id,
-      subscription_status: 'trialing',
+      subscription_status: 'active',
       subscription_tier: founderTier,
       founder_status: true,
       founding_partner_badge: true,
       founder_tier: founderTier,
       founder_activation_paid_at: now,
-      trial_ends_at: trialEndsAt,
+      trial_ends_at: null,
       partner_status: PARTNER_STATUS.ACTIVE,
       updated_at: now,
     })
@@ -305,8 +302,8 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
               <p style="margin:0 0 14px;font-size:18px;font-weight:700;color:#111111;text-transform:capitalize;">${founderTier} Founder</p>
               <p style="margin:0 0 6px;font-size:13px;color:#666666;">Territory</p>
               <p style="margin:0 0 14px;font-size:16px;font-weight:600;color:#111111;">${territory}</p>
-              <p style="margin:0 0 6px;font-size:13px;color:#666666;">First 12 months</p>
-              <p style="margin:0 0 14px;font-size:16px;font-weight:600;color:#111111;">Included — no monthly charge until ${new Date(trialEndsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+              <p style="margin:0 0 6px;font-size:13px;color:#666666;">Billing starts</p>
+              <p style="margin:0 0 14px;font-size:16px;font-weight:600;color:#111111;">Immediately — your locked rate begins today</p>
               <p style="margin:0 0 6px;font-size:13px;color:#666666;">Locked renewal rate</p>
               <p style="margin:0;font-size:16px;font-weight:600;color:#111111;">${renewalAmount}/month — for life</p>
             </td></tr>
@@ -328,7 +325,7 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
     </td></tr>
   </table>
 </body></html>`,
-      text: `Welcome to ListWorx. You are now a Founding Partner. Tier: ${founderTier}. Territory: ${territory}. Billing begins ${new Date(trialEndsAt).toLocaleDateString('en-US')} at ${renewalAmount}/month. IronClad Standards still apply.`,
+      text: `Welcome to ListWorx. You are now a Founding Partner. Tier: ${founderTier}. Territory: ${territory}. Your locked rate of ${renewalAmount}/month begins immediately. IronClad Standards still apply.`,
     }).catch((emailError) => console.error('[stripe-webhook] Founding Partner email failed', emailError));
   }
 }
