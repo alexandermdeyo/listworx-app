@@ -70,6 +70,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Create role-specific profile row.
+    // Non-blocking — log the error but let signup succeed.
+    // A missing profile can be repaired; a failed signup loses the user.
+    if (role === 'REALTOR') {
+      const { error: profileError } = await supabase
+        .from('realtor_profiles')
+        .upsert({ user_id: id }, { onConflict: 'user_id', ignoreDuplicates: true });
+      if (profileError) {
+        console.error('UPSERT REALTOR PROFILE FAILED:', profileError);
+      }
+    } else if (role === 'HOMEOWNER') {
+      const { error: profileError } = await supabase
+        .from('requestor_profiles')
+        .upsert(
+          { user_id: id, user_type: 'homeowner' },
+          { onConflict: 'user_id', ignoreDuplicates: true }
+        );
+      if (profileError) {
+        console.error('UPSERT REQUESTOR PROFILE (HOMEOWNER) FAILED:', profileError);
+      }
+    } else if (role === 'PROPERTY_MANAGER') {
+      const { error: profileError } = await supabase
+        .from('requestor_profiles')
+        .upsert(
+          { user_id: id, user_type: 'property_manager' },
+          { onConflict: 'user_id', ignoreDuplicates: true }
+        );
+      if (profileError) {
+        console.error('UPSERT REQUESTOR PROFILE (PROPERTY_MANAGER) FAILED:', profileError);
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('UPSERT APP USER ROUTE ERROR:', error);

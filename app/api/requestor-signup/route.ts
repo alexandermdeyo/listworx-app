@@ -1,3 +1,14 @@
+/*
+ * DEPRECATED — Do not call this route.
+ * Requestor and realtor signup is handled entirely
+ * by /api/upsert-app-user which correctly creates
+ * the users row and the appropriate profile row.
+ * This route has incorrect column references and
+ * hardcoded wrong role values.
+ * TODO: Delete this file after confirming no
+ * external integrations reference it.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -9,7 +20,14 @@ function createAdminClient() {
   );
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
+  return NextResponse.json(
+    { error: 'This endpoint is deprecated' },
+    { status: 410 }
+  );
+}
+
+async function POST_DEPRECATED(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, password, name, requestorRole, companyName } = body;

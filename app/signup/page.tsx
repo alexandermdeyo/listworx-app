@@ -389,6 +389,16 @@ export default function SignupPage() {
               Privacy Policy
             </Link>
           </p>
+
+          <p className="text-center text-sm text-lw-text/50 mt-3">
+            Already have an account?{' '}
+            <Link
+              href="/login"
+              className="text-lw-rust hover:underline font-medium"
+            >
+              Log in
+            </Link>
+          </p>
         </div>
       </div>
     </PageShell>
