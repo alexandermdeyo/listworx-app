@@ -33,6 +33,7 @@ import {
   Star,
   LayoutDashboard,
   Settings,
+  CircleCheck as CheckCircle,
 } from 'lucide-react';
 
 type JobRequest = {
@@ -123,6 +124,7 @@ export default function RequestorDashboardPage() {
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState<string | null>(null);
   const [realtorProfile, setRealtorProfile] = useState<RealtorProfile | null>(null);
+  const [selectingReferral, setSelectingReferral] = useState<Set<string>>(new Set());
 
   const loadUser = useCallback(async () => {
     try {
@@ -174,6 +176,28 @@ export default function RequestorDashboardPage() {
       // Continue redirecting even if the remote sign-out call fails.
     }
     window.location.href = '/login';
+  }
+
+  async function handleSelectContractor(referralId: string) {
+    setSelectingReferral(prev => new Set(prev).add(referralId));
+    try {
+      const res = await fetch('/api/requestor/select-contractor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ referralId }),
+      });
+      if (res.ok) {
+        await loadDashboard();
+      }
+    } catch (err) {
+      console.error('Failed to select contractor:', err);
+    } finally {
+      setSelectingReferral(prev => {
+        const next = new Set(prev);
+        next.delete(referralId);
+        return next;
+      });
+    }
   }
 
   const referralsByRequest = useMemo(() => {
@@ -467,6 +491,30 @@ export default function RequestorDashboardPage() {
                                   <BookmarkCheck className="h-4 w-4 mr-2" />
                                   Save Contractor
                                 </Button>
+                                {referral.status === 'CONTACTED' ? (
+                                  <div className="flex items-center gap-2 text-green-400 text-sm py-1">
+                                    <CheckCircle className="h-4 w-4 shrink-0" />
+                                    <span>Your pick — we notified ListWorx</span>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    onClick={() => handleSelectContractor(referral.id)}
+                                    disabled={selectingReferral.has(referral.id)}
+                                    className="w-full bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600"
+                                  >
+                                    {selectingReferral.has(referral.id) ? (
+                                      <>
+                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                        Saving...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <CheckCircle className="h-4 w-4 mr-2" />
+                                        I picked this one
+                                      </>
+                                    )}
+                                  </Button>
+                                )}
                                 {job.feedback_token ? (
                                   <Link href={`/feedback/${job.feedback_token}`} className="block">
                                     <Button variant="outline" className="w-full border-lw-rust/30 text-foreground hover:bg-lw-rust/10">
