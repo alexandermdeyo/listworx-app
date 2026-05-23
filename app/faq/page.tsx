@@ -21,11 +21,11 @@ const founderFaqs = [
 ];
 
 const requestorFaqs = [
-  ['How do I request a contractor?', 'Use the Request a Referral form on our homepage. Describe the work you need done, your location, and your timeline. We will match you with up to three vetted contractors.'],
+  ['How do I request a contractor?', 'The moment you submit a request ListWorx gets to work. Within about 30 seconds you will see three contractor cards on your screen — company name, contact info, a link to their full profile, and their IronClad status if they have earned it.\n\nYou will also get an email with those same three cards so you have everything in one place.\n\nFrom there it is completely up to you. Review the contractors, check out their profiles, and reach out to whoever feels like the right fit. Nobody is going to pressure you and no contractor is going to blow up your phone because they do not have your number.\n\nWhen you have made your choice just mark who you picked in your dashboard. We keep track of it so we can follow up after the job and make sure everything went the way it should.'],
   ['Why only three contractors per request?', 'Most lead-generation services dump your contact info to 20+ contractors who all call you within minutes. We do not do that. We send you the best three matches in your area. You decide who to talk to.'],
   ['Do contractors pay to be shown to me?', 'Contractors pay a monthly subscription to be in our network, but their placement in your referral list is determined by tier, IronClad compliance, and territory — not by paying for individual leads. We are not pay-to-play.'],
-  ['Can I request a specific contractor?', 'If you know which ListWorx contractor you want to work with, you can find their profile directly in the contractor directory and contact them.'],
-  ['What information do you share with the contractors?', 'Your name, contact info, the type of work you need, and your service area. That is it. We do not share your personal information beyond what is needed for the contractor to reach out.'],
+  ['Can I request a specific contractor?', 'Not directly through a job request — but your dashboard keeps track of contractors you have worked with before. If you had a great experience with someone you can find them in your saved contractors and reach out to them directly through their profile page.\n\nWe are also building a preferred contractor feature for realtors specifically — so the contractors you trust show up first when it matters.'],
+  ['What information do you share with the contractors?', 'None of your personal contact information goes to the contractors. That is not how we work.\n\nWhen a referral goes out, each matched contractor gets an email that tells them the service category, the county, whether the request came from a homeowner or a realtor, and a summary of the job. That is it. No name. No phone number. No email address. Nothing they can use to track you down.\n\nYou get their information — not the other way around. You review the three contractors we matched you with, decide who you want to reach out to, and you make the call. The power stays with you.'],
 ];
 
 function FaqGroup({ title, faqs }: { title: string; faqs: string[][] }) {
@@ -33,12 +33,22 @@ function FaqGroup({ title, faqs }: { title: string; faqs: string[][] }) {
     <section className="mb-12">
       <h2 className="mb-6 text-3xl font-bold text-white">{title}</h2>
       <div className="space-y-4">
-        {faqs.map(([q, a]) => (
-          <div key={q} className="rounded-lg border border-lw-dark-border bg-lw-dark-card p-6">
-            <h3 className="mb-2 text-lg font-bold text-white">{q}</h3>
-            <p className="text-zinc-300 leading-relaxed">{a}</p>
-          </div>
-        ))}
+        {faqs.map(([q, a]) => {
+          const paragraphs = a.split('\n\n');
+          return (
+            <div key={q} className="rounded-lg border border-lw-dark-border bg-lw-dark-card p-6">
+              <h3 className="mb-2 text-lg font-bold text-white">{q}</h3>
+              {paragraphs.map((para, i) => (
+                <p
+                  key={i}
+                  className={`text-zinc-300 leading-relaxed${i < paragraphs.length - 1 ? ' mb-3' : ''}`}
+                >
+                  {para}
+                </p>
+              ))}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
