@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
 
 const features = [
-  ['12 Months Included Access', '$199 activation fee covers your first full year in the network. No monthly charges until month 13.'],
+  ['Rate Locked From Day One', 'The rate you activate at is the rate you pay forever. Not until next year. Not after a trial. From the moment you activate, that number is yours for life.'],
   ['Founding Partner Badge', 'Displayed on every referral we send. Realtors and homeowners see it. It signals you were vetted, you were first, and you earned it.'],
   ['Price Lock — For Life', 'Your renewal rate is locked permanently as long as you stay active and maintain IronClad Standards. Standard pricing goes up over time. Your founder rate never does.'],
   ['Territory Reservation', 'Your trade and county is reserved for you. When your spot fills, no other contractor of the same trade joins at founder pricing in your county.'],
@@ -16,8 +16,7 @@ const features = [
 
 const pricingRows = [
   ['Activation Fee', '$199 one-time', '$199 one-time', '$199 one-time'],
-  ['First 12 Months', 'Included', 'Included', 'Included'],
-  ['Renewal Rate', '$159/month', '$279/month', '$479/month'],
+  ['Locked Monthly Rate', '$159/mo', '$279/mo', '$479/mo'],
   ['Standard Rate', '$199/month', '$349/month', '$599/month'],
   ['You Save', '$40/mo forever', '$70/mo forever', '$120/mo forever'],
   ['Spots Per County', '10 per trade', '5 per trade', '2 per trade'],
@@ -29,7 +28,7 @@ const spots = [
 ];
 
 const faqs = [
-  ['Is the $199 a monthly fee?', 'No. It is a one-time activation fee. Your first 12 months of network access are included. After that, you are billed at your locked founder renewal rate — $159, $279, or $479/month depending on your tier.'],
+  ['Is the $199 a monthly fee?', "Here's how it works — you pay the $199 activation fee to lock in your spot. That's a one-time thing. Then your monthly billing kicks in immediately at your locked founder rate. Basic founders pay $159/month. Preferred pay $279. Elite pay $479. Those numbers never go up. Ever. People who join after the founding period closes will pay standard pricing — $199, $349, or $599 a month. You won't."],
   ['What happens if I cancel and want to come back?', 'If you cancel your subscription, your Founding Partner pricing is permanently forfeited. You would re-enter at standard pricing. We recommend pausing rather than canceling if you need a break — contact us and we will work with you.'],
   ['Can my Founding Partner status be taken away?', 'Yes. Founders who violate IronClad Standards — ghosting customers, letting insurance lapse, unprofessional conduct — lose Founding Partner status and may be removed from the network entirely. This is how we protect the network for everyone.'],
   ['What is the referral volume guarantee?', 'There is none. ListWorx does not guarantee a specific number of referrals. What we guarantee is that when requestors in your area submit a job in your trade, you are in the rotation to be one of the three referrals returned — prioritized by tier and IronClad compliance. Referral volume grows as the network grows.'],

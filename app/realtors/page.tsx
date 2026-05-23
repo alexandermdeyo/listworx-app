@@ -313,6 +313,53 @@ export default function RealtorsPage() {
         </div>
       </section>
 
+      {/* LISTING STUDIO */}
+      <section className="py-20 bg-zinc-950 border-y border-zinc-800">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-4">
+              <span className="inline-flex items-center gap-2 rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-1.5 text-sm font-semibold text-lw-rust">
+                <Zap className="h-4 w-4" />
+                Listing Studio
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+              Now we built you something else.
+            </h2>
+            <div className="space-y-4 text-lg text-zinc-300 mb-10 max-w-3xl">
+              <p>You&apos;ve been generating your own marketing content forever. Writing captions at 10pm. Tweaking Canva templates between showings. Sending the same open house email you&apos;ve sent forty times. That&apos;s done.</p>
+              <p>Listing Studio is built into your ListWorx account. Put in your property details and walk away with Instagram captions, Facebook posts, a LinkedIn update, your email campaign, an open house announcement, and a rewritten property description — all in about 30 seconds.</p>
+              <p>It also builds you a shareable listing page for every property. Clean, fast, branded to you. Text the link to a client. Drop it in your bio. Done.</p>
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-4">What you actually get</h3>
+            <ul className="space-y-3 mb-10">
+              {[
+                'Content packages — every caption, post, and email you need for a listing, generated together in one shot',
+                'Branded landing pages — a real URL for every listing, ready to share the same day it goes live',
+                'PDF flyers — listing flyers and open house flyers, built from your data and branded to you',
+                'Your brand on everything — your name, photo, colors, and contact info baked into every asset',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+                  <span className="text-zinc-300">{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            <h3 className="text-xl font-bold text-white mb-2">And there&apos;s more coming.</h3>
+            <p className="text-zinc-400 mb-8">Neighborhood guides. Slideshow videos. AI voiceovers. Automated social campaigns. We&apos;re building it fast and Listing Studio subscribers get it first.</p>
+
+            <Link href="/pricing">
+              <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">
+                See what&apos;s included
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* BOTTOM CTA */}
       <section className="py-20 bg-primary">
         <div className="container mx-auto px-4">

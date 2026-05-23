@@ -12,11 +12,10 @@ const standardPlans = [
 ];
 
 const pricingRows = [
-  ['Activation Fee', '$149 one-time', '$149 one-time', '$149 one-time'],
-  ['First 12 Months', 'Included', 'Included', 'Included'],
-  ['Renewal Rate', '$99/month', '$199/month', '$349/month'],
+  ['Activation Fee', '$199 one-time', '$199 one-time', '$199 one-time'],
+  ['Locked Monthly Rate', '$159/mo', '$279/mo', '$479/mo'],
   ['Standard Rate', '$199/month', '$349/month', '$599/month'],
-  ['You Save', '$100/mo forever', '$150/mo forever', '$250/mo forever'],
+  ['You Save', '$40/mo forever', '$70/mo forever', '$120/mo forever'],
   ['Spots Per County', '10 per trade', '5 per trade', '2 per trade'],
 ];
 
@@ -45,7 +44,7 @@ export default function PricingPage() {
 
       <section id="founder" className="container mx-auto px-4 py-16">
         <h2 className="text-4xl font-bold text-white">Founding Partner Pricing</h2>
-        <p className="mb-6 text-zinc-400">Limited spots. Permanent price lock. First year included.</p>
+        <p className="mb-6 text-zinc-400">Limited spots. When they're gone, this offer closes for good. Your rate locks in on day one — and nobody joining after you will ever see it again.</p>
         <div className="overflow-x-auto rounded-xl border border-zinc-800">
           <table className="w-full min-w-[760px] bg-zinc-950 text-left text-sm">
             <thead><tr>{['', 'Basic Founder', 'Preferred Founder', 'Elite Founder'].map(h => <th key={h} className="p-4 text-white">{h}</th>)}</tr></thead>
@@ -58,7 +57,7 @@ export default function PricingPage() {
 
       <section className="container mx-auto px-4 py-16 text-center">
         <h2 className="text-4xl font-bold text-white">Free for Realtors and Homeowners</h2>
-        <p className="mx-auto my-5 max-w-2xl text-zinc-400">ListWorx is always free for requestors. Submit a job request, receive three vetted referrals, connect directly with your contractor. No account required.</p>
+        <p className="mx-auto my-5 max-w-2xl text-zinc-400">Job referrals are always free for realtors and homeowners. Always. That part never changes. Realtors who want access to Listing Studio — our marketing and content platform — can add that separately. More on that below.</p>
         <Link href="/request"><Button variant="outline" className="border-lw-rust text-lw-rust hover:bg-lw-rust hover:text-white">Request a Referral</Button></Link>
       </section>
     </PageShell>

@@ -836,8 +836,7 @@ export default function SubscriptionSection({
               </div>
               <h3 className="text-2xl font-bold text-white">Become a Founding Partner</h3>
               <p className="mt-1 text-sm text-zinc-300">
-                One-time $199 activation fee. 12 months of network access included.
-                Lock in founder renewal pricing for life.
+                One-time $199 activation. Your locked rate starts immediately — and it never goes up. Ever.
               </p>
             </div>
             <div className="flex flex-col items-center gap-3">
@@ -855,7 +854,7 @@ export default function SubscriptionSection({
 
           <div className="mb-4">
             <p className="mb-2 text-sm font-semibold text-white">
-              Choose your locked founder tier (renewal rate after year 1):
+              Choose your tier. This is the rate you'll pay every month — locked in for life.
             </p>
             <div className="grid gap-3 md:grid-cols-3">
               {FOUNDER_TIERS.map((tier) => {
@@ -876,7 +875,7 @@ export default function SubscriptionSection({
                       ${tier.renewalRate}/mo
                     </div>
                     <div className="text-xs text-zinc-400">
-                      after year 1 • save ${tier.savings}/mo
+                      locked forever • save ${tier.savings}/mo vs standard
                     </div>
                     <div className="mt-2 text-xs text-zinc-400">
                       {tier.spots} spots / county
