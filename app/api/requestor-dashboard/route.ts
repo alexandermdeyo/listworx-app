@@ -41,6 +41,26 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient();
 
+    // Fetch the user's role so the dashboard can render role-specific sections.
+    const { data: userData } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    const userRole: string | null = userData?.role ?? null;
+
+    // If the user is a REALTOR, fetch their Listing Studio profile.
+    let realtorProfile: Record<string, any> | null = null;
+    if (userRole === 'REALTOR') {
+      const { data: rp } = await supabase
+        .from('realtor_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      realtorProfile = rp ?? null;
+    }
+
     const { data: requestorProfile, error: requestorProfileError } = await supabase
       .from('requestor_profiles')
       .select('id')
@@ -57,6 +77,8 @@ export async function GET(request: NextRequest) {
     if (!requestorProfile?.id) {
       return NextResponse.json({
         success: true,
+        userRole,
+        realtorProfile,
         requests: [],
         referrals: [],
       });
@@ -81,6 +103,8 @@ export async function GET(request: NextRequest) {
     if (requestIds.length === 0) {
       return NextResponse.json({
         success: true,
+        userRole,
+        realtorProfile,
         requests,
         referrals: [],
       });
@@ -133,6 +157,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      userRole,
+      realtorProfile,
       requests,
       referrals: hydratedReferrals,
     });

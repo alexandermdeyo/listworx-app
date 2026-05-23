@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/DashboardLayout';
 import type { NavItem } from '@/components/DashboardLayout';
+import { SubscriptionCards } from '@/components/listing-studio/SubscriptionCards';
+import type { RealtorProfile } from '@/components/listing-studio/SubscriptionCards';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -119,6 +121,8 @@ export default function RequestorDashboardPage() {
   const [jobRequests, setJobRequests] = useState([] as JobRequest[]);
   const [referrals, setReferrals] = useState([] as Referral[]);
   const [userName, setUserName] = useState('');
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [realtorProfile, setRealtorProfile] = useState<RealtorProfile | null>(null);
 
   const loadUser = useCallback(async () => {
     try {
@@ -149,6 +153,8 @@ export default function RequestorDashboardPage() {
 
       setJobRequests(Array.isArray(data?.requests) ? data.requests : []);
       setReferrals(Array.isArray(data?.referrals) ? data.referrals : []);
+      setUserRole(data?.userRole ?? null);
+      setRealtorProfile(data?.realtorProfile ?? null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard.');
     } finally {
@@ -268,6 +274,13 @@ export default function RequestorDashboardPage() {
           </div>
         ))}
       </div>
+
+      {/* Listing Studio — visible to realtors only */}
+      {userRole === 'REALTOR' && (
+        <div className="mb-6">
+          <SubscriptionCards realtorProfile={realtorProfile} />
+        </div>
+      )}
 
       {loading ? (
         <Card className="p-10">
