@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type Stripe from 'stripe';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import { createStripeServerClient } from '@/lib/stripe-server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
@@ -44,13 +45,25 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-        await handleSubscriptionUpdated(event.data.object);
+      case 'customer.subscription.updated': {
+        const sub = event.data.object as any;
+        if (sub.metadata?.user_type === 'realtor') {
+          await handleRealtorSubscriptionUpdated(sub);
+        } else {
+          await handleSubscriptionUpdated(sub);
+        }
         break;
+      }
 
-      case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(event.data.object);
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object as any;
+        if (sub.metadata?.user_type === 'realtor') {
+          await handleRealtorSubscriptionUpdated(sub);
+        } else {
+          await handleSubscriptionDeleted(sub);
+        }
         break;
+      }
 
       case 'invoice.payment_succeeded':
         await handlePaymentSucceeded(event.data.object);
@@ -124,6 +137,12 @@ async function handleCheckoutCompleted(session: any) {
     stripeSubscriptionId: session.subscription,
     stripeCustomerId: session.customer,
   });
+
+  if (session.metadata?.user_type === 'realtor' &&
+      session.metadata?.product === 'listing_studio') {
+    await handleRealtorListingStudioCheckout(session);
+    return;
+  }
 
   if (!contractorId) {
     console.error('[stripe-webhook] No contractor ID in checkout session');
@@ -327,6 +346,207 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
 </body></html>`,
       text: `Welcome to ListWorx. You are now a Founding Partner. Tier: ${founderTier}. Territory: ${territory}. Your locked rate of ${renewalAmount}/month begins immediately. IronClad Standards still apply.`,
     }).catch((emailError) => console.error('[stripe-webhook] Founding Partner email failed', emailError));
+  }
+}
+
+async function handleRealtorListingStudioCheckout(session: any) {
+  const stripe = getStripe();
+  const supabase = getSupabase();
+  const userId = session.metadata?.user_id;
+
+  if (!userId) {
+    console.error('[stripe-webhook] No user_id in realtor checkout session metadata');
+    return;
+  }
+
+  const subscriptionId = session.subscription;
+  if (!subscriptionId) {
+    console.error('[stripe-webhook] No subscription ID in realtor checkout session');
+    return;
+  }
+
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const priceId = subscription.items.data[0]?.price?.id;
+
+  if (!priceId) {
+    console.error('[stripe-webhook] No price ID found in realtor checkout');
+    return;
+  }
+
+  const PRICE_TO_TIER: Record<string, string> = {
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '']: 'starter',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL || '']: 'starter',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY || '']: 'pro_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL || '']: 'pro_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL || '']: 'founding_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL || '']: 'founding_pro_agent',
+  };
+
+  const TIER_LIMITS: Record<string, { content_packages: number; flyers: number; landing_pages: number; slideshow_videos: number }> = {
+    starter:           { content_packages: 8,  flyers: 5,  landing_pages: 5,  slideshow_videos: 0 },
+    agent:             { content_packages: 25, flyers: 15, landing_pages: 15, slideshow_videos: 0 },
+    pro_agent:         { content_packages: 60, flyers: 40, landing_pages: 40, slideshow_videos: 5 },
+    founding_agent:    { content_packages: 25, flyers: 15, landing_pages: 15, slideshow_videos: 0 },
+    founding_pro_agent:{ content_packages: 60, flyers: 40, landing_pages: 40, slideshow_videos: 5 },
+  };
+
+  const tier = PRICE_TO_TIER[priceId] || 'starter';
+  const limits = TIER_LIMITS[tier] || TIER_LIMITS.starter;
+  const isFounder = tier.startsWith('founding_');
+  const baseTier = isFounder ? tier.replace('founding_', '') : tier;
+
+  const price = subscription.items.data[0]?.price;
+  const interval = (price as any)?.recurring?.interval === 'year' ? 'annual' : 'monthly';
+
+  console.log('[stripe-webhook] realtor listing_studio checkout', {
+    userId,
+    tier,
+    baseTier,
+    isFounder,
+    interval,
+    subscriptionId,
+  });
+
+  const { error } = await supabase
+    .from('realtor_profiles')
+    .update({
+      stripe_customer_id: session.customer,
+      stripe_subscription_id: subscriptionId,
+      listing_studio_tier: baseTier,
+      listing_studio_status: 'active',
+      listing_studio_interval: interval,
+      listing_studio_is_founder: isFounder,
+      realtor_plan: baseTier,
+      subscription_status: 'active',
+      directory_listed: true,
+      content_packages_remaining: limits.content_packages,
+      flyers_remaining: limits.flyers,
+      landing_pages_remaining: limits.landing_pages,
+      slideshow_videos_remaining: limits.slideshow_videos,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('[stripe-webhook] Error updating realtor_profiles for listing studio checkout:', error);
+    return;
+  }
+
+  console.log(`[stripe-webhook] Realtor ${userId} activated Listing Studio tier=${baseTier} isFounder=${isFounder}`);
+}
+
+async function handleRealtorSubscriptionUpdated(subscription: any) {
+  const stripe = getStripe();
+  const supabase = getSupabase();
+  const userId = subscription.metadata?.user_id;
+
+  if (!userId) {
+    console.error('[stripe-webhook] No user_id in realtor subscription metadata');
+    return;
+  }
+
+  const priceId = subscription.items?.data[0]?.price?.id;
+
+  const PRICE_TO_TIER: Record<string, string> = {
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '']: 'starter',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL || '']: 'starter',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY || '']: 'pro_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL || '']: 'pro_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL || '']: 'founding_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL || '']: 'founding_pro_agent',
+  };
+
+  const TIER_LIMITS: Record<string, { content_packages: number; flyers: number; landing_pages: number; slideshow_videos: number }> = {
+    starter:           { content_packages: 8,  flyers: 5,  landing_pages: 5,  slideshow_videos: 0 },
+    agent:             { content_packages: 25, flyers: 15, landing_pages: 15, slideshow_videos: 0 },
+    pro_agent:         { content_packages: 60, flyers: 40, landing_pages: 40, slideshow_videos: 5 },
+    founding_agent:    { content_packages: 25, flyers: 15, landing_pages: 15, slideshow_videos: 0 },
+    founding_pro_agent:{ content_packages: 60, flyers: 40, landing_pages: 40, slideshow_videos: 5 },
+  };
+
+  console.log('[stripe-webhook] handleRealtorSubscriptionUpdated', {
+    subscriptionId: subscription.id,
+    userId,
+    status: subscription.status,
+  });
+
+  if (subscription.status === 'active') {
+    const tier = priceId ? (PRICE_TO_TIER[priceId] || 'starter') : 'starter';
+    const limits = TIER_LIMITS[tier] || TIER_LIMITS.starter;
+    const isFounder = tier.startsWith('founding_');
+    const baseTier = isFounder ? tier.replace('founding_', '') : tier;
+
+    const price = subscription.items?.data[0]?.price;
+    const interval = (price as any)?.recurring?.interval === 'year' ? 'annual' : 'monthly';
+
+    const { error } = await supabase
+      .from('realtor_profiles')
+      .update({
+        listing_studio_tier: baseTier,
+        listing_studio_status: 'active',
+        listing_studio_interval: interval,
+        listing_studio_is_founder: isFounder,
+        realtor_plan: baseTier,
+        subscription_status: 'active',
+        directory_listed: true,
+        content_packages_remaining: limits.content_packages,
+        flyers_remaining: limits.flyers,
+        landing_pages_remaining: limits.landing_pages,
+        slideshow_videos_remaining: limits.slideshow_videos,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('[stripe-webhook] Error updating realtor_profiles on subscription active:', error);
+    } else {
+      console.log(`[stripe-webhook] Realtor ${userId} subscription active, tier=${baseTier}`);
+    }
+
+  } else if (subscription.status === 'past_due') {
+    const { error } = await supabase
+      .from('realtor_profiles')
+      .update({
+        listing_studio_status: 'past_due',
+        subscription_status: 'past_due',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('[stripe-webhook] Error updating realtor_profiles on subscription past_due:', error);
+    } else {
+      console.log(`[stripe-webhook] Realtor ${userId} subscription past_due`);
+    }
+
+  } else if (subscription.status === 'canceled' || subscription.status === 'cancelled') {
+    const { error } = await supabase
+      .from('realtor_profiles')
+      .update({
+        listing_studio_tier: null,
+        listing_studio_status: 'canceled',
+        listing_studio_interval: null,
+        listing_studio_is_founder: false,
+        realtor_plan: 'free',
+        subscription_status: 'canceled',
+        directory_listed: false,
+        content_packages_remaining: 0,
+        flyers_remaining: 0,
+        landing_pages_remaining: 0,
+        slideshow_videos_remaining: 0,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('[stripe-webhook] Error updating realtor_profiles on subscription canceled:', error);
+    } else {
+      console.log(`[stripe-webhook] Realtor ${userId} subscription canceled, plan → free`);
+    }
   }
 }
 
