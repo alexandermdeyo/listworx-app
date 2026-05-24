@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import imageCompression from 'browser-image-compression';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -19,6 +20,9 @@ import {
   Zap,
   Calendar,
   Image,
+  X,
+  Star,
+  Upload,
 } from 'lucide-react';
 import type { RealtorProfile } from './SubscriptionCards';
 
@@ -30,6 +34,14 @@ type Asset = {
   asset_type: string;
   content: string;
   version: number;
+};
+
+type ListingPhoto = {
+  id: string;
+  listing_id: string;
+  storage_path: string;
+  display_order: number;
+  is_primary: boolean;
 };
 
 type Listing = {
@@ -52,6 +64,7 @@ type Listing = {
   status: string;
   created_at: string;
   listing_assets?: Asset[];
+  listing_photos?: ListingPhoto[];
 };
 
 type GeneratedContent = Record<string, string>;
@@ -95,6 +108,14 @@ const EMPTY_FORM: FormData = {
   brand_email: '',
   brand_color: '#ff6600',
 };
+
+const COMPRESSION_OPTIONS = {
+  maxSizeMB: 1,
+  maxWidthOrHeight: 1920,
+  useWebWorker: true,
+};
+
+const MAX_PHOTOS = 15;
 
 const CONTENT_CARDS: {
   key: string;
@@ -174,12 +195,22 @@ export function ListingStudio({
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [isGenerating, setIsGenerating]   = useState(false);
   const [isSubmitting, setIsSubmitting]   = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [error, setError]                 = useState<string | null>(null);
   const [copiedKey, setCopiedKey]         = useState<string | null>(null);
   const [formData, setFormData]           = useState<FormData>(EMPTY_FORM);
   const [remainingPackages, setRemainingPackages] = useState(
     realtorProfile.content_packages_remaining
   );
+
+  // Photo state
+  const [photos, setPhotos]                     = useState<File[]>([]);
+  const [photoPreviews, setPhotoPreviews]       = useState<string[]>([]);
+  const [primaryPhotoIndex, setPrimaryPhotoIndex] = useState(0);
+  const [isDraggingOver, setIsDraggingOver]     = useState(false);
+  const [photoSignedUrls, setPhotoSignedUrls]   = useState<string[]>([]);
+
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   const tier      = realtorProfile.listing_studio_tier || 'starter';
   const planLimit = PLAN_LIMITS[tier] || 8;
@@ -200,6 +231,35 @@ export function ListingStudio({
   useEffect(() => {
     void loadListings();
   }, [loadListings]);
+
+  // ── Fetch signed URLs for generated view photos ────────────────────────────
+
+  useEffect(() => {
+    if (view !== 'generated' || !currentListing?.listing_photos?.length) {
+      return;
+    }
+
+    const sorted = [...(currentListing.listing_photos || [])]
+      .sort((a, b) => a.display_order - b.display_order);
+    const paths = sorted.map((p) => p.storage_path);
+
+    fetch('/api/listing-studio/photo-urls', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paths }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.urls) {
+          setPhotoSignedUrls(
+            data.urls.map((u: { signedUrl: string }) => u.signedUrl)
+          );
+        }
+      })
+      .catch(() => {
+        // Silently ignore — photo gallery is non-critical
+      });
+  }, [view, currentListing]);
 
   // ── Clipboard copy ─────────────────────────────────────────────────────────
 
@@ -226,6 +286,66 @@ export function ListingStudio({
     return data.parsed as GeneratedContent;
   }
 
+  // ── Photo handling ─────────────────────────────────────────────────────────
+
+  function addFiles(files: FileList | File[]) {
+    const incoming = Array.from(files).filter((f) =>
+      f.type.startsWith('image/')
+    );
+    if (incoming.length === 0) return;
+
+    setPhotos((prev) => {
+      const combined = [...prev, ...incoming].slice(0, MAX_PHOTOS);
+      // Build previews for new files
+      incoming.slice(0, MAX_PHOTOS - prev.length).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            setPhotoPreviews((p) => [...p, e.target!.result as string].slice(0, MAX_PHOTOS));
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+      return combined;
+    });
+  }
+
+  function removePhoto(index: number) {
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
+    setPhotoPreviews((prev) => prev.filter((_, i) => i !== index));
+    setPrimaryPhotoIndex((prev) => {
+      if (prev === index) return 0;
+      if (prev > index) return prev - 1;
+      return prev;
+    });
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDraggingOver(false);
+    if (e.dataTransfer.files) {
+      addFiles(e.dataTransfer.files);
+    }
+  }
+
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDraggingOver(true);
+  }
+
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDraggingOver(false);
+  }
+
+  function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      addFiles(e.target.files);
+      // Reset input value so the same file can be re-selected
+      e.target.value = '';
+    }
+  }
+
   // ── Form submission ────────────────────────────────────────────────────────
 
   async function handleSubmit(e: React.FormEvent) {
@@ -237,28 +357,60 @@ export function ListingStudio({
       let listingId: string;
 
       if (currentListing) {
-        // Re-generating content for an existing listing — skip creation
+        // Re-generating for an existing listing — skip creation
         listingId = currentListing.id;
       } else {
-        // New listing — create the DB record first
+        // 1. Compress photos
+        let photoPaths: string[] = [];
+        if (photos.length > 0) {
+          setIsCompressing(true);
+          setIsSubmitting(false);
+
+          const compressedFiles = await Promise.all(
+            photos.map((file) => imageCompression(file, COMPRESSION_OPTIONS))
+          );
+
+          setIsCompressing(false);
+          setIsSubmitting(true);
+
+          // 2. Upload to storage
+          const fd = new FormData();
+          compressedFiles.forEach((file) => fd.append('photos', file));
+
+          const uploadRes = await fetch('/api/listing-studio/upload-photos', {
+            method: 'POST',
+            body: fd,
+          });
+          const uploadData = await uploadRes.json();
+          if (!uploadRes.ok) {
+            throw new Error(uploadData.error || 'Failed to upload photos');
+          }
+          photoPaths = uploadData.paths as string[];
+        }
+
+        // 3. Create listing record
         const listingRes = await fetch('/api/listing-studio/listings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...formData,
-            beds:  Number(formData.beds),
-            baths: Number(formData.baths),
-            sqft:  Number(formData.sqft),
-            price: Number(formData.price),
+            beds:                Number(formData.beds),
+            baths:               Number(formData.baths),
+            sqft:                Number(formData.sqft),
+            price:               Number(formData.price),
+            photo_paths:         photoPaths,
+            primary_photo_index: primaryPhotoIndex,
           }),
         });
         const listingData = await listingRes.json();
-        if (!listingRes.ok) throw new Error(listingData.error || 'Failed to create listing');
+        if (!listingRes.ok) {
+          throw new Error(listingData.error || 'Failed to create listing');
+        }
         setCurrentListing(listingData.listing);
         listingId = listingData.listing.id;
       }
 
-      // Switch to generating state before the API call
+      // 4. Generate content
       setIsSubmitting(false);
       setIsGenerating(true);
 
@@ -270,6 +422,7 @@ export function ListingStudio({
     } catch (err: any) {
       setError(err.message);
     } finally {
+      setIsCompressing(false);
       setIsSubmitting(false);
       setIsGenerating(false);
     }
@@ -295,10 +448,18 @@ export function ListingStudio({
 
   // ── Navigation helpers ─────────────────────────────────────────────────────
 
+  function resetPhotoState() {
+    setPhotos([]);
+    setPhotoPreviews([]);
+    setPrimaryPhotoIndex(0);
+    setPhotoSignedUrls([]);
+  }
+
   function handleNewListing() {
     setCurrentListing(null);
     setGeneratedContent(null);
     setFormData(EMPTY_FORM);
+    resetPhotoState();
     setError(null);
     setView('create');
   }
@@ -321,6 +482,7 @@ export function ListingStudio({
       brand_email: listing.brand_email || '',
       brand_color: listing.brand_color || '#ff6600',
     });
+    resetPhotoState();
     setError(null);
     setView('create');
   }
@@ -332,6 +494,7 @@ export function ListingStudio({
     );
     setCurrentListing(listing);
     setGeneratedContent(content);
+    setPhotoSignedUrls([]);
     setError(null);
     setView('generated');
   }
@@ -339,6 +502,7 @@ export function ListingStudio({
   function handleBackToList() {
     setCurrentListing(null);
     setGeneratedContent(null);
+    resetPhotoState();
     setError(null);
     setView('list');
   }
@@ -373,6 +537,15 @@ export function ListingStudio({
   // ─────────────────────────────────────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────────────────────────────────────
+
+  // Loading status label for the overlay
+  const loadingLabel = isCompressing
+    ? 'Compressing photos...'
+    : isSubmitting
+    ? photos.length > 0
+      ? 'Uploading photos...'
+      : 'Saving listing...'
+    : 'Generating your content...';
 
   return (
     <div className="rounded-2xl bg-zinc-950 border border-zinc-800 overflow-hidden">
@@ -419,23 +592,36 @@ export function ListingStudio({
             <div className="space-y-3">
               {listings.map((listing) => {
                 const hasContent = (listing.listing_assets || []).length > 0;
+                const primaryPhoto = (listing.listing_photos || []).find(
+                  (p) => p.is_primary
+                );
                 return (
                   <div
                     key={listing.id}
                     className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                   >
-                    <div>
-                      <p className="text-white font-semibold text-sm">
-                        {listing.address}, {listing.city}, {listing.state}
-                      </p>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
-                        <span>{formatDate(listing.created_at)}</span>
-                        <span>·</span>
-                        <span>
-                          {listing.beds}bd · {listing.baths}ba · {listing.sqft?.toLocaleString()} sqft
-                        </span>
-                        <span>·</span>
-                        <span>{formatPrice(listing.price)}</span>
+                    <div className="flex items-center gap-3">
+                      {/* Thumbnail */}
+                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-zinc-800 border border-zinc-700 shrink-0 flex items-center justify-center">
+                        {primaryPhoto ? (
+                          <PhotoThumbnail path={primaryPhoto.storage_path} />
+                        ) : (
+                          <Home className="h-5 w-5 text-zinc-600" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">
+                          {listing.address}, {listing.city}, {listing.state}
+                        </p>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                          <span>{formatDate(listing.created_at)}</span>
+                          <span>·</span>
+                          <span>
+                            {listing.beds}bd · {listing.baths}ba · {listing.sqft?.toLocaleString()} sqft
+                          </span>
+                          <span>·</span>
+                          <span>{formatPrice(listing.price)}</span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
@@ -491,12 +677,10 @@ export function ListingStudio({
           </div>
 
           {/* Loading overlay */}
-          {(isSubmitting || isGenerating) && (
+          {(isCompressing || isSubmitting || isGenerating) && (
             <div className="rounded-xl border border-zinc-700 bg-zinc-900 p-10 text-center mb-6">
               <Loader2 className="h-8 w-8 text-lw-rust animate-spin mx-auto mb-4" />
-              <p className="text-white font-semibold mb-1">
-                {isSubmitting ? 'Saving listing...' : 'Generating your content...'}
-              </p>
+              <p className="text-white font-semibold mb-1">{loadingLabel}</p>
               {isGenerating && (
                 <p className="text-zinc-400 text-sm">This takes about 30 seconds.</p>
               )}
@@ -509,9 +693,136 @@ export function ListingStudio({
             </Alert>
           )}
 
-          {!isSubmitting && !isGenerating && (
+          {!isCompressing && !isSubmitting && !isGenerating && (
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Property Details */}
+
+              {/* ─── Photo Upload ─────────────────────────────────────────────── */}
+              {!currentListing && (
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-4">
+                    Listing Photos <span className="text-zinc-500 font-normal normal-case tracking-normal ml-1">Optional · up to {MAX_PHOTOS}</span>
+                  </p>
+
+                  {/* Drop zone */}
+                  <div
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onClick={() => photos.length < MAX_PHOTOS && photoInputRef.current?.click()}
+                    className={`
+                      relative rounded-xl border-2 border-dashed transition-all cursor-pointer
+                      ${photos.length >= MAX_PHOTOS
+                        ? 'border-zinc-700 cursor-not-allowed opacity-60'
+                        : isDraggingOver
+                        ? 'border-lw-rust bg-lw-rust/5'
+                        : 'border-zinc-700 hover:border-zinc-500 hover:bg-zinc-900/60'
+                      }
+                      ${photoPreviews.length === 0 ? 'p-10' : 'p-4'}
+                    `}
+                  >
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileInputChange}
+                    />
+
+                    {photoPreviews.length === 0 ? (
+                      /* Empty state */
+                      <div className="text-center">
+                        <Upload className="h-8 w-8 text-zinc-600 mx-auto mb-3" />
+                        <p className="text-sm text-zinc-400 mb-1">
+                          Drag & drop photos here, or click to browse
+                        </p>
+                        <p className="text-xs text-zinc-600">
+                          JPG, PNG, WebP, HEIC · Up to {MAX_PHOTOS} photos · Compressed automatically
+                        </p>
+                      </div>
+                    ) : (
+                      /* Photo preview grid */
+                      <div>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-3">
+                          {photoPreviews.map((src, i) => (
+                            <div
+                              key={i}
+                              className={`
+                                relative aspect-square rounded-lg overflow-hidden border-2 transition-all
+                                ${i === primaryPhotoIndex
+                                  ? 'border-lw-rust ring-1 ring-lw-rust/40'
+                                  : 'border-zinc-700'
+                                }
+                              `}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <img
+                                src={src}
+                                alt={`Photo ${i + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+
+                              {/* Primary badge */}
+                              {i === primaryPhotoIndex && (
+                                <div className="absolute top-1 left-1 bg-lw-rust text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                                  Primary
+                                </div>
+                              )}
+
+                              {/* Action buttons */}
+                              <div className="absolute top-1 right-1 flex flex-col gap-1">
+                                {/* Remove */}
+                                <button
+                                  type="button"
+                                  onClick={() => removePhoto(i)}
+                                  className="h-5 w-5 rounded-full bg-black/70 text-white hover:bg-red-600 flex items-center justify-center transition"
+                                  title="Remove photo"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+
+                                {/* Set as primary */}
+                                {i !== primaryPhotoIndex && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setPrimaryPhotoIndex(i)}
+                                    className="h-5 w-5 rounded-full bg-black/70 text-zinc-300 hover:bg-lw-rust hover:text-white flex items-center justify-center transition"
+                                    title="Set as primary photo"
+                                  >
+                                    <Star className="h-3 w-3" />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+
+                          {/* Add more tile */}
+                          {photos.length < MAX_PHOTOS && (
+                            <button
+                              type="button"
+                              onClick={() => photoInputRef.current?.click()}
+                              className="aspect-square rounded-lg border-2 border-dashed border-zinc-700 hover:border-zinc-500 flex items-center justify-center transition"
+                            >
+                              <Plus className="h-5 w-5 text-zinc-600" />
+                            </button>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-zinc-600">
+                          {photos.length}/{MAX_PHOTOS} photos ·{' '}
+                          {primaryPhotoIndex < photos.length
+                            ? `Photo ${primaryPhotoIndex + 1} is primary`
+                            : 'First photo is primary'}{' '}
+                          · Click <Star className="inline h-3 w-3" /> to change primary · Click{' '}
+                          <X className="inline h-3 w-3" /> to remove
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ─── Property Details ──────────────────────────────────────────── */}
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-4">
                   Property Details
@@ -617,7 +928,7 @@ export function ListingStudio({
                 </div>
               </div>
 
-              {/* Brand Details */}
+              {/* ─── Brand Details ─────────────────────────────────────────────── */}
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-4">
                   Your Brand
@@ -665,7 +976,7 @@ export function ListingStudio({
                 </div>
               </div>
 
-              {/* Actions */}
+              {/* ─── Actions ───────────────────────────────────────────────────── */}
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Button
                   type="button"
@@ -680,7 +991,7 @@ export function ListingStudio({
                   className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold flex-1 sm:flex-none"
                 >
                   <Wand2 className="h-4 w-4 mr-2" />
-                  Generate My Content
+                  {currentListing ? 'Regenerate Content' : 'Generate My Content'}
                 </Button>
               </div>
             </form>
@@ -733,10 +1044,45 @@ export function ListingStudio({
             </Alert>
           )}
 
-          {/* Content cards grid */}
+          {/* ── Photo gallery ──────────────────────────────────────────────── */}
+          {photoSignedUrls.length > 0 && (
+            <div className="mb-8">
+              <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-3">
+                Listing Photos
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {photoSignedUrls.map((url, i) => {
+                  const sorted = [...(currentListing.listing_photos || [])].sort(
+                    (a, b) => a.display_order - b.display_order
+                  );
+                  const photo = sorted[i];
+                  return (
+                    <div
+                      key={i}
+                      className={`relative rounded-xl overflow-hidden aspect-video ${
+                        photo?.is_primary ? 'ring-2 ring-lw-rust' : ''
+                      }`}
+                    >
+                      <img
+                        src={url}
+                        alt={`Photo ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {photo?.is_primary && (
+                        <span className="absolute top-1.5 left-1.5 bg-lw-rust text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                          Primary
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ── Content cards grid ─────────────────────────────────────────── */}
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
             {CONTENT_CARDS.map((card) => {
-              // Email card combines subject + body
               const isEmail = !!card.emailKeys;
               const displayText = isEmail
                 ? `Subject: ${generatedContent.email_subject || ''}\n\n${generatedContent.email_body || ''}`
@@ -829,5 +1175,37 @@ export function ListingStudio({
         </div>
       )}
     </div>
+  );
+}
+
+// ─── Thumbnail helper — fetches a signed URL for the list-view thumbnail ──────
+
+function PhotoThumbnail({ path }: { path: string }) {
+  const [src, setSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/listing-studio/photo-urls', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paths: [path] }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        const url = data.urls?.[0]?.signedUrl;
+        if (url) setSrc(url);
+      })
+      .catch(() => {});
+  }, [path]);
+
+  if (!src) {
+    return <Home className="h-5 w-5 text-zinc-600" />;
+  }
+
+  return (
+    <img
+      src={src}
+      alt=""
+      className="w-full h-full object-cover"
+    />
   );
 }

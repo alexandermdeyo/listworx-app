@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     const { data: listings, error } = await admin
       .from('listings')
-      .select('*, listing_assets(*)')
+      .select('*, listing_assets(*), listing_photos(*)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -104,6 +104,8 @@ export async function POST(request: NextRequest) {
       brand_phone,
       brand_email,
       brand_color,
+      photo_paths,
+      primary_photo_index,
     } = body as Record<string, any>;
 
     if (!address || !city || !state || !zip || !beds || !baths || !sqft || !price || !description) {
@@ -147,6 +149,26 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('[listing-studio/listings] POST insert error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // ── Insert photo rows if any ─────────────────────────────────────────────
+    if (Array.isArray(photo_paths) && photo_paths.length > 0) {
+      const primaryIndex = typeof primary_photo_index === 'number' ? primary_photo_index : 0;
+      const photoRows = photo_paths.map((path: string, index: number) => ({
+        listing_id: listing.id,
+        storage_path: path,
+        display_order: index,
+        is_primary: index === primaryIndex,
+      }));
+
+      const { error: photoError } = await admin
+        .from('listing_photos')
+        .insert(photoRows);
+
+      if (photoError) {
+        console.error('[listing-studio/listings] Photo insert error:', photoError);
+        // Listing was created successfully — don't fail the whole request
+      }
     }
 
     return NextResponse.json({ listing }, { status: 201 });
