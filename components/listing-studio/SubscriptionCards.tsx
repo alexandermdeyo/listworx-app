@@ -2,25 +2,30 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Crown, Zap } from 'lucide-react';
+import { CheckCircle, Crown, Loader2, Zap } from 'lucide-react';
 
 export type RealtorProfile = {
   id: string;
   user_id: string;
-  realtor_plan: string | null;
-  realtor_plan_interval: string | null;
+  // Listing Studio subscription
+  listing_studio_tier: string | null;
+  listing_studio_status: string | null;
+  listing_studio_interval: string | null;
+  listing_studio_is_founder: boolean | null;
+  // Legacy / shared fields still present in DB
+  realtor_founder_tier: string | null;
   subscription_status: string | null;
   subscription_current_period_end: string | null;
+  // Monthly allowances (reset each billing cycle by webhook)
   content_packages_remaining: number;
   flyers_remaining: number;
   landing_pages_remaining: number;
   slideshow_videos_remaining: number;
+  // Top-up / purchased balances
   purchased_content_packages: number;
   purchased_flyers: number;
   purchased_landing_pages: number;
   purchased_slideshow_videos: number;
-  realtor_founder: boolean | null;
-  realtor_founder_tier: string | null;
 };
 
 type BillingPeriod = 'monthly' | 'annual';
@@ -128,9 +133,9 @@ function UsageBar({
 // ─── Active plan display ──────────────────────────────────────────────────────
 
 function ActivePlanDisplay({ profile }: { profile: RealtorProfile }) {
-  const plan = profile.realtor_plan || 'free';
+  const plan = profile.listing_studio_tier || 'free';
   const limits = PLAN_LIMITS[plan] ?? { content: 0, flyers: 0, landing: 0, videos: 0 };
-  const interval = profile.realtor_plan_interval === 'annual' ? 'Annual' : 'Monthly';
+  const interval = profile.listing_studio_interval === 'annual' ? 'Annual' : 'Monthly';
   const isProAgent = plan === 'pro_agent';
   const canUpgrade = plan === 'starter' || plan === 'agent';
 
@@ -159,6 +164,11 @@ function ActivePlanDisplay({ profile }: { profile: RealtorProfile }) {
           <span className="inline-flex items-center rounded-full bg-gray-100 text-gray-600 px-3 py-1 text-xs font-medium">
             {interval}
           </span>
+          {profile.listing_studio_is_founder && (
+            <span className="inline-flex items-center rounded-full bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 text-xs font-semibold">
+              Founding Partner
+            </span>
+          )}
         </div>
       </div>
 
@@ -214,6 +224,59 @@ function ActivePlanDisplay({ profile }: { profile: RealtorProfile }) {
 
 function FreePlanCards() {
   const [period, setPeriod] = useState<BillingPeriod>('monthly');
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+
+  const PRICE_IDS: Record<string, Record<string, string>> = {
+    starter: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL  || '',
+    },
+    agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL  || '',
+    },
+    pro_agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL  || '',
+    },
+  };
+
+  async function handleCheckout(tierId: string, interval: BillingPeriod) {
+    const priceId = PRICE_IDS[tierId]?.[interval];
+    if (!priceId) {
+      console.error('No price ID found for', tierId, interval);
+      return;
+    }
+
+    setLoadingTier(tierId);
+    try {
+      const res = await fetch('/api/listing-studio/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId, interval }),
+      });
+
+      if (res.status === 401) {
+        window.location.href = '/login?redirect=/realtor-dashboard';
+        return;
+      }
+      if (res.status === 403) {
+        alert('Listing Studio is available for realtors. Please create a realtor account.');
+        return;
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('No checkout URL returned');
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+    } finally {
+      setLoadingTier(null);
+    }
+  }
 
   return (
     <div className="rounded-2xl bg-zinc-950 border border-zinc-800 p-6 md:p-8">
@@ -270,6 +333,7 @@ function FreePlanCards() {
       <div className="grid gap-4 md:grid-cols-3 mb-6">
         {TIERS.map((tier) => {
           const price = period === 'monthly' ? tier.monthlyPrice : tier.annualPrice;
+          const isLoading = loadingTier === tier.id;
 
           return (
             <div
@@ -334,17 +398,24 @@ function FreePlanCards() {
               </ul>
 
               {/* CTA */}
-              <a href="#" className="block">
-                <Button
-                  className={`w-full font-semibold ${
-                    tier.highlight
-                      ? 'bg-lw-rust hover:bg-lw-rust-hover text-white'
-                      : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600'
-                  }`}
-                >
-                  Get Started
-                </Button>
-              </a>
+              <Button
+                onClick={() => handleCheckout(tier.id, period)}
+                disabled={!!loadingTier}
+                className={`w-full font-semibold ${
+                  tier.highlight
+                    ? 'bg-lw-rust hover:bg-lw-rust-hover text-white'
+                    : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600'
+                }`}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Redirecting...
+                  </>
+                ) : (
+                  'Get Started'
+                )}
+              </Button>
             </div>
           );
         })}
@@ -378,7 +449,7 @@ function FreePlanCards() {
             </div>
           </div>
           <div className="shrink-0">
-            <a href="#">
+            <a href="/listing-studio#founding">
               <Button className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap">
                 Learn More
               </Button>
@@ -397,9 +468,11 @@ export function SubscriptionCards({
 }: {
   realtorProfile: RealtorProfile | null;
 }) {
-  const plan = realtorProfile?.realtor_plan ?? 'free';
+  const isActive =
+    !!realtorProfile?.listing_studio_tier &&
+    realtorProfile?.listing_studio_status === 'active';
 
-  if (plan !== 'free' && realtorProfile) {
+  if (isActive && realtorProfile) {
     return <ActivePlanDisplay profile={realtorProfile} />;
   }
 

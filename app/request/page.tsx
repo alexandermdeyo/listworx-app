@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown, ExternalLink } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Navigation from '@/components/Navigation';
@@ -80,6 +81,7 @@ export default function RequestPage() {
   const supabase = createClient();
 
   const [authReady, setAuthReady] = useState(false);
+  const [dashboardUrl, setDashboardUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [matching, setMatching] = useState(false);
   const [matched, setMatched] = useState(false);
@@ -139,6 +141,10 @@ export default function RequestPage() {
       if (role === 'ADMIN') {
         router.push('/admin/crm');
         return;
+      }
+
+      if (role === 'REALTOR' || role === 'HOMEOWNER' || role === 'PROPERTY_MANAGER') {
+        setDashboardUrl('/requestor-dashboard');
       }
 
       const { data: requestorProfile, error: requestorProfileError } = await supabase
@@ -425,6 +431,19 @@ export default function RequestPage() {
   return (
     <PageShell surface="dark">
       <Navigation />
+      {dashboardUrl && (
+        <div className="w-full bg-zinc-900 border-l-4 border-lw-rust px-6 py-3 flex items-center justify-between">
+          <p className="text-sm text-zinc-300">
+            You are already logged in. Want to go to your dashboard instead?
+          </p>
+          <Link
+            href={dashboardUrl}
+            className="text-sm font-semibold text-lw-rust hover:text-lw-rust-hover whitespace-nowrap ml-4"
+          >
+            Go to Dashboard →
+          </Link>
+        </div>
+      )}
       <section className="relative overflow-hidden py-16">
         <img
           src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1920&q=80"

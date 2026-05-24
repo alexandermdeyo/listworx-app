@@ -6,6 +6,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import type { NavItem } from '@/components/DashboardLayout';
 import { SubscriptionCards } from '@/components/listing-studio/SubscriptionCards';
 import type { RealtorProfile } from '@/components/listing-studio/SubscriptionCards';
+import { ListingStudio } from '@/components/listing-studio/ListingStudio';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -303,6 +304,13 @@ export default function RequestorDashboardPage() {
       {userRole === 'REALTOR' && (
         <div className="mb-6">
           <SubscriptionCards realtorProfile={realtorProfile} />
+        </div>
+      )}
+
+      {userRole === 'REALTOR' &&
+       realtorProfile?.listing_studio_status === 'active' && (
+        <div className="mb-6">
+          <ListingStudio realtorProfile={realtorProfile} />
         </div>
       )}
 
