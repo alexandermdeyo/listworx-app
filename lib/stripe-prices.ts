@@ -34,6 +34,27 @@ export const STRIPE_PRICES = {
     },
   },
 
+  realtor: {
+    starter: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY,
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL,
+    },
+    agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY,
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL,
+    },
+    pro_agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY,
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL,
+    },
+    founding_agent: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL,
+    },
+    founding_pro_agent: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL,
+    },
+  },
+
   addons: {
     onetime: {
       ironclad_badge_kit:
