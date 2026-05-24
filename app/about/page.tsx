@@ -52,6 +52,37 @@ export default function AboutPage() {
         <div className="border-t border-zinc-800" />
       </div>
 
+      {/* VISION + MISSION */}
+      <section className="py-20 md:py-28">
+        <div className="mx-auto px-6" style={{ maxWidth: '1200px' }}>
+          <div className="grid md:grid-cols-2 gap-12 md:gap-20" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+            {/* Vision */}
+            <div className="border-l-2 border-[#f97316] pl-7">
+              <p className="text-[#f97316] text-sm font-semibold uppercase tracking-widest mb-5">
+                Our Vision
+              </p>
+              <p className="text-xl md:text-2xl text-white font-bold leading-snug">
+                To rebuild trust in the way homeowners, realtors, property managers, and contractors connect, creating a nationwide network where quality work, honest business, and real accountability still matter.
+              </p>
+            </div>
+            {/* Mission */}
+            <div className="border-l-2 border-[#f97316] pl-7">
+              <p className="text-[#f97316] text-sm font-semibold uppercase tracking-widest mb-5">
+                Our Mission
+              </p>
+              <p className="text-xl md:text-2xl text-white font-bold leading-snug">
+                ListWorx connects homeowners and property professionals with vetted local contractors and trusted real estate partners while equipping those businesses with marketing tools, visibility, and support to grow. We make finding the right help easier, faster, and built on standards instead of guesswork.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DIVIDER */}
+      <div className="mx-auto px-6" style={{ maxWidth: '1200px' }}>
+        <div className="border-t border-zinc-800" />
+      </div>
+
       {/* FOUNDER STORY */}
       <section className="py-20 md:py-28">
         <div className="mx-auto px-6" style={{ maxWidth: '1200px' }}>
