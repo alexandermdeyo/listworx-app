@@ -6,5 +6,13 @@ publish = ".next"
 NODE_VERSION = "20"
 NEXT_TELEMETRY_DISABLED = "1"
 
+[functions]
+  timeout = 30
+
+# Per-function timeout for the AI content generation route
+# (takes effect if @netlify/plugin-nextjs compiles routes individually)
+[functions."app/api/listing-studio/generate"]
+  timeout = 30
+
 [[plugins]]
 package = "@netlify/plugin-nextjs"
