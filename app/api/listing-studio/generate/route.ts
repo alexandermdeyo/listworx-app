@@ -129,11 +129,14 @@ Tone: Premium but warm and conversational. Locally specific where possible. Writ
     if (!anthropicRes.ok) {
       const errText = await anthropicRes.text();
       console.error('[listing-studio/generate] Anthropic API error:', errText);
-      return NextResponse.json({ error: 'AI generation failed' }, { status: 500 });
+      return NextResponse.json({ error: 'AI generation failed', detail: errText }, { status: 500 });
     }
 
     const anthropicData = await anthropicRes.json();
     const rawText: string = anthropicData.content?.[0]?.text || '';
+
+    console.error('[generate] status:', anthropicRes.status);
+    console.error('[generate] body preview:', rawText.substring(0, 500));
 
     // ── Parse JSON from response ────────────────────────────────────────────
     let parsed: Record<string, string>;
@@ -147,7 +150,7 @@ Tone: Premium but warm and conversational. Locally specific where possible. Writ
     } catch (parseErr) {
       console.error('[listing-studio/generate] JSON parse failed. Raw text:', rawText);
       return NextResponse.json(
-        { error: 'Failed to parse AI response — raw text returned for debugging', rawText },
+        { error: 'Failed to parse AI response', rawText, detail: rawText },
         { status: 500 }
       );
     }
