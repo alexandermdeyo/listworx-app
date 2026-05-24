@@ -19,6 +19,7 @@ import {
   Rocket,
   ArrowRight,
   Crown,
+  Loader2,
   BarChart3,
   Film,
   Mic,
@@ -89,6 +90,68 @@ const TIERS = [
 
 export default function ListingStudioPage() {
   const [period, setPeriod] = useState<BillingPeriod>('monthly');
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+
+  const PRICE_IDS: Record<string, Record<string, string>> = {
+    starter: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL || '',
+    },
+    agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL || '',
+    },
+    pro_agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL || '',
+    },
+    founding_agent: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL || '',
+    },
+    founding_pro_agent: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL || '',
+    },
+  };
+
+  async function handleCheckout(tierId: string, interval: string) {
+    const priceId = PRICE_IDS[tierId]?.[interval];
+    if (!priceId) {
+      console.error('No price ID found for', tierId, interval);
+      return;
+    }
+
+    setLoadingTier(tierId);
+
+    try {
+      const res = await fetch('/api/listing-studio/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId, interval }),
+      });
+
+      if (res.status === 401) {
+        window.location.href = '/login?redirect=/listing-studio';
+        return;
+      }
+
+      if (res.status === 403) {
+        alert('Listing Studio is available for realtors. Please create a realtor account.');
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('No checkout URL returned');
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+    } finally {
+      setLoadingTier(null);
+    }
+  }
 
   return (
     <PageShell surface="dark">
@@ -522,17 +585,24 @@ export default function ListingStudioPage() {
                     </ul>
 
                     {/* CTA */}
-                    <a href="#" className="block">
-                      <Button
-                        className={`w-full font-semibold ${
-                          tier.highlight
-                            ? 'bg-lw-rust hover:bg-lw-rust-hover text-white'
-                            : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600'
-                        }`}
-                      >
-                        Get Started
-                      </Button>
-                    </a>
+                    <Button
+                      onClick={() => handleCheckout(tier.id, period)}
+                      disabled={loadingTier === tier.id}
+                      className={`w-full font-semibold ${
+                        tier.highlight
+                          ? 'bg-lw-rust hover:bg-lw-rust-hover text-white'
+                          : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600'
+                      }`}
+                    >
+                      {loadingTier === tier.id ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Loading...
+                        </>
+                      ) : (
+                        'Get Started'
+                      )}
+                    </Button>
                   </div>
                 );
               })}
@@ -560,12 +630,35 @@ export default function ListingStudioPage() {
                     </p>
                   </div>
                 </div>
-                <div className="shrink-0">
-                  <Link href="/founding-partner">
-                    <Button className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap">
-                      Learn More
-                    </Button>
-                  </Link>
+                <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+                  <Button
+                    onClick={() => handleCheckout('founding_agent', 'annual')}
+                    disabled={loadingTier === 'founding_agent'}
+                    className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap"
+                  >
+                    {loadingTier === 'founding_agent' ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      'Founding Agent'
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => handleCheckout('founding_pro_agent', 'annual')}
+                    disabled={loadingTier === 'founding_pro_agent'}
+                    className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap"
+                  >
+                    {loadingTier === 'founding_pro_agent' ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      'Founding Pro Agent'
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>
