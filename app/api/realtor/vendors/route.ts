@@ -201,8 +201,11 @@ export async function POST(request: NextRequest) {
 
         const inviteUrl = `https://listworx.co/invite/${token}`;
 
+        // from: RESEND_FROM_EMAIL env var (adeyo@listworx.co)
+        // subject: "${realtorName} added you to their contractor network on ListWorx"
+        // template: HTML invite email with CTA → https://listworx.co/invite/${token}
         try {
-          await sendEmail({
+          const emailResult = await sendEmail({
             to: email,
             subject: `${realtorName} added you to their contractor network on ListWorx`,
             html: `
@@ -240,8 +243,9 @@ export async function POST(request: NextRequest) {
             `,
             text: `${realtorName} added you to their contractor network on ListWorx.\n\nJoin their network here: ${inviteUrl}\n\nThis invite expires in 30 days.`,
           });
-        } catch (emailError: any) {
-          console.error('[realtor/vendors] Failed to send invite email:', emailError);
+          console.log('[vendor invite] email sent:', emailResult);
+        } catch (emailError) {
+          console.error('[vendor invite] email failed:', emailError);
           // Don't fail — vendor + invitation already saved
         }
       }

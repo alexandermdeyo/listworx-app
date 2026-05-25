@@ -1,11 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
 import type { NavItem } from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createClient } from '@/lib/supabase-browser';
 import {
@@ -18,16 +17,18 @@ import {
   LayoutDashboard,
   Mail,
   Phone,
-  Building2,
   Send,
   UserPlus,
-  Briefcase,
   CheckCircle2,
   Clock,
-  X,
+  ChevronDown,
+  ChevronUp,
+  ArrowUpDown,
 } from 'lucide-react';
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+type Category = { id: string; name: string };
 
 type VendorInvitation = {
   id: string;
@@ -49,32 +50,18 @@ type Vendor = {
   vendor_invitations?: VendorInvitation[];
 };
 
-// ── Constants ────────────────────────────────────────────────────────────────
-
-const TRADES = [
-  'Plumber',
-  'Electrician',
-  'HVAC',
-  'Painter',
-  'Landscaper',
-  'Cleaner',
-  'Photographer',
-  'Roofer',
-  'Flooring',
-  'Handyman',
-  'Other',
-];
+// ── Constants ─────────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/requestor-dashboard' },
-  { id: 'submit', label: 'Submit Request', icon: Plus, href: '/request' },
-  { id: 'requests', label: 'My Requests', icon: ClipboardList, href: '/requestor-dashboard' },
-  { id: 'vendors', label: 'My Vendors', icon: Users, href: '/requestor-dashboard/vendors' },
-  { id: 'profile', label: 'Profile', icon: User2, disabled: true },
-  { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
+  { id: 'dashboard', label: 'Dashboard',      icon: LayoutDashboard, href: '/requestor-dashboard' },
+  { id: 'submit',    label: 'Submit Request',  icon: Plus,            href: '/request' },
+  { id: 'requests',  label: 'My Requests',     icon: ClipboardList,   href: '/requestor-dashboard' },
+  { id: 'vendors',   label: 'My Vendors',      icon: Users,           href: '/requestor-dashboard/vendors' },
+  { id: 'profile',   label: 'Profile',         icon: User2,           disabled: true },
+  { id: 'settings',  label: 'Settings',        icon: Settings,        disabled: true },
 ];
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', {
@@ -90,7 +77,7 @@ function daysSince(iso: string) {
 
 function getVendorStatus(vendor: Vendor): {
   label: string;
-  color: string;
+  colorClass: string;
   date?: string;
 } {
   const invites = vendor.vendor_invitations ?? [];
@@ -98,21 +85,21 @@ function getVendorStatus(vendor: Vendor): {
   if (accepted) {
     return {
       label: 'Joined ListWorx',
-      color: 'bg-green-100 text-green-700',
+      colorClass: 'bg-green-900/50 text-green-400',
       date: accepted.accepted_at ? formatDate(accepted.accepted_at) : undefined,
     };
   }
-  const latest = invites.sort(
+  const latest = [...invites].sort(
     (a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
   )[0];
   if (latest) {
     return {
       label: 'Invited',
-      color: 'bg-yellow-100 text-yellow-700',
+      colorClass: 'bg-yellow-900/50 text-yellow-400',
       date: formatDate(latest.sent_at),
     };
   }
-  return { label: 'Not Invited', color: 'bg-gray-100 text-gray-600' };
+  return { label: 'Not Invited', colorClass: 'bg-zinc-700 text-zinc-400' };
 }
 
 // ── Page Component ────────────────────────────────────────────────────────────
@@ -132,6 +119,7 @@ export default function VendorsPage() {
   const supabase = supabaseRef.current;
 
   const [userName, setUserName] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loadingVendors, setLoadingVendors] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -142,7 +130,10 @@ export default function VendorsPage() {
   const [saveError, setSaveError] = useState('');
   const [saveSuccess, setSaveSuccess] = useState('');
 
-  // Resend invite state: vendorId → loading
+  // Table state
+  const [expandedVendorId, setExpandedVendorId] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<'name' | 'trade' | 'status'>('name');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [resending, setResending] = useState<Record<string, boolean>>({});
 
   // ── Auth check ─────────────────────────────────────────────────────────────
@@ -155,6 +146,18 @@ export default function VendorsPage() {
       setUserName(user.email?.split('@')[0] ?? 'User');
     });
   }, [supabase, router]);
+
+  // ── Load categories from Supabase ──────────────────────────────────────────
+  useEffect(() => {
+    supabase
+      .from('categories')
+      .select('id, name')
+      .eq('is_active', true)
+      .order('name', { ascending: true })
+      .then(({ data }) => {
+        if (data) setCategories(data);
+      });
+  }, [supabase]);
 
   // ── Load vendors ───────────────────────────────────────────────────────────
   const loadVendors = useCallback(async () => {
@@ -197,18 +200,9 @@ export default function VendorsPage() {
     setSaveError('');
     setSaveSuccess('');
 
-    if (!form.name.trim()) {
-      setSaveError('Vendor name is required.');
-      return;
-    }
-    if (!form.email.trim()) {
-      setSaveError('Email is required.');
-      return;
-    }
-    if (!form.trade) {
-      setSaveError('Please select a trade.');
-      return;
-    }
+    if (!form.name.trim()) { setSaveError('Vendor name is required.'); return; }
+    if (!form.email.trim()) { setSaveError('Email is required.'); return; }
+    if (!form.trade) { setSaveError('Please select a trade.'); return; }
 
     setSaving(true);
     try {
@@ -216,13 +210,13 @@ export default function VendorsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name.trim(),
+          name:          form.name.trim(),
           business_name: form.business_name.trim() || undefined,
-          email: form.email.trim(),
-          trade: form.trade,
-          phone: form.phone.trim() || undefined,
-          notes: form.notes.trim() || undefined,
-          send_invite: sendInvite,
+          email:         form.email.trim(),
+          trade:         form.trade,
+          phone:         form.phone.trim() || undefined,
+          notes:         form.notes.trim() || undefined,
+          send_invite:   sendInvite,
         }),
       });
       const data = await res.json();
@@ -243,7 +237,8 @@ export default function VendorsPage() {
   }
 
   // ── Resend invite ──────────────────────────────────────────────────────────
-  async function handleResendInvite(vendor: Vendor) {
+  async function handleResendInvite(e: React.MouseEvent, vendor: Vendor) {
+    e.stopPropagation(); // don't toggle row expansion
     setResending((prev) => ({ ...prev, [vendor.id]: true }));
     try {
       const res = await fetch('/api/realtor/vendors/resend-invite', {
@@ -263,6 +258,35 @@ export default function VendorsPage() {
     }
   }
 
+  // ── Sort ───────────────────────────────────────────────────────────────────
+  function handleSort(key: 'name' | 'trade' | 'status') {
+    if (sortKey === key) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  }
+
+  const sortedVendors = useMemo(() => {
+    return [...vendors].sort((a, b) => {
+      let aVal = '';
+      let bVal = '';
+      if (sortKey === 'name')       { aVal = a.name;                        bVal = b.name; }
+      else if (sortKey === 'trade') { aVal = a.trade;                       bVal = b.trade; }
+      else                          { aVal = getVendorStatus(a).label;      bVal = getVendorStatus(b).label; }
+      return sortDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    });
+  }, [vendors, sortKey, sortDir]);
+
+  // ── Sort icon helper ───────────────────────────────────────────────────────
+  function SortIcon({ col }: { col: 'name' | 'trade' | 'status' }) {
+    if (sortKey !== col) return <ArrowUpDown className="h-3 w-3 text-zinc-600" />;
+    return sortDir === 'asc'
+      ? <ChevronUp className="h-3 w-3 text-lw-rust" />
+      : <ChevronDown className="h-3 w-3 text-lw-rust" />;
+  }
+
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <DashboardLayout
@@ -273,9 +297,9 @@ export default function VendorsPage() {
       onLogout={handleLogout}
       hasNotifications={false}
     >
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="p-6 max-w-5xl mx-auto">
 
-        {/* ── Header ───────────────────────────────────────────────────────── */}
+        {/* ── Header ─────────────────────────────────────────────────────── */}
         <div className="mb-6">
           <h2
             className="text-2xl font-bold text-gray-900"
@@ -289,21 +313,21 @@ export default function VendorsPage() {
           </p>
         </div>
 
-        {/* ── Add Vendor Form ───────────────────────────────────────────────── */}
-        <Card className="p-6 mb-6">
+        {/* ── Add Vendor Form ─────────────────────────────────────────────── */}
+        <div className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-6 mb-6">
           <div className="flex items-center gap-2 mb-5">
             <UserPlus className="h-5 w-5 text-lw-rust" />
-            <h3 className="text-lg font-semibold text-gray-900">Add a Vendor</h3>
+            <h3 className="text-base font-semibold text-white">Add a Vendor</h3>
           </div>
 
           {saveError && (
-            <Alert className="mb-4 bg-red-50 border-red-200">
-              <AlertDescription className="text-red-700">{saveError}</AlertDescription>
+            <Alert className="mb-4 bg-red-950/50 border-red-800">
+              <AlertDescription className="text-red-400">{saveError}</AlertDescription>
             </Alert>
           )}
           {saveSuccess && (
-            <Alert className="mb-4 bg-green-50 border-green-200">
-              <AlertDescription className="text-green-700 flex items-center gap-2">
+            <Alert className="mb-4 bg-green-950/50 border-green-800">
+              <AlertDescription className="text-green-400 flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                 {saveSuccess}
               </AlertDescription>
@@ -314,7 +338,7 @@ export default function VendorsPage() {
             {/* Name */}
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">
-                Name <span className="text-red-500">*</span>
+                Name <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
@@ -322,7 +346,7 @@ export default function VendorsPage() {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Jane Smith"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
+                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
             </div>
 
@@ -337,14 +361,14 @@ export default function VendorsPage() {
                 value={form.business_name}
                 onChange={handleChange}
                 placeholder="Smith Plumbing LLC"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
+                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
             </div>
 
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">
-                Email <span className="text-red-500">*</span>
+                Email <span className="text-red-400">*</span>
               </label>
               <input
                 type="email"
@@ -352,25 +376,25 @@ export default function VendorsPage() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="jane@smithplumbing.com"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
+                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
             </div>
 
-            {/* Trade */}
+            {/* Trade — dynamic from Supabase categories */}
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">
-                Trade <span className="text-red-500">*</span>
+                Trade <span className="text-red-400">*</span>
               </label>
               <select
                 name="trade"
                 value={form.trade}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust bg-white"
+                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust"
               >
                 <option value="">Select a trade...</option>
-                {TRADES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                {categories.map((c) => (
+                  <option key={c.id} value={c.name}>
+                    {c.name}
                   </option>
                 ))}
               </select>
@@ -387,7 +411,7 @@ export default function VendorsPage() {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="(555) 000-0000"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
+                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
             </div>
 
@@ -402,7 +426,7 @@ export default function VendorsPage() {
                 onChange={handleChange}
                 placeholder="Great for kitchen remodels, fast response..."
                 rows={2}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust resize-none placeholder:text-zinc-500"
+                className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust resize-none placeholder:text-zinc-500"
               />
             </div>
           </div>
@@ -414,15 +438,9 @@ export default function VendorsPage() {
               className="border border-zinc-500 text-white bg-zinc-700 hover:bg-zinc-600"
             >
               {saving ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Saving...
-                </>
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Saving...</>
               ) : (
-                <>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Save to My List
-                </>
+                <><Plus className="h-4 w-4 mr-2" />Save to My List</>
               )}
             </Button>
 
@@ -433,58 +451,76 @@ export default function VendorsPage() {
               style={{ backgroundColor: '#E8621A' }}
             >
               {saving ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Sending...
-                </>
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Sending...</>
               ) : (
-                <>
-                  <Send className="h-4 w-4 mr-2" />
-                  Save and Send Invite
-                </>
+                <><Send className="h-4 w-4 mr-2" />Save and Send Invite</>
               )}
             </Button>
           </div>
-        </Card>
+        </div>
 
-        {/* ── Vendor List ───────────────────────────────────────────────────── */}
+        {/* ── Vendor Table ────────────────────────────────────────────────── */}
         <div>
           <h3
-            className="text-lg font-semibold text-gray-900 mb-4"
+            className="text-base font-semibold text-gray-900 mb-3"
             style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}
           >
             Your Vendors ({vendors.length})
           </h3>
 
           {loadError && (
-            <Alert className="mb-4 bg-red-50 border-red-200">
-              <AlertDescription className="text-red-700">{loadError}</AlertDescription>
+            <Alert className="mb-4 bg-red-950/50 border-red-800">
+              <AlertDescription className="text-red-400">{loadError}</AlertDescription>
             </Alert>
           )}
 
           {loadingVendors ? (
-            <Card className="p-10">
-              <div className="flex items-center justify-center text-gray-400">
-                <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                Loading vendors...
-              </div>
-            </Card>
+            <div className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-10 flex items-center justify-center text-zinc-500">
+              <Loader2 className="h-5 w-5 animate-spin mr-2" />
+              Loading vendors...
+            </div>
           ) : vendors.length === 0 ? (
-            <Card className="p-12 text-center">
-              <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500 font-medium mb-1">No vendors yet.</p>
-              <p className="text-sm text-gray-400">
+            <div className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-12 text-center">
+              <Users className="h-10 w-10 text-zinc-600 mx-auto mb-3" />
+              <p className="text-zinc-400 font-medium mb-1">No vendors yet.</p>
+              <p className="text-sm text-zinc-500">
                 Add contractors you trust and invite them to join your network.
               </p>
-            </Card>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {vendors.map((vendor) => {
+            <div className="rounded-lg border border-zinc-700 overflow-hidden">
+
+              {/* Table header */}
+              <div className="hidden md:grid grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-2.5 bg-zinc-900 border-b border-zinc-700">
+                <button
+                  onClick={() => handleSort('name')}
+                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 hover:text-zinc-300 text-left"
+                >
+                  Name <SortIcon col="name" />
+                </button>
+                <button
+                  onClick={() => handleSort('trade')}
+                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 hover:text-zinc-300 text-left"
+                >
+                  Trade <SortIcon col="trade" />
+                </button>
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Email</span>
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Phone</span>
+                <button
+                  onClick={() => handleSort('status')}
+                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 hover:text-zinc-300 text-left"
+                >
+                  Status <SortIcon col="status" />
+                </button>
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Actions</span>
+              </div>
+
+              {/* Table rows */}
+              {sortedVendors.map((vendor) => {
                 const status = getVendorStatus(vendor);
                 const invites = vendor.vendor_invitations ?? [];
-                const latestInvite = invites.sort(
-                  (a, b) =>
-                    new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
+                const latestInvite = [...invites].sort(
+                  (a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
                 )[0];
                 const canResend =
                   latestInvite &&
@@ -492,119 +528,145 @@ export default function VendorsPage() {
                   daysSince(latestInvite.sent_at) >= 7;
                 const hasInvite = invites.length > 0;
                 const accepted = invites.some((i) => i.status === 'ACCEPTED');
+                const isExpanded = expandedVendorId === vendor.id;
 
                 return (
-                  <Card key={vendor.id} className="p-5">
-                    {/* Name + status */}
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <div>
-                        <p className="font-semibold text-gray-900">{vendor.name}</p>
+                  <div key={vendor.id}>
+                    {/* Main row */}
+                    <div
+                      onClick={() =>
+                        setExpandedVendorId(isExpanded ? null : vendor.id)
+                      }
+                      className="grid grid-cols-1 md:grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-3.5 bg-zinc-800/50 border-b border-zinc-700 hover:bg-zinc-700/50 cursor-pointer transition-colors"
+                    >
+                      {/* Name + business */}
+                      <div className="min-w-0">
+                        <p className="text-white font-medium text-sm truncate">{vendor.name}</p>
                         {vendor.business_name && (
-                          <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
-                            <Building2 className="h-3.5 w-3.5 shrink-0" />
-                            {vendor.business_name}
-                          </p>
+                          <p className="text-zinc-300 text-xs truncate mt-0.5">{vendor.business_name}</p>
                         )}
                       </div>
-                      <span
-                        className={`text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 ${status.color}`}
-                      >
-                        {status.label}
-                      </span>
-                    </div>
 
-                    {/* Trade badge */}
-                    <div className="mb-3">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-orange-100 text-orange-700">
-                        <Briefcase className="h-3 w-3" />
-                        {vendor.trade}
-                      </span>
-                    </div>
+                      {/* Trade badge */}
+                      <div className="flex items-start">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-lw-rust/20 text-lw-rust border border-lw-rust/30 whitespace-nowrap">
+                          {vendor.trade}
+                        </span>
+                      </div>
 
-                    {/* Contact */}
-                    <div className="space-y-1.5 text-sm text-gray-600 mb-3">
-                      <a
-                        href={`mailto:${vendor.email}`}
-                        className="flex items-center gap-2 hover:text-gray-900"
-                      >
-                        <Mail className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-                        {vendor.email}
-                      </a>
-                      {vendor.phone && (
+                      {/* Email */}
+                      <div className="flex items-center min-w-0">
                         <a
-                          href={`tel:${vendor.phone.replace(/[^0-9+]/g, '')}`}
-                          className="flex items-center gap-2 hover:text-gray-900"
+                          href={`mailto:${vendor.email}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-1.5 text-zinc-400 text-sm hover:text-zinc-200 truncate"
                         >
-                          <Phone className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-                          {vendor.phone}
+                          <Mail className="h-3.5 w-3.5 shrink-0" />
+                          <span className="truncate">{vendor.email}</span>
                         </a>
-                      )}
+                      </div>
+
+                      {/* Phone */}
+                      <div className="flex items-center">
+                        {vendor.phone ? (
+                          <a
+                            href={`tel:${vendor.phone.replace(/[^0-9+]/g, '')}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1.5 text-zinc-400 text-sm hover:text-zinc-200"
+                          >
+                            <Phone className="h-3.5 w-3.5 shrink-0" />
+                            {vendor.phone}
+                          </a>
+                        ) : (
+                          <span className="text-zinc-600 text-sm">—</span>
+                        )}
+                      </div>
+
+                      {/* Status badge */}
+                      <div className="flex items-center">
+                        <span
+                          className={`text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap ${status.colorClass}`}
+                        >
+                          {status.label}
+                        </span>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        {!hasInvite && !accepted && (
+                          <Button
+                            size="sm"
+                            onClick={(e) => handleResendInvite(e, vendor)}
+                            disabled={resending[vendor.id]}
+                            className="text-white text-xs h-7 px-2.5"
+                            style={{ backgroundColor: '#E8621A' }}
+                          >
+                            {resending[vendor.id] ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <><Send className="h-3 w-3 mr-1" />Send Invite</>
+                            )}
+                          </Button>
+                        )}
+                        {canResend && (
+                          <Button
+                            size="sm"
+                            onClick={(e) => handleResendInvite(e, vendor)}
+                            disabled={resending[vendor.id]}
+                            className="text-xs h-7 px-2.5 border border-zinc-500 text-zinc-300 bg-zinc-700 hover:bg-zinc-600"
+                          >
+                            {resending[vendor.id] ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <><Send className="h-3 w-3 mr-1" />Resend</>
+                            )}
+                          </Button>
+                        )}
+                        {accepted && (
+                          <span className="flex items-center gap-1 text-xs text-green-400">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            Active
+                          </span>
+                        )}
+                        {/* Expand indicator */}
+                        <span className="ml-auto text-zinc-600">
+                          {isExpanded
+                            ? <ChevronUp className="h-4 w-4" />
+                            : <ChevronDown className="h-4 w-4" />}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Notes */}
-                    {vendor.notes && (
-                      <p className="text-xs text-gray-500 italic mb-3 line-clamp-2">
-                        {vendor.notes}
-                      </p>
-                    )}
-
-                    {/* Invite status detail */}
-                    {status.date && (
-                      <p className="text-xs text-gray-400 flex items-center gap-1 mb-3">
-                        <Clock className="h-3 w-3" />
-                        {status.label === 'Joined ListWorx' ? 'Joined' : 'Invited'}{' '}
-                        {status.date}
-                      </p>
-                    )}
-
-                    {/* Action buttons */}
-                    <div className="flex gap-2 mt-1">
-                      {!hasInvite && !accepted && (
-                        <Button
-                          size="sm"
-                          onClick={() => handleResendInvite(vendor)}
-                          disabled={resending[vendor.id]}
-                          className="text-white text-xs"
-                          style={{ backgroundColor: '#E8621A' }}
-                        >
-                          {resending[vendor.id] ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <>
-                              <Send className="h-3.5 w-3.5 mr-1" />
-                              Send Invite
-                            </>
-                          )}
-                        </Button>
-                      )}
-
-                      {canResend && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleResendInvite(vendor)}
-                          disabled={resending[vendor.id]}
-                          className="text-xs border-gray-300"
-                        >
-                          {resending[vendor.id] ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <>
-                              <Send className="h-3.5 w-3.5 mr-1" />
-                              Resend Invite
-                            </>
-                          )}
-                        </Button>
-                      )}
-
-                      {accepted && (
-                        <div className="flex items-center gap-1 text-xs text-green-600">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          Active on ListWorx
+                    {/* Expanded detail panel */}
+                    {isExpanded && (
+                      <div className="px-4 py-3 bg-zinc-900/60 border-b border-zinc-700 grid md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 mb-1">
+                            Notes
+                          </p>
+                          <p className="text-sm text-zinc-300">
+                            {vendor.notes || <span className="text-zinc-600 italic">No notes added.</span>}
+                          </p>
                         </div>
-                      )}
-                    </div>
-                  </Card>
+                        <div>
+                          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 mb-1">
+                            Invite Status
+                          </p>
+                          {status.date ? (
+                            <p className="text-sm text-zinc-300 flex items-center gap-1.5">
+                              <Clock className="h-3.5 w-3.5 text-zinc-500" />
+                              {status.label === 'Joined ListWorx' ? 'Joined' : 'Invited'} {status.date}
+                            </p>
+                          ) : (
+                            <p className="text-sm text-zinc-600 italic">No invite sent yet.</p>
+                          )}
+                          <p className="text-xs text-zinc-500 mt-1">
+                            Added {formatDate(vendor.created_at)}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
