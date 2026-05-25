@@ -134,17 +134,17 @@ Tone: Premium, warm, conversational, locally specific.`;
 
     // ── Parse JSON from response ────────────────────────────────────────────
     let parsed: Record<string, string>;
+    // Strip possible markdown code fences — declared outside try so catch can reference it
+    const cleaned = rawText
+      .replace(/^```(?:json)?\s*/i, '')
+      .replace(/```\s*$/, '')
+      .trim();
     try {
-      // Strip possible markdown code fences
-      const cleaned = rawText
-        .replace(/^```(?:json)?\s*/i, '')
-        .replace(/```\s*$/, '')
-        .trim();
       parsed = JSON.parse(cleaned);
     } catch (parseErr) {
       console.error('[listing-studio/generate] JSON parse failed. Raw text:', rawText);
       return NextResponse.json(
-        { error: 'Failed to parse AI response', rawText, detail: rawText },
+        { error: 'Failed to parse AI response', raw: cleaned.substring(0, 500) },
         { status: 500 }
       );
     }
