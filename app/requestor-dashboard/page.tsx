@@ -110,6 +110,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/requestor-dashboard' },
   { id: 'submit', label: 'Submit Request', icon: Plus, href: '/request' },
   { id: 'requests', label: 'My Requests', icon: ClipboardList, href: '/requestor-dashboard' },
+  { id: 'vendors', label: 'My Vendors', icon: Users, href: '/requestor-dashboard/vendors' },
   { id: 'profile', label: 'Profile', icon: User2, disabled: true },
   { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
 ];
