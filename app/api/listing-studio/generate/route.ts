@@ -9,6 +9,7 @@ const ASSET_TYPES = [
   'email_subject',
   'email_body',
   'description_rewrite',
+  'open_house_sheet',
 ] as const;
 
 export async function POST(request: NextRequest) {
@@ -93,8 +94,11 @@ Return ONLY valid JSON with these exact keys. No markdown, no preamble, no expla
   "facebook_post": "...",
   "email_subject": "...",
   "email_body": "...",
-  "description_rewrite": "..."
+  "description_rewrite": "...",
+  "open_house_sheet": "..."
 }
+
+For open_house_sheet: write a formatted property information sheet for open house visitors. Include address, price, beds/baths/sqft, key features as bullet points, and agent name and contact info. Professional and clean.
 
 Property details:
 Address: ${listing.address}, ${listing.city}, ${listing.state} ${listing.zip}

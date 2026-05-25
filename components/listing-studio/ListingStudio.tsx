@@ -117,22 +117,19 @@ const COMPRESSION_OPTIONS = {
 
 const MAX_PHOTOS = 15;
 
-const CONTENT_CARDS: {
-  key: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  emailKeys?: string[];
-}[] = [
-  { key: 'instagram_caption_1',    label: 'Instagram Caption 1',          icon: Image },
-  { key: 'instagram_caption_2',    label: 'Instagram Caption 2',          icon: Image },
-  { key: 'instagram_caption_3',    label: 'Instagram Caption 3',          icon: Image },
-  { key: 'facebook_post',          label: 'Facebook Post',                 icon: Share2 },
-  { key: 'linkedin_post',          label: 'LinkedIn Post',                 icon: Globe },
-  { key: 'email',                  label: 'Email',                         icon: Mail,
-    emailKeys: ['email_subject', 'email_body'] },
-  { key: 'open_house_announcement',label: 'Open House Announcement',       icon: Calendar },
-  { key: 'description_rewrite',    label: 'Property Description Rewrite',  icon: FileText },
-];
+// Metadata for every known asset type — used to render dynamic content cards.
+// Adding or removing types from the generate prompt automatically adjusts the UI.
+const ASSET_META: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
+  instagram_caption_1:     { label: 'Instagram Caption 1',          icon: Image },
+  instagram_caption_2:     { label: 'Instagram Caption 2',          icon: Image },
+  instagram_caption_3:     { label: 'Instagram Caption 3',          icon: Image },
+  facebook_post:           { label: 'Facebook Post',                icon: Share2 },
+  linkedin_post:           { label: 'LinkedIn Post',                icon: Globe },
+  email_subject:           { label: 'Email',                        icon: Mail },
+  open_house_announcement: { label: 'Open House Announcement',      icon: Calendar },
+  open_house_sheet:        { label: 'Open House Property Sheet',    icon: FileText },
+  description_rewrite:     { label: 'Property Description Rewrite', icon: FileText },
+};
 
 // ─── Small components ─────────────────────────────────────────────────────────
 
@@ -625,25 +622,36 @@ export function ListingStudio({
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      {hasContent && (
+                      {hasContent ? (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleGenerateForExisting(listing)}
+                            className="border-zinc-700 text-zinc-400 hover:bg-zinc-800 text-xs"
+                          >
+                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                            Regenerate
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleViewContent(listing)}
+                            className="bg-lw-rust hover:bg-lw-rust-hover text-white text-xs"
+                          >
+                            <FileText className="h-3.5 w-3.5 mr-1.5" />
+                            View Content
+                          </Button>
+                        </>
+                      ) : (
                         <Button
-                          variant="outline"
                           size="sm"
-                          onClick={() => handleViewContent(listing)}
-                          className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 text-xs"
+                          onClick={() => handleGenerateForExisting(listing)}
+                          className="bg-lw-rust hover:bg-lw-rust-hover text-white text-xs"
                         >
-                          <FileText className="h-3.5 w-3.5 mr-1.5" />
-                          View Content
+                          <Wand2 className="h-3.5 w-3.5 mr-1.5" />
+                          Generate Content
                         </Button>
                       )}
-                      <Button
-                        size="sm"
-                        onClick={() => handleGenerateForExisting(listing)}
-                        className="bg-lw-rust hover:bg-lw-rust-hover text-white text-xs"
-                      >
-                        <Wand2 className="h-3.5 w-3.5 mr-1.5" />
-                        Generate Content
-                      </Button>
                     </div>
                   </div>
                 );
@@ -1080,88 +1088,91 @@ export function ListingStudio({
             </div>
           )}
 
-          {/* ── Content cards grid ─────────────────────────────────────────── */}
+          {/* ── Content cards — rendered dynamically from actual assets ──────── */}
+          {/* email_body is merged into the email_subject card; empty assets are skipped */}
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
-            {CONTENT_CARDS.map((card) => {
-              const isEmail = !!card.emailKeys;
-              const displayText = isEmail
-                ? `Subject: ${generatedContent.email_subject || ''}\n\n${generatedContent.email_body || ''}`
-                : generatedContent[card.key] || '';
-              const copyText = displayText;
-              const isCopied = copiedKey === card.key;
-              const Icon = card.icon;
+            {Object.keys(generatedContent)
+              .filter((key) => key !== 'email_body' && !!generatedContent[key]?.trim())
+              .map((key) => {
+                const isEmail = key === 'email_subject';
+                const meta = ASSET_META[key] || { label: key.replace(/_/g, ' '), icon: FileText };
+                const Icon = meta.icon;
+                const displayText = isEmail
+                  ? `Subject: ${generatedContent.email_subject || ''}\n\n${generatedContent.email_body || ''}`
+                  : generatedContent[key] || '';
+                const isCopied = copiedKey === key;
 
-              return (
-                <div
-                  key={card.key}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 flex flex-col gap-3"
-                >
-                  {/* Card header */}
-                  <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-lw-rust shrink-0" />
-                    <p className="text-xs font-bold uppercase tracking-wide text-zinc-300">
-                      {card.label}
-                    </p>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1">
-                    {isEmail ? (
-                      <div className="space-y-2">
-                        <div className="rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2">
-                          <p className="text-xs text-zinc-500 mb-0.5">Subject</p>
-                          <p className="text-sm text-white">
-                            {generatedContent.email_subject || '—'}
-                          </p>
-                        </div>
-                        <div className="rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2">
-                          <p className="text-xs text-zinc-500 mb-0.5">Body</p>
-                          <p className="text-sm text-zinc-300 whitespace-pre-line leading-relaxed">
-                            {generatedContent.email_body || '—'}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-sm text-zinc-300 whitespace-pre-line leading-relaxed">
-                        {displayText || '—'}
+                return (
+                  <div
+                    key={key}
+                    className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 flex flex-col gap-3"
+                  >
+                    {/* Card header */}
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-4 w-4 text-lw-rust shrink-0" />
+                      <p className="text-xs font-bold uppercase tracking-wide text-zinc-300">
+                        {isEmail ? 'Email' : meta.label}
                       </p>
-                    )}
-                  </div>
+                    </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 pt-1 border-t border-zinc-800">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleCopy(card.key, copyText)}
-                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 text-xs h-8"
-                    >
-                      {isCopied ? (
-                        <>
-                          <Check className="h-3.5 w-3.5 mr-1.5 text-green-400" />
-                          Copied!
-                        </>
+                    {/* Content */}
+                    <div className="flex-1">
+                      {isEmail ? (
+                        <div className="space-y-2">
+                          <div className="rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2">
+                            <p className="text-xs text-zinc-500 mb-0.5">Subject</p>
+                            <p className="text-sm text-white">
+                              {generatedContent.email_subject || '—'}
+                            </p>
+                          </div>
+                          <div className="rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2">
+                            <p className="text-xs text-zinc-500 mb-0.5">Body</p>
+                            <p className="text-sm text-zinc-300 whitespace-pre-line leading-relaxed">
+                              {generatedContent.email_body || '—'}
+                            </p>
+                          </div>
+                        </div>
                       ) : (
-                        <>
-                          <Copy className="h-3.5 w-3.5 mr-1.5" />
-                          Copy
-                        </>
+                        <p className="text-sm text-zinc-300 whitespace-pre-line leading-relaxed">
+                          {displayText || '—'}
+                        </p>
                       )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleRegenerate}
-                      disabled={isGenerating || remainingPackages <= 0}
-                      className="border-zinc-700 text-zinc-400 hover:bg-zinc-800 text-xs h-8"
-                    >
-                      <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                      Regenerate
-                    </Button>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 pt-1 border-t border-zinc-800">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleCopy(key, displayText)}
+                        className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 text-xs h-8"
+                      >
+                        {isCopied ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 mr-1.5 text-green-400" />
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3.5 w-3.5 mr-1.5" />
+                            Copy
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleRegenerate}
+                        disabled={isGenerating || remainingPackages <= 0}
+                        className="border-zinc-700 text-zinc-400 hover:bg-zinc-800 text-xs h-8"
+                      >
+                        <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                        Regenerate
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
 
           {/* Usage summary */}
