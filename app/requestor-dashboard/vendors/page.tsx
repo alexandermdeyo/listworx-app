@@ -156,13 +156,21 @@ export default function VendorsPage() {
       const emailPrefix = user.email?.split('@')[0] ?? 'User';
       setUserName(emailPrefix);
 
-      // Fetch realtor profile for brand name (used in invite emails)
-      const { data: profile } = await supabase
-        .from('realtor_profiles')
-        .select('brand_name')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      setRealtorName(profile?.brand_name || emailPrefix || 'Your realtor');
+      // Fetch realtor profile + users record for name (used in invite emails)
+      const [{ data: profile }, { data: userRecord }] = await Promise.all([
+        supabase
+          .from('realtor_profiles')
+          .select('brand_name')
+          .eq('user_id', user.id)
+          .maybeSingle(),
+        supabase
+          .from('users')
+          .select('name')
+          .eq('id', user.id)
+          .maybeSingle(),
+      ]);
+      // Priority: brand_name → users.name → email prefix
+      setRealtorName(profile?.brand_name || userRecord?.name || emailPrefix || 'Your realtor');
     });
   }, [supabase, router]);
 
