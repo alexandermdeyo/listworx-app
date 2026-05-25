@@ -65,20 +65,28 @@ export async function POST(request: NextRequest) {
     let token = providedToken ?? null;
 
     if (!token) {
-      // Look for an existing PENDING invitation
+      // Look for an existing PENDING invitation for this realtor + invitee email
       const { data: existingInv } = await admin
         .from('vendor_invitations')
-        .select('token')
-        .eq('realtor_vendor_id', vendorId)
+        .select('invite_token')
+        .eq('invited_by', session.user.id)
+        .eq('invitee_email', inviteeEmail)
         .eq('status', 'PENDING')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
-      if (existingInv?.token) {
-        token = existingInv.token;
+      if (existingInv?.invite_token) {
+        token = existingInv.invite_token;
       } else {
-        // No pending invitation — create a fresh one
+        // No pending invitation — look up vendor record for trade + business,
+        // then create a fresh invitation row
+        const { data: vendorRecord } = await admin
+          .from('realtor_vendors')
+          .select('business_name, trade')
+          .eq('id', vendorId)
+          .maybeSingle();
+
         const tokenBytes = crypto.getRandomValues(new Uint8Array(24));
         const newToken = Array.from(tokenBytes)
           .map((b) => b.toString(16).padStart(2, '0'))
@@ -87,27 +95,37 @@ export async function POST(request: NextRequest) {
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 30);
 
-        const { data: newInv, error: invError } = await admin
+        const insertPayload = {
+          invited_by:       session.user.id,
+          invitee_email:    inviteeEmail,
+          invitee_name:     inviteeName,
+          invitee_business: vendorRecord?.business_name ?? null,
+          invitee_trade:    vendorRecord?.trade ?? null,
+          invite_token:     newToken,
+          status:           'PENDING',
+          expires_at:       expiresAt.toISOString(),
+        };
+
+        console.log('[send-invite] inserting invitation row:', JSON.stringify(insertPayload));
+
+        const { data: newInvitation, error: insertError } = await admin
           .from('vendor_invitations')
-          .insert({
-            realtor_vendor_id: vendorId,
-            token: newToken,
-            status: 'PENDING',
-            sent_at: new Date().toISOString(),
-            expires_at: expiresAt.toISOString(),
-          })
-          .select('token')
+          .insert(insertPayload)
+          .select()
           .single();
 
-        if (invError || !newInv) {
-          console.error('[vendor/send-invite] Failed to create invitation:', invError);
+        if (insertError) {
+          console.error(
+            '[send-invite] invitation insert error:',
+            JSON.stringify(insertError)
+          );
           return NextResponse.json(
-            { error: 'Failed to create invitation record.' },
+            { error: 'Failed to create invitation record.', detail: insertError.message },
             { status: 500 }
           );
         }
 
-        token = newInv.token;
+        token = newInvitation.invite_token;
       }
     }
 
