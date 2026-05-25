@@ -214,14 +214,20 @@ export default function VendorsPage() {
     if (!form.trade) { setSaveError('Please select a trade.'); return; }
 
     setSaving(true);
+
+    // Capture before clearing the form
+    const vendorName  = form.name.trim();
+    const vendorEmail = form.email.trim();
+
     try {
+      // ── Step 1: Save vendor + create invitation row ────────────────────────
       const res = await fetch('/api/realtor/vendors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:          form.name.trim(),
+          name:          vendorName,
           business_name: form.business_name.trim() || undefined,
-          email:         form.email.trim(),
+          email:         vendorEmail,
           trade:         form.trade,
           phone:         form.phone.trim() || undefined,
           notes:         form.notes.trim() || undefined,
@@ -231,11 +237,35 @@ export default function VendorsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save vendor.');
 
+      // ── Step 2: If invite requested and token returned, send email separately
+      if (sendInvite && data.token) {
+        // Fire-and-forget: returns immediately, email sends in background
+        fetch('/api/realtor/vendors/send-invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            vendorId:     data.vendor.id,
+            token:        data.token,
+            inviteeName:  vendorName,
+            inviteeEmail: vendorEmail,
+            realtorName:  userName || 'Your realtor',
+          }),
+        })
+          .then(async (r) => {
+            if (!r.ok) {
+              const d = await r.json();
+              console.error('[send-invite] failed:', d.error);
+            }
+          })
+          .catch((err) => console.error('[send-invite] fetch error:', err));
+      }
+
+      // ── Step 3: Show success immediately ──────────────────────────────────
       setForm(EMPTY_FORM);
       setSaveSuccess(
         sendInvite
-          ? `${form.name} saved and invite sent to ${form.email}.`
-          : `${form.name} added to your vendor list.`
+          ? `${vendorName} saved and invite sent to ${vendorEmail}.`
+          : `${vendorName} added to your vendor list.`
       );
       await loadVendors();
     } catch (err: any) {
