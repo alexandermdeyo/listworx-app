@@ -280,7 +280,7 @@ export default function VendorsPage() {
     e.stopPropagation(); // don't toggle row expansion
     setResending((prev) => ({ ...prev, [vendor.id]: true }));
     try {
-      const res = await fetch('/api/realtor/vendors/resend-invite', {
+      const res = await fetch('/api/realtor/vendors/send-invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ vendorId: vendor.id }),
