@@ -284,8 +284,8 @@ export default function VendorsPage() {
             My Contractor Network
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Invite contractors you trust and keep them organized in one place. When they
-            join ListWorx, you'll be their first connection.
+            Your contractors already do great work. Help them get found by more clients — and
+            make sure there is always a vetted backup when your first call is unavailable.
           </p>
         </div>
 
@@ -411,8 +411,7 @@ export default function VendorsPage() {
             <Button
               onClick={() => handleSubmit(false)}
               disabled={saving}
-              variant="outline"
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border border-zinc-500 text-white bg-zinc-700 hover:bg-zinc-600"
             >
               {saving ? (
                 <>
