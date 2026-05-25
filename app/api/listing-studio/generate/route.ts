@@ -5,12 +5,9 @@ import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 const ASSET_TYPES = [
   'instagram_caption_1',
   'instagram_caption_2',
-  'instagram_caption_3',
   'facebook_post',
-  'linkedin_post',
   'email_subject',
   'email_body',
-  'open_house_announcement',
   'description_rewrite',
 ] as const;
 
@@ -93,12 +90,9 @@ Return ONLY valid JSON with these exact keys. No markdown, no preamble, no expla
 {
   "instagram_caption_1": "...",
   "instagram_caption_2": "...",
-  "instagram_caption_3": "...",
   "facebook_post": "...",
-  "linkedin_post": "...",
   "email_subject": "...",
   "email_body": "...",
-  "open_house_announcement": "...",
   "description_rewrite": "..."
 }
 
@@ -109,7 +103,7 @@ Description: ${listing.description}
 
 Agent: ${listing.brand_name} | ${listing.brand_phone} | ${listing.brand_email}
 
-Tone: Premium but warm and conversational. Locally specific where possible. Write like a knowledgeable local agent who genuinely loves the area. Not corporate. Not generic. Sound like a real person.`;
+Tone: Premium, warm, conversational, locally specific.`;
 
     // ── Call Anthropic ──────────────────────────────────────────────────────
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
@@ -121,7 +115,7 @@ Tone: Premium but warm and conversational. Locally specific where possible. Writ
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 2000,
+        max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
