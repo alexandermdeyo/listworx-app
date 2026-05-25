@@ -102,6 +102,15 @@ function getVendorStatus(vendor: Vendor): {
   return { label: 'Not Invited', colorClass: 'bg-zinc-700 text-zinc-400' };
 }
 
+// ── Phone formatter ───────────────────────────────────────────────────────────
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 // ── Page Component ────────────────────────────────────────────────────────────
 
 const EMPTY_FORM = {
@@ -409,7 +418,7 @@ export default function VendorsPage() {
                 type="tel"
                 name="phone"
                 value={form.phone}
-                onChange={handleChange}
+                onChange={(e) => setForm((prev) => ({ ...prev, phone: formatPhone(e.target.value) }))}
                 placeholder="(555) 000-0000"
                 className="w-full rounded-md border border-zinc-600 bg-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
@@ -488,31 +497,31 @@ export default function VendorsPage() {
               </p>
             </div>
           ) : (
-            <div className="rounded-lg border border-zinc-700 overflow-hidden">
+            <div className="rounded-lg border border-zinc-700 bg-zinc-900 overflow-hidden">
 
               {/* Table header */}
-              <div className="hidden md:grid grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-2.5 bg-zinc-900 border-b border-zinc-700">
+              <div className="hidden md:grid grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-2.5 bg-zinc-800 border-b border-zinc-700">
                 <button
                   onClick={() => handleSort('name')}
-                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 hover:text-zinc-300 text-left"
+                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-zinc-400 hover:text-zinc-300 text-left"
                 >
                   Name <SortIcon col="name" />
                 </button>
                 <button
                   onClick={() => handleSort('trade')}
-                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 hover:text-zinc-300 text-left"
+                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-zinc-400 hover:text-zinc-300 text-left"
                 >
                   Trade <SortIcon col="trade" />
                 </button>
-                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Email</span>
-                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Phone</span>
+                <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">Email</span>
+                <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">Phone</span>
                 <button
                   onClick={() => handleSort('status')}
-                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 hover:text-zinc-300 text-left"
+                  className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-zinc-400 hover:text-zinc-300 text-left"
                 >
                   Status <SortIcon col="status" />
                 </button>
-                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Actions</span>
+                <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">Actions</span>
               </div>
 
               {/* Table rows */}
@@ -537,13 +546,13 @@ export default function VendorsPage() {
                       onClick={() =>
                         setExpandedVendorId(isExpanded ? null : vendor.id)
                       }
-                      className="grid grid-cols-1 md:grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-3.5 bg-zinc-800/50 border-b border-zinc-700 hover:bg-zinc-700/50 cursor-pointer transition-colors"
+                      className="grid grid-cols-1 md:grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-3.5 bg-zinc-900 border-b border-zinc-800 hover:bg-zinc-800/50 cursor-pointer transition-colors"
                     >
                       {/* Name + business */}
                       <div className="min-w-0">
                         <p className="text-white font-medium text-sm truncate">{vendor.name}</p>
                         {vendor.business_name && (
-                          <p className="text-zinc-300 text-xs truncate mt-0.5">{vendor.business_name}</p>
+                          <p className="text-zinc-400 text-sm truncate mt-0.5">{vendor.business_name}</p>
                         )}
                       </div>
 
@@ -645,9 +654,9 @@ export default function VendorsPage() {
 
                     {/* Expanded detail panel */}
                     {isExpanded && (
-                      <div className="px-4 py-3 bg-zinc-900/60 border-b border-zinc-700 grid md:grid-cols-2 gap-4">
+                      <div className="px-4 py-3 bg-zinc-800 border-t border-zinc-700 grid md:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 mb-1">
+                          <p className="text-xs font-medium uppercase tracking-wider text-zinc-400 mb-1">
                             Notes
                           </p>
                           <p className="text-sm text-zinc-300">
@@ -655,7 +664,7 @@ export default function VendorsPage() {
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 mb-1">
+                          <p className="text-xs font-medium uppercase tracking-wider text-zinc-400 mb-1">
                             Invite Status
                           </p>
                           {status.date ? (

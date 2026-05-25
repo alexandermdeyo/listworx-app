@@ -202,46 +202,50 @@ export async function POST(request: NextRequest) {
         const inviteUrl = `https://listworx.co/invite/${token}`;
 
         // Non-blocking: fire and forget — API returns immediately, email completes in background
-        // from: RESEND_FROM_EMAIL env var (adeyo@listworx.co)
-        // subject: "${realtorName} added you to their contractor network on ListWorx"
-        // template: HTML invite email with CTA → https://listworx.co/invite/${token}
         sendEmail({
           to: email,
-          subject: `${realtorName} added you to their contractor network on ListWorx`,
-          html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
-                <div style="margin-bottom: 24px;">
-                  <img src="https://listworx.co/logo.png" alt="ListWorx" height="36" style="height: 36px;" />
-                </div>
-
-                <h1 style="font-size: 22px; font-weight: 700; color: #111; margin-bottom: 12px;">
-                  You've been added to a contractor network
-                </h1>
-
-                <p style="font-size: 15px; color: #444; line-height: 1.6; margin-bottom: 16px;">
-                  <strong>${realtorName}</strong> added you — <strong>${name}${business_name ? ` (${business_name})` : ''}</strong> — to their trusted contractor network on <a href="https://listworx.co" style="color: #E8621A; text-decoration: none;">ListWorx</a>.
-                </p>
-
-                <p style="font-size: 15px; color: #444; line-height: 1.6; margin-bottom: 24px;">
-                  ListWorx connects realtors with reliable local contractors. Joining their network means you'll be top of mind when ${realtorName} and their clients need work done.
-                </p>
-
-                <a href="${inviteUrl}" style="display: inline-block; background: #E8621A; color: white; font-weight: 700; font-size: 16px; padding: 14px 28px; border-radius: 8px; text-decoration: none; margin-bottom: 24px;">
-                  Join My Network on ListWorx
-                </a>
-
-                <p style="font-size: 13px; color: #888; margin-bottom: 8px;">
-                  This invite expires in 30 days. If you didn't expect this, you can safely ignore it.
-                </p>
-
-                <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
-
-                <p style="font-size: 12px; color: #aaa;">
-                  ListWorx · <a href="https://listworx.co" style="color: #aaa;">listworx.co</a>
-                </p>
-              </div>
-            `,
-          text: `${realtorName} added you to their contractor network on ListWorx.\n\nJoin their network here: ${inviteUrl}\n\nThis invite expires in 30 days.`,
+          subject: `${realtorName} wants you in their contractor network`,
+          html: `<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#F5F5F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F5F4;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <!-- Header -->
+        <tr><td style="background:#1a1a1a;padding:24px 32px;text-align:center;">
+          <img src="https://listworx.co/LW_LOGO.png" alt="ListWorx" width="120" style="display:inline-block;max-width:120px;height:auto;" />
+        </td></tr>
+        <!-- Orange accent bar -->
+        <tr><td style="height:4px;background:#E85000;line-height:4px;font-size:0;">&nbsp;</td></tr>
+        <!-- Body -->
+        <tr><td style="padding:36px 32px 16px;">
+          <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#E85000;">ListWorx Contractor Network</p>
+          <h1 style="margin:0 0 16px;font-size:26px;font-weight:700;color:#111111;line-height:1.2;">${realtorName} wants you in their contractor network</h1>
+          <p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#333333;">
+            <strong>${name}${business_name ? ` — ${business_name}` : ''}</strong>, you've been added to the trusted contractor network of <strong>${realtorName}</strong> on ListWorx.
+          </p>
+          <p style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#333333;">
+            Your contractors already do great work. ListWorx helps realtors find and refer reliable local pros like you — and being in their network means you're the first call when their clients need help.
+          </p>
+          <!-- CTA button -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+            <tr><td align="center">
+              <a href="${inviteUrl}" target="_blank" style="display:inline-block;background:#E85000;color:#ffffff;font-family:-apple-system,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.3px;text-decoration:none;padding:14px 34px;border-radius:7px;line-height:1.4;">See Your Invitation →</a>
+            </td></tr>
+          </table>
+          <p style="margin:0 0 8px;font-size:13px;line-height:1.5;color:#888888;">This invitation expires in 30 days. If you weren't expecting this, you can safely ignore it.</p>
+          <p style="margin:0;font-size:12px;color:#888888;text-align:center;">Questions? <a href="mailto:support@listworx.co" style="color:#E85000;text-decoration:none;">support@listworx.co</a></p>
+        </td></tr>
+        <!-- Footer -->
+        <tr><td style="background:#1a1a1a;padding:24px 32px;text-align:center;">
+          <img src="https://listworx.co/Ironclad_Standards_Logo.png" alt="IronClad Standards" width="56" style="display:inline-block;max-width:56px;height:auto;opacity:0.9;" />
+          <p style="margin:12px 0 0;font-size:11px;color:#999999;letter-spacing:0.5px;">ListWorx — Built in Gallatin, TN</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`,
+          text: `${realtorName} wants you in their contractor network on ListWorx.\n\nSee your invitation: ${inviteUrl}\n\nThis invitation expires in 30 days.\n\nQuestions? support@listworx.co\nListWorx — Built in Gallatin, TN`,
         })
           .then((emailResult) => {
             console.log('[vendor invite] email sent:', emailResult);
