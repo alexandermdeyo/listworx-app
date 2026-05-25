@@ -40,19 +40,75 @@ export async function POST(request: NextRequest) {
 
     // ── Parse body ────────────────────────────────────────────────────────────
     const body = await request.json();
-    const { vendorId, token, inviteeName, inviteeEmail, realtorName } = body as {
+    const {
+      vendorId,
+      token: providedToken,
+      inviteeName,
+      inviteeEmail,
+      realtorName,
+    } = body as {
       vendorId: string;
-      token: string;
+      token?: string;
       inviteeName: string;
       inviteeEmail: string;
       realtorName: string;
     };
 
-    if (!token || !inviteeEmail || !inviteeName || !realtorName) {
+    if (!vendorId || !inviteeEmail || !inviteeName || !realtorName) {
       return NextResponse.json(
-        { error: 'token, inviteeEmail, inviteeName, and realtorName are required.' },
+        { error: 'vendorId, inviteeEmail, inviteeName, and realtorName are required.' },
         { status: 400 }
       );
+    }
+
+    // ── Resolve token — use provided token or look up / create invitation ─────
+    let token = providedToken ?? null;
+
+    if (!token) {
+      // Look for an existing PENDING invitation
+      const { data: existingInv } = await admin
+        .from('vendor_invitations')
+        .select('token')
+        .eq('realtor_vendor_id', vendorId)
+        .eq('status', 'PENDING')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existingInv?.token) {
+        token = existingInv.token;
+      } else {
+        // No pending invitation — create a fresh one
+        const tokenBytes = crypto.getRandomValues(new Uint8Array(24));
+        const newToken = Array.from(tokenBytes)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 30);
+
+        const { data: newInv, error: invError } = await admin
+          .from('vendor_invitations')
+          .insert({
+            realtor_vendor_id: vendorId,
+            token: newToken,
+            status: 'PENDING',
+            sent_at: new Date().toISOString(),
+            expires_at: expiresAt.toISOString(),
+          })
+          .select('token')
+          .single();
+
+        if (invError || !newInv) {
+          console.error('[vendor/send-invite] Failed to create invitation:', invError);
+          return NextResponse.json(
+            { error: 'Failed to create invitation record.' },
+            { status: 500 }
+          );
+        }
+
+        token = newInv.token;
+      }
     }
 
     const inviteUrl = `https://listworx.co/invite/${token}`;

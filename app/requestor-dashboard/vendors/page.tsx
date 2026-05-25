@@ -128,6 +128,7 @@ export default function VendorsPage() {
   const supabase = supabaseRef.current;
 
   const [userName, setUserName] = useState('');
+  const [realtorName, setRealtorName] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loadingVendors, setLoadingVendors] = useState(true);
@@ -147,12 +148,21 @@ export default function VendorsPage() {
 
   // ── Auth check ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) {
         router.replace('/login');
         return;
       }
-      setUserName(user.email?.split('@')[0] ?? 'User');
+      const emailPrefix = user.email?.split('@')[0] ?? 'User';
+      setUserName(emailPrefix);
+
+      // Fetch realtor profile for brand name (used in invite emails)
+      const { data: profile } = await supabase
+        .from('realtor_profiles')
+        .select('brand_name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      setRealtorName(profile?.brand_name || emailPrefix || 'Your realtor');
     });
   }, [supabase, router]);
 
@@ -248,7 +258,7 @@ export default function VendorsPage() {
             token:        data.token,
             inviteeName:  vendorName,
             inviteeEmail: vendorEmail,
-            realtorName:  userName || 'Your realtor',
+            realtorName:  realtorName || 'Your realtor',
           }),
         })
           .then(async (r) => {
@@ -283,7 +293,13 @@ export default function VendorsPage() {
       const res = await fetch('/api/realtor/vendors/send-invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ vendorId: vendor.id }),
+        body: JSON.stringify({
+          vendorId:     vendor.id,
+          inviteeName:  vendor.name,
+          inviteeEmail: vendor.email,
+          realtorName:  realtorName || 'Your realtor',
+          // no token — server looks up or creates latest pending invitation
+        }),
       });
       if (!res.ok) {
         const d = await res.json();
