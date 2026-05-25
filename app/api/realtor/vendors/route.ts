@@ -5,7 +5,7 @@
  *
  * CREATE TABLE realtor_vendors (
  *   id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
- *   realtor_user_id  UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ *   realtor_id  UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
  *   name             TEXT        NOT NULL,
  *   business_name    TEXT,
  *   email            TEXT        NOT NULL,
@@ -27,7 +27,7 @@
  *   created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
  * );
  *
- * CREATE INDEX ON realtor_vendors (realtor_user_id);
+ * CREATE INDEX ON realtor_vendors (realtor_id);
  * CREATE INDEX ON vendor_invitations (realtor_vendor_id);
  */
 
@@ -81,7 +81,7 @@ export async function GET() {
     const { data: vendors, error } = await admin
       .from('realtor_vendors')
       .select('*')
-      .eq('realtor_user_id', user.id)
+      .eq('realtor_id', user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
     const { data: vendor, error: vendorError } = await admin
       .from('realtor_vendors')
       .insert({
-        realtor_user_id: user.id,
+        realtor_id: user.id,
         name,
         business_name: business_name || null,
         email,
