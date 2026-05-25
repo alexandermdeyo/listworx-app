@@ -115,7 +115,7 @@ Tone: Premium, warm, conversational, locally specific.`;
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
+        max_tokens: 3000,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
