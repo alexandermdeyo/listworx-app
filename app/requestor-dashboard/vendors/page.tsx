@@ -46,7 +46,7 @@ type Vendor = {
   phone: string | null;
   notes: string | null;
   created_at: string;
-  vendor_invitations: VendorInvitation[];
+  vendor_invitations?: VendorInvitation[];
 };
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -313,7 +313,7 @@ export default function VendorsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-zinc-300 mb-1">
                 Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -322,13 +322,13 @@ export default function VendorsPage() {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Jane Smith"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
             </div>
 
             {/* Business name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-zinc-300 mb-1">
                 Business Name
               </label>
               <input
@@ -337,13 +337,13 @@ export default function VendorsPage() {
                 value={form.business_name}
                 onChange={handleChange}
                 placeholder="Smith Plumbing LLC"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-zinc-300 mb-1">
                 Email <span className="text-red-500">*</span>
               </label>
               <input
@@ -352,13 +352,13 @@ export default function VendorsPage() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="jane@smithplumbing.com"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
             </div>
 
             {/* Trade */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-zinc-300 mb-1">
                 Trade <span className="text-red-500">*</span>
               </label>
               <select
@@ -378,7 +378,7 @@ export default function VendorsPage() {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-zinc-300 mb-1">
                 Phone
               </label>
               <input
@@ -387,13 +387,13 @@ export default function VendorsPage() {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="(555) 000-0000"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust placeholder:text-zinc-500"
               />
             </div>
 
             {/* Notes */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-zinc-300 mb-1">
                 Notes
               </label>
               <textarea
@@ -402,7 +402,7 @@ export default function VendorsPage() {
                 onChange={handleChange}
                 placeholder="Great for kitchen remodels, fast response..."
                 rows={2}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust resize-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust resize-none placeholder:text-zinc-500"
               />
             </div>
           </div>

@@ -80,7 +80,7 @@ export async function GET() {
 
     const { data: vendors, error } = await admin
       .from('realtor_vendors')
-      .select('*, vendor_invitations(*)')
+      .select('*')
       .eq('realtor_user_id', user.id)
       .order('created_at', { ascending: false });
 
