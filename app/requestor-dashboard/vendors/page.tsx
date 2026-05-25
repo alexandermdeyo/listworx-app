@@ -314,7 +314,7 @@ export default function VendorsPage() {
         </div>
 
         {/* ── Add Vendor Form ─────────────────────────────────────────────── */}
-        <div className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-6 mb-6">
+        <div className="rounded-lg border border-zinc-700 bg-zinc-900 p-6 mb-6">
           <div className="flex items-center gap-2 mb-5">
             <UserPlus className="h-5 w-5 text-lw-rust" />
             <h3 className="text-base font-semibold text-white">Add a Vendor</h3>
@@ -628,8 +628,14 @@ export default function VendorsPage() {
                             Active
                           </span>
                         )}
-                        {/* Expand indicator */}
-                        <span className="ml-auto text-zinc-600">
+                        {/* Expand indicator — needs its own handler because parent stops propagation */}
+                        <span
+                          className="ml-auto text-zinc-600 cursor-pointer hover:text-zinc-400"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedVendorId(isExpanded ? null : vendor.id);
+                          }}
+                        >
                           {isExpanded
                             ? <ChevronUp className="h-4 w-4" />
                             : <ChevronDown className="h-4 w-4" />}

@@ -201,14 +201,14 @@ export async function POST(request: NextRequest) {
 
         const inviteUrl = `https://listworx.co/invite/${token}`;
 
+        // Non-blocking: fire and forget — API returns immediately, email completes in background
         // from: RESEND_FROM_EMAIL env var (adeyo@listworx.co)
         // subject: "${realtorName} added you to their contractor network on ListWorx"
         // template: HTML invite email with CTA → https://listworx.co/invite/${token}
-        try {
-          const emailResult = await sendEmail({
-            to: email,
-            subject: `${realtorName} added you to their contractor network on ListWorx`,
-            html: `
+        sendEmail({
+          to: email,
+          subject: `${realtorName} added you to their contractor network on ListWorx`,
+          html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
                 <div style="margin-bottom: 24px;">
                   <img src="https://listworx.co/logo.png" alt="ListWorx" height="36" style="height: 36px;" />
@@ -241,13 +241,14 @@ export async function POST(request: NextRequest) {
                 </p>
               </div>
             `,
-            text: `${realtorName} added you to their contractor network on ListWorx.\n\nJoin their network here: ${inviteUrl}\n\nThis invite expires in 30 days.`,
+          text: `${realtorName} added you to their contractor network on ListWorx.\n\nJoin their network here: ${inviteUrl}\n\nThis invite expires in 30 days.`,
+        })
+          .then((emailResult) => {
+            console.log('[vendor invite] email sent:', emailResult);
+          })
+          .catch((err) => {
+            console.error('[vendor invite] email failed:', err);
           });
-          console.log('[vendor invite] email sent:', emailResult);
-        } catch (emailError) {
-          console.error('[vendor invite] email failed:', emailError);
-          // Don't fail — vendor + invitation already saved
-        }
       }
     }
 
