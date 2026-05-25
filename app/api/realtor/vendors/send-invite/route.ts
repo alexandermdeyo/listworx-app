@@ -46,12 +46,14 @@ export async function POST(request: NextRequest) {
       inviteeName,
       inviteeEmail,
       realtorName,
+      realtorBrokerage,
     } = body as {
       vendorId: string;
       token?: string;
       inviteeName: string;
       inviteeEmail: string;
       realtorName: string;
+      realtorBrokerage?: string | null;
     };
 
     if (!vendorId || !inviteeEmail || !inviteeName || !realtorName) {
@@ -134,7 +136,9 @@ export async function POST(request: NextRequest) {
     // ── Send branded email ────────────────────────────────────────────────────
     const emailResult = await sendEmail({
       to: inviteeEmail,
-      subject: `${realtorName} wants you in their contractor network`,
+      subject: realtorBrokerage
+        ? `${realtorName} from ${realtorBrokerage} wants you in their contractor network`
+        : `${realtorName} wants you in their contractor network`,
       html: `<!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;background:#F5F5F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
@@ -150,9 +154,9 @@ export async function POST(request: NextRequest) {
         <!-- Body -->
         <tr><td style="padding:36px 32px 16px;">
           <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#E85000;">ListWorx Contractor Network</p>
-          <h1 style="margin:0 0 16px;font-size:26px;font-weight:700;color:#111111;line-height:1.2;">${realtorName} wants you in their contractor network</h1>
+          <h1 style="margin:0 0 16px;font-size:26px;font-weight:700;color:#111111;line-height:1.2;">${realtorName}${realtorBrokerage ? ` from ${realtorBrokerage}` : ''} wants you in their contractor network</h1>
           <p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#333333;">
-            <strong>${inviteeName}</strong>, you've been added to the trusted contractor network of <strong>${realtorName}</strong> on ListWorx.
+            <strong>${inviteeName}</strong>, you've been added to the trusted contractor network of <strong>${realtorName}</strong>${realtorBrokerage ? `, ${realtorBrokerage}` : ''} on ListWorx.
           </p>
           <p style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#333333;">
             Your work speaks for itself. ListWorx helps realtors find and refer reliable local pros like you — and being in their network means you're the first call when their clients need help.

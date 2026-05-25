@@ -129,6 +129,7 @@ export default function VendorsPage() {
 
   const [userName, setUserName] = useState('');
   const [realtorName, setRealtorName] = useState('');
+  const [realtorBrokerage, setRealtorBrokerage] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loadingVendors, setLoadingVendors] = useState(true);
@@ -160,7 +161,7 @@ export default function VendorsPage() {
       const [{ data: profile }, { data: userRecord }] = await Promise.all([
         supabase
           .from('realtor_profiles')
-          .select('brand_name')
+          .select('brand_name, brokerage_name')
           .eq('user_id', user.id)
           .maybeSingle(),
         supabase
@@ -171,6 +172,7 @@ export default function VendorsPage() {
       ]);
       // Priority: brand_name → users.name → email prefix
       setRealtorName(profile?.brand_name || userRecord?.name || emailPrefix || 'Your realtor');
+      setRealtorBrokerage(profile?.brokerage_name || null);
     });
   }, [supabase, router]);
 
@@ -262,11 +264,12 @@ export default function VendorsPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            vendorId:     data.vendor.id,
-            token:        data.token,
-            inviteeName:  vendorName,
-            inviteeEmail: vendorEmail,
-            realtorName:  realtorName || 'Your realtor',
+            vendorId:        data.vendor.id,
+            token:           data.token,
+            inviteeName:     vendorName,
+            inviteeEmail:    vendorEmail,
+            realtorName:     realtorName || 'Your realtor',
+            realtorBrokerage: realtorBrokerage || null,
           }),
         })
           .then(async (r) => {
@@ -302,10 +305,11 @@ export default function VendorsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          vendorId:     vendor.id,
-          inviteeName:  vendor.name,
-          inviteeEmail: vendor.email,
-          realtorName:  realtorName || 'Your realtor',
+          vendorId:         vendor.id,
+          inviteeName:      vendor.name,
+          inviteeEmail:     vendor.email,
+          realtorName:      realtorName || 'Your realtor',
+          realtorBrokerage: realtorBrokerage || null,
           // no token — server looks up or creates latest pending invitation
         }),
       });
