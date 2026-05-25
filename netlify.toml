@@ -6,8 +6,5 @@
   NODE_VERSION = "20"
   NEXT_TELEMETRY_DISABLED = "1"
 
-[functions]
-  timeout = 30
-
 [[plugins]]
   package = "@netlify/plugin-nextjs"
