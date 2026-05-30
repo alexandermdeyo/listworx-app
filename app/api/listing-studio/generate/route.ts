@@ -12,6 +12,12 @@ const ASSET_TYPES = [
   'open_house_sheet',
 ] as const;
 
+// ─── Prompts ──────────────────────────────────────────────────────────────────
+
+const SYSTEM_PROMPT = `You are a premier real estate marketing copywriter. Your work appears on printed flyers, open house sheets, and social media for top-producing realtors. Every word you write should make a prospective buyer feel something — curiosity, aspiration, urgency. Write with confidence and restraint. Avoid clichés like dream home, won't last long, nestled, boasting, stunning. Find the specific detail that makes this property worth wanting and lead with that. Write the way a great human copywriter would after walking through the home — not the way an AI fills a template. Do not use any emojis anywhere in any output. All content must be plain professional text only. No emoji characters of any kind in any field. Use your knowledge of the city, neighborhood, and surrounding region to add authentic local context. Reference proximity to real landmarks, lakes, schools, or districts naturally — the way a local agent would, not as a checklist.`;
+
+const VISION_PREAMBLE = `You have been provided photos of the property. Study each photo carefully — the architectural style, interior finishes, lighting quality, spatial feel, outdoor spaces, lot character, and any details that would appeal to buyers. Use what you observe in the photos combined with the listing details to craft all outputs. Do not describe what you see in the photos explicitly. Let your observations inform the writing naturally, the way a skilled copywriter would after a personal walkthrough.`;
+
 export async function POST(request: NextRequest) {
   try {
     // ── Auth ────────────────────────────────────────────────────────────────
@@ -83,10 +89,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Build prompt ────────────────────────────────────────────────────────
-    const prompt = `You are a real estate marketing copywriter. Generate marketing content for this property listing.
+    // ── Fetch listing photos and build signed URLs for vision ───────────────
+    const { data: photoRows } = await admin
+      .from('listing_photos')
+      .select('storage_path')
+      .eq('listing_id', listingId);
 
-Return ONLY valid JSON with these exact keys. No markdown, no preamble, no explanation. Just the JSON object:
+    type ImageBlock = {
+      type: 'image';
+      source: { type: 'url'; url: string };
+    };
+    type TextBlock = { type: 'text'; text: string };
+    type ContentBlock = TextBlock | ImageBlock;
+
+    const imageBlocks: ImageBlock[] = [];
+
+    if (photoRows && photoRows.length > 0) {
+      for (const row of photoRows) {
+        const { data: signedData, error: signedError } = await admin.storage
+          .from('listing-photos')
+          .createSignedUrl(row.storage_path, 60);
+        if (signedError || !signedData?.signedUrl) {
+          console.warn(
+            '[listing-studio/generate] Failed to sign URL for',
+            row.storage_path,
+            signedError?.message
+          );
+          continue;
+        }
+        imageBlocks.push({
+          type: 'image',
+          source: { type: 'url', url: signedData.signedUrl },
+        });
+      }
+    }
+
+    console.log(
+      `[listing-studio/generate] Photos for vision: ${imageBlocks.length} of ${photoRows?.length ?? 0}`
+    );
+
+    // ── Build task text ──────────────────────────────────────────────────────
+    const taskText = `Return ONLY valid JSON with these exact keys. No markdown, no preamble, no explanation. Just the JSON object:
 
 {
   "instagram_caption_1": "...",
@@ -105,24 +148,43 @@ Address: ${listing.address}, ${listing.city}, ${listing.state} ${listing.zip}
 Beds: ${listing.beds} | Baths: ${listing.baths} | Sqft: ${listing.sqft} | Price: $${listing.price}
 Description: ${listing.description}
 
-Agent: ${listing.brand_name} | ${listing.brand_phone} | ${listing.brand_email}
+Agent: ${listing.brand_name} | ${listing.brand_phone} | ${listing.brand_email}`;
 
-Tone: Premium, warm, conversational, locally specific.`;
+    // If photos are available, build a multimodal content array; otherwise plain text
+    const userContent: string | ContentBlock[] =
+      imageBlocks.length > 0
+        ? ([
+            { type: 'text', text: VISION_PREAMBLE },
+            ...imageBlocks,
+            { type: 'text', text: taskText },
+          ] as ContentBlock[])
+        : taskText;
 
-    // ── Call Anthropic ──────────────────────────────────────────────────────
-    const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY!,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 3000,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
+    // ── Call Anthropic (with vision fallback to text-only if needed) ─────────
+    async function callAnthropic(content: string | ContentBlock[]): Promise<Response> {
+      return fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY!,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 3000,
+          system: SYSTEM_PROMPT,
+          messages: [{ role: 'user', content }],
+        }),
+      });
+    }
+
+    let anthropicRes = await callAnthropic(userContent);
+
+    // If multimodal call failed (e.g. model doesn't support vision), retry text-only
+    if (!anthropicRes.ok && imageBlocks.length > 0) {
+      console.warn('[listing-studio/generate] Multimodal call failed — retrying text-only');
+      anthropicRes = await callAnthropic(taskText);
+    }
 
     if (!anthropicRes.ok) {
       const errText = await anthropicRes.text();
@@ -133,8 +195,8 @@ Tone: Premium, warm, conversational, locally specific.`;
     const anthropicData = await anthropicRes.json();
     const rawText: string = anthropicData.content?.[0]?.text || '';
 
-    console.error('[generate] status:', anthropicRes.status);
-    console.error('[generate] body preview:', rawText.substring(0, 500));
+    console.log('[generate] status:', anthropicRes.status);
+    console.log('[generate] body preview:', rawText.substring(0, 500));
 
     // ── Parse JSON from response ────────────────────────────────────────────
     let parsed: Record<string, string>;
