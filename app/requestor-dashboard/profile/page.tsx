@@ -24,6 +24,7 @@ import {
   Instagram,
   Facebook,
   Linkedin,
+  Youtube,
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react';
@@ -55,9 +56,11 @@ type BrandKitForm = {
   personal_logo_url:  string;
   brokerage_logo_url: string;
   primary_color:      string;
+  secondary_color:    string;
   instagram_handle:   string;
   facebook_url:       string;
   linkedin_url:       string;
+  youtube_url:        string;
   bio:                string;
   preferred_cta:      string;
   disclaimer_text:    string;
@@ -79,6 +82,7 @@ type ShowcasePost = {
   image_url: string;
   caption: string;
   display_order: number;
+  media_type: string;
 };
 
 const EMPTY_FORM: BrandKitForm = {
@@ -94,9 +98,11 @@ const EMPTY_FORM: BrandKitForm = {
   personal_logo_url:  '',
   brokerage_logo_url: '',
   primary_color:      '#E8621A',
+  secondary_color:    '#1a1a1a',
   instagram_handle:   '',
   facebook_url:       '',
   linkedin_url:       '',
+  youtube_url:        '',
   bio:                '',
   preferred_cta:      '',
   disclaimer_text:    '',
@@ -298,9 +304,11 @@ export default function ProfilePage() {
           personal_logo_url:  bk.personal_logo_url  || '',
           brokerage_logo_url: bk.brokerage_logo_url || '',
           primary_color:      bk.primary_color      || '#E8621A',
+          secondary_color:    bk.secondary_color    || '#1a1a1a',
           instagram_handle:   bk.instagram_handle   || '',
           facebook_url:       bk.facebook_url       || '',
           linkedin_url:       bk.linkedin_url       || '',
+          youtube_url:        bk.youtube_url        || '',
           bio:                bk.bio                || '',
           preferred_cta:      bk.preferred_cta      || '',
           disclaimer_text:    bk.disclaimer_text    || '',
@@ -392,6 +400,7 @@ export default function ProfilePage() {
           image_url:     uploadData.url,
           caption:       '',
           display_order: showcase.length,
+          media_type:    uploadData.media_type ?? 'image',
         }),
       });
       const createData = await createRes.json();
@@ -618,29 +627,54 @@ export default function ProfilePage() {
         {/* ── SECTION 4 — Brand ─────────────────────────────────────────── */}
         <Section title="Brand">
           <div className="space-y-5">
-            <Field label="Primary Color">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-lg border border-zinc-700 shrink-0"
-                  style={{ backgroundColor: form.primary_color || '#E8621A' }}
-                />
-                <input
-                  className={inputCls}
-                  type="text"
-                  placeholder="#E8621A"
-                  value={form.primary_color}
-                  onChange={(e) => set('primary_color', e.target.value)}
-                  maxLength={9}
-                />
-                <input
-                  type="color"
-                  value={form.primary_color || '#E8621A'}
-                  onChange={(e) => set('primary_color', e.target.value)}
-                  className="w-10 h-10 rounded cursor-pointer border border-zinc-700 bg-transparent shrink-0"
-                  title="Pick color"
-                />
-              </div>
-            </Field>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Primary Color">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-lg border border-zinc-700 shrink-0"
+                    style={{ backgroundColor: form.primary_color || '#E8621A' }}
+                  />
+                  <input
+                    className={inputCls}
+                    type="text"
+                    placeholder="#E8621A"
+                    value={form.primary_color}
+                    onChange={(e) => set('primary_color', e.target.value)}
+                    maxLength={9}
+                  />
+                  <input
+                    type="color"
+                    value={form.primary_color || '#E8621A'}
+                    onChange={(e) => set('primary_color', e.target.value)}
+                    className="w-10 h-10 rounded cursor-pointer border border-zinc-700 bg-transparent shrink-0"
+                    title="Pick primary color"
+                  />
+                </div>
+              </Field>
+              <Field label="Secondary Color">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-lg border border-zinc-700 shrink-0"
+                    style={{ backgroundColor: form.secondary_color || '#1a1a1a' }}
+                  />
+                  <input
+                    className={inputCls}
+                    type="text"
+                    placeholder="#1a1a1a"
+                    value={form.secondary_color}
+                    onChange={(e) => set('secondary_color', e.target.value)}
+                    maxLength={9}
+                  />
+                  <input
+                    type="color"
+                    value={form.secondary_color || '#1a1a1a'}
+                    onChange={(e) => set('secondary_color', e.target.value)}
+                    className="w-10 h-10 rounded cursor-pointer border border-zinc-700 bg-transparent shrink-0"
+                    title="Pick secondary color"
+                  />
+                </div>
+              </Field>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <ImageUploadArea
@@ -685,6 +719,13 @@ export default function ProfilePage() {
                 <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                 <input className={`${inputCls} pl-9`} placeholder="https://linkedin.com/in/..." value={form.linkedin_url}
                   onChange={(e) => set('linkedin_url', e.target.value)} />
+              </div>
+            </Field>
+            <Field label="YouTube Channel URL">
+              <div className="relative">
+                <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                <input className={`${inputCls} pl-9`} placeholder="https://youtube.com/@yourchannel" value={form.youtube_url}
+                  onChange={(e) => set('youtube_url', e.target.value)} />
               </div>
             </Field>
           </div>
@@ -753,7 +794,7 @@ export default function ProfilePage() {
         {/* ── SECTION 8 — Social Media Showcase ─────────────────────────── */}
         <Section title="Social Media Showcase">
           <p className="text-zinc-400 text-sm mb-4">
-            Upload Instagram screenshots, marketing graphics, or social posts. These appear in a grid on your public profile.
+            Upload photos or videos from your social media posts. These appear in a grid on your public profile.
           </p>
 
           {/* Upload button */}
@@ -761,11 +802,11 @@ export default function ProfilePage() {
             {showUploading ? (
               <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
             ) : (
-              <><Upload className="h-4 w-4" /> Add Photo</>
+              <><Upload className="h-4 w-4" /> Add Photo or Video</>
             )}
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,video/mp4,video/quicktime,video/x-m4v"
               className="hidden"
               disabled={showUploading}
               onChange={(e) => {
@@ -777,14 +818,25 @@ export default function ProfilePage() {
           </label>
 
           {showcase.length === 0 ? (
-            <p className="text-zinc-600 text-sm">No showcase photos yet.</p>
+            <p className="text-zinc-600 text-sm">No showcase media yet.</p>
           ) : (
             <div className="grid grid-cols-3 gap-3">
               {showcase.map((post, idx) => (
                 <div key={post.id} className="group relative flex flex-col gap-2">
-                  {/* Image */}
+                  {/* Image or video */}
                   <div className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800">
-                    <img src={post.image_url} alt="" className="w-full h-full object-cover" />
+                    {post.media_type === 'video' ? (
+                      <video
+                        src={post.image_url}
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                      />
+                    ) : (
+                      <img src={post.image_url} alt="" className="w-full h-full object-cover" />
+                    )}
                     {/* Controls overlay */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-start justify-between p-1.5">
                       <div className="flex flex-col gap-1">

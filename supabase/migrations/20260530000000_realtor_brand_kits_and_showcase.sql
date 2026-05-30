@@ -75,3 +75,16 @@ create policy "Users can manage their own showcase posts"
 create policy "Showcase posts are publicly readable"
   on realtor_showcase_posts for select
   using (true);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Additive columns (session 3 hotfix)
+-- ─────────────────────────────────────────────────────────────────────────────
+
+alter table realtor_brand_kits
+  add column if not exists secondary_color text default '#1a1a1a';
+
+alter table realtor_brand_kits
+  add column if not exists youtube_url text;
+
+alter table realtor_showcase_posts
+  add column if not exists media_type text default 'image';

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
-const ALLOWED_TYPES = new Set([
+const IMAGE_TYPES = new Set([
   'image/jpeg',
   'image/jpg',
   'image/png',
@@ -10,6 +10,15 @@ const ALLOWED_TYPES = new Set([
   'image/heic',
   'image/heif',
 ]);
+
+const VIDEO_TYPES = new Set([
+  'video/mp4',
+  'video/quicktime',   // .mov
+  'video/x-m4v',
+  'video/mpeg',
+]);
+
+const ALLOWED_TYPES = new Set([...IMAGE_TYPES, ...VIDEO_TYPES]);
 
 // Accepted field names and their storage sub-paths
 const FIELD_PATHS: Record<string, string> = {
@@ -58,10 +67,12 @@ export async function POST(request: NextRequest) {
 
     if (!ALLOWED_TYPES.has(file.type)) {
       return NextResponse.json(
-        { error: `File type ${file.type} not supported. Use JPG, PNG, WebP, or HEIC.` },
+        { error: `File type ${file.type} not supported. Use JPG, PNG, WebP, HEIC, MP4, or MOV.` },
         { status: 400 }
       );
     }
+
+    const mediaType = VIDEO_TYPES.has(file.type) ? 'video' : 'image';
 
     // ── Upload to logos bucket ────────────────────────────────────────────────
     const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
@@ -87,9 +98,9 @@ export async function POST(request: NextRequest) {
       .from('logos')
       .getPublicUrl(storagePath);
 
-    console.log(`[brand-kit/upload] Uploaded ${field} for user=${user.id} → ${storagePath}`);
+    console.log(`[brand-kit/upload] Uploaded ${field} (${mediaType}) for user=${user.id} → ${storagePath}`);
 
-    return NextResponse.json({ url: publicUrl, path: storagePath });
+    return NextResponse.json({ url: publicUrl, path: storagePath, media_type: mediaType });
   } catch (err: any) {
     console.error('[brand-kit/upload] Exception:', err);
     return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });

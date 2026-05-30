@@ -26,10 +26,11 @@ export async function POST(request: NextRequest) {
     if (auth.error) return NextResponse.json({ error: auth.error }, { status: auth.status });
     const { user, admin } = auth;
 
-    const { image_url, caption, display_order } = await request.json() as {
+    const { image_url, caption, display_order, media_type } = await request.json() as {
       image_url: string;
       caption?: string;
       display_order?: number;
+      media_type?: string;
     };
 
     if (!image_url) return NextResponse.json({ error: 'image_url is required' }, { status: 400 });
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest) {
         image_url,
         caption:       caption       ?? null,
         display_order: display_order ?? 0,
+        media_type:    media_type    ?? 'image',
       })
       .select()
       .single();
