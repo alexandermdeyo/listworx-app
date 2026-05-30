@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const admin = createSupabaseAdminClient();
     const { data: userRecord } = await admin
       .from('users')
-      .select('role')
+      .select('role, name, email')
       .eq('id', session.user.id)
       .maybeSingle();
 
@@ -45,20 +45,46 @@ export async function POST(request: NextRequest) {
       token: providedToken,
       inviteeName,
       inviteeEmail,
-      realtorName,
-      realtorBrokerage,
+      realtorName: bodyRealtorName,
+      realtorBrokerage: bodyRealtorBrokerage,
     } = body as {
       vendorId: string;
       token?: string;
       inviteeName: string;
       inviteeEmail: string;
-      realtorName: string;
+      realtorName?: string;
       realtorBrokerage?: string | null;
     };
 
-    if (!vendorId || !inviteeEmail || !inviteeName || !realtorName) {
+    // ── Resolve sender name from brand kit (priority chain) ───────────────────
+    // 1. brand_kit.display_name + brand_kit.brokerage_name
+    // 2. body realtorName + body realtorBrokerage
+    // 3. users.name
+    // 4. email prefix
+
+    const { data: brandKit } = await admin
+      .from('realtor_brand_kits')
+      .select('display_name, brokerage_name')
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+
+    let realtorName: string;
+    let realtorBrokerage: string | null;
+
+    if (brandKit?.display_name) {
+      realtorName      = brandKit.display_name;
+      realtorBrokerage = brandKit.brokerage_name ?? null;
+    } else if (bodyRealtorName) {
+      realtorName      = bodyRealtorName;
+      realtorBrokerage = bodyRealtorBrokerage ?? null;
+    } else {
+      realtorName      = userRecord?.name || session.user.email?.split('@')[0] || 'Your Realtor';
+      realtorBrokerage = null;
+    }
+
+    if (!vendorId || !inviteeEmail || !inviteeName) {
       return NextResponse.json(
-        { error: 'vendorId, inviteeEmail, inviteeName, and realtorName are required.' },
+        { error: 'vendorId, inviteeEmail, and inviteeName are required.' },
         { status: 400 }
       );
     }
