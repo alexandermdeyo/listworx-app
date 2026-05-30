@@ -55,6 +55,28 @@ export const STRIPE_PRICES = {
     },
   },
 
+  // ── v2 tiers (Listing Studio relaunch) ────────────────────────────────────
+  realtor_v2: {
+    starter_agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_MONTHLY,
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_ANNUAL,
+    },
+    agent_pro: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_MONTHLY,
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_ANNUAL,
+    },
+    elite: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_MONTHLY,
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_ANNUAL,
+    },
+    founding_agent_pro: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_PRO_ANNUAL,
+    },
+    founding_elite: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_ELITE_ANNUAL,
+    },
+  },
+
   addons: {
     onetime: {
       ironclad_badge_kit:

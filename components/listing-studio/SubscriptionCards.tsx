@@ -32,69 +32,85 @@ type BillingPeriod = 'monthly' | 'annual';
 
 const TIERS = [
   {
-    id: 'starter',
-    name: 'Starter',
-    monthlyPrice: 59,
-    annualPrice: 39,
-    savingsPct: 34,
+    id: 'starter_agent',
+    name: 'Starter Agent',
+    monthlyPrice: 119,
+    annualPrice: 99,
+    savingsPct: 17,
     highlight: false,
     highlightLabel: null as string | null,
     features: [
-      '5 active listings',
-      '8 content packages/month',
-      '5 flyers/month',
-      '5 landing pages/month',
-      'AI captions, posts & email copy',
+      '8 active listings',
+      '15 content packages/month',
+      '8 flyers/month',
+      '8 landing pages/month',
+      'AI captions posts and email copy',
     ],
   },
   {
     id: 'agent',
-    name: 'Agent',
-    monthlyPrice: 119,
-    annualPrice: 79,
-    savingsPct: 34,
+    name: 'Agent Pro',
+    monthlyPrice: 299,
+    annualPrice: 249,
+    savingsPct: 17,
     highlight: true,
     highlightLabel: 'Most Popular' as string | null,
     features: [
-      '15 active listings',
-      '25 content packages/month',
-      '15 flyers/month',
-      '15 landing pages/month',
-      'Everything in Starter',
-      'Agent branding on all content',
+      '25 active listings',
+      '50 content packages/month',
+      '30 flyers/month',
+      '30 landing pages/month',
+      '3 videos/month',
+      'Directory listing and public profile',
+      'Unlimited vendor invites',
     ],
   },
   {
-    id: 'pro_agent',
-    name: 'Pro Agent',
-    monthlyPrice: 199,
-    annualPrice: 139,
-    savingsPct: 30,
+    id: 'elite',
+    name: 'Elite',
+    monthlyPrice: 599,
+    annualPrice: 499,
+    savingsPct: 17,
     highlight: false,
     highlightLabel: null as string | null,
     features: [
       'Unlimited listings',
-      '60 content packages/month',
-      '40 flyers/month',
-      '40 landing pages/month',
-      '5 slideshow videos/month',
-      'Everything in Agent',
-      'Priority support',
+      '150 content packages/month',
+      '100 flyers/month',
+      '100 landing pages/month',
+      '10 videos/month',
+      'Priority directory placement',
+      '5 team seats',
+      'Luxury templates and advanced analytics',
     ],
   },
-] as const;
+];
 
 // Monthly allocation limits per plan (used as fallback for usage bars)
 const PLAN_LIMITS: Record<string, { content: number; flyers: number; landing: number; videos: number }> = {
-  starter:   { content: 8,  flyers: 5,  landing: 5,  videos: 0 },
-  agent:     { content: 25, flyers: 15, landing: 15, videos: 0 },
-  pro_agent: { content: 60, flyers: 40, landing: 40, videos: 5 },
+  // legacy v1 tiers
+  starter:            { content: 8,   flyers: 5,   landing: 5,   videos: 0 },
+  pro_agent:          { content: 60,  flyers: 40,  landing: 40,  videos: 5 },
+  founding_agent:     { content: 25,  flyers: 15,  landing: 15,  videos: 0 },
+  founding_pro_agent: { content: 60,  flyers: 40,  landing: 40,  videos: 5 },
+  // current tiers
+  starter_agent:      { content: 15,  flyers: 8,   landing: 8,   videos: 0 },
+  agent:              { content: 50,  flyers: 30,  landing: 30,  videos: 3 },
+  elite:              { content: 150, flyers: 100, landing: 100, videos: 10 },
+  founding_agent_pro: { content: 50,  flyers: 30,  landing: 30,  videos: 3 },
+  founding_elite:     { content: 150, flyers: 100, landing: 100, videos: 10 },
 };
 
 function planLabel(plan: string) {
-  if (plan === 'starter')   return 'Starter';
-  if (plan === 'agent')     return 'Agent';
-  if (plan === 'pro_agent') return 'Pro Agent';
+  if (plan === 'starter')            return 'Starter';
+  if (plan === 'pro_agent')          return 'Pro Agent';
+  if (plan === 'founding_agent')     return 'Founding Agent';
+  if (plan === 'founding_pro_agent') return 'Founding Pro Agent';
+  if (plan === 'starter_agent')      return 'Starter Agent';
+  if (plan === 'agent')              return 'Agent Pro';
+  if (plan === 'elite')              return 'Elite';
+  if (plan === 'founding_agent_pro') return 'Founding Agent Pro';
+  if (plan === 'founding_elite')     return 'Founding Elite';
   return plan;
 }
 
@@ -136,8 +152,9 @@ function ActivePlanDisplay({ profile }: { profile: RealtorProfile }) {
   const plan = profile.listing_studio_tier || 'free';
   const limits = PLAN_LIMITS[plan] ?? { content: 0, flyers: 0, landing: 0, videos: 0 };
   const interval = profile.listing_studio_interval === 'annual' ? 'Annual' : 'Monthly';
-  const isProAgent = plan === 'pro_agent';
-  const canUpgrade = plan === 'starter' || plan === 'agent';
+  const hasVideos = ['pro_agent', 'founding_pro_agent', 'agent', 'elite', 'founding_agent_pro', 'founding_elite'].includes(plan);
+  const isProAgent = plan === 'elite' || plan === 'founding_elite';
+  const canUpgrade = plan === 'starter_agent' || plan === 'agent';
 
   // Use purchased_* as the ceiling, fall back to plan limits so bars render on
   // fresh subscriptions before the webhook sets purchased quantities.
@@ -189,7 +206,7 @@ function ActivePlanDisplay({ profile }: { profile: RealtorProfile }) {
           remaining={profile.landing_pages_remaining}
           total={landingTotal}
         />
-        {isProAgent && (
+        {hasVideos && (
           <UsageBar
             label="Slideshow Videos"
             remaining={profile.slideshow_videos_remaining}
@@ -200,18 +217,25 @@ function ActivePlanDisplay({ profile }: { profile: RealtorProfile }) {
 
       {/* Actions */}
       <div className="flex flex-wrap gap-3">
-        <Button className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold" asChild>
-          <a href="#">Access Listing Studio</a>
+        <Button
+          className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold"
+          onClick={() => { window.location.href = '/requestor-dashboard'; }}
+        >
+          Access Listing Studio
         </Button>
         <Button
           variant="outline"
           className="border-lw-rust/30 text-gray-700 hover:bg-lw-rust/5"
-          asChild
+          onClick={() => { alert('Your credits reset automatically at the start of each billing cycle. Additional credit top-ups are coming soon.'); }}
         >
-          <a href="#">Buy More Credits</a>
+          Buy More Credits
         </Button>
         {canUpgrade && (
-          <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50">
+          <Button
+            variant="outline"
+            className="border-gray-200 text-gray-600 hover:bg-gray-50"
+            onClick={() => { window.location.href = '/listing-studio'; }}
+          >
             Upgrade Plan
           </Button>
         )}
@@ -227,17 +251,23 @@ function FreePlanCards() {
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
   const PRICE_IDS: Record<string, Record<string, string>> = {
-    starter: {
-      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '',
-      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL  || '',
+    starter_agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_ANNUAL  || '',
     },
     agent: {
-      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY || '',
-      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL  || '',
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_ANNUAL  || '',
     },
-    pro_agent: {
-      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY || '',
-      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL  || '',
+    elite: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_ANNUAL  || '',
+    },
+    founding_agent_pro: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_PRO_ANNUAL || '',
+    },
+    founding_elite: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_ELITE_ANNUAL || '',
     },
   };
 
@@ -318,11 +348,11 @@ function FreePlanCards() {
             Annual
             {period === 'monthly' ? (
               <span className="rounded-full bg-amber-400/20 text-amber-300 px-2 py-0.5 text-xs font-semibold">
-                Save ~34%
+                Save ~17%
               </span>
             ) : (
               <span className="rounded-full bg-white/20 text-white px-2 py-0.5 text-xs font-semibold">
-                ✓ Saving ~34%
+                ✓ Saving ~17%
               </span>
             )}
           </button>
@@ -439,17 +469,17 @@ function FreePlanCards() {
               <div className="flex flex-col sm:flex-row gap-y-1.5 gap-x-5 text-sm text-zinc-400">
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                  $199 activation + $59/mo Agent forever
+                  <span><span className="text-white font-semibold">Founding Agent Pro</span> — $828/yr ($69/mo)</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                  $199 activation + $99/mo Pro Agent forever
+                  <span><span className="text-white font-semibold">Founding Elite</span> — $1,428/yr ($119/mo)</span>
                 </span>
               </div>
             </div>
           </div>
           <div className="shrink-0">
-            <a href="/listing-studio#founding">
+            <a href="/listing-studio/founding-partner">
               <Button className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap">
                 Learn More
               </Button>

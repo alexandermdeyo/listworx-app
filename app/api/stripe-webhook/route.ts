@@ -374,28 +374,43 @@ async function handleRealtorListingStudioCheckout(session: any) {
   }
 
   const PRICE_TO_TIER: Record<string, string> = {
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '']: 'starter',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL || '']: 'starter',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY || '']: 'agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL || '']: 'agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY || '']: 'pro_agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL || '']: 'pro_agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL || '']: 'founding_agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL || '']: 'founding_pro_agent',
+    // Legacy price IDs — keep so old subscriptions still resolve
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '']: 'starter_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL  || '']: 'starter_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY   || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL    || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY     || '']: 'elite',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL      || '']: 'elite',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL   || '']: 'founding_agent_pro',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL     || '']: 'founding_elite',
+    // Current price IDs
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_MONTHLY   || '']: 'starter_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_ANNUAL    || '']: 'starter_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_MONTHLY       || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_ANNUAL        || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_MONTHLY           || '']: 'elite',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_ANNUAL            || '']: 'elite',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_PRO_ANNUAL || '']: 'founding_agent_pro',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_ELITE_ANNUAL     || '']: 'founding_elite',
+    // Hardcoded fallback for founding IDs in case env vars are not set server-side
+    'price_1TcqSd7JcUvuHoDO0b5Lbcht': 'founding_agent_pro',
+    'price_1TcqSd7JcUvuHoDOzITZfA5t': 'founding_elite',
   };
 
   const TIER_LIMITS: Record<string, { content_packages: number; flyers: number; landing_pages: number; slideshow_videos: number }> = {
-    starter:           { content_packages: 8,  flyers: 5,  landing_pages: 5,  slideshow_videos: 0 },
-    agent:             { content_packages: 25, flyers: 15, landing_pages: 15, slideshow_videos: 0 },
-    pro_agent:         { content_packages: 60, flyers: 40, landing_pages: 40, slideshow_videos: 5 },
-    founding_agent:    { content_packages: 25, flyers: 15, landing_pages: 15, slideshow_videos: 0 },
-    founding_pro_agent:{ content_packages: 60, flyers: 40, landing_pages: 40, slideshow_videos: 5 },
+    starter_agent:      { content_packages: 15,  flyers: 8,   landing_pages: 8,   slideshow_videos: 0 },
+    agent:              { content_packages: 50,  flyers: 30,  landing_pages: 30,  slideshow_videos: 3 },
+    elite:              { content_packages: 150, flyers: 100, landing_pages: 100, slideshow_videos: 10 },
+    founding_agent_pro: { content_packages: 50,  flyers: 30,  landing_pages: 30,  slideshow_videos: 3 },
+    founding_elite:     { content_packages: 150, flyers: 100, landing_pages: 100, slideshow_videos: 10 },
   };
 
-  const tier = PRICE_TO_TIER[priceId] || 'starter';
-  const limits = TIER_LIMITS[tier] || TIER_LIMITS.starter;
+  const tier = PRICE_TO_TIER[priceId] || 'starter_agent';
+  const limits = TIER_LIMITS[tier] || TIER_LIMITS.starter_agent;
   const isFounder = tier.startsWith('founding_');
-  const baseTier = isFounder ? tier.replace('founding_', '') : tier;
+  // founding_agent_pro → base tier 'agent'; founding_elite → 'elite'
+  const rawBase = isFounder ? tier.replace('founding_', '') : tier;
+  const baseTier = rawBase === 'agent_pro' ? 'agent' : rawBase;
 
   const price = subscription.items.data[0]?.price;
   const interval = (price as any)?.recurring?.interval === 'year' ? 'annual' : 'monthly';
@@ -409,6 +424,8 @@ async function handleRealtorListingStudioCheckout(session: any) {
     subscriptionId,
   });
 
+  const directoryTiers = ['agent', 'pro_agent', 'founding_agent', 'founding_pro_agent', 'agent_pro', 'elite', 'founding_agent_pro', 'founding_elite'];
+
   const { error } = await supabase
     .from('realtor_profiles')
     .update({
@@ -420,7 +437,7 @@ async function handleRealtorListingStudioCheckout(session: any) {
       listing_studio_is_founder: isFounder,
       realtor_plan: baseTier,
       subscription_status: 'active',
-      directory_listed: true,
+      directory_listed: directoryTiers.includes(tier),
       content_packages_remaining: limits.content_packages,
       flyers_remaining: limits.flyers,
       landing_pages_remaining: limits.landing_pages,
@@ -450,22 +467,35 @@ async function handleRealtorSubscriptionUpdated(subscription: any) {
   const priceId = subscription.items?.data[0]?.price?.id;
 
   const PRICE_TO_TIER: Record<string, string> = {
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '']: 'starter',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL || '']: 'starter',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY || '']: 'agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL || '']: 'agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY || '']: 'pro_agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL || '']: 'pro_agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL || '']: 'founding_agent',
-    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL || '']: 'founding_pro_agent',
+    // Legacy price IDs — keep so old subscriptions still resolve
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '']: 'starter_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL  || '']: 'starter_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY   || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL    || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY     || '']: 'elite',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL      || '']: 'elite',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL   || '']: 'founding_agent_pro',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL     || '']: 'founding_elite',
+    // Current price IDs
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_MONTHLY   || '']: 'starter_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_ANNUAL    || '']: 'starter_agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_MONTHLY       || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_ANNUAL        || '']: 'agent',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_MONTHLY           || '']: 'elite',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_ANNUAL            || '']: 'elite',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_PRO_ANNUAL || '']: 'founding_agent_pro',
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_ELITE_ANNUAL     || '']: 'founding_elite',
+    // Hardcoded fallback for founding IDs in case env vars are not set server-side
+    'price_1TcqSd7JcUvuHoDO0b5Lbcht': 'founding_agent_pro',
+    'price_1TcqSd7JcUvuHoDOzITZfA5t': 'founding_elite',
   };
 
   const TIER_LIMITS: Record<string, { content_packages: number; flyers: number; landing_pages: number; slideshow_videos: number }> = {
-    starter:           { content_packages: 8,  flyers: 5,  landing_pages: 5,  slideshow_videos: 0 },
-    agent:             { content_packages: 25, flyers: 15, landing_pages: 15, slideshow_videos: 0 },
-    pro_agent:         { content_packages: 60, flyers: 40, landing_pages: 40, slideshow_videos: 5 },
-    founding_agent:    { content_packages: 25, flyers: 15, landing_pages: 15, slideshow_videos: 0 },
-    founding_pro_agent:{ content_packages: 60, flyers: 40, landing_pages: 40, slideshow_videos: 5 },
+    starter_agent:      { content_packages: 15,  flyers: 8,   landing_pages: 8,   slideshow_videos: 0 },
+    agent:              { content_packages: 50,  flyers: 30,  landing_pages: 30,  slideshow_videos: 3 },
+    elite:              { content_packages: 150, flyers: 100, landing_pages: 100, slideshow_videos: 10 },
+    founding_agent_pro: { content_packages: 50,  flyers: 30,  landing_pages: 30,  slideshow_videos: 3 },
+    founding_elite:     { content_packages: 150, flyers: 100, landing_pages: 100, slideshow_videos: 10 },
   };
 
   console.log('[stripe-webhook] handleRealtorSubscriptionUpdated', {
@@ -474,11 +504,14 @@ async function handleRealtorSubscriptionUpdated(subscription: any) {
     status: subscription.status,
   });
 
+  const directoryTiers = ['agent', 'pro_agent', 'founding_agent', 'founding_pro_agent', 'agent_pro', 'elite', 'founding_agent_pro', 'founding_elite'];
+
   if (subscription.status === 'active') {
-    const tier = priceId ? (PRICE_TO_TIER[priceId] || 'starter') : 'starter';
-    const limits = TIER_LIMITS[tier] || TIER_LIMITS.starter;
+    const tier = priceId ? (PRICE_TO_TIER[priceId] || 'starter_agent') : 'starter_agent';
+    const limits = TIER_LIMITS[tier] || TIER_LIMITS.starter_agent;
     const isFounder = tier.startsWith('founding_');
-    const baseTier = isFounder ? tier.replace('founding_', '') : tier;
+    const rawBase = isFounder ? tier.replace('founding_', '') : tier;
+    const baseTier = rawBase === 'agent_pro' ? 'agent' : rawBase;
 
     const price = subscription.items?.data[0]?.price;
     const interval = (price as any)?.recurring?.interval === 'year' ? 'annual' : 'monthly';
@@ -492,7 +525,7 @@ async function handleRealtorSubscriptionUpdated(subscription: any) {
         listing_studio_is_founder: isFounder,
         realtor_plan: baseTier,
         subscription_status: 'active',
-        directory_listed: true,
+        directory_listed: directoryTiers.includes(tier),
         content_packages_remaining: limits.content_packages,
         flyers_remaining: limits.flyers,
         landing_pages_remaining: limits.landing_pages,

@@ -34,57 +34,65 @@ type BillingPeriod = 'monthly' | 'annual';
 
 const TIERS = [
   {
-    id: 'starter',
-    name: 'Starter',
-    monthlyPrice: 59,
-    annualPrice: 39,
-    annualTotal: 468,
-    savingsPct: 34,
+    id: 'starter_agent',
+    name: 'Starter Agent',
+    monthlyPrice: 119,
+    annualPrice: 99,
+    annualTotal: 1188,
+    savingsPct: 17,
     highlight: false,
     badge: null as string | null,
     features: [
-      '5 active listings',
-      '8 content packages per month',
-      '5 flyers per month',
-      '5 landing pages per month',
+      '8 active listings',
+      '15 content packages per month',
+      '8 flyers per month',
+      '8 landing pages per month',
+      'AI captions posts and email copy',
     ],
+    noDirectoryListing: true,
   },
   {
     id: 'agent',
-    name: 'Agent',
-    monthlyPrice: 119,
-    annualPrice: 79,
-    annualTotal: 948,
-    savingsPct: 34,
+    name: 'Agent Pro',
+    monthlyPrice: 299,
+    annualPrice: 249,
+    annualTotal: 2988,
+    savingsPct: 17,
     highlight: true,
     badge: 'Most Popular' as string | null,
     features: [
-      '15 active listings',
-      '25 content packages per month',
-      '15 flyers per month',
-      '15 landing pages per month',
-      'Agent branding on all content',
+      '25 active listings',
+      '50 content packages per month',
+      '30 flyers per month',
+      '30 landing pages per month',
+      '3 videos per month',
+      'Directory listing and public profile',
+      'Unlimited vendor invites',
     ],
+    noDirectoryListing: false,
   },
   {
-    id: 'pro_agent',
-    name: 'Pro Agent',
-    monthlyPrice: 199,
-    annualPrice: 139,
-    annualTotal: 1668,
-    savingsPct: 30,
+    id: 'elite',
+    name: 'Elite',
+    monthlyPrice: 599,
+    annualPrice: 499,
+    annualTotal: 5988,
+    savingsPct: 17,
     highlight: false,
     badge: null as string | null,
     features: [
       'Unlimited listings',
-      '60 content packages per month',
-      '40 flyers per month',
-      '40 landing pages per month',
-      '5 slideshow videos per month',
-      'Priority support',
+      '150 content packages per month',
+      '100 flyers per month',
+      '100 landing pages per month',
+      '10 videos per month',
+      'Priority directory placement',
+      '5 team seats',
+      'Luxury templates and advanced analytics',
     ],
+    noDirectoryListing: false,
   },
-] as const;
+];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -93,23 +101,23 @@ export default function ListingStudioPage() {
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
   const PRICE_IDS: Record<string, Record<string, string>> = {
-    starter: {
-      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_MONTHLY || '',
-      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_ANNUAL || '',
+    starter_agent: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_STARTER_AGENT_ANNUAL  || '',
     },
     agent: {
-      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_MONTHLY || '',
-      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_ANNUAL || '',
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_AGENT_PRO_ANNUAL  || '',
     },
-    pro_agent: {
-      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_MONTHLY || '',
-      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_PRO_ANNUAL || '',
+    elite: {
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_MONTHLY || '',
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_ELITE_ANNUAL  || '',
     },
-    founding_agent: {
-      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_ANNUAL || '',
+    founding_agent_pro: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_AGENT_PRO_ANNUAL || '',
     },
-    founding_pro_agent: {
-      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_PRO_ANNUAL || '',
+    founding_elite: {
+      annual:  process.env.NEXT_PUBLIC_STRIPE_PRICE_REALTOR_FOUNDING_ELITE_ANNUAL || '',
     },
   };
 
@@ -496,11 +504,11 @@ export default function ListingStudioPage() {
                   Annual
                   {period === 'monthly' ? (
                     <span className="rounded-full bg-amber-400/20 text-amber-300 px-2 py-0.5 text-xs font-semibold">
-                      Save ~34%
+                      Save ~17%
                     </span>
                   ) : (
                     <span className="rounded-full bg-white/20 text-white px-2 py-0.5 text-xs font-semibold">
-                      ✓ Saving ~34%
+                      ✓ Saving ~17%
                     </span>
                   )}
                 </button>
@@ -614,49 +622,43 @@ export default function ListingStudioPage() {
             </p>
 
             {/* Founding Partner bar */}
-            <div className="rounded-xl border border-lw-rust/30 bg-gradient-to-r from-amber-950/20 via-zinc-900 to-amber-950/20 p-6 md:p-8">
+            <div className="rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-950/20 via-zinc-900 to-amber-950/20 p-6 md:p-8">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                 <div className="flex items-start gap-3">
                   <Crown className="h-6 w-6 text-amber-400 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-bold text-white text-lg mb-1">
-                      Want to lock in your rate before it changes?
-                    </p>
-                    <p className="text-zinc-300 text-sm mb-1">
-                      The Founding Partner program is still open — but it will not be for long.
-                    </p>
-                    <p className="text-zinc-400 text-sm">
-                      $199 activation. Your rate locked from day one.
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <p className="font-bold text-white text-lg">Founding Partner — Lock Your Rate Forever</p>
+                      <span className="rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2.5 py-0.5 text-xs font-semibold">
+                        Limited Spots
+                      </span>
+                    </div>
+                    <p className="text-sm text-zinc-400 mt-1">
+                      Agent Pro at $199/mo or Elite at $399/mo — locked forever.
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 shrink-0">
                   <Button
-                    onClick={() => handleCheckout('founding_agent', 'annual')}
-                    disabled={loadingTier === 'founding_agent'}
+                    onClick={() => handleCheckout('founding_agent_pro', 'annual')}
+                    disabled={loadingTier === 'founding_agent_pro'}
                     className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap"
                   >
-                    {loadingTier === 'founding_agent' ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Loading...
-                      </>
+                    {loadingTier === 'founding_agent_pro' ? (
+                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Loading...</>
                     ) : (
-                      'Founding Agent'
+                      'Founding Agent Pro'
                     )}
                   </Button>
                   <Button
-                    onClick={() => handleCheckout('founding_pro_agent', 'annual')}
-                    disabled={loadingTier === 'founding_pro_agent'}
+                    onClick={() => handleCheckout('founding_elite', 'annual')}
+                    disabled={loadingTier === 'founding_elite'}
                     className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap"
                   >
-                    {loadingTier === 'founding_pro_agent' ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Loading...
-                      </>
+                    {loadingTier === 'founding_elite' ? (
+                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Loading...</>
                     ) : (
-                      'Founding Pro Agent'
+                      'Founding Elite'
                     )}
                   </Button>
                 </div>
