@@ -18,6 +18,36 @@ const SYSTEM_PROMPT = `You are a premier real estate marketing copywriter. Your 
 
 const VISION_PREAMBLE = `You have been provided photos of the property. Study each photo carefully — the architectural style, interior finishes, lighting quality, spatial feel, outdoor spaces, lot character, and any details that would appeal to buyers. Use what you observe in the photos combined with the listing details to craft all outputs. Do not describe what you see in the photos explicitly. Let your observations inform the writing naturally, the way a skilled copywriter would after a personal walkthrough.`;
 
+// ─── Types (module-level so they are always in scope) ─────────────────────────
+
+type ImageBlock = {
+  type: 'image';
+  source: { type: 'url'; url: string };
+};
+type TextBlock = { type: 'text'; text: string };
+type ContentBlock = TextBlock | ImageBlock;
+
+// ─── Anthropic helper (module-level — never inside try blocks) ────────────────
+
+async function callAnthropic(content: string | ContentBlock[]): Promise<Response> {
+  return fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.ANTHROPIC_API_KEY!,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 3000,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content }],
+    }),
+  });
+}
+
+// ─── Route handler ────────────────────────────────────────────────────────────
+
 export async function POST(request: NextRequest) {
   try {
     // ── Auth ────────────────────────────────────────────────────────────────
@@ -56,23 +86,25 @@ export async function POST(request: NextRequest) {
 
     if (!profile || profile.content_packages_remaining <= 0) {
       return NextResponse.json(
-        {
-          error:
-            'No content packages remaining. Please upgrade or purchase more.',
-        },
+        { error: 'No content packages remaining. Please upgrade or purchase more.' },
         { status: 403 }
       );
     }
 
-    // ── Parse body ──────────────────────────────────────────────────────────
-    const { listingId } = await request.json();
+    // ── Parse body (own try/catch so a bad body returns 400, not 500) ────────
+    let listingId: string;
+    try {
+      const body = await request.json();
+      listingId = body?.listingId;
+    } catch {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
 
     if (!listingId) {
-      return NextResponse.json(
-        { error: 'listingId is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'listingId is required' }, { status: 400 });
     }
+
+    console.log(`[listing-studio/generate] Request received — listingId=${listingId} user=${user.id}`);
 
     // ── Fetch listing (verify ownership) ───────────────────────────────────
     const { data: listing, error: listingError } = await admin
@@ -83,45 +115,55 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (listingError || !listing) {
-      return NextResponse.json(
-        { error: 'Listing not found' },
-        { status: 404 }
-      );
+      console.error(`[listing-studio/generate] Listing not found — listingId=${listingId}`, listingError);
+      return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
     }
 
     // ── Fetch listing photos and build signed URLs for vision ───────────────
-    const { data: photoRows } = await admin
+    console.log(`[listing-studio/generate] Starting photo fetch for listingId=${listingId}`);
+
+    const { data: photoRows, error: photoFetchError } = await admin
       .from('listing_photos')
       .select('storage_path')
       .eq('listing_id', listingId);
 
-    type ImageBlock = {
-      type: 'image';
-      source: { type: 'url'; url: string };
-    };
-    type TextBlock = { type: 'text'; text: string };
-    type ContentBlock = TextBlock | ImageBlock;
+    if (photoFetchError) {
+      console.warn('[listing-studio/generate] listing_photos query error (continuing without photos):', photoFetchError.message);
+    }
 
     const imageBlocks: ImageBlock[] = [];
 
     if (photoRows && photoRows.length > 0) {
+      console.log(`[listing-studio/generate] Found ${photoRows.length} photo row(s) — generating signed URLs`);
+
       for (const row of photoRows) {
-        const { data: signedData, error: signedError } = await admin.storage
-          .from('listing-photos')
-          .createSignedUrl(row.storage_path, 60);
-        if (signedError || !signedData?.signedUrl) {
+        try {
+          const { data: signedData, error: signedError } = await admin.storage
+            .from('listing-photos')
+            .createSignedUrl(row.storage_path, 60);
+
+          if (signedError || !signedData?.signedUrl) {
+            console.warn(
+              `[listing-studio/generate] Failed to sign URL for path=${row.storage_path}:`,
+              signedError?.message ?? 'no signedUrl returned'
+            );
+            continue;
+          }
+
+          console.log(`[listing-studio/generate] Signed URL generated for path=${row.storage_path}`);
+          imageBlocks.push({
+            type: 'image',
+            source: { type: 'url', url: signedData.signedUrl },
+          });
+        } catch (signErr: any) {
           console.warn(
-            '[listing-studio/generate] Failed to sign URL for',
-            row.storage_path,
-            signedError?.message
+            `[listing-studio/generate] createSignedUrl threw for path=${row.storage_path}:`,
+            signErr?.message
           );
-          continue;
         }
-        imageBlocks.push({
-          type: 'image',
-          source: { type: 'url', url: signedData.signedUrl },
-        });
       }
+    } else {
+      console.log(`[listing-studio/generate] No photos found for listingId=${listingId} — text-only generation`);
     }
 
     console.log(
@@ -160,29 +202,18 @@ Agent: ${listing.brand_name} | ${listing.brand_phone} | ${listing.brand_email}`;
           ] as ContentBlock[])
         : taskText;
 
-    // ── Call Anthropic (with vision fallback to text-only if needed) ─────────
-    async function callAnthropic(content: string | ContentBlock[]): Promise<Response> {
-      return fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY!,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 3000,
-          system: SYSTEM_PROMPT,
-          messages: [{ role: 'user', content }],
-        }),
-      });
-    }
+    // ── Call Anthropic ────────────────────────────────────────────────────────
+    console.log(
+      `[listing-studio/generate] Calling Anthropic — ${imageBlocks.length} image(s) attached, model=claude-sonnet-4-6`
+    );
 
     let anthropicRes = await callAnthropic(userContent);
 
-    // If multimodal call failed (e.g. model doesn't support vision), retry text-only
+    // If multimodal call failed (e.g. model doesn't support URL-type images), retry text-only
     if (!anthropicRes.ok && imageBlocks.length > 0) {
-      console.warn('[listing-studio/generate] Multimodal call failed — retrying text-only');
+      console.warn(
+        `[listing-studio/generate] Multimodal call failed (status ${anthropicRes.status}) — retrying text-only`
+      );
       anthropicRes = await callAnthropic(taskText);
     }
 
@@ -195,19 +226,18 @@ Agent: ${listing.brand_name} | ${listing.brand_phone} | ${listing.brand_email}`;
     const anthropicData = await anthropicRes.json();
     const rawText: string = anthropicData.content?.[0]?.text || '';
 
-    console.log('[generate] status:', anthropicRes.status);
-    console.log('[generate] body preview:', rawText.substring(0, 500));
+    console.log(`[listing-studio/generate] Anthropic responded — raw length=${rawText.length}`);
+    console.log('[listing-studio/generate] Response preview:', rawText.substring(0, 300));
 
     // ── Parse JSON from response ────────────────────────────────────────────
     let parsed: Record<string, string>;
-    // Strip possible markdown code fences — declared outside try so catch can reference it
     const cleaned = rawText
       .replace(/^```(?:json)?\s*/i, '')
       .replace(/```\s*$/, '')
       .trim();
     try {
       parsed = JSON.parse(cleaned);
-    } catch (parseErr) {
+    } catch {
       console.error('[listing-studio/generate] JSON parse failed. Raw text:', rawText);
       return NextResponse.json(
         { error: 'Failed to parse AI response', raw: cleaned.substring(0, 500) },
@@ -230,10 +260,7 @@ Agent: ${listing.brand_name} | ${listing.brand_phone} | ${listing.brand_email}`;
 
     if (assetsError) {
       console.error('[listing-studio/generate] Error saving assets:', assetsError);
-      return NextResponse.json(
-        { error: 'Failed to save generated content' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to save generated content' }, { status: 500 });
     }
 
     // ── Decrement content_packages_remaining ────────────────────────────────
@@ -250,14 +277,15 @@ Agent: ${listing.brand_name} | ${listing.brand_phone} | ${listing.brand_email}`;
     }
 
     console.log(
-      `[listing-studio/generate] Generated content for listing=${listingId} user=${user.id} — packages remaining: ${profile.content_packages_remaining - 1}`
+      `[listing-studio/generate] Done — listing=${listingId} user=${user.id} packages_remaining=${profile.content_packages_remaining - 1}`
     );
 
     return NextResponse.json({ assets, parsed });
+
   } catch (error: any) {
-    console.error('[listing-studio/generate] Exception:', error);
+    console.error('[listing-studio/generate] Unhandled exception:', error?.message ?? error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Generation failed', detail: error?.message || 'Internal server error' },
       { status: 500 }
     );
   }
