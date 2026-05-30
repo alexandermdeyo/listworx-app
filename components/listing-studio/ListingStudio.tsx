@@ -23,6 +23,7 @@ import {
   X,
   Star,
   Upload,
+  Camera,
 } from 'lucide-react';
 import type { RealtorProfile } from './SubscriptionCards';
 
@@ -578,80 +579,86 @@ export function ListingStudio({
 
           {/* Listing cards */}
           {listings.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-zinc-700 p-10 text-center">
-              <Wand2 className="h-8 w-8 text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-400 text-sm mb-1">No listings yet.</p>
-              <p className="text-zinc-600 text-xs">
-                Create your first one to generate marketing content.
+            <div className="rounded-xl border border-dashed border-zinc-700 p-12 text-center">
+              <div className="w-16 h-16 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center mx-auto mb-4">
+                <Camera className="h-8 w-8 text-zinc-600" />
+              </div>
+              <p className="text-zinc-300 font-semibold text-base mb-1.5">No listings yet</p>
+              <p className="text-zinc-500 text-sm mb-6 max-w-xs mx-auto">
+                Create your first listing to generate marketing content, flyers, and landing pages.
               </p>
+              <Button onClick={handleNewListing} className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold">
+                <Plus className="h-4 w-4 mr-2" />New Listing
+              </Button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {listings.map((listing) => {
                 const hasContent = (listing.listing_assets || []).length > 0;
-                const primaryPhoto = (listing.listing_photos || []).find(
-                  (p) => p.is_primary
-                );
+                const primaryPhoto =
+                  (listing.listing_photos || []).find((p) => p.is_primary) ??
+                  (listing.listing_photos || [])[0];
                 return (
                   <div
                     key={listing.id}
-                    className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                    className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden flex flex-col"
                   >
-                    <div className="flex items-center gap-3">
-                      {/* Thumbnail */}
-                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-zinc-800 border border-zinc-700 shrink-0 flex items-center justify-center">
-                        {primaryPhoto ? (
-                          <PhotoThumbnail path={primaryPhoto.storage_path} />
-                        ) : (
-                          <Home className="h-5 w-5 text-zinc-600" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-white font-semibold text-sm">
-                          {listing.address}, {listing.city}, {listing.state}
-                        </p>
-                        <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
-                          <span>{formatDate(listing.created_at)}</span>
-                          <span>·</span>
-                          <span>
-                            {listing.beds}bd · {listing.baths}ba · {listing.sqft?.toLocaleString()} sqft
-                          </span>
-                          <span>·</span>
-                          <span>{formatPrice(listing.price)}</span>
+                    {/* Photo */}
+                    <div className="relative w-full aspect-[4/3] bg-zinc-800">
+                      {primaryPhoto ? (
+                        <PhotoThumbnail path={primaryPhoto.storage_path} />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Camera className="h-10 w-10 text-zinc-600" />
                         </div>
-                      </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {hasContent ? (
-                        <>
+                    {/* Details */}
+                    <div className="p-4 flex flex-col flex-1">
+                      <p className="text-white font-semibold text-sm leading-snug">{listing.address}</p>
+                      <p className="text-zinc-400 text-xs mt-0.5">
+                        {listing.city}, {listing.state} {listing.zip}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2 text-xs text-zinc-500">
+                        <span>{listing.beds} bd</span>
+                        <span>·</span>
+                        <span>{listing.baths} ba</span>
+                        <span>·</span>
+                        <span>{listing.sqft?.toLocaleString()} sqft</span>
+                      </div>
+                      <p className="text-lw-rust font-semibold text-sm mt-1">{formatPrice(listing.price)}</p>
+                      <div className="flex items-center gap-2 mt-auto pt-3">
+                        {hasContent ? (
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={() => handleViewContent(listing)}
+                              className="flex-1 bg-lw-rust hover:bg-lw-rust-hover text-white text-xs"
+                            >
+                              <FileText className="h-3.5 w-3.5 mr-1.5" />
+                              View Content
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleGenerateForExisting(listing)}
+                              className="border-zinc-700 text-zinc-400 hover:bg-zinc-800 text-xs px-2.5"
+                              title="Regenerate"
+                            >
+                              <RefreshCw className="h-3.5 w-3.5" />
+                            </Button>
+                          </>
+                        ) : (
                           <Button
-                            variant="outline"
                             size="sm"
                             onClick={() => handleGenerateForExisting(listing)}
-                            className="border-zinc-700 text-zinc-400 hover:bg-zinc-800 text-xs"
+                            className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white text-xs"
                           >
-                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                            Regenerate
+                            <Wand2 className="h-3.5 w-3.5 mr-1.5" />
+                            Generate Content
                           </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => handleViewContent(listing)}
-                            className="bg-lw-rust hover:bg-lw-rust-hover text-white text-xs"
-                          >
-                            <FileText className="h-3.5 w-3.5 mr-1.5" />
-                            View Content
-                          </Button>
-                        </>
-                      ) : (
-                        <Button
-                          size="sm"
-                          onClick={() => handleGenerateForExisting(listing)}
-                          className="bg-lw-rust hover:bg-lw-rust-hover text-white text-xs"
-                        >
-                          <Wand2 className="h-3.5 w-3.5 mr-1.5" />
-                          Generate Content
-                        </Button>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -1209,7 +1216,11 @@ function PhotoThumbnail({ path }: { path: string }) {
   }, [path]);
 
   if (!src) {
-    return <Home className="h-5 w-5 text-zinc-600" />;
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-zinc-800">
+        <Camera className="h-8 w-8 text-zinc-600" />
+      </div>
+    );
   }
 
   return (

@@ -107,12 +107,13 @@ function formatDate(value: string | null) {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/requestor-dashboard' },
-  { id: 'submit', label: 'Submit Request', icon: Plus, href: '/request' },
-  { id: 'requests', label: 'My Requests', icon: ClipboardList, href: '/requestor-dashboard' },
-  { id: 'vendors', label: 'My Vendors', icon: Users, href: '/requestor-dashboard/vendors' },
-  { id: 'profile', label: 'Profile', icon: User2, disabled: true },
-  { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
+  { id: 'dashboard',   label: 'Dashboard',     icon: LayoutDashboard, href: '/requestor-dashboard' },
+  { id: 'my-listings', label: 'My Listings',   icon: Home,            href: '/requestor-dashboard#listing-studio' },
+  { id: 'my-profile',  label: 'My Profile',    icon: User2,           href: '/requestor-dashboard/profile' },
+  { id: 'vendors',     label: 'My Vendors',    icon: Users,           href: '/requestor-dashboard/vendors' },
+  { id: 'submit',      label: 'Submit Request', icon: Plus,           href: '/request' },
+  { id: 'requests',    label: 'My Requests',   icon: ClipboardList,   href: '/requestor-dashboard' },
+  { id: 'settings',    label: 'Settings',      icon: Settings,        disabled: true },
 ];
 
 
@@ -272,12 +273,27 @@ export default function RequestorDashboardPage() {
           </p>
         </div>
 
-        <Link href="/request">
-          <Button className="text-white font-semibold" style={{ backgroundColor: '#E8621A' }}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Request
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          {userRole === 'REALTOR' && (
+            <Button
+              className="text-white font-bold text-base px-5 py-5"
+              style={{ backgroundColor: '#E8621A' }}
+              onClick={() => {
+                const el = document.getElementById('listing-studio');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              New Listing
+            </Button>
+          )}
+          <Link href="/request">
+            <Button className="text-white font-semibold" style={{ backgroundColor: '#E8621A' }}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Request
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {error && (
@@ -303,16 +319,12 @@ export default function RequestorDashboardPage() {
 
       {/* Listing Studio — visible to realtors only */}
       {userRole === 'REALTOR' && (
-        <div className="mb-6">
+        <section id="listing-studio" className="mb-6 space-y-6">
           <SubscriptionCards realtorProfile={realtorProfile} />
-        </div>
-      )}
-
-      {userRole === 'REALTOR' &&
-       realtorProfile?.listing_studio_status === 'active' && (
-        <div className="mb-6">
-          <ListingStudio realtorProfile={realtorProfile} />
-        </div>
+          {realtorProfile?.listing_studio_status === 'active' && (
+            <ListingStudio realtorProfile={realtorProfile} />
+          )}
+        </section>
       )}
 
       {loading ? (
