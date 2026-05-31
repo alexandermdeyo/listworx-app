@@ -64,6 +64,22 @@ type Listing = {
   slug: string;
   status: string;
   created_at: string;
+  // Extended fields
+  lot_size: string | null;
+  year_built: number | null;
+  property_type: string | null;
+  mls_number: string | null;
+  open_house_date: string | null;
+  open_house_end: string | null;
+  features: string[] | null;
+  highlights: string[] | null;
+  lifestyle_notes: string | null;
+  neighborhood_notes: string | null;
+  virtual_tour_url: string | null;
+  floor_plan_url: string | null;
+  video_url: string | null;
+  status_type: string | null;
+  template_style: string | null;
   listing_assets?: Asset[];
   listing_photos?: ListingPhoto[];
 };
@@ -84,6 +100,22 @@ type FormData = {
   brand_phone: string;
   brand_email: string;
   brand_color: string;
+  // Extended fields
+  property_type: string;
+  year_built: string;
+  lot_size: string;
+  mls_number: string;
+  status_type: string;
+  open_house_date: string;
+  open_house_end: string;
+  features: string;
+  highlights: string;
+  lifestyle_notes: string;
+  neighborhood_notes: string;
+  virtual_tour_url: string;
+  floor_plan_url: string;
+  video_url: string;
+  template_style: string;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -95,19 +127,35 @@ const PLAN_LIMITS: Record<string, number> = {
 };
 
 const EMPTY_FORM: FormData = {
-  address:     '',
-  city:        '',
-  state:       'TN',
-  zip:         '',
-  beds:        '',
-  baths:       '',
-  sqft:        '',
-  price:       '',
-  description: '',
-  brand_name:  '',
-  brand_phone: '',
-  brand_email: '',
-  brand_color: '#ff6600',
+  address:            '',
+  city:               '',
+  state:              'TN',
+  zip:                '',
+  beds:               '',
+  baths:              '',
+  sqft:               '',
+  price:              '',
+  description:        '',
+  brand_name:         '',
+  brand_phone:        '',
+  brand_email:        '',
+  brand_color:        '#ff6600',
+  // Extended fields
+  property_type:      'Single Family',
+  year_built:         '',
+  lot_size:           '',
+  mls_number:         '',
+  status_type:        'just_listed',
+  open_house_date:    '',
+  open_house_end:     '',
+  features:           '',
+  highlights:         '',
+  lifestyle_notes:    '',
+  neighborhood_notes: '',
+  virtual_tour_url:   '',
+  floor_plan_url:     '',
+  video_url:          '',
+  template_style:     'modern',
 };
 
 const COMPRESSION_OPTIONS = {
@@ -396,6 +444,15 @@ export function ListingStudio({
             baths:               Number(formData.baths),
             sqft:                Number(formData.sqft),
             price:               Number(formData.price),
+            year_built:          formData.year_built ? Number(formData.year_built) : null,
+            open_house_date:     formData.open_house_date || null,
+            open_house_end:      formData.open_house_end  || null,
+            features:            formData.features
+              ? formData.features.split(',').map((s) => s.trim()).filter(Boolean)
+              : [],
+            highlights:          formData.highlights
+              ? formData.highlights.split(',').map((s) => s.trim()).filter(Boolean)
+              : [],
             photo_paths:         photoPaths,
             primary_photo_index: primaryPhotoIndex,
           }),
@@ -466,19 +523,38 @@ export function ListingStudio({
     setCurrentListing(listing);
     setGeneratedContent(null);
     setFormData({
-      address:     listing.address,
-      city:        listing.city,
-      state:       listing.state,
-      zip:         listing.zip,
-      beds:        String(listing.beds),
-      baths:       String(listing.baths),
-      sqft:        String(listing.sqft),
-      price:       String(listing.price),
-      description: listing.description,
-      brand_name:  listing.brand_name  || '',
-      brand_phone: listing.brand_phone || '',
-      brand_email: listing.brand_email || '',
-      brand_color: listing.brand_color || '#ff6600',
+      address:            listing.address,
+      city:               listing.city,
+      state:              listing.state,
+      zip:                listing.zip,
+      beds:               String(listing.beds),
+      baths:              String(listing.baths),
+      sqft:               String(listing.sqft),
+      price:              String(listing.price),
+      description:        listing.description,
+      brand_name:         listing.brand_name         || '',
+      brand_phone:        listing.brand_phone        || '',
+      brand_email:        listing.brand_email        || '',
+      brand_color:        listing.brand_color        || '#ff6600',
+      property_type:      listing.property_type      || 'Single Family',
+      year_built:         listing.year_built != null ? String(listing.year_built) : '',
+      lot_size:           listing.lot_size            || '',
+      mls_number:         listing.mls_number          || '',
+      status_type:        listing.status_type         || 'just_listed',
+      open_house_date:    listing.open_house_date
+        ? listing.open_house_date.slice(0, 16)
+        : '',
+      open_house_end:     listing.open_house_end
+        ? listing.open_house_end.slice(0, 16)
+        : '',
+      features:           (listing.features   || []).join(', '),
+      highlights:         (listing.highlights || []).join(', '),
+      lifestyle_notes:    listing.lifestyle_notes    || '',
+      neighborhood_notes: listing.neighborhood_notes || '',
+      virtual_tour_url:   listing.virtual_tour_url   || '',
+      floor_plan_url:     listing.floor_plan_url      || '',
+      video_url:          listing.video_url           || '',
+      template_style:     listing.template_style      || 'modern',
     });
     resetPhotoState();
     setError(null);
@@ -940,6 +1016,191 @@ export function ListingStudio({
                       />
                     </FormField>
                   </div>
+                </div>
+              </div>
+
+              {/* ─── Extended Property Details ────────────────────────────────── */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-4">
+                  Additional Details
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <FormField label="Property Type">
+                    <select
+                      className={inputClass}
+                      value={formData.property_type}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, property_type: e.target.value }))}
+                    >
+                      <option>Single Family</option>
+                      <option>Condo</option>
+                      <option>Townhouse</option>
+                      <option>Multi-Family</option>
+                      <option>Land</option>
+                      <option>Commercial</option>
+                    </select>
+                  </FormField>
+                  <FormField label="Status">
+                    <select
+                      className={inputClass}
+                      value={formData.status_type}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, status_type: e.target.value }))}
+                    >
+                      <option value="just_listed">Just Listed</option>
+                      <option value="price_reduced">Price Reduced</option>
+                      <option value="back_on_market">Back on Market</option>
+                      <option value="coming_soon">Coming Soon</option>
+                      <option value="sold">Sold</option>
+                    </select>
+                  </FormField>
+                  <FormField label="Year Built">
+                    <input
+                      type="number"
+                      className={inputClass}
+                      placeholder="1998"
+                      min={1800}
+                      max={new Date().getFullYear() + 1}
+                      step={1}
+                      {...field('year_built')}
+                    />
+                  </FormField>
+                  <FormField label="Lot Size">
+                    <input
+                      type="text"
+                      className={inputClass}
+                      placeholder="0.25 acres"
+                      {...field('lot_size')}
+                    />
+                  </FormField>
+                  <FormField label="MLS Number">
+                    <input
+                      type="text"
+                      className={inputClass}
+                      placeholder="MLS-123456"
+                      {...field('mls_number')}
+                    />
+                  </FormField>
+                </div>
+              </div>
+
+              {/* ─── Open House ───────────────────────────────────────────────── */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-4">
+                  Open House
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <FormField label="Open House Start">
+                    <input
+                      type="datetime-local"
+                      className={inputClass}
+                      {...field('open_house_date')}
+                    />
+                  </FormField>
+                  <FormField label="Open House End">
+                    <input
+                      type="datetime-local"
+                      className={inputClass}
+                      {...field('open_house_end')}
+                    />
+                  </FormField>
+                </div>
+              </div>
+
+              {/* ─── Features & Highlights ────────────────────────────────────── */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-4">
+                  Features &amp; Highlights
+                </p>
+                <div className="grid gap-4">
+                  <FormField label="Features">
+                    <input
+                      type="text"
+                      className={inputClass}
+                      placeholder="Hardwood floors, granite countertops, stainless appliances"
+                      {...field('features')}
+                    />
+                    <p className="text-xs text-zinc-600 mt-1">Comma-separated</p>
+                  </FormField>
+                  <FormField label="Highlights">
+                    <input
+                      type="text"
+                      className={inputClass}
+                      placeholder="Corner lot, cul-de-sac, mountain views"
+                      {...field('highlights')}
+                    />
+                    <p className="text-xs text-zinc-600 mt-1">Comma-separated</p>
+                  </FormField>
+                  <FormField label="Lifestyle Notes">
+                    <textarea
+                      className={`${inputClass} min-h-[80px] resize-y`}
+                      placeholder="Walkable to downtown, great school district, quiet neighborhood"
+                      rows={3}
+                      value={formData.lifestyle_notes}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, lifestyle_notes: e.target.value }))}
+                    />
+                  </FormField>
+                  <FormField label="Neighborhood Notes">
+                    <textarea
+                      className={`${inputClass} min-h-[80px] resize-y`}
+                      placeholder="5 minutes from Trader Joe's, close to Bledsoe Creek State Park"
+                      rows={3}
+                      value={formData.neighborhood_notes}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, neighborhood_notes: e.target.value }))}
+                    />
+                  </FormField>
+                </div>
+              </div>
+
+              {/* ─── Media Links ──────────────────────────────────────────────── */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-4">
+                  Media Links
+                </p>
+                <div className="grid gap-4">
+                  <FormField label="Virtual Tour URL">
+                    <input
+                      type="url"
+                      className={inputClass}
+                      placeholder="https://my.matterport.com/show/?m=..."
+                      {...field('virtual_tour_url')}
+                    />
+                  </FormField>
+                  <FormField label="Floor Plan URL">
+                    <input
+                      type="url"
+                      className={inputClass}
+                      placeholder="https://..."
+                      {...field('floor_plan_url')}
+                    />
+                  </FormField>
+                  <FormField label="Video URL">
+                    <input
+                      type="url"
+                      className={inputClass}
+                      placeholder="https://youtube.com/watch?v=..."
+                      {...field('video_url')}
+                    />
+                  </FormField>
+                </div>
+              </div>
+
+              {/* ─── Template Style ───────────────────────────────────────────── */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-4">
+                  Template Style
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <FormField label="Style">
+                    <select
+                      className={inputClass}
+                      value={formData.template_style}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, template_style: e.target.value }))}
+                    >
+                      <option value="modern">Modern</option>
+                      <option value="classic">Classic</option>
+                      <option value="luxury">Luxury</option>
+                      <option value="minimal">Minimal</option>
+                    </select>
+                  </FormField>
                 </div>
               </div>
 
