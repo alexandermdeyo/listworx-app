@@ -4,9 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/DashboardLayout';
 import type { NavItem } from '@/components/DashboardLayout';
-import { SubscriptionCards } from '@/components/listing-studio/SubscriptionCards';
 import type { RealtorProfile } from '@/components/listing-studio/SubscriptionCards';
-import { ListingStudio } from '@/components/listing-studio/ListingStudio';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -36,6 +34,8 @@ import {
   Settings,
   CircleCheck as CheckCircle,
   Palette,
+  Sparkles,
+  Wand2,
 } from 'lucide-react';
 
 type JobRequest = {
@@ -108,14 +108,14 @@ function formatDate(value: string | null) {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'dashboard',   label: 'Dashboard',     icon: LayoutDashboard, href: '/requestor-dashboard' },
-  { id: 'my-listings', label: 'My Listings',   icon: Home,            href: '/requestor-dashboard#listing-studio' },
-  { id: 'my-profile',  label: 'My Profile',    icon: User2,           href: '/requestor-dashboard/profile' },
-  { id: 'my-brand',    label: 'My Brand',      icon: Palette,         href: '/requestor-dashboard/brand' },
-  { id: 'vendors',     label: 'My Vendors',    icon: Users,           href: '/requestor-dashboard/vendors' },
-  { id: 'submit',      label: 'Submit Request', icon: Plus,           href: '/request' },
-  { id: 'requests',    label: 'My Requests',   icon: ClipboardList,   href: '/requestor-dashboard' },
-  { id: 'settings',    label: 'Settings',      icon: Settings,        disabled: true },
+  { id: 'dashboard',      label: 'Dashboard',      icon: LayoutDashboard, href: '/requestor-dashboard' },
+  { id: 'listing-studio', label: 'Listing Studio', icon: Sparkles,        href: '/requestor-dashboard/listing-studio' },
+  { id: 'my-profile',     label: 'My Profile',     icon: User2,           href: '/requestor-dashboard/profile' },
+  { id: 'my-brand',       label: 'My Brand',       icon: Palette,         href: '/requestor-dashboard/brand' },
+  { id: 'vendors',        label: 'My Vendors',     icon: Users,           href: '/requestor-dashboard/vendors' },
+  { id: 'submit',         label: 'Submit Request', icon: Plus,            href: '/request' },
+  { id: 'requests',       label: 'My Requests',    icon: ClipboardList,   href: '/requestor-dashboard' },
+  { id: 'settings',       label: 'Settings',       icon: Settings,        disabled: true },
 ];
 
 
@@ -276,19 +276,6 @@ export default function RequestorDashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {userRole === 'REALTOR' && (
-            <Button
-              className="text-white font-bold text-base px-5 py-5"
-              style={{ backgroundColor: '#E8621A' }}
-              onClick={() => {
-                const el = document.getElementById('listing-studio');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              New Listing
-            </Button>
-          )}
           <Link href="/request">
             <Button className="text-white font-semibold" style={{ backgroundColor: '#E8621A' }}>
               <Plus className="h-4 w-4 mr-2" />
@@ -319,14 +306,29 @@ export default function RequestorDashboardPage() {
         ))}
       </div>
 
-      {/* Listing Studio — visible to realtors only */}
+      {/* Listing Studio summary card — visible to realtors only */}
       {userRole === 'REALTOR' && (
-        <section id="listing-studio" className="mb-6 space-y-6">
-          <SubscriptionCards realtorProfile={realtorProfile} />
-          {realtorProfile?.listing_studio_status === 'active' && (
-            <ListingStudio realtorProfile={realtorProfile} />
-          )}
-        </section>
+        <div className="mb-6 rounded-2xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#FFF3ED' }}>
+              <Wand2 className="h-6 w-6" style={{ color: '#E8621A' }} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Listing Studio</h3>
+              <p className="text-sm text-gray-500 mt-0.5">
+                {realtorProfile?.listing_studio_status === 'active'
+                  ? 'Generate captions, emails, and property descriptions for any listing.'
+                  : 'Unlock AI-powered marketing content for your listings.'}
+              </p>
+            </div>
+          </div>
+          <Link href="/requestor-dashboard/listing-studio" className="shrink-0">
+            <Button className="text-white font-semibold w-full sm:w-auto" style={{ backgroundColor: '#E8621A' }}>
+              <Sparkles className="h-4 w-4 mr-2" />
+              Open Listing Studio
+            </Button>
+          </Link>
+        </div>
       )}
 
       {loading ? (

@@ -170,6 +170,23 @@ export async function POST(request: NextRequest) {
       `[listing-studio/generate] Photos for vision: ${imageBlocks.length} of ${photoRows?.length ?? 0}`
     );
 
+    // ── Fetch brand kit (best-effort — falls back gracefully if missing) ───────
+    const { data: brandKit } = await admin
+      .from('realtor_brand_kits')
+      .select('display_name, brokerage_name, preferred_cta, disclaimer_text, job_title')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const agentName    = brandKit?.display_name    || listing.brand_name  || 'Your Agent';
+    const brokerage    = brandKit?.brokerage_name  || '';
+    const jobTitle     = brandKit?.job_title       || '';
+    const preferredCta = brandKit?.preferred_cta   || '';
+    const disclaimer   = brandKit?.disclaimer_text || '';
+
+    const brandLine = [agentName, jobTitle, brokerage].filter(Boolean).join(' | ');
+    const ctaLine   = preferredCta ? `\nPreferred CTA for closing lines: ${preferredCta}` : '';
+    const discLine  = disclaimer   ? `\nDisclaimer (append to email_body only): ${disclaimer}` : '';
+
     // ── Build task text ──────────────────────────────────────────────────────
     const taskText = `Return ONLY valid JSON with these exact keys. No markdown, no preamble, no explanation. Just the JSON object:
 
@@ -184,13 +201,15 @@ export async function POST(request: NextRequest) {
 }
 
 For open_house_sheet: write a formatted property information sheet for open house visitors. Include address, price, beds/baths/sqft, key features as bullet points, and agent name and contact info. Professional and clean.
+For email_body: sign off with the agent's name and brokerage. If a disclaimer is provided, append it as the final line.
+For all outputs: use the agent's preferred CTA in the closing line where appropriate.${ctaLine}${discLine}
 
 Property details:
 Address: ${listing.address}, ${listing.city}, ${listing.state} ${listing.zip}
 Beds: ${listing.beds} | Baths: ${listing.baths} | Sqft: ${listing.sqft} | Price: $${listing.price}
 Description: ${listing.description}
 
-Agent: ${listing.brand_name} | ${listing.brand_phone} | ${listing.brand_email}`;
+Agent: ${brandLine} | ${listing.brand_phone || ''} | ${listing.brand_email || ''}`;
 
     // If photos are available, build a multimodal content array; otherwise plain text
     const userContent: string | ContentBlock[] =

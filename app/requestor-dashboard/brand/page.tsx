@@ -23,19 +23,20 @@ import {
   Facebook,
   Linkedin,
   Youtube,
+  Sparkles,
 } from 'lucide-react';
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'dashboard',   label: 'Dashboard',      icon: LayoutDashboard, href: '/requestor-dashboard' },
-  { id: 'my-listings', label: 'My Listings',    icon: Home,            href: '/requestor-dashboard#listing-studio' },
-  { id: 'my-profile',  label: 'My Profile',     icon: User2,           href: '/requestor-dashboard/profile' },
-  { id: 'my-brand',    label: 'My Brand',       icon: Palette,         href: '/requestor-dashboard/brand' },
-  { id: 'vendors',     label: 'My Vendors',     icon: Users,           href: '/requestor-dashboard/vendors' },
-  { id: 'submit',      label: 'Submit Request', icon: Plus,            href: '/request' },
-  { id: 'requests',    label: 'My Requests',    icon: ClipboardList,   href: '/requestor-dashboard' },
-  { id: 'settings',    label: 'Settings',       icon: Settings,        disabled: true },
+  { id: 'dashboard',      label: 'Dashboard',      icon: LayoutDashboard, href: '/requestor-dashboard' },
+  { id: 'listing-studio', label: 'Listing Studio', icon: Sparkles,        href: '/requestor-dashboard/listing-studio' },
+  { id: 'my-profile',     label: 'My Profile',     icon: User2,           href: '/requestor-dashboard/profile' },
+  { id: 'my-brand',       label: 'My Brand',       icon: Palette,         href: '/requestor-dashboard/brand' },
+  { id: 'vendors',        label: 'My Vendors',     icon: Users,           href: '/requestor-dashboard/vendors' },
+  { id: 'submit',         label: 'Submit Request', icon: Plus,            href: '/request' },
+  { id: 'requests',       label: 'My Requests',    icon: ClipboardList,   href: '/requestor-dashboard' },
+  { id: 'settings',       label: 'Settings',       icon: Settings,        disabled: true },
 ];
 
 // ─── Types ────────────────────────────────────────────────────────────────────
