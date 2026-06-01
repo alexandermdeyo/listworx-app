@@ -12,6 +12,7 @@ import {
   FileText,
   Wand2,
   Copy,
+  Check,
   CircleCheck as CheckCircle,
   Globe,
   FileDown,
@@ -27,6 +28,189 @@ import {
   Map,
   Layers,
 } from 'lucide-react';
+
+// ─── Sample output data ───────────────────────────────────────────────────────
+
+const SAMPLE_TABS = [
+  {
+    id: 'instagram',
+    label: 'Instagram Caption',
+    content: `That covered back porch alone is worth the drive out to Hendersonville. 🏡
+
+4 bed | 3 bath | 2,340 sqft | $489,000
+412 Maple Creek Drive, Hendersonville TN
+
+Corner lot, open floor plan, primary suite on main — and Sumner County schools within minutes. This one checks every box.
+
+DM me to schedule a showing before it's gone.
+
+#HendersonvilleHomes #NashvilleRealEstate #JustListed #SumnerCounty #ListWorx`,
+  },
+  {
+    id: 'facebook',
+    label: 'Facebook Post',
+    content: `Just Listed in Hendersonville — and this one moves fast.
+
+412 Maple Creek Drive is a 4-bedroom, 3-bath home with 2,340 square feet of thoughtfully designed space. Built in 2018, it features quartz countertops, hardwood floors, a gas fireplace, and a covered back porch made for Tennessee evenings.
+
+Corner lot. Open floor plan. Primary suite on the main level. Top-rated Sumner County schools around the corner.
+
+Listed at $489,000.
+
+Drop a comment or send me a message to schedule your private showing. Links in bio.`,
+  },
+  {
+    id: 'description',
+    label: 'Property Description',
+    content: `Welcome to 412 Maple Creek Drive — a move-in ready 4-bedroom, 3-bathroom home nestled on a corner lot in one of Hendersonville's most sought-after neighborhoods.
+
+Built in 2018, this 2,340 square foot home combines modern finishes with everyday livability. The open floor plan flows from a chef-inspired kitchen — complete with quartz countertops, stainless appliances, and a gas fireplace — to a bright and airy living space perfect for entertaining.
+
+The primary suite on the main level offers a private retreat, while three additional bedrooms provide flexibility for family, guests, or a home office. Step outside to a covered back porch overlooking the corner lot — your own slice of Tennessee outdoor living.
+
+Located just 10 minutes from Gallatin and close to Drakes Creek Park, this home puts top-rated Sumner County schools, shopping, and recreation right at your doorstep.
+
+Priced at $489,000. Homes like this don't last — schedule your showing today.`,
+  },
+  {
+    id: 'email',
+    label: 'Email to Buyer List',
+    content: `Subject: New Listing Alert — 4BR in Hendersonville, $489K
+
+Hi [First Name],
+
+I wanted to make sure you saw this one before it hits the weekend rush.
+
+412 Maple Creek Drive just hit the market in Hendersonville at $489,000 — and it's exactly the kind of home that goes fast in this market.
+
+Here's what makes it stand out:
+• 4 bed / 3 bath / 2,340 sqft — built in 2018
+• Primary suite on the main level
+• Open floor plan with quartz countertops and hardwood floors
+• Covered back porch on a corner lot
+• Top-rated Sumner County schools, close to Drakes Creek Park
+
+If this fits what you've been looking for, let's get you in this week.
+
+Reply to this email or call me directly and I'll get something on the calendar.
+
+[Realtor Name]
+[Brokerage]
+[Phone]`,
+  },
+] as const;
+
+type SampleTabId = (typeof SAMPLE_TABS)[number]['id'];
+
+// ─── Sample output section component ─────────────────────────────────────────
+
+function SampleOutputSection() {
+  const [activeTab, setActiveTab] = useState<SampleTabId>('instagram');
+  const [copiedTab, setCopiedTab] = useState<SampleTabId | null>(null);
+
+  const activeContent = SAMPLE_TABS.find((t) => t.id === activeTab)!.content;
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(activeContent);
+      setCopiedTab(activeTab);
+      setTimeout(() => setCopiedTab(null), 2000);
+    } catch {
+      // Clipboard API unavailable — silently ignore
+    }
+  }
+
+  return (
+    <section className="py-20 bg-lw-dark border-b border-lw-dark-border">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto">
+
+          {/* Section header */}
+          <div className="text-center mb-12">
+            <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3">
+              Real Output. Real Listing.
+            </p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+              See What ListWorx{' '}
+              <span className="relative inline-block">
+                Generates
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-amber-400 rounded-full" />
+              </span>
+            </h2>
+            <p className="text-lg text-zinc-400 max-w-xl mx-auto mt-3">
+              Here&apos;s a real sample for a Nashville listing — generated in seconds.
+            </p>
+            {/* Listing chip */}
+            <div className="inline-flex items-center gap-2 mt-5 rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-300">
+              <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0" />
+              412 Maple Creek Drive, Hendersonville TN · 4 bd / 3 ba · $489,000
+            </div>
+          </div>
+
+          {/* Tab bar */}
+          <div className="flex gap-1 overflow-x-auto pb-px mb-6 scrollbar-none">
+            {SAMPLE_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-all shrink-0 ${
+                  activeTab === tab.id
+                    ? 'bg-amber-400 text-zinc-900 shadow font-semibold'
+                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white border border-zinc-700'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Content card */}
+          <div className="rounded-2xl border border-zinc-700 bg-zinc-900 overflow-hidden">
+            {/* Card header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-800 bg-zinc-900/80">
+              <p className="text-xs font-bold uppercase tracking-widest text-amber-400">
+                {SAMPLE_TABS.find((t) => t.id === activeTab)!.label}
+              </p>
+              <button
+                onClick={handleCopy}
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                  copiedTab === activeTab
+                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700'
+                }`}
+              >
+                {copiedTab === activeTab ? (
+                  <>
+                    <Check className="h-3.5 w-3.5" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3.5 w-3.5" />
+                    Copy
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Output text */}
+            <div className="p-6 md:p-8">
+              <pre className="text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap font-sans">
+                {activeContent}
+              </pre>
+            </div>
+          </div>
+
+          {/* Footer note */}
+          <p className="text-center text-zinc-500 text-sm mt-6">
+            This output was generated by ListWorx from a real property description. Every listing gets a full package like this — in about 30 seconds.
+          </p>
+
+        </div>
+      </div>
+    </section>
+  );
+}
 
 // ─── Pricing data ─────────────────────────────────────────────────────────────
 
@@ -669,7 +853,10 @@ export default function ListingStudioPage() {
         </div>
       </section>
 
-      {/* ── SECTION 6 — BOTTOM CTA ────────────────────────────────────────── */}
+      {/* ── SECTION 6 — SAMPLE OUTPUT ────────────────────────────────────── */}
+      <SampleOutputSection />
+
+      {/* ── SECTION 7 — BOTTOM CTA ────────────────────────────────────────── */}
       <section className="py-24 bg-lw-rust">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
