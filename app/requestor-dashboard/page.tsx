@@ -35,6 +35,7 @@ import {
   LayoutDashboard,
   Settings,
   CircleCheck as CheckCircle,
+  Palette,
 } from 'lucide-react';
 
 type JobRequest = {
@@ -110,6 +111,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard',   label: 'Dashboard',     icon: LayoutDashboard, href: '/requestor-dashboard' },
   { id: 'my-listings', label: 'My Listings',   icon: Home,            href: '/requestor-dashboard#listing-studio' },
   { id: 'my-profile',  label: 'My Profile',    icon: User2,           href: '/requestor-dashboard/profile' },
+  { id: 'my-brand',    label: 'My Brand',      icon: Palette,         href: '/requestor-dashboard/brand' },
   { id: 'vendors',     label: 'My Vendors',    icon: Users,           href: '/requestor-dashboard/vendors' },
   { id: 'submit',      label: 'Submit Request', icon: Plus,           href: '/request' },
   { id: 'requests',    label: 'My Requests',   icon: ClipboardList,   href: '/requestor-dashboard' },

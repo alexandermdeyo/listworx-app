@@ -114,11 +114,11 @@ export default async function RealtorProfilePage({
               This realtor hasn't published their profile yet. Check back soon.
             </p>
             <Link
-              href="/"
+              href="/requestor-dashboard"
               className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-white font-semibold text-sm"
               style={{ backgroundColor: '#E8621A' }}
             >
-              Back to ListWorx
+              Back to Your Dashboard
             </Link>
           </div>
         </div>
@@ -182,8 +182,8 @@ export default async function RealtorProfilePage({
         <div className="text-center max-w-md px-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
           <p className="text-gray-500 text-sm mb-6">We couldn't load this profile. Please try again.</p>
-          <Link href="/" className="text-sm font-semibold" style={{ color: '#E8621A' }}>
-            Back to ListWorx
+          <Link href="/requestor-dashboard" className="text-sm font-semibold" style={{ color: '#E8621A' }}>
+            Back to Your Dashboard
           </Link>
         </div>
       </div>

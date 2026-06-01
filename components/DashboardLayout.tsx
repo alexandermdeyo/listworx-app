@@ -1,8 +1,10 @@
 'use client';
 
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Bell, LogOut, Menu, X } from 'lucide-react';
+import { createClient } from '@/lib/supabase-browser';
 
 export interface NavItem {
   id: string;
@@ -27,6 +29,10 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
+const INACTIVE_MS      = 30 * 60 * 1000; // 30 minutes
+const WARN_BEFORE_MS   =  5 * 60 * 1000; // warn 5 min before → at 25 min mark
+const ACTIVITY_EVENTS  = ['mousemove', 'keydown', 'click', 'scroll'] as const;
+
 export default function DashboardLayout({
   userName,
   tierBadge,
@@ -37,7 +43,64 @@ export default function DashboardLayout({
   hasNotifications = false,
   children,
 }: DashboardLayoutProps) {
+  const router                      = useRouter();
+  const supabase                    = useRef(createClient());
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
+  const inactiveTimer               = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const warnTimer                   = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearTimers = useCallback(() => {
+    if (inactiveTimer.current) clearTimeout(inactiveTimer.current);
+    if (warnTimer.current)    clearTimeout(warnTimer.current);
+  }, []);
+
+  const startTimers = useCallback(() => {
+    clearTimers();
+    setShowTimeoutWarning(false);
+
+    warnTimer.current = setTimeout(() => {
+      setShowTimeoutWarning(true);
+    }, INACTIVE_MS - WARN_BEFORE_MS);
+
+    inactiveTimer.current = setTimeout(async () => {
+      setShowTimeoutWarning(false);
+      try { await supabase.current.auth.signOut(); } catch {}
+      router.replace('/login');
+    }, INACTIVE_MS);
+  }, [clearTimers, router]);
+
+  const resetTimers = useCallback(() => {
+    startTimers();
+  }, [startTimers]);
+
+  // ── Desktop: 30-min inactivity timeout ──────────────────────────────────────
+  useEffect(() => {
+    startTimers();
+
+    const handler = () => resetTimers();
+    ACTIVITY_EVENTS.forEach((ev) => window.addEventListener(ev, handler, { passive: true }));
+
+    return () => {
+      clearTimers();
+      ACTIVITY_EVENTS.forEach((ev) => window.removeEventListener(ev, handler));
+    };
+  }, [startTimers, resetTimers, clearTimers]);
+
+  // ── Mobile: sign out on page hide (tab switch / app background on touch devices) ──
+  useEffect(() => {
+    const isTouchDevice = navigator.maxTouchPoints > 0;
+    if (!isTouchDevice) return;
+
+    async function handleVisibilityChange() {
+      if (document.visibilityState === 'hidden') {
+        try { await supabase.current.auth.signOut(); } catch {}
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   function closeSidebar() {
     setSidebarOpen(false);
@@ -53,6 +116,19 @@ export default function DashboardLayout({
           onClick={closeSidebar}
           aria-hidden="true"
         />
+      )}
+
+      {/* Inactivity warning banner */}
+      {showTimeoutWarning && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-xl border border-amber-400/40 bg-zinc-900 px-5 py-3 shadow-xl text-sm text-amber-300 whitespace-nowrap">
+          <span>You&apos;ll be signed out in 5 minutes due to inactivity.</span>
+          <button
+            onClick={resetTimers}
+            className="ml-1 rounded-lg bg-amber-400 px-3 py-1 text-xs font-bold text-zinc-900 hover:bg-amber-300 transition"
+          >
+            Stay signed in
+          </button>
+        </div>
       )}
 
       {/* Sidebar */}
