@@ -49,6 +49,7 @@ export default function DashboardLayout({
   const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
   const inactiveTimer               = useRef<ReturnType<typeof setTimeout> | null>(null);
   const warnTimer                   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigatingRef               = useRef(false);
 
   const clearTimers = useCallback(() => {
     if (inactiveTimer.current) clearTimeout(inactiveTimer.current);
@@ -88,18 +89,34 @@ export default function DashboardLayout({
   }, [startTimers, resetTimers, clearTimers]);
 
   // ── Mobile: sign out on page hide (tab switch / app background on touch devices) ──
+  // Guard: if the hide was triggered by internal navigation, skip sign-out.
   useEffect(() => {
     const isTouchDevice = navigator.maxTouchPoints > 0;
     if (!isTouchDevice) return;
 
+    // Capture-phase click listener — sets navigatingRef when any internal link is clicked.
+    // Resets after 2 s so it doesn't permanently suppress sign-out.
+    function handleClick(e: MouseEvent) {
+      const target = (e.target as HTMLElement).closest('a');
+      if (target?.href?.includes(window.location.origin)) {
+        navigatingRef.current = true;
+        setTimeout(() => { navigatingRef.current = false; }, 2000);
+      }
+    }
+
     async function handleVisibilityChange() {
-      if (document.visibilityState === 'hidden') {
+      if (document.visibilityState === 'hidden' && !navigatingRef.current) {
         try { await supabase.current.auth.signOut(); } catch {}
       }
     }
 
+    window.addEventListener('click', handleClick, true);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('click', handleClick, true);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   function closeSidebar() {
