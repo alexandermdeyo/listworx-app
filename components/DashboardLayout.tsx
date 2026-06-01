@@ -1,8 +1,8 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import Link from 'next/link';
-import { Bell, LogOut } from 'lucide-react';
+import { Bell, LogOut, Menu, X } from 'lucide-react';
 
 export interface NavItem {
   id: string;
@@ -37,15 +37,33 @@ export default function DashboardLayout({
   hasNotifications = false,
   children,
 }: DashboardLayoutProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  function closeSidebar() {
+    setSidebarOpen(false);
+  }
+
   return (
     <div className="flex min-h-screen" style={{ fontFamily: "'Barlow', Arial, sans-serif" }}>
+
+      {/* Mobile overlay — sits above content, behind sidebar */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-black/50 md:hidden"
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className="fixed inset-y-0 left-0 z-40 flex w-60 flex-col"
+        className={`fixed inset-y-0 left-0 z-30 flex w-60 max-w-[75vw] flex-col transition-transform duration-200
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          md:translate-x-0`}
         style={{ backgroundColor: '#181818' }}
       >
-        {/* Logo */}
-        <div className="flex h-16 items-center px-5 border-b border-white/10">
+        {/* Logo + mobile close button */}
+        <div className="flex h-16 items-center justify-between px-5 border-b border-white/10">
           <Link href="/" className="flex items-center">
             <img
               src="/Listworx_wordmark_logo.png"
@@ -53,6 +71,13 @@ export default function DashboardLayout({
               className="h-8 w-auto"
             />
           </Link>
+          <button
+            onClick={closeSidebar}
+            className="md:hidden text-white/60 hover:text-white transition-colors p-1"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         {/* User info */}
@@ -131,7 +156,7 @@ export default function DashboardLayout({
 
             if (item.href && !item.disabled) {
               return (
-                <Link key={item.id} href={item.href} className={baseClass} style={activeBg}>
+                <Link key={item.id} href={item.href} className={baseClass} style={activeBg} onClick={closeSidebar}>
                   {content}
                 </Link>
               );
@@ -140,7 +165,7 @@ export default function DashboardLayout({
             return (
               <button
                 key={item.id}
-                onClick={item.disabled ? undefined : item.onClick}
+                onClick={item.disabled ? undefined : () => { closeSidebar(); item.onClick?.(); }}
                 disabled={item.disabled}
                 className={baseClass}
                 style={activeBg}
@@ -154,7 +179,7 @@ export default function DashboardLayout({
         {/* Bottom sign out */}
         <div className="border-t border-white/10 py-3">
           <button
-            onClick={onLogout}
+            onClick={() => { closeSidebar(); onLogout(); }}
             className="flex w-full items-center gap-3 px-5 py-2.5 text-sm text-white/50 hover:text-white transition-colors"
           >
             <LogOut className="h-4 w-4 flex-shrink-0" />
@@ -164,15 +189,25 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main content area */}
-      <div className="flex flex-1 flex-col" style={{ marginLeft: '240px' }}>
+      <div className="flex flex-1 flex-col md:ml-60">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-15 items-center justify-between border-b border-gray-200 bg-white px-6 py-0" style={{ height: '60px' }}>
-          <h1
-            className="text-xl font-bold uppercase tracking-wide text-gray-900"
-            style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}
-          >
-            {pageTitle}
-          </h1>
+        <header className="sticky top-0 z-10 flex h-15 items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6 py-0" style={{ height: '60px' }}>
+          <div className="flex items-center gap-3">
+            {/* Hamburger — mobile only */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden text-gray-600 hover:text-gray-900 transition-colors p-1 -ml-1"
+              aria-label="Open menu"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+            <h1
+              className="text-xl font-bold uppercase tracking-wide text-gray-900"
+              style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}
+            >
+              {pageTitle}
+            </h1>
+          </div>
           <div className="flex items-center gap-3">
             {tierBadge && (
               <span
