@@ -102,24 +102,35 @@ export default async function RealtorProfilePage({
     if (!brandKit) {
       // Brand kit not set up yet — show a friendly placeholder instead of 404
       return (
-        <div className="min-h-screen bg-white flex items-center justify-center" style={{ fontFamily: "'Barlow', Arial, sans-serif" }}>
-          <div className="text-center max-w-md px-6">
-            <div className="w-20 h-20 rounded-full bg-zinc-100 flex items-center justify-center mx-auto mb-6">
-              <svg className="h-10 w-10 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Profile not set up yet</h1>
-            <p className="text-gray-500 text-sm mb-6">
-              This realtor hasn't published their profile yet. Check back soon.
-            </p>
-            <Link
-              href="/requestor-dashboard"
-              className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-white font-semibold text-sm"
-              style={{ backgroundColor: '#E8621A' }}
-            >
-              Back to Your Dashboard
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Barlow', Arial, sans-serif" }}>
+          {/* Back bar */}
+          <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-100">
+            <Link href="/requestor-dashboard" className="text-sm text-zinc-500 hover:text-zinc-900 transition">
+              ← Back to Dashboard
             </Link>
+            <Link href="/requestor-dashboard/profile" className="text-sm text-zinc-500 hover:text-zinc-900 transition">
+              ← Back to My Profile
+            </Link>
+          </div>
+          <div className="flex items-center justify-center flex-1 py-24 px-6">
+            <div className="text-center max-w-md">
+              <div className="w-20 h-20 rounded-full bg-zinc-100 flex items-center justify-center mx-auto mb-6">
+                <svg className="h-10 w-10 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Profile not set up yet</h1>
+              <p className="text-gray-500 text-sm mb-6">
+                This realtor hasn't published their profile yet. Check back soon.
+              </p>
+              <Link
+                href="/requestor-dashboard"
+                className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-white font-semibold text-sm"
+                style={{ backgroundColor: '#E8621A' }}
+              >
+                Back to Your Dashboard
+              </Link>
+            </div>
           </div>
         </div>
       );
@@ -178,13 +189,24 @@ export default async function RealtorProfilePage({
   } catch (err: any) {
     console.error('[realtors/[id]] page error:', err?.message);
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center max-w-md px-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
-          <p className="text-gray-500 text-sm mb-6">We couldn't load this profile. Please try again.</p>
-          <Link href="/requestor-dashboard" className="text-sm font-semibold" style={{ color: '#E8621A' }}>
-            Back to Your Dashboard
+      <div className="min-h-screen bg-white" style={{ fontFamily: "'Barlow', Arial, sans-serif" }}>
+        {/* Back bar */}
+        <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-100">
+          <Link href="/requestor-dashboard" className="text-sm text-zinc-500 hover:text-zinc-900 transition">
+            ← Back to Dashboard
           </Link>
+          <Link href="/requestor-dashboard/profile" className="text-sm text-zinc-500 hover:text-zinc-900 transition">
+            ← Back to My Profile
+          </Link>
+        </div>
+        <div className="flex items-center justify-center flex-1 py-24 px-6">
+          <div className="text-center max-w-md">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
+            <p className="text-gray-500 text-sm mb-6">We couldn't load this profile. Please try again.</p>
+            <Link href="/requestor-dashboard" className="text-sm font-semibold" style={{ color: '#E8621A' }}>
+              Back to Your Dashboard
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -202,6 +224,16 @@ export default async function RealtorProfilePage({
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Barlow', Arial, sans-serif" }}>
+
+      {/* ── Back navigation bar ───────────────────────────────────────────── */}
+      <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-100 bg-white">
+        <Link href="/requestor-dashboard" className="text-sm text-zinc-500 hover:text-zinc-900 transition">
+          ← Back to Dashboard
+        </Link>
+        <Link href="/requestor-dashboard/profile" className="text-sm text-zinc-500 hover:text-zinc-900 transition">
+          ← Back to My Profile
+        </Link>
+      </div>
 
       {/* ── Cover photo ───────────────────────────────────────────────────── */}
       <div
@@ -418,6 +450,20 @@ export default async function RealtorProfilePage({
           <p className="text-xs text-gray-400 leading-relaxed pb-12">{kit.disclaimer_text}</p>
         )}
 
+      </div>
+
+      {/* ── Sticky preview banner ─────────────────────────────────────────── */}
+      <div className="sticky bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-3 bg-zinc-900/95 backdrop-blur-sm px-6 py-3 border-t border-zinc-700">
+        <p className="text-sm text-zinc-300">
+          This is how clients see your profile.
+        </p>
+        <Link
+          href="/requestor-dashboard/profile"
+          className="shrink-0 inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
+          style={{ backgroundColor: '#E8621A' }}
+        >
+          Edit My Profile →
+        </Link>
       </div>
 
       {/* ── Footer ────────────────────────────────────────────────────────── */}
