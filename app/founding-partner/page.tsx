@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
+import FoundingPartnerCard from '@/components/founding-partner/FoundingPartnerCard';
 
 const features = [
   ['Rate Locked From Day One', 'The rate you activate at is the rate you pay forever. Not until next year. Not after a trial. From the moment you activate, that number is yours for life.'],
@@ -79,22 +80,8 @@ export default function FoundingPartnerPage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-12 text-center">
-        <div className="mx-auto max-w-3xl rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-zinc-900 to-zinc-800 p-8 md:p-12 shadow-lg">
-          <img
-            src="/ironclad_founder_shield_logo.png"
-            alt=""
-            className="mx-auto mb-4 h-20 w-auto drop-shadow-md"
-            aria-hidden="true"
-          />
-          <h3 className="mb-3 text-2xl md:text-3xl font-bold text-white">Lock in Founding Partner Pricing</h3>
-          <p className="mb-6 text-zinc-300">Spots are limited per trade and county. Once your trade fills, founder pricing closes permanently.</p>
-          <Link href="/apply">
-            <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">
-              Apply as a Founding Partner →
-            </Button>
-          </Link>
-        </div>
+      <section className="container mx-auto px-4 py-12">
+        <FoundingPartnerCard />
       </section>
 
       <section className="container mx-auto px-4 py-12">

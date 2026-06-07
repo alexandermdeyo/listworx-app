@@ -35,6 +35,10 @@ export async function POST(request: NextRequest) {
       ironclad_acknowledged: Boolean(body.ironclad_acknowledged),
       agreed_to_standards: Boolean(body.ironclad_acknowledged),
       volume_acknowledged: Boolean(body.volume_acknowledged),
+      founder_tier: body.founder_tier || null,
+      founder_addons: Array.isArray(body.founder_addons) && body.founder_addons.length > 0
+        ? body.founder_addons
+        : null,
       status: 'pending',
     };
 

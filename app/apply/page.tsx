@@ -1,11 +1,42 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import { createClient } from '@/lib/supabase-browser';
 import ApplicationForm from '@/app/contractor-dashboard/ApplicationForm';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader as Loader2, CircleAlert as AlertCircle } from 'lucide-react';
+
+export type FounderSelection = {
+  tierId: string;
+  tierName: string;
+  addons: string[];
+  total: number;
+};
+
+const LS_KEY = 'lw_founder_selection';
+
+function readFounderSelection(params: URLSearchParams): FounderSelection | null {
+  const tierId = params.get('tier');
+  if (tierId) {
+    const addons = params.get('addons') ? params.get('addons')!.split(',').filter(Boolean) : [];
+    const total = Number(params.get('total') || 75);
+    // derive a display name from the id
+    const tierName = tierId
+      .split('_')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+    return { tierId, tierName, addons, total };
+  }
+  try {
+    const stored = localStorage.getItem(LS_KEY);
+    if (stored) return JSON.parse(stored) as FounderSelection;
+  } catch {
+    // ignore
+  }
+  return null;
+}
 
 type Role =
   | 'ADMIN'
@@ -54,11 +85,17 @@ interface AuthenticatedContractorState {
 export default function ApplyPage() {
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
+  const searchParams = useSearchParams();
 
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [authError, setAuthError] = useState('');
   const [state, setState] = useState<AuthenticatedContractorState | null>(null);
   const [reloadTick, setReloadTick] = useState(0);
+  const [founderSelection, setFounderSelection] = useState<FounderSelection | null>(null);
+
+  useEffect(() => {
+    setFounderSelection(readFounderSelection(searchParams));
+  }, [searchParams]);
 
   const refreshFromApplication = useCallback(() => {
     setReloadTick((prev) => prev + 1);
@@ -213,11 +250,35 @@ export default function ApplyPage() {
               </p>
             </div>
 
+            {founderSelection && (
+                <div className="mb-6 rounded-xl border border-lw-rust/40 bg-lw-rust/5 px-5 py-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-lw-rust">Founding Partner Selection</p>
+                      <p className="text-sm text-lw-text mt-0.5">
+                        <span className="font-semibold">{founderSelection.tierName}</span>
+                        {founderSelection.addons.length > 0 && (
+                          <> + {founderSelection.addons.length} add-on{founderSelection.addons.length !== 1 ? 's' : ''}</>
+                        )}
+                        <span className="ml-2 text-lw-text/60">${founderSelection.total} due today after approval</span>
+                      </p>
+                    </div>
+                    <a
+                      href="/founding-partner"
+                      className="text-xs text-lw-rust underline underline-offset-2 whitespace-nowrap self-start sm:self-center"
+                    >
+                      Change selections
+                    </a>
+                  </div>
+                </div>
+              )}
+
             <div className="bg-lw-surface-card rounded-2xl border border-lw-border-light p-6 sm:p-8 shadow-sm">
               <ApplicationForm
                 userId={state.userId}
                 userEmail={state.userEmail}
                 existingProfile={state.existingProfile}
+                founderSelection={founderSelection ?? undefined}
                 onSuccess={refreshFromApplication}
               />
             </div>

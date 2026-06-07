@@ -32,10 +32,18 @@ interface Trade {
   name: string;
 }
 
+interface FounderSelection {
+  tierId: string;
+  tierName: string;
+  addons: string[];
+  total: number;
+}
+
 interface ApplicationFormProps {
   userId: string;
   userEmail: string;
   existingProfile?: any;
+  founderSelection?: FounderSelection;
   onSuccess: () => void;
 }
 
@@ -171,6 +179,7 @@ export default function ApplicationForm({
   userId,
   userEmail,
   existingProfile,
+  founderSelection,
   onSuccess,
 }: ApplicationFormProps) {
   const supabaseRef = useRef(createClient());
@@ -557,8 +566,12 @@ export default function ApplicationForm({
           instagram_url: form.instagram_url.trim() || null,
           ironclad_acknowledged: form.agreed_to_standards,
           volume_acknowledged: form.volume_acknowledged,
+          founder_tier: founderSelection?.tierId || null,
+          founder_addons: founderSelection?.addons?.length ? founderSelection.addons : null,
         }),
       }).catch((applicationError) => console.error('contractor_applications insert error:', applicationError));
+
+      try { localStorage.removeItem('lw_founder_selection'); } catch { /* ignore */ }
 
       fetch(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,
@@ -628,7 +641,14 @@ export default function ApplicationForm({
             <Shield className="h-5 w-5 text-lw-rust" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-lw-text">Apply to Join the ListWorx Network</h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-lg font-bold text-lw-text">Apply to Join the ListWorx Network</h2>
+              {founderSelection && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-lw-rust/10 border border-lw-rust/30 px-2.5 py-0.5 text-xs font-semibold text-lw-rust">
+                  {founderSelection.tierName}
+                </span>
+              )}
+            </div>
             <p className="text-lw-text/50 text-sm mt-0.5">
               Applications are reviewed by our team within 72 hours. We vet every contractor before approving network access. After approval, you will receive instructions to complete your subscription and claim your Founding Partner spot if one is still available in your trade and county.
             </p>
