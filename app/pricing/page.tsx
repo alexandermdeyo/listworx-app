@@ -12,7 +12,7 @@ const standardPlans = [
 ];
 
 const pricingRows = [
-  ['Activation Fee', '$199 one-time', '$199 one-time', '$199 one-time'],
+  ['Activation Fee', '$75 one-time', '$75 one-time', '$75 one-time'],
   ['Locked Monthly Rate', '$159/mo', '$279/mo', '$479/mo'],
   ['Standard Rate', '$199/month', '$349/month', '$599/month'],
   ['You Save', '$40/mo forever', '$70/mo forever', '$120/mo forever'],

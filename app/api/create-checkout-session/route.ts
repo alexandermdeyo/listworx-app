@@ -171,6 +171,7 @@ export async function POST(request: NextRequest) {
       cancel_url: `${baseUrl}/contractor-dashboard?canceled=true`,
       client_reference_id: contractorId,
       metadata,
+      ...(isFounderActivation && { allow_promotion_codes: true }),
     };
 
     if (sessionMode === 'subscription') {

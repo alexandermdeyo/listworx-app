@@ -47,7 +47,7 @@ export default function ContractorsPage() {
                 </div>
                 <p className="mb-2 text-sm text-zinc-500">vs $199/mo standard</p>
                 <p className="mb-5 text-sm font-semibold text-lw-rust">Save $40 every month forever</p>
-                <p className="mb-6 text-xs text-zinc-600">$199 one-time activation</p>
+                <p className="mb-6 text-xs text-zinc-600">$75 one-time activation</p>
                 <Link href="/founding-partner" className="block">
                   <Button className="w-full border border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700">
                     Claim Your Spot
@@ -66,7 +66,7 @@ export default function ContractorsPage() {
                 </div>
                 <p className="mb-2 text-sm text-zinc-500">vs $349/mo standard</p>
                 <p className="mb-5 text-sm font-semibold text-lw-rust">Save $70 every month forever</p>
-                <p className="mb-6 text-xs text-zinc-600">$199 one-time activation</p>
+                <p className="mb-6 text-xs text-zinc-600">$75 one-time activation</p>
                 <Link href="/founding-partner" className="block">
                   <Button className="w-full bg-lw-rust text-white hover:bg-lw-rust-hover">
                     Claim Your Spot
@@ -82,7 +82,7 @@ export default function ContractorsPage() {
                 </div>
                 <p className="mb-2 text-sm text-zinc-500">vs $599/mo standard</p>
                 <p className="mb-5 text-sm font-semibold text-lw-rust">Save $120 every month forever</p>
-                <p className="mb-6 text-xs text-zinc-600">$199 one-time activation</p>
+                <p className="mb-6 text-xs text-zinc-600">$75 one-time activation</p>
                 <Link href="/founding-partner" className="block">
                   <Button className="w-full border border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700">
                     Claim Your Spot
@@ -94,7 +94,7 @@ export default function ContractorsPage() {
             {/* Below-cards copy */}
             <div className="text-center">
               <p className="mb-3 text-sm text-zinc-400">
-                $199 activation. Billing starts immediately at your locked rate. No trial. No games.
+                $75 activation. Billing starts immediately at your locked rate. No trial. No games.
               </p>
               <p className="mx-auto max-w-xl text-sm text-zinc-500">
                 Every Founding Partner profile displays the IronClad Founding Partner badge — a permanent marker that you were here from the beginning.

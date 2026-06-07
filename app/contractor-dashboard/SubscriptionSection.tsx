@@ -211,7 +211,7 @@ export default function SubscriptionSection({
     return sum + price;
   }, 0);
 
-  const founderTotalCents = 199 + addonsTotalCents;
+  const founderTotalCents = 75 + addonsTotalCents;
 
   function toggleAddon(addonId: string) {
     setSelectedAddons((prev) =>
@@ -836,7 +836,7 @@ export default function SubscriptionSection({
               </div>
               <h3 className="text-2xl font-bold text-white">Become a Founding Partner</h3>
               <p className="mt-1 text-sm text-zinc-300">
-                One-time $199 activation. Your locked rate starts immediately — and it never goes up. Ever.
+                One-time $75 activation. Your locked rate starts immediately — and it never goes up. Ever.
               </p>
             </div>
             <div className="flex flex-col items-center gap-3">
@@ -846,7 +846,7 @@ export default function SubscriptionSection({
                 className="h-24 w-auto md:h-28 drop-shadow-lg"
               />
               <div className="rounded-xl bg-zinc-900/60 border border-lw-rust/40 px-5 py-3 text-center">
-                <div className="text-3xl font-bold text-lw-rust">$199</div>
+                <div className="text-3xl font-bold text-lw-rust">$75</div>
                 <div className="text-xs text-zinc-400">one-time activation</div>
               </div>
             </div>
@@ -892,7 +892,7 @@ export default function SubscriptionSection({
               <div className="mb-4">
                 <h4 className="text-lg font-bold text-white">Customize Your Founder Kit (optional)</h4>
                 <p className="text-sm text-zinc-400">
-                  Bundle these one-time add-ons with your $199 activation.
+                  Bundle these one-time add-ons with your $75 activation.
                   Monthly services like Profile Boost can be added anytime after activation.
                 </p>
               </div>
@@ -931,7 +931,7 @@ export default function SubscriptionSection({
               {addonsTotalCents > 0 && (
                 <div className="mt-4 rounded-lg border border-lw-rust/40 bg-zinc-900/60 p-3 text-center">
                   <p className="text-sm text-zinc-300">
-                    $199 activation + ${addonsTotalCents} add-ons =
+                    $75 activation + ${addonsTotalCents} add-ons =
                     <span className="ml-1 font-bold text-white">${founderTotalCents} total</span>
                   </p>
                 </div>

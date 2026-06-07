@@ -13,7 +13,7 @@ const generalFaqs = [
 ];
 
 const founderFaqs = [
-  ['What is a Founding Partner?', 'Simple. Pay the $199 activation fee, pick your tier, and your monthly billing starts right away at your locked founder rate. Basic is $159/month. Preferred is $279. Elite is $479. That rate is yours permanently — no increases, no renegotiating, no surprises. Standard pricing for contractors who join after the founding period is $199, $349, or $599 a month. Founding Partners never pay that.'],
+  ['What is a Founding Partner?', 'Simple. Pay the $75 activation fee, pick your tier, and your monthly billing starts right away at your locked founder rate. Basic is $159/month. Preferred is $279. Elite is $479. That rate is yours permanently — no increases, no renegotiating, no surprises. Standard pricing for contractors who join after the founding period is $199, $349, or $599 a month. Founding Partners never pay that.'],
   ['Why should I become a Founding Partner instead of joining standard monthly?', 'Three reasons: locked renewal pricing as low as $159/month forever (versus standard $199-$599/month), Founding Partner badge on every referral we send, and territory reservation for your trade and county.'],
   ['How long does Founding Partner pricing last?', 'For life — as long as you maintain active status and IronClad compliance. If you cancel or get removed for IronClad violations, Founding Partner pricing is forfeited.'],
   ['Are spots really limited?', 'Yes. We are accepting 10 Basic Founder, 5 Preferred Founder, and 2 Elite Founder contractors per trade in each county. Once a trade fills in your county, no other contractor of that trade joins at Founding Partner pricing.'],

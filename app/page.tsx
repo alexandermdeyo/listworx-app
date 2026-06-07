@@ -169,7 +169,7 @@ export default function LandingPage() {
             <Link href="/founding-partner">
               <Button size="lg" className="bg-amber-500 text-black hover:bg-amber-400">Reserve My Founding Partner Spot</Button>
             </Link>
-            <p className="mt-4 text-sm text-zinc-300">$199 one-time activation. Your locked rate begins immediately. $159–$479/month depending on tier — locked for life.</p>
+            <p className="mt-4 text-sm text-zinc-300">$75 one-time activation. Your locked rate begins immediately. $159–$479/month depending on tier — locked for life.</p>
           </div>
         </div>
       </section>
