@@ -235,21 +235,6 @@ export default function ApplyPage() {
           </div>
         ) : !state ? null : (
           <div>
-            <div className="mb-8 text-center">
-              <img
-                src="/Ironclad_Standards_Logo.png"
-                alt=""
-                className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
-                aria-hidden="true"
-              />
-              <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-3 tracking-tight">
-                Apply to Join the ListWorx Network
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Applications are reviewed by our team within 72 hours. We vet every contractor before approving network access. After approval, you will receive instructions to complete your subscription and claim your Founding Partner spot if one is still available in your trade and county.
-              </p>
-            </div>
-
             {founderSelection && (
                 <div className="mb-6 rounded-xl border border-lw-rust/40 bg-lw-rust/5 px-5 py-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

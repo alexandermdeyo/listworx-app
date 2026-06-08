@@ -68,10 +68,13 @@ export default function FoundingPartnerPage() {
       <section className="container mx-auto px-4 py-12">
         <h2 className="text-4xl font-bold text-white">Founding Partner Pricing</h2>
         <p className="mb-6 text-zinc-400">One-time $75 activation fee covers all tiers. Your renewal rate depends on the tier you choose.</p>
-        <div className="overflow-x-auto rounded-xl border border-zinc-800">
-          <table className="w-full min-w-[760px] bg-zinc-950 text-left text-sm">
-            <thead><tr>{['', 'Basic Founder', 'Preferred Founder', 'Elite Founder'].map(h => <th key={h} className="p-4 text-white">{h}</th>)}</tr></thead>
-            <tbody>{pricingRows.map(row => <tr key={row[0]} className="border-t border-zinc-800">{row.map((cell, i) => <td key={cell} className={`p-4 ${i === 0 ? 'font-semibold text-zinc-200' : 'text-zinc-400'}`}>{cell}</td>)}</tr>)}</tbody>
+        <p className="sm:hidden mb-2 text-xs text-zinc-500 flex items-center gap-1">
+          <span>←</span> Swipe to compare tiers <span>→</span>
+        </p>
+        <div className="overflow-x-auto rounded-xl border border-zinc-800 -webkit-overflow-scrolling-touch">
+          <table className="w-full min-w-[680px] bg-zinc-950 text-left text-sm">
+            <thead><tr>{['', 'Basic Founder', 'Preferred Founder', 'Elite Founder'].map(h => <th key={h} className="p-4 text-white whitespace-nowrap">{h}</th>)}</tr></thead>
+            <tbody>{pricingRows.map(row => <tr key={row[0]} className="border-t border-zinc-800">{row.map((cell, i) => <td key={cell} className={`p-4 whitespace-nowrap ${i === 0 ? 'font-semibold text-zinc-200' : 'text-zinc-400'}`}>{cell}</td>)}</tr>)}</tbody>
           </table>
         </div>
         <div className="mt-5 flex gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-amber-100">

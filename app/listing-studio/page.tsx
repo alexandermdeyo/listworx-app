@@ -707,7 +707,7 @@ export default function ListingStudioPage() {
                 return (
                   <div
                     key={tier.id}
-                    className={`relative rounded-2xl p-7 flex flex-col transition-all ${
+                    className={`relative rounded-2xl p-7 flex flex-col transition-all min-w-0 w-full ${
                       tier.highlight
                         ? 'bg-white text-zinc-900 shadow-2xl ring-2 ring-lw-rust'
                         : 'bg-zinc-900 border border-zinc-700 text-white'

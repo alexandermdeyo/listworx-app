@@ -460,7 +460,7 @@ export default function RequestPage() {
             className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
             aria-hidden="true"
           />
-          <h1 className="text-5xl font-bold mb-4">Request a Contractor Referral</h1>
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4 break-words">Request a Contractor Referral</h1>
           <p className="text-xl text-muted-foreground">
             Submit your job details below. We&apos;ll return exactly three vetted, IronClad-certified contractors in your area — typically within a few hours. No account required.
           </p>
