@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { LayoutDashboard, LogIn, LogOut, Menu, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
+import America250Strip from '@/components/site/America250Strip';
 
 type Role =
   | 'ADMIN'
@@ -137,7 +138,9 @@ export default function Navigation() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-lw-dark-border bg-zinc-900/95 backdrop-blur">
+    <header className="sticky top-0 z-40">
+      <America250Strip />
+    <div className="border-b border-lw-dark-border bg-zinc-900/95 backdrop-blur">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
         <Link href="/" className="flex items-center" aria-label="ListWorx home">
           <img
@@ -281,6 +284,7 @@ export default function Navigation() {
           </nav>
         </div>
       )}
+    </div>
     </header>
   );
 }

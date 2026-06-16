@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Award, Briefcase, FileText, Clock, Target, CheckCheck, Phone, CircleAlert as AlertCircle, ArrowRight, Lock, Star, Crown, Wrench, Camera, Video, Film, MessageSquare } from 'lucide-react';
+import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Award, Briefcase, FileText, Clock, Target, CheckCheck, Phone, CircleAlert as AlertCircle, ArrowRight, Lock, Star, Crown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
@@ -22,18 +22,18 @@ export default function ContractorsPage() {
             {/* Badge */}
             <div className="mb-8 text-center">
               <span className="inline-block rounded-full bg-lw-rust px-5 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
-                Founding Partner Program — Limited Spots
+                Founding Partner Program — National Ground Floor
               </span>
             </div>
 
             {/* Heading */}
             <h2 className="mb-4 text-center text-4xl font-bold text-white md:text-6xl">
-              Get in before the price changes.
+              Lock Your Rate. Hold Your Territory. Join the National Network.
             </h2>
 
             {/* Subheading */}
             <p className="mx-auto mb-12 max-w-2xl text-center text-lg text-zinc-400">
-              The Founding Partner program is still open. When the spots are gone it closes permanently and standard pricing takes over. This is not a marketing tactic — it is just how it works.
+              Founding Partners are the people who were here first. When ListWorx expands into a new market, Founding Partners in that trade and county already have their position. The rate they locked is the rate they keep — for as long as they&apos;re in the network.
             </p>
 
             {/* Tier cards */}
@@ -105,65 +105,6 @@ export default function ContractorsPage() {
         </div>
       </section>
 
-      {/* CONTRACTOR STUDIO — COMING SOON */}
-      <section className="border-b border-zinc-800 bg-zinc-900 py-16 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-
-            {/* Badge */}
-            <div className="mb-8 text-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-800 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-zinc-300">
-                <Wrench className="h-3 w-3" />
-                Coming Soon — Contractor Studio
-              </span>
-            </div>
-
-            {/* Heading */}
-            <h2 className="mb-6 text-center text-3xl font-bold text-white md:text-5xl">
-              We are building your marketing department.
-            </h2>
-
-            {/* Body */}
-            <p className="mx-auto mb-4 max-w-2xl text-center text-lg text-zinc-400">
-              Most contractors are great at the work and terrible at talking about it. Not because they do not care — because nobody ever built them the right tools. That is changing.
-            </p>
-            <p className="mx-auto mb-10 max-w-2xl text-center text-lg text-zinc-400">
-              Contractor Studio is coming to ListWorx. It is a set of marketing tools built specifically for the trades — not generic social media stuff repurposed from some influencer platform. Built for contractors, by people who actually respect what you do.
-            </p>
-
-            {/* Feature list */}
-            <div className="mb-10 grid gap-4 sm:grid-cols-2">
-              {[
-                { icon: Camera, text: 'Before and after post generator — upload your job photos and walk away with a ready-to-post social media post that shows your work' },
-                { icon: Star, text: 'Review request templates — text-ready messages you send to clients after a job to ask for a Google review without feeling awkward about it' },
-                { icon: FileText, text: 'Seasonal promotion posts — HVAC tune-up specials, spring cleaning packages, whatever fits your trade' },
-                { icon: Video, text: 'Job site video scripts — short scripts written for phone-filmed job site clips that actually get watched' },
-                { icon: Film, text: 'Slideshow videos — your job photos turned into a shareable video automatically' },
-                { icon: MessageSquare, text: 'Business profile copy — a bio written for your Google Business page, Facebook, and Nextdoor that sounds like you wrote it yourself' },
-              ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
-                  <p className="text-sm text-zinc-300">{text}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Bottom copy + CTA */}
-            <p className="mb-6 text-center text-sm text-zinc-400">
-              Contractor Studio will be included in Preferred and Elite tiers. Basic subscribers can add it for a small monthly fee.
-            </p>
-            <div className="text-center">
-              <Link href="/contact">
-                <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800 hover:text-white">
-                  I want early access
-                </Button>
-              </Link>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
       {/* HERO */}
       <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -179,14 +120,17 @@ export default function ContractorsPage() {
         <div className="max-w-5xl mx-auto text-center">
           <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
             <Briefcase className="h-3 w-3 mr-1" />
-            IronClad Partner Network
+            IronClad Partner Network · Expanding Nationally
           </Badge>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 referraling-tight">
-            Built for Contractors<br className="hidden md:block" />
-            <span className="text-primary">Who Take Pride in Their Work.</span>
+            First Position. Locked Rate.<br className="hidden md:block" />
+            <span className="text-primary">National Network.</span>
           </h1>
-          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-            You bring the craftsmanship. We help bring the opportunity. ListWorx is your growth partner — helping serious home service pros get seen by realtors, homeowners, and property managers who need quality work done right.
+          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-4 max-w-3xl mx-auto">
+            You do the work. We make sure the right people know your name — everywhere we go.
+          </p>
+          <p className="text-base md:text-lg text-muted-foreground mb-10 max-w-3xl mx-auto">
+            ListWorx is building the largest vetted independent contractor network in America. Founding Partners lock their rate the day they join and hold first position in their trade and county as we expand. That position doesn&apos;t get auctioned off. It doesn&apos;t get renegotiated. It&apos;s yours.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -206,16 +150,16 @@ export default function ContractorsPage() {
 
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">3 Max</div>
-              <div className="text-sm text-muted-foreground">Contractors Per Referral</div>
+              <div className="text-4xl font-bold text-primary mb-2">First</div>
+              <div className="text-sm text-muted-foreground">Position — In Your Trade & County</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">Flat</div>
-              <div className="text-sm text-muted-foreground">Monthly Rate — No Per-Referral Fees</div>
+              <div className="text-sm text-muted-foreground">Rate — No Per-Referral Fees, Ever</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">Vetted</div>
-              <div className="text-sm text-muted-foreground">Referrals from Trusted Realtors</div>
+              <div className="text-4xl font-bold text-primary mb-2">National</div>
+              <div className="text-sm text-muted-foreground">Expanding Market by Market</div>
             </div>
           </div>
         </div>
@@ -228,27 +172,24 @@ export default function ContractorsPage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-5">
-                We’re Building This With You
+                This Isn&apos;t a Lead Platform. It&apos;s a Network.
               </h2>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto">
-                ListWorx is built for contractors who take pride in their work.
-              </p>
             </div>
 
             <Card className="p-6 md:p-8 bg-card border border-border mb-8">
-              <p className="text-base md:text-lg text-muted-foreground referraling-relaxed">
-                We’re not here to sell random referrals, spam your phone, or throw you into a race-to-the-bottom bidding war. We’re building a trusted contractor network that helps serious home service pros get in front of realtors, homeowners, and property managers who need quality work done right.
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                Lead platforms make money when you fail. They charge you per contact, sell that same contact to fifteen other contractors, and pocket the spread while you race to underbid everyone. That&apos;s the business model. That&apos;s why it feels bad — because it is.
               </p>
-              <p className="text-base md:text-lg text-muted-foreground referraling-relaxed mt-5">
-                As ListWorx grows, our goal is to grow with you — helping contractors get more exposure, build stronger reputations, earn more referrals, and eventually access tools, education, hiring support, mentorship opportunities, and marketing resources that help your business scale.
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed mt-5">
+                ListWorx is built the other direction. Flat membership. Three referrals max per request. IronClad Standards required for everyone in the network. When a realtor or homeowner gets a name from us, they&apos;re getting someone who earned it.
               </p>
             </Card>
 
             <div className="grid sm:grid-cols-3 gap-4">
               {[
-                'We don’t do referral spam.',
-                'We don’t do race-to-the-bottom bidding.',
-                'We help good contractors get seen by people who actually need them.',
+                'No per-referral fees. Ever.',
+                "No lead auctions. You don't bid for your own name.",
+                'You compete against two other vetted pros — not fifteen strangers.',
               ].map((line) => (
                 <div key={line} className="rounded-lg border border-primary/30 bg-card px-4 py-4 text-center shadow-sm">
                   <p className="text-sm md:text-base font-semibold text-foreground">{line}</p>
@@ -265,10 +206,10 @@ export default function ContractorsPage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-                How ListWorx Sends You Better Opportunities
+                How It Works
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-                From application to first call, here’s exactly how we help the right customers find your business.
+                From application to first referral — here&apos;s exactly how you get in and what happens next.
               </p>
             </div>
 
@@ -278,25 +219,25 @@ export default function ContractorsPage() {
                   step: '01',
                   icon: FileText,
                   title: 'Apply',
-                  desc: 'Submit your application with your license, insurance, and trade specialties. We review credentials within 48 hours.',
+                  desc: 'Submit your license, insurance, and trade. We verify credentials within 48 hours.',
                 },
                 {
                   step: '02',
                   icon: Shield,
                   title: 'Get Approved',
-                  desc: 'Once verified against IronClad Standards, your account is activated and you choose a subscription plan.',
+                  desc: 'IronClad Standards verified. Your profile activates in the network.',
                 },
                 {
                   step: '03',
                   icon: DollarSign,
-                  title: 'Subscribe',
-                  desc: 'Pay a flat monthly fee. No per-referral charges. Your subscription tier determines your placement priority.',
+                  title: 'Lock Your Rate',
+                  desc: 'Founding Partners pay one activation fee and their monthly rate never moves — not next year, not ever.',
                 },
                 {
                   step: '04',
                   icon: Target,
                   title: 'Receive Referrals',
-                  desc: "When someone needs your trade in your service area, you're matched directly — no junk blasts, no bidding circus.",
+                  desc: "When someone in your trade and county needs work, you get the call. Not fifteen other people. You.",
                 },
               ].map((item) => (
                 <div key={item.step} className="text-center">
@@ -326,10 +267,10 @@ export default function ContractorsPage() {
                 <Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad Standards" width={120} height={120} className="w-24 h-auto" />
               </div>
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                Why This Is Different From Referral Marketplaces
+                Why the Network Model Wins
               </h2>
               <p className="text-lg md:text-xl text-zinc-300 max-w-3xl mx-auto">
-                Angi, HomeAdvisor, and Thumbtack sell your contact info to as many contractors as they can. ListWorx is built around the opposite model.
+                Lead platforms are built to extract money from contractors. A network is built to protect them.
               </p>
             </div>
 
@@ -400,10 +341,10 @@ export default function ContractorsPage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-                Stop Paying for Dead-End Referrals
+                Stop Paying for Dead-End Leads
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground">
-                Here’s what changes when you stop chasing random contacts and join a trusted contractor network.
+                Here&apos;s what changes when you stop chasing random contacts and join a national network built around your reputation.
               </p>
             </div>
 
@@ -436,7 +377,7 @@ export default function ContractorsPage() {
                   </li>
                   <li className="flex items-start">
                     <span className="text-destructive mr-3 font-bold">✗</span>
-                    <span>Too many “just looking” requests that never become real jobs</span>
+                    <span>No network standards — anyone can buy a lead</span>
                   </li>
                 </ul>
               </Card>
@@ -469,7 +410,7 @@ export default function ContractorsPage() {
                   </li>
                   <li className="flex items-start">
                     <span className="mr-3 font-bold">✓</span>
-                    <span>We help good contractors get seen by people who actually need them</span>
+                    <span>IronClad-certified network members only — your competition is qualified</span>
                   </li>
                 </ul>
               </Card>
@@ -571,7 +512,7 @@ export default function ContractorsPage() {
                 Is This the Right Fit?
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground">
-                Built for contractors who take pride in their work — not everyone qualifies, and that’s by design.
+                Built for contractors who take pride in their work — not everyone qualifies, and that's by design.
               </p>
             </div>
 
@@ -613,7 +554,7 @@ export default function ContractorsPage() {
                 <ul className="space-y-3 text-sm md:text-base text-muted-foreground">
                   <li className="flex items-start">
                     <span className="text-zinc-500 mr-3 font-bold">✗</span>
-                    <span>Are unlicensed or don’t carry proper insurance</span>
+                    <span>Are unlicensed or don't carry proper insurance</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-zinc-500 mr-3 font-bold">✗</span>
@@ -621,7 +562,7 @@ export default function ContractorsPage() {
                   </li>
                   <li className="flex items-start">
                     <span className="text-zinc-500 mr-3 font-bold">✗</span>
-                    <span>Can’t commit to 24-hour response times on referrals</span>
+                    <span>Can't commit to 24-hour response times on referrals</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-zinc-500 mr-3 font-bold">✗</span>
@@ -629,7 +570,7 @@ export default function ContractorsPage() {
                   </li>
                   <li className="flex items-start">
                     <span className="text-zinc-500 mr-3 font-bold">✗</span>
-                    <span>Won’t meet professional communication or conduct standards</span>
+                    <span>Won't meet professional communication or conduct standards</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-zinc-500 mr-3 font-bold">✗</span>
@@ -656,13 +597,13 @@ export default function ContractorsPage() {
               />
               <Badge className="mb-4 bg-amber-600/15 text-amber-500 border-amber-600/30">
                 <Crown className="h-3 w-3 mr-1" />
-                Limited Founding Spots Available
+                National Ground Floor — Limited Spots by Trade & County
               </Badge>
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
                 Founding Partner Program
               </h2>
               <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto">
-                The first contractors to join the ListWorx network earn a distinction that cannot be purchased later. Founding Partner status is permanent and exclusive.
+                The people who join now are the people who own their position in the network — permanently. As ListWorx expands nationally, Founding Partners are already there. That&apos;s not available later.
               </p>
             </div>
 
@@ -670,29 +611,29 @@ export default function ContractorsPage() {
               <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-900/30 bg-amber-950/10">
                 <Star className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-base font-semibold text-white mb-1">Permanent Recognition</h3>
-                  <p className="text-sm text-zinc-400">Your Founding Partner badge stays on your profile permanently — even as the network grows. This status is never revoked and never available again.</p>
+                  <h3 className="text-base font-semibold text-white mb-1">Permanent Badge. Permanent Status.</h3>
+                  <p className="text-sm text-zinc-400">Your Founding Partner badge stays on your profile for the life of your membership — visible to every realtor and homeowner who finds you in the network. It cannot be bought later.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-900/30 bg-amber-950/10">
                 <TrendingUp className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-base font-semibold text-white mb-1">Priority Early Positioning</h3>
-                  <p className="text-sm text-zinc-400">As the first members of the network, Founding Partners receive early referral advantage before market saturation. Get established while competition is lowest.</p>
+                  <h3 className="text-base font-semibold text-white mb-1">First Position in Your Trade & County</h3>
+                  <p className="text-sm text-zinc-400">Founding Partners hold first position in referral matching for their trade and county. As the network expands, that position is already yours.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-900/30 bg-amber-950/10">
                 <Shield className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-base font-semibold text-white mb-1">Stronger Network Visibility</h3>
-                  <p className="text-sm text-zinc-400">Founding Partners are highlighted across the platform with dedicated badges and enhanced profile presence that sets them apart from future members.</p>
+                  <h3 className="text-base font-semibold text-white mb-1">Rate Locked From Day One</h3>
+                  <p className="text-sm text-zinc-400">The rate you lock in today is the rate you pay — forever. Standard pricing goes up when the founding window closes. Yours doesn&apos;t.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-900/30 bg-amber-950/10">
                 <Lock className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-base font-semibold text-white mb-1">Limited Availability</h3>
-                  <p className="text-sm text-zinc-400">Founding Partner status is only available during the network launch phase. Once the window closes, this designation is permanently closed to new members.</p>
+                  <h3 className="text-base font-semibold text-white mb-1">Closes When It Fills — No Exceptions</h3>
+                  <p className="text-sm text-zinc-400">Founding Partner spots are limited by trade and county. When yours fills, the program closes in your market. There is no waitlist and no reopening.</p>
                 </div>
               </div>
             </div>
@@ -784,6 +725,10 @@ export default function ContractorsPage() {
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
                     <span>IronClad Certified Partner badge</span>
                   </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Contractor Studio included — marketing tools built for the trades</span>
+                  </li>
                 </ul>
                 <Link href="/apply" className="block">
                   <Button className="w-full bg-primary hover:bg-primary/90 text-white">
@@ -808,6 +753,10 @@ export default function ContractorsPage() {
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
                     <span>Premium profile placement and IronClad Elite badge</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Contractor Studio included — full access to all tools</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
@@ -837,10 +786,10 @@ export default function ContractorsPage() {
               <Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad Certified Partner" width={120} height={120} className="w-24 h-auto" />
             </div>
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              Apply to Become an IronClad Partner
+              Join the National Network
             </h2>
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Stop chasing bad contacts. Start building a referral pipeline with predictable costs and quality clients. Applications are reviewed within 48 hours.
+              Stop chasing bad leads. Lock your rate, hold your territory, and build a referral pipeline inside the largest vetted contractor network in America. Applications reviewed within 48 hours.
             </p>
             <Link href="/apply">
               <Button size="lg" className="text-lg px-8 md:px-10 py-6 rounded-lg shadow-lg hover:shadow-xl bg-white text-primary hover:bg-white/90">

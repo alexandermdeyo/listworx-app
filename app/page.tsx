@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
 import ContractorOfTheWeek from '@/components/site/ContractorOfTheWeek';
+import America250Banner from '@/components/site/America250Banner';
 
 const founderBenefits = [
   'Locked rate — never increases, ever',
@@ -57,13 +58,16 @@ export default function LandingPage() {
           <div className="mx-auto max-w-5xl">
           <div className="mb-6 inline-flex items-center rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-2 text-sm font-semibold text-lw-rust">
             <Shield className="mr-2 h-4 w-4" />
-            IronClad-certified referral network
+            IronClad Certified · National Contractor Network
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
-            The Contractor Network Built on Trust, Not Transactions.
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-4">
+            The Largest Vetted Contractor Network in America
           </h1>
+          <p className="mx-auto mb-4 max-w-2xl text-xl md:text-2xl font-semibold text-lw-rust">
+            Built on Trust, Not Transactions.
+          </p>
           <p className="mx-auto mb-10 max-w-3xl text-lg md:text-xl text-zinc-300 leading-relaxed">
-            ListWorx connects realtors and homeowners with vetted, IronClad-certified contractors. No referral fees. No bidding wars. Just trusted referrals — and only three per request.
+            ListWorx is a national network of IronClad-certified independent contractors. No referral fees. No lead auctions. No bidding wars. Realtors and homeowners submit a request and get exactly three vetted names — people who earned their spot.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
             <Link href="/apply">
@@ -79,11 +83,13 @@ export default function LandingPage() {
             </Link>
           </div>
           <p className="text-sm text-zinc-400">
-            Trusted by realtors and homeowners in Nashville, Sumner County, and Minneapolis.
+            Expanding nationally. Founding Partner spots are filling by trade and county.
           </p>
         </div>
       </div>
     </section>
+
+      <America250Banner />
 
       <section className="container mx-auto px-4 py-16">
         <div className="grid gap-6 md:grid-cols-3">
@@ -91,17 +97,17 @@ export default function LandingPage() {
             {
               icon: Shield,
               title: 'Not a Lead Marketplace',
-              body: "We don't sell your contact info to the highest bidder. ListWorx is a vetted referral network. Contractors pay a flat monthly fee and get connected to people who actually need their work.",
+              body: "We don't sell leads. We don't take cuts. ListWorx contractors pay a flat monthly fee to be part of a vetted national network — and get connected to people with real jobs, not window shoppers.",
             },
             {
               icon: Filter,
               title: 'Only 3 Referrals Per Request',
-              body: 'Every requestor gets exactly three contractor referrals — not a dozen. Quality over volume. The contractors we send are vetted, IronClad-certified, and ready to work.',
+              body: 'Every request sends exactly three contractor names. Not fifteen, not whoever paid the most to show up first. Three vetted, IronClad-certified professionals. Your odds are real. Your competition is fair.',
             },
             {
               icon: BadgeCheck,
-              title: 'IronClad Standards Required',
-              body: "Every contractor in the network must maintain IronClad Standards — fast response, valid insurance, professional communication, no ghosting. Fall short and you're out. That's the deal.",
+              title: 'IronClad: The National Standard',
+              body: "Every contractor in this network is verified and held to IronClad Standards — the national benchmark for licensed, insured, professional tradespeople. Meet the standard or you're out. That's not a threat. It's the point.",
             },
           ].map((item) => {
             const Icon = item.icon;
@@ -121,11 +127,11 @@ export default function LandingPage() {
           <Card className="border-zinc-800 bg-zinc-950 p-8">
             <h2 className="mb-6 text-3xl font-bold text-white">For Contractors</h2>
             {[
-              'Apply and get vetted',
-              'Complete your IronClad certification',
-              'Choose your subscription tier',
-              'Receive referrals from realtors and homeowners in your area',
-              'Build your reputation inside the network',
+              'Apply and get vetted — license, insurance, trade verified',
+              'Complete IronClad certification',
+              'Lock your Founding Partner rate — first position in your trade and county',
+              'Receive referrals as ListWorx expands into your market',
+              'Build your reputation inside a national network that protects it',
             ].map((step, index) => (
               <div key={step} className="mb-4 flex gap-3 text-zinc-300">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-lw-rust text-sm font-bold text-white">{index + 1}</span>
@@ -136,10 +142,10 @@ export default function LandingPage() {
           <Card className="border-zinc-800 bg-zinc-950 p-8">
             <h2 className="mb-6 text-3xl font-bold text-white">For Realtors & Homeowners</h2>
             {[
-              'Submit a job request — takes 60 seconds',
-              'Receive exactly 3 vetted contractor referrals',
-              'Contact your contractor directly — no middleman',
-              'Leave feedback to keep the network strong',
+              'Submit a request — takes 60 seconds',
+              'Get exactly 3 vetted, IronClad-certified contractors',
+              'Contact them directly — no middleman, no markup',
+              'Leave feedback. It keeps the network strong everywhere.',
             ].map((step, index) => (
               <div key={step} className="mb-4 flex gap-3 text-zinc-300">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-lw-rust text-sm font-bold text-white">{index + 1}</span>
@@ -154,9 +160,9 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-5xl text-center">
             <Crown className="mx-auto mb-4 h-10 w-10 text-amber-400" />
-            <h2 className="mb-4 text-3xl md:text-5xl font-bold text-white">Founding Partner Spots Are Open — But Not For Long</h2>
+            <h2 className="mb-4 text-3xl md:text-5xl font-bold text-white">Get in at the Ground Floor of a National Network</h2>
             <p className="mx-auto mb-8 max-w-3xl text-lg text-zinc-200">
-              We are accepting a limited number of Founding Partners in each trade and county. When your trade fills, that&apos;s it. No exceptions, no waitlist.
+              Founding Partners lock their rate forever and hold first position in their trade and county as ListWorx expands nationally. When your trade closes in your county, it&apos;s done. No exceptions.
             </p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 mb-8 text-left">
               {founderBenefits.map((benefit) => (
@@ -199,10 +205,10 @@ export default function LandingPage() {
               className="mx-auto mb-6 h-24 md:h-32 w-auto drop-shadow-lg"
               aria-hidden="true"
             />
-            <h2 className="mb-4 text-4xl font-bold text-white">What IronClad Standards Mean</h2>
+            <h2 className="mb-4 text-4xl font-bold text-white">IronClad: The National Standard for Contractor Vetting</h2>
           </div>
           <p className="mb-8 text-lg text-zinc-300">
-            Every contractor in the ListWorx network is held to IronClad Standards. This is not a suggestion. It is the cost of being in the network.
+            IronClad Standards are what separate a professional network from a directory. Every contractor in ListWorx is held to them — nationwide, no exceptions. This is what &ldquo;vetted&rdquo; actually means.
           </p>
           <div className="grid gap-3 md:grid-cols-2">
             {ironcladItems.map((item) => (
@@ -213,7 +219,7 @@ export default function LandingPage() {
             ))}
           </div>
           <p className="mt-8 text-zinc-300">
-            Contractors who fall short of IronClad Standards are removed from the network. Founding Partner status can be revoked. We protect the network so the network protects you.
+            Contractors who fall short are removed. Founding Partner status can be revoked. We protect the standard so the standard protects every contractor in it.
           </p>
         </div>
       </section>
@@ -236,12 +242,12 @@ export default function LandingPage() {
       </section>
 
       <section className="container mx-auto px-4 py-20 text-center">
-        <h2 className="mb-4 text-4xl md:text-5xl font-bold text-white">Ready to Join the Network?</h2>
+        <h2 className="mb-4 text-4xl md:text-5xl font-bold text-white">Ready to Join the National Network?</h2>
         <div className="mb-5 flex flex-col sm:flex-row justify-center gap-4">
           <Link href="/apply"><Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">Apply as a Contractor</Button></Link>
           <Link href="/request"><Button size="lg" variant="outline" className="border-lw-rust text-lw-rust hover:bg-lw-rust hover:text-white">Request a Referral</Button></Link>
         </div>
-        <p className="text-zinc-400">Realtors and homeowners use ListWorx free. Contractors — Founding Partner spots are limited. Apply now.</p>
+        <p className="text-zinc-400">Realtors and homeowners use ListWorx free. Contractors — Founding Partner spots are limited by trade and county. Apply now before yours fills.</p>
       </section>
 
       <section className="bg-zinc-950 py-20">
