@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { BadgeCheck, CheckCircle, Filter, Shield, Star, ArrowRight, Crown } from 'lucide-react';
+import { BadgeCheck, CheckCircle, Filter, Shield, ArrowRight, Crown } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -8,6 +8,7 @@ import { PageShell } from '@/components/design-system';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
 import ContractorOfTheWeek from '@/components/site/ContractorOfTheWeek';
 import America250Banner from '@/components/site/America250Banner';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 const founderBenefits = [
   'Locked rate — never increases, ever',
@@ -18,6 +19,25 @@ const founderBenefits = [
   'IronClad decal package',
 ];
 
+const homepageFaqs = [
+  [
+    'What is the activation fee?',
+    "A one-time $75 activation fee to lock in your Founding Partner rate. Your monthly billing starts right away at your locked rate — Basic $159/month, Preferred $279/month, or Elite $479/month — and that rate is yours for life.",
+  ],
+  [
+    'How is this different from Angi or Thumbtack?',
+    "Angi and Thumbtack sell your info to a pile of contractors who all call you within minutes — that's the business model. ListWorx doesn't sell leads or run bidding wars. Contractors pay one flat monthly fee to be part of a vetted national network, and every request sends exactly three IronClad-certified names. No auctions, no lead fees, no flood of calls.",
+  ],
+  [
+    'What does IronClad Certified mean?',
+    'IronClad Certified means a contractor has been vetted against the IronClad Standards: valid license and insurance verified, professional communication, no history of ghosting customers, and a 24-hour response commitment. Contractors who fall short of the standard are removed from the network.',
+  ],
+  [
+    'Is there a contract or can I cancel anytime?',
+    "No long-term contract — Founding Partner status runs month-to-month and you can cancel anytime. Canceling forfeits your locked Founding Partner rate; if you rejoin later, you'd re-enter at standard pricing.",
+  ],
+];
+
 const ironcladItems = [
   'Respond to referrals within 24 hours',
   'Maintain valid insurance and licenses at all times',
@@ -25,12 +45,6 @@ const ironcladItems = [
   'Communicate professionally',
   'Deliver quality work, every time',
   'Maintain your reputation — we monitor it',
-];
-
-const testimonials = [
-  { name: '[Contractor Name]', trade: '[Trade]', city: '[City] TN' },
-  { name: '[Contractor Name]', trade: '[Trade]', city: '[City] TN' },
-  { name: '[Contractor Name]', trade: '[Trade]', city: '[City] TN' },
 ];
 
 export default function LandingPage() {
@@ -143,7 +157,7 @@ export default function LandingPage() {
             <h2 className="mb-6 text-3xl font-bold text-white">For Realtors & Homeowners</h2>
             {[
               'Submit a request — takes 60 seconds',
-              'Get exactly 3 vetted, IronClad-certified contractors',
+              'Get exactly 3 vetted, IronClad-certified contractors — instantly, in under 30 seconds',
               'Contact them directly — no middleman, no markup',
               'Leave feedback. It keeps the network strong everywhere.',
             ].map((step, index) => (
@@ -180,18 +194,30 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="border-y border-lw-dark-border bg-zinc-900/50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-            <div>
-              <p className="text-base font-semibold text-white">Have questions about how ListWorx works?</p>
-              <p className="text-sm text-zinc-400">See answers to common questions from contractors, realtors, and homeowners.</p>
+      <section className="border-y border-lw-dark-border bg-zinc-900/50 py-16">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="mb-2 text-center text-3xl md:text-4xl font-bold text-white">Common Questions</h2>
+            <p className="mb-8 text-center text-zinc-400">Answers to the questions we hear most from contractors, realtors, and homeowners.</p>
+            <Accordion type="single" collapsible className="mb-8">
+              {homepageFaqs.map(([question, answer]) => (
+                <AccordionItem key={question} value={question} className="border-lw-dark-border">
+                  <AccordionTrigger className="text-left text-base font-semibold text-white hover:no-underline">
+                    {question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-zinc-400 leading-relaxed">
+                    {answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+            <div className="text-center">
+              <Link href="/faq">
+                <Button variant="outline" className="border-lw-rust text-lw-rust hover:bg-lw-rust hover:text-white">
+                  See all FAQs →
+                </Button>
+              </Link>
             </div>
-            <Link href="/faq">
-              <Button variant="outline" className="border-lw-rust text-lw-rust hover:bg-lw-rust hover:text-white whitespace-nowrap">
-                Read the FAQ →
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
@@ -225,21 +251,6 @@ export default function LandingPage() {
       </section>
 
       <ContractorOfTheWeek />
-
-      <section className="container mx-auto px-4 py-16">
-        <h2 className="mb-8 text-center text-4xl font-bold text-white">What Contractors Are Saying</h2>
-        {/* TODO: replace with real testimonials from Supabase */}
-        <div className="grid gap-6 md:grid-cols-3">
-          {testimonials.map((testimonial, index) => (
-            <Card key={index} className="border-zinc-800 bg-zinc-950 p-6">
-              <Star className="mb-4 h-5 w-5 text-amber-400" />
-              <p className="mb-5 text-zinc-200">“Finally a platform that treats contractors like professionals, not commodities.”</p>
-              <p className="text-sm font-semibold text-white">{testimonial.name}</p>
-              <p className="text-sm text-zinc-500">{testimonial.trade}, {testimonial.city}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
 
       <section className="container mx-auto px-4 py-20 text-center">
         <h2 className="mb-4 text-4xl md:text-5xl font-bold text-white">Ready to Join the National Network?</h2>

@@ -559,7 +559,7 @@ export const realtorEmails = {
       'Your Referrals Are Ready',
       `Hi ${realtorName} — ListWorx has matched your request with IronClad-certified contractors.`,
       `
-      ${p(`Your service request for <strong style="color:${C.white};">${propertyAddress}</strong> has been received and your matched contractor referrals are on the way.`)}
+      ${p(`Your service request for <strong style="color:${C.white};">${propertyAddress}</strong> has been received and your matched contractor referrals are ready below.`)}
 
       ${dataTable([
         ['Submitted By', clientName],
@@ -584,7 +584,7 @@ export const realtorEmails = {
       `Your request is in — we're matching you with up to 3 qualified contractors now.`,
       'requestor'
     ),
-    text: `Your Contractor Referrals Are Ready\n\nHi ${realtorName},\n\nYour service request for ${clientName} at ${propertyAddress} has been received.\n\nServices: ${services.join(', ')}\n\nYour matched contractors will be sent shortly. Each has been notified of the referral and is expecting to hear from you.\n\nQuestions? Email support@listworx.com\n\n— The ListWorx Team`,
+    text: `Your Contractor Referrals Are Ready\n\nHi ${realtorName},\n\nYour service request for ${clientName} at ${propertyAddress} has been received and matched instantly with IronClad-certified contractors.\n\nServices: ${services.join(', ')}\n\nEach matched contractor has been notified of the referral and is expecting to hear from you.\n\nQuestions? Email support@listworx.com\n\n— The ListWorx Team`,
   }),
 
   contractorMatchSent: (

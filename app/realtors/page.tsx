@@ -172,7 +172,7 @@ export default function RealtorsPage() {
                 <div className="text-6xl font-bold text-primary/20 mb-4 text-center">02</div>
                 <h3 className="text-xl font-bold text-foreground mb-3 text-center">Receive Up to 3 Matches</h3>
                 <p className="text-muted-foreground text-center">
-                  We match you with up to 3 IronClad-certified contractors based on trade, location, and availability. No bidding wars, no junk lists.
+                  Instantly — in under 30 seconds you&apos;ll see your matched contractors on screen, plus an email and a copy saved in your dashboard. No bidding wars, no junk lists.
                 </p>
               </Card>
 

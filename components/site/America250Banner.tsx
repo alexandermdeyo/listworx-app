@@ -6,18 +6,20 @@ export default function America250Banner() {
     <div className="w-full overflow-hidden shadow-lg" style={{ fontFamily: "'Barlow', sans-serif" }}>
 
       {/* Hero Banner Body */}
-      <div className="relative overflow-hidden flex flex-col" style={{ minHeight: 380, background: '#ffffff' }}>
+      <div className="relative overflow-hidden flex flex-col" style={{ minHeight: 380, background: '#0B0E14' }}>
 
-        {/* Background flag image — very subtle */}
+        {/* Background flag image */}
         <div
           className="absolute inset-0 z-0"
           style={{
             backgroundImage: "url('/america250-bg.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center right',
-            opacity: 0.10,
           }}
         />
+
+        {/* Dark cinematic overlay — ~60% dark */}
+        <div className="absolute inset-0 z-[1]" style={{ background: 'rgba(0,0,0,0.6)' }} />
 
         {/* Orange left stripe */}
         <div className="absolute left-0 top-0 bottom-0 z-10" style={{ width: 5, background: '#E86B2B' }} />
@@ -53,14 +55,14 @@ export default function America250Banner() {
                 lineHeight: 1.0,
                 textTransform: 'uppercase',
                 letterSpacing: '-0.5px',
-                color: '#1A1A1A',
+                color: '#ffffff',
               }}
             >
-              <span style={{ color: '#1A1A1A' }}>America Wasn&apos;t</span><br />
-              <span style={{ color: '#1A1A1A' }}>Built By </span>
-              <span style={{ color: '#E86B2B' }}>Algorithms.</span><br />
-              <span style={{ color: '#1A1A1A' }}>It Was Built By</span><br />
-              <span style={{ color: '#E86B2B' }}>People Like You.</span>
+              <span style={{ color: '#ffffff' }}>America Wasn&apos;t</span><br />
+              <span style={{ color: '#ffffff' }}>Built By </span>
+              <span style={{ color: '#ffffff' }}>Algorithms.</span><br />
+              <span style={{ color: '#ffffff' }}>It Was Built By</span><br />
+              <span style={{ color: '#ffffff' }}>People Like You.</span>
             </h2>
 
             {/* Sub */}
@@ -70,7 +72,7 @@ export default function America250Banner() {
                 fontFamily: "'Barlow', sans-serif",
                 fontSize: 15,
                 fontWeight: 400,
-                color: '#555555',
+                color: '#C9CDD6',
                 lineHeight: 1.65,
                 maxWidth: 430,
                 paddingLeft: 14,
@@ -79,7 +81,7 @@ export default function America250Banner() {
             >
               250 years of tradespeople, craftsmen, and independent
               contractors — the hands that built everything worth having.{' '}
-              <strong style={{ color: '#1A1A1A', fontWeight: 600 }}>ListWorx is their network.</strong>
+              <strong style={{ color: '#ffffff', fontWeight: 600 }}>ListWorx is their network.</strong>
             </p>
 
             {/* CTA */}
@@ -104,15 +106,18 @@ export default function America250Banner() {
           </div>
 
           {/* Right: medallion */}
-          <div className="flex-shrink-0 flex items-center justify-center">
+          <div className="flex-shrink-0 flex items-center justify-center" style={{ background: 'transparent' }}>
             <Image
-              src="/america250-medallion.png"
+              src="/america250-medallion-transparent.png"
               alt="America 250 — Still Building"
               width={260}
               height={260}
               className="w-48 md:w-64 h-auto"
               style={{
-                filter: 'drop-shadow(0 4px 24px rgba(232,107,43,0.25)) drop-shadow(0 2px 8px rgba(0,0,0,0.12))',
+                objectFit: 'contain',
+                background: 'transparent',
+                borderRadius: 0,
+                filter: 'drop-shadow(0 4px 24px rgba(232,107,43,0.25)) drop-shadow(0 2px 8px rgba(0,0,0,0.35))',
               }}
             />
           </div>

@@ -318,7 +318,7 @@ export default function RequestPage() {
             </h1>
             <p className="text-muted-foreground">
               {contractors.length > 0
-                ? `You're all set. We're matching you with three vetted contractors in your area and will send their information to ${formData.clientEmail} shortly. Questions? Contact us at support@listworx.co.`
+                ? `Here are your three vetted contractor matches. We've also sent this information to ${formData.clientEmail}, and you can find it anytime in your dashboard. Questions? Contact us at support@listworx.co.`
                 : 'Your request was saved successfully, but no active contractors matched yet.'}
             </p>
           </div>
@@ -462,7 +462,7 @@ export default function RequestPage() {
           />
           <h1 className="text-3xl sm:text-5xl font-bold mb-4 break-words">Request a Contractor Referral</h1>
           <p className="text-xl text-muted-foreground">
-            Submit your job details below. We&apos;ll return exactly three vetted, IronClad-certified contractors in your area — typically within a few hours. No account required.
+            Submit your job details below. We&apos;ll return exactly three vetted, IronClad-certified contractors in your area — instantly, in under 30 seconds. No account required.
           </p>
         </div>
 

@@ -8,7 +8,7 @@ const generalFaqs = [
   ['What is ListWorx?', 'ListWorx is a contractor referral network for realtors and homeowners. We match each request with up to three vetted, IronClad-certified contractors in your area. No referral fees. No bidding wars.'],
   ['How are contractors vetted?', 'Every contractor in the network is reviewed against IronClad Standards before approval: valid licensing and insurance, professional communication, no history of ghosting customers, and a commitment to responding within 24 hours.'],
   ['Does it cost realtors or homeowners anything to use ListWorx?', 'No. ListWorx is free for realtors and homeowners. Contractors pay a flat monthly subscription to participate in the network.'],
-  ['How fast will I get matched with a contractor?', 'Most requests are matched within a few hours during business days. You will receive up to three contractor profiles. They will reach out to you directly.'],
+  ['How fast will I get matched with a contractor?', 'Instantly — in under 30 seconds. The moment you submit a request, you will see your matched contractor profiles right on your screen. We also send the same information to your email, and it stays saved in your dashboard so you can find it anytime.'],
   ['What if I have a bad experience with a contractor?', 'Tell us. Every job is followed by a feedback survey covering response time, quality, and professionalism. Contractors who violate IronClad Standards lose their network status.'],
 ];
 
