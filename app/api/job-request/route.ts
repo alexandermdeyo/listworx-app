@@ -235,37 +235,49 @@ export async function POST(request: NextRequest) {
       data: { user },
     } = await supabaseAuth.auth.getUser();
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'You must be logged in to submit a request.' },
-        { status: 401 }
-      );
-    }
-
     const supabase = createAdminClient();
 
-    const { data: requestorProfile, error: requestorProfileError } = await supabase
-      .from('requestor_profiles')
-      .select('id')
-      .eq('user_id', user.id)
-      .maybeSingle();
+    // The public request form allows anonymous submission — no account required.
+    // For logged-in users, the profile table to check depends on role: REALTORs
+    // are stored in realtor_profiles, HOMEOWNER/PROPERTY_MANAGER in requestor_profiles.
+    // requestor_profiles is the only one with a matching FK column on job_requests
+    // (requestor_profile_id), so that's the only lookup result we store. A missing
+    // profile never blocks submission — the form fields are used directly either way.
+    let requestorProfileId: string | null = null;
 
-    if (requestorProfileError) {
-      console.error('[job-request] requestor profile lookup failed:', requestorProfileError);
-      return NextResponse.json(
-        { error: requestorProfileError.message || 'Failed to load requestor profile.' },
-        { status: 500 }
-      );
+    if (user) {
+      const { data: appUser } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const role = String(appUser?.role || '').toUpperCase();
+
+      if (role === 'HOMEOWNER' || role === 'PROPERTY_MANAGER') {
+        const { data: requestorProfile, error: requestorProfileError } = await supabase
+          .from('requestor_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (requestorProfileError) {
+          console.error('[job-request] requestor profile lookup failed:', requestorProfileError);
+        }
+
+        requestorProfileId = requestorProfile?.id ?? null;
+      } else if (role === 'REALTOR') {
+        const { error: realtorProfileError } = await supabase
+          .from('realtor_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (realtorProfileError) {
+          console.error('[job-request] realtor profile lookup failed:', realtorProfileError);
+        }
+      }
     }
-
-    if (!requestorProfile?.id) {
-      return NextResponse.json(
-        { error: 'No requestor profile found for this account.' },
-        { status: 400 }
-      );
-    }
-
-    const requestorProfileId = requestorProfile.id;
 
     const { data: countyRow, error: countyError } = await supabase
       .from('counties')

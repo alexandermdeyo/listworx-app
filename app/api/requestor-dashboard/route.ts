@@ -61,43 +61,62 @@ export async function GET(request: NextRequest) {
       realtorProfile = rp ?? null;
     }
 
-    const { data: requestorProfile, error: requestorProfileError } = await supabase
-      .from('requestor_profiles')
-      .select('id')
-      .eq('user_id', user.id)
-      .maybeSingle();
+    // REALTOR users never get a requestor_profiles row (they get realtor_profiles
+    // instead), so their submitted requests are looked up by requester_email —
+    // the same email the public /request form stores on job_requests at submission.
+    // HOMEOWNER/PROPERTY_MANAGER users are the only ones with a requestor_profiles row.
+    let requests: any[] = [];
 
-    if (requestorProfileError) {
-      return NextResponse.json(
-        { error: requestorProfileError.message || 'Failed to load requestor profile.' },
-        { status: 500 }
-      );
+    if (userRole === 'REALTOR') {
+      const requesterEmail = (user.email || '').trim().toLowerCase();
+
+      if (requesterEmail) {
+        const { data: requestsData, error: requestsError } = await supabase
+          .from('job_requests')
+          .select('*')
+          .eq('requester_email', requesterEmail)
+          .order('created_at', { ascending: false });
+
+        if (requestsError) {
+          return NextResponse.json(
+            { error: requestsError.message || 'Failed to load requests.' },
+            { status: 500 }
+          );
+        }
+
+        requests = requestsData || [];
+      }
+    } else if (userRole === 'HOMEOWNER' || userRole === 'PROPERTY_MANAGER') {
+      const { data: requestorProfile, error: requestorProfileError } = await supabase
+        .from('requestor_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (requestorProfileError) {
+        return NextResponse.json(
+          { error: requestorProfileError.message || 'Failed to load requestor profile.' },
+          { status: 500 }
+        );
+      }
+
+      if (requestorProfile?.id) {
+        const { data: requestsData, error: requestsError } = await supabase
+          .from('job_requests')
+          .select('*')
+          .eq('requestor_profile_id', requestorProfile.id)
+          .order('created_at', { ascending: false });
+
+        if (requestsError) {
+          return NextResponse.json(
+            { error: requestsError.message || 'Failed to load requests.' },
+            { status: 500 }
+          );
+        }
+
+        requests = requestsData || [];
+      }
     }
-
-    if (!requestorProfile?.id) {
-      return NextResponse.json({
-        success: true,
-        userRole,
-        realtorProfile,
-        requests: [],
-        referrals: [],
-      });
-    }
-
-    const { data: requestsData, error: requestsError } = await supabase
-      .from('job_requests')
-      .select('*')
-      .eq('requestor_profile_id', requestorProfile.id)
-      .order('created_at', { ascending: false });
-
-    if (requestsError) {
-      return NextResponse.json(
-        { error: requestsError.message || 'Failed to load requests.' },
-        { status: 500 }
-      );
-    }
-
-    const requests = requestsData || [];
     const requestIds = requests.map((r: any) => r.id);
 
     if (requestIds.length === 0) {

@@ -153,8 +153,9 @@ export async function findMatchedContractors(
   const rotationSeed = jobRequestId || today;
 
   const scored: MatchedContractor[] = activeProfiles.map((row: any) => {
-    const tier =
-      pickNullableString(row, ['tier', 'subscription_tier', 'partner_tier']) || 'basic';
+    // subscription_tier is the only tier column that exists on contractor_profiles.
+    // A contractor with no subscription_tier set (null) is treated as Basic, not excluded.
+    const tier = pickNullableString(row, ['subscription_tier']) || 'basic';
 
     const totalReferralsReceived = pickNumber(
       row,

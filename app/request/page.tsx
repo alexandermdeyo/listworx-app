@@ -115,7 +115,7 @@ export default function RequestPage() {
       } = await supabase.auth.getSession();
 
       if (!session?.user) {
-        router.push('/signup?redirect=/request');
+        setAuthReady(true);
         return;
       }
 
@@ -147,14 +147,32 @@ export default function RequestPage() {
         setDashboardUrl('/requestor-dashboard');
       }
 
-      const { data: requestorProfile, error: requestorProfileError } = await supabase
-        .from('requestor_profiles')
-        .select('id, company_name')
-        .eq('user_id', user.id)
-        .maybeSingle();
+      let companyName = '';
 
-      if (requestorProfileError) {
-        console.error('[request] requestor profile lookup failed:', requestorProfileError);
+      if (role === 'REALTOR') {
+        const { data: realtorProfile, error: realtorProfileError } = await supabase
+          .from('realtor_profiles')
+          .select('brokerage_name')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (realtorProfileError) {
+          console.error('[request] realtor profile lookup failed:', realtorProfileError);
+        }
+
+        companyName = realtorProfile?.brokerage_name || '';
+      } else if (role === 'HOMEOWNER' || role === 'PROPERTY_MANAGER') {
+        const { data: requestorProfile, error: requestorProfileError } = await supabase
+          .from('requestor_profiles')
+          .select('company_name')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (requestorProfileError) {
+          console.error('[request] requestor profile lookup failed:', requestorProfileError);
+        }
+
+        companyName = requestorProfile?.company_name || '';
       }
 
       setFormData((prev) => ({
@@ -162,7 +180,7 @@ export default function RequestPage() {
         clientType: normalizeClientType(appUser?.role),
         clientName: appUser?.name || '',
         clientEmail: appUser?.email || user.email || '',
-        companyName: requestorProfile?.company_name || '',
+        companyName,
       }));
 
       setAuthReady(true);
