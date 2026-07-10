@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase-browser';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Navigation from '@/components/Navigation';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -18,6 +19,9 @@ import ApplicationForm from './ApplicationForm';
 import ContractorProfileEditor from './ContractorProfileEditor';
 import ReferralsSection from './ReferralsSection';
 import ComplianceDocuments from './ComplianceDocuments';
+import DocumentsTab from './DocumentsTab';
+import SettingsTab from './SettingsTab';
+import { Toaster } from '@/components/ui/toaster';
 import {
   Loader as Loader2,
   CircleAlert as AlertCircle,
@@ -30,6 +34,7 @@ import {
   MapPin,
   Briefcase,
   Upload,
+  Download,
   CircleCheck as CheckCircle2,
   Shield,
   CreditCard,
@@ -46,7 +51,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-type DashboardTab = 'overview' | 'profile' | 'settings';
+type DashboardTab = 'overview' | 'profile' | 'documents' | 'settings';
 type Role =
   | 'ADMIN'
   | 'CONTRACTOR'
@@ -742,7 +747,7 @@ export default function ContractorDashboard() {
       id: 'documents',
       label: 'Documents',
       icon: FileText,
-      onClick: () => setActiveTab('profile'),
+      onClick: () => setActiveTab('documents'),
     },
     {
       id: 'reviews',
@@ -785,21 +790,19 @@ export default function ContractorDashboard() {
       id: 'settings',
       label: 'Settings',
       icon: Settings,
-      onClick: () => {
-        if (
-          profile.partner_status === PARTNER_STATUS.APPLIED ||
-          profile.partner_status === PARTNER_STATUS.UNDER_REVIEW
-        ) {
-          setActiveTab('settings');
-        }
-      },
+      onClick: () => setActiveTab('settings'),
     },
   ];
 
   const activeNavId =
     activeTab === 'profile' ? 'profile' :
+    activeTab === 'documents' ? 'documents' :
     activeTab === 'settings' ? 'settings' :
     'overview';
+
+  const showApplicationForm =
+    profile.partner_status === PARTNER_STATUS.APPLIED ||
+    profile.partner_status === PARTNER_STATUS.UNDER_REVIEW;
 
   return (
     <DashboardLayout
@@ -807,7 +810,8 @@ export default function ContractorDashboard() {
       tierBadge={profile.tier || null}
       pageTitle={
         activeTab === 'profile' ? 'My Profile' :
-        activeTab === 'settings' ? 'Edit Application' :
+        activeTab === 'documents' ? 'Documents' :
+        activeTab === 'settings' ? (showApplicationForm ? 'Edit Application' : 'Settings') :
         'Dashboard'
       }
       navItems={navItems}
@@ -1254,25 +1258,43 @@ export default function ContractorDashboard() {
                         disabled={uploading}
                       />
 
-                      <Button
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={uploading}
-                        variant="outline"
-                        size="sm"
-                        className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
-                      >
-                        {uploading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Uploading...
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="mr-2 h-4 w-4" />
-                            {profile.logo_url ? 'Replace Logo' : 'Upload Logo'}
-                          </>
+                      <div className="flex w-full gap-2">
+                        <Button
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploading}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                        >
+                          {uploading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" />
+                              {profile.logo_url ? 'Replace Logo' : 'Upload Logo'}
+                            </>
+                          )}
+                        </Button>
+
+                        {profile.logo_url && (
+                          <a
+                            href={profile.logo_url}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cn(
+                              buttonVariants({ variant: 'outline', size: 'sm' }),
+                              'flex-1 border-gray-300 text-gray-700 hover:bg-gray-50'
+                            )}
+                          >
+                            <Download className="mr-2 h-4 w-4" />
+                            Download Logo
+                          </a>
                         )}
-                      </Button>
+                      </div>
 
                       <p className="text-center text-xs text-gray-400">PNG, JPG, WebP — max 5MB</p>
 
@@ -1343,30 +1365,48 @@ export default function ContractorDashboard() {
             </div>
           )}
 
-          {activeTab === 'settings' && (
-            <div className="max-w-3xl">
-              <div className="mb-6 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
-                <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
-                <div>
-                  <p className="text-sm font-semibold text-amber-800">Edit Your Application</p>
-                  <p className="mt-0.5 text-sm text-amber-700">
-                    You can update your application details while it is under review.
-                  </p>
-                </div>
-              </div>
+          {activeTab === 'documents' && (
+            <DocumentsTab
+              profile={profile}
+              onNavigateToProfile={() => setActiveTab('profile')}
+            />
+          )}
 
-              <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
-                <ApplicationForm
-                  userId={userId!}
-                  userEmail={userEmail}
-                  existingProfile={profile}
-                  onSuccess={refreshProfile}
-                />
-              </div>
+          {activeTab === 'settings' && (
+            <div className="max-w-3xl space-y-8">
+              {showApplicationForm && (
+                <div>
+                  <div className="mb-6 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                    <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-amber-800">Edit Your Application</p>
+                      <p className="mt-0.5 text-sm text-amber-700">
+                        You can update your application details while it is under review.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 shadow-sm">
+                    <ApplicationForm
+                      userId={userId!}
+                      userEmail={userEmail}
+                      existingProfile={profile}
+                      onSuccess={refreshProfile}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <SettingsTab
+                profile={profile}
+                userEmail={userEmail}
+                onNotificationPreferenceChange={(value) => setProfile({ ...profile, notification_email: value })}
+              />
             </div>
           )}
         </div>
       </div>
+      <Toaster />
     </DashboardLayout>
   );
 }

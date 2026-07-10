@@ -46,6 +46,7 @@ export interface ContractorProfile {
   bbb_url?: string;
   subscription_status?: string;
   subscription_current_period_end?: string;
+  notification_email?: boolean;
   service_area_state?: string;
   service_area_counties?: string[];
   created_at: string;
