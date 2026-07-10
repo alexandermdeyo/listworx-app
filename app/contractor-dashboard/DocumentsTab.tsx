@@ -45,7 +45,13 @@ interface ContractorDocumentRow {
   label: string | null;
   is_public: boolean | null;
   storage_path: string | null;
+  expiration_date: string | null;
   created_at: string | null;
+}
+
+function formatDate(dateStr: string | null | undefined) {
+  if (!dateStr) return null;
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 interface DocumentsTabProps {
@@ -123,6 +129,9 @@ export default function DocumentsTab({ profile, onNavigateToProfile }: Documents
 
   const [actionLoadingKey, setActionLoadingKey] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  const [expirationEdits, setExpirationEdits] = useState<Record<string, string>>({});
+  const [expirationSavingId, setExpirationSavingId] = useState<string | null>(null);
 
   useEffect(() => {
     void fetchDocuments();
@@ -212,6 +221,34 @@ export default function DocumentsTab({ profile, onNavigateToProfile }: Documents
       setError('Could not update visibility: ' + (err.message || 'Unknown error'));
     } finally {
       setActionLoadingKey(null);
+    }
+  }
+
+  async function handleUpdateExpiration(doc: ContractorDocumentRow) {
+    const newDate = expirationEdits[doc.id];
+    if (!newDate) return;
+
+    setExpirationSavingId(doc.id);
+    setError(null);
+    try {
+      const { error: updateErr } = await supabase
+        .from('contractor_documents')
+        .update({ expiration_date: newDate, updated_at: new Date().toISOString() })
+        .eq('id', doc.id);
+      if (updateErr) throw updateErr;
+
+      setSuccessMessage('Expiration date updated.');
+      setTimeout(() => setSuccessMessage(null), 4000);
+      setExpirationEdits((prev) => {
+        const next = { ...prev };
+        delete next[doc.id];
+        return next;
+      });
+      await fetchDocuments();
+    } catch (err: any) {
+      setError('Could not update expiration date: ' + (err.message || 'Unknown error'));
+    } finally {
+      setExpirationSavingId(null);
     }
   }
 
@@ -326,60 +363,113 @@ export default function DocumentsTab({ profile, onNavigateToProfile }: Documents
         <div className="grid sm:grid-cols-2 gap-5">
           {(
             [
-              { key: 'license' as const, label: 'License', icon: FileBadge, url: profile.license_document_url, doc: licenseComplianceDoc },
-              { key: 'insurance' as const, label: 'Insurance', icon: FileCheck, url: profile.insurance_document_url, doc: insuranceComplianceDoc },
+              {
+                key: 'license' as const,
+                label: 'License',
+                icon: FileBadge,
+                profileUrl: profile.license_document_url,
+                profileExpiration: profile.license_expiration_date,
+                doc: licenseComplianceDoc,
+              },
+              {
+                key: 'insurance' as const,
+                label: 'Insurance',
+                icon: FileCheck,
+                profileUrl: profile.insurance_document_url,
+                profileExpiration: profile.insurance_expiration_date,
+                doc: insuranceComplianceDoc,
+              },
             ]
-          ).map(({ key, label: typeLabel, icon: Icon, url, doc }) => (
-            <div key={key} className="bg-white text-gray-900 rounded-2xl border border-gray-200 overflow-hidden flex flex-col shadow-sm">
-              <div className="px-5 pt-5 pb-4 border-b border-gray-100">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-gray-50 border border-gray-200 flex-shrink-0">
-                    <Icon className="h-5 w-5 text-lw-rust" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm text-gray-900">{typeLabel}</h3>
-                  </div>
-                  {url && doc?.status && <StatusBadge status={doc.status} />}
-                </div>
-              </div>
+          ).map(({ key, label: typeLabel, icon: Icon, profileUrl, profileExpiration, doc }) => {
+            const url = doc?.document_url || profileUrl || null;
+            const fileName = doc?.file_name || getDisplayFileName(url, `${typeLabel} document`);
+            const expiration = doc?.expiration_date || profileExpiration || null;
+            const isSavingExpiration = expirationSavingId === doc?.id;
 
-              <div className="px-5 py-4 flex-1">
-                {url ? (
-                  <div className="flex items-start gap-2">
-                    <FileText className="h-4 w-4 text-gray-300 flex-shrink-0 mt-0.5" />
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate" title={getDisplayFileName(url, `${typeLabel} document`)}>
-                        {getDisplayFileName(url, `${typeLabel} document`)}
-                      </p>
+            return (
+              <div key={key} className="bg-white text-gray-900 rounded-2xl border border-gray-200 overflow-hidden flex flex-col shadow-sm">
+                <div className="px-5 pt-5 pb-4 border-b border-gray-100">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-lg bg-gray-50 border border-gray-200 flex-shrink-0">
+                      <Icon className="h-5 w-5 text-lw-rust" />
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm text-gray-900">{typeLabel}</h3>
+                    </div>
+                    {url && doc?.status && <StatusBadge status={doc.status} />}
                   </div>
-                ) : (
-                  <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-5 text-center">
-                    <p className="text-gray-500 text-sm font-medium">Not uploaded yet</p>
-                    <button
-                      onClick={onNavigateToProfile}
-                      className="mt-2 text-xs font-semibold text-lw-rust hover:underline"
+                </div>
+
+                <div className="px-5 py-4 flex-1 space-y-3">
+                  {url ? (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <FileText className="h-4 w-4 text-gray-300 flex-shrink-0 mt-0.5" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate" title={fileName}>
+                            {fileName}
+                          </p>
+                        </div>
+                      </div>
+
+                      {expiration && (
+                        <div className="rounded-lg bg-gray-50 border border-gray-200 px-3 py-2 text-xs text-gray-600">
+                          Expires: <span className="font-semibold">{formatDate(expiration)}</span>
+                        </div>
+                      )}
+
+                      {doc && (
+                        <div className="pt-1">
+                          <Label className="text-xs text-gray-500">Update Expiration Date</Label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Input
+                              type="date"
+                              value={expirationEdits[doc.id] ?? ''}
+                              onChange={(e) =>
+                                setExpirationEdits((prev) => ({ ...prev, [doc.id]: e.target.value }))
+                              }
+                              className="text-xs h-8"
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => handleUpdateExpiration(doc)}
+                              disabled={!expirationEdits[doc.id] || isSavingExpiration}
+                              className="h-8 text-xs bg-lw-rust text-white hover:bg-lw-rust-hover flex-shrink-0"
+                            >
+                              {isSavingExpiration ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Save'}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-5 text-center">
+                      <p className="text-gray-500 text-sm font-medium">Not uploaded yet</p>
+                      <button
+                        onClick={onNavigateToProfile}
+                        className="mt-2 text-xs font-semibold text-lw-rust hover:underline"
+                      >
+                        Upload in My Profile
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {url && (
+                  <div className="px-5 pb-5">
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
                     >
-                      Upload in My Profile
-                    </button>
+                      <Eye className="h-3.5 w-3.5" /> View
+                    </a>
                   </div>
                 )}
               </div>
-
-              {url && (
-                <div className="px-5 pb-5">
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <Eye className="h-3.5 w-3.5" /> View
-                  </a>
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

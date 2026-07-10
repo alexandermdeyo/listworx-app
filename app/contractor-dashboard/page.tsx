@@ -120,9 +120,31 @@ export default function ContractorDashboard() {
   const [saveProfileError, setSaveProfileError] = useState<string | null>(null);
   const [saveProfileInfo, setSaveProfileInfo] = useState<string | null>(null);
 
+  const [complianceExpirations, setComplianceExpirations] = useState<{
+    license: string | null;
+    insurance: string | null;
+  }>({ license: null, insurance: null });
+
   useEffect(() => {
     void checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (!profile?.id) return;
+
+    (async () => {
+      const { data } = await supabase
+        .from('contractor_documents')
+        .select('document_type, expiration_date, created_at')
+        .eq('contractor_id', profile.id)
+        .in('document_type', ['LICENSE', 'INSURANCE'])
+        .order('created_at', { ascending: false });
+
+      const license = (data || []).find((d: any) => d.document_type === 'LICENSE')?.expiration_date ?? null;
+      const insurance = (data || []).find((d: any) => d.document_type === 'INSURANCE')?.expiration_date ?? null;
+      setComplianceExpirations({ license, insurance });
+    })();
+  }, [profile?.id]);
 
   useEffect(() => {
     if (!profile) return;
@@ -712,17 +734,23 @@ export default function ContractorDashboard() {
     );
   }
 
-  const isExpiringSoon = (dateStr: string | null | undefined) => {
+  const isExpiringSoonOrExpired = (dateStr: string | null | undefined) => {
     if (!dateStr) return false;
     const d = new Date(dateStr);
     const thirtyDays = new Date();
     thirtyDays.setDate(thirtyDays.getDate() + 30);
-    return d <= thirtyDays && d > new Date();
+    return d <= thirtyDays;
   };
 
-  const licenseExpiring = isExpiringSoon(profile.license_expiration_date);
-  const insuranceExpiring = isExpiringSoon(profile.insurance_expiration_date);
+  const effectiveLicenseExpiration = complianceExpirations.license || profile.license_expiration_date || null;
+  const effectiveInsuranceExpiration = complianceExpirations.insurance || profile.insurance_expiration_date || null;
+
+  const licenseExpiring = isExpiringSoonOrExpired(effectiveLicenseExpiration);
+  const insuranceExpiring = isExpiringSoonOrExpired(effectiveInsuranceExpiration);
   const hasExpiryWarning = licenseExpiring || insuranceExpiring;
+
+  const formatExpiryDate = (dateStr: string | null) =>
+    dateStr ? new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
 
   const navItems: NavItem[] = [
     {
@@ -822,27 +850,23 @@ export default function ContractorDashboard() {
       <div className="p-6 space-y-6 text-gray-900">
         {/* Expiry warning banner */}
         {hasExpiryWarning && (
-          <div className="flex items-start gap-3 rounded-lg border border-lw-rust/40 bg-lw-rust/5 px-4 py-3">
-            <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-lw-rust" />
-            <div>
-              <p className="text-sm font-semibold text-lw-rust">Credential Expiring Soon</p>
-              <p className="text-sm text-gray-600">
-                {[
-                  licenseExpiring && 'Your contractor license expires within 30 days.',
-                  insuranceExpiring && 'Your insurance certificate expires within 30 days.',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                {' '}
-                <button
-                  onClick={() => setActiveTab('profile')}
-                  className="font-medium text-lw-rust underline hover:no-underline"
-                >
-                  Update Documents →
-                </button>
-              </p>
+          <button
+            onClick={() => setActiveTab('documents')}
+            className="w-full text-left flex items-start gap-3 rounded-lg border border-lw-rust/40 bg-orange-50 px-4 py-3 hover:bg-orange-100 transition-colors"
+          >
+            <div className="space-y-1">
+              {licenseExpiring && (
+                <p className="text-sm font-semibold text-lw-rust">
+                  ⚠️ Your License expires on {formatExpiryDate(effectiveLicenseExpiration)}. Please update it to stay active.
+                </p>
+              )}
+              {insuranceExpiring && (
+                <p className="text-sm font-semibold text-lw-rust">
+                  ⚠️ Your Insurance expires on {formatExpiryDate(effectiveInsuranceExpiration)}. Please update it to stay active.
+                </p>
+              )}
             </div>
-          </div>
+          </button>
         )}
 
         {/* Status card */}
