@@ -134,6 +134,8 @@ export default function ContractorDashboard() {
   }, []);
 
   useEffect(() => {
+    if (!userId) return;
+
     (async () => {
       const { data } = await supabase
         .from('admin_settings')
@@ -142,7 +144,7 @@ export default function ContractorDashboard() {
         .maybeSingle();
       setAcademyEnabled(data?.value === 'true');
     })();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (!profile?.id) return;
