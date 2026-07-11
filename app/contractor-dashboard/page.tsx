@@ -21,6 +21,7 @@ import ReferralsSection from './ReferralsSection';
 import ComplianceDocuments from './ComplianceDocuments';
 import DocumentsTab from './DocumentsTab';
 import SettingsTab from './SettingsTab';
+import AcademyTab from './AcademyTab';
 import { Toaster } from '@/components/ui/toaster';
 import {
   Loader as Loader2,
@@ -47,11 +48,12 @@ import {
   Bell,
   Star,
   Zap,
+  GraduationCap,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-type DashboardTab = 'overview' | 'profile' | 'documents' | 'settings';
+type DashboardTab = 'overview' | 'profile' | 'documents' | 'academy' | 'settings';
 type Role =
   | 'ADMIN'
   | 'CONTRACTOR'
@@ -125,8 +127,21 @@ export default function ContractorDashboard() {
     insurance: string | null;
   }>({ license: null, insurance: null });
 
+  const [academyEnabled, setAcademyEnabled] = useState(false);
+
   useEffect(() => {
     void checkAuth();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from('admin_settings')
+        .select('value')
+        .eq('key', 'academy_enabled')
+        .maybeSingle();
+      setAcademyEnabled(data?.value === 'true');
+    })();
   }, []);
 
   useEffect(() => {
@@ -790,6 +805,16 @@ export default function ContractorDashboard() {
       disabled: true,
       badgeLabel: 'Elite',
     },
+    ...(academyEnabled
+      ? [
+          {
+            id: 'academy',
+            label: 'Academy',
+            icon: GraduationCap,
+            onClick: () => setActiveTab('academy'),
+          },
+        ]
+      : []),
     {
       id: 'ai-toolkit',
       label: 'AI Toolkit',
@@ -825,6 +850,7 @@ export default function ContractorDashboard() {
   const activeNavId =
     activeTab === 'profile' ? 'profile' :
     activeTab === 'documents' ? 'documents' :
+    activeTab === 'academy' ? 'academy' :
     activeTab === 'settings' ? 'settings' :
     'overview';
 
@@ -839,6 +865,7 @@ export default function ContractorDashboard() {
       pageTitle={
         activeTab === 'profile' ? 'My Profile' :
         activeTab === 'documents' ? 'Documents' :
+        activeTab === 'academy' ? 'ListWorx Academy' :
         activeTab === 'settings' ? (showApplicationForm ? 'Edit Application' : 'Settings') :
         'Dashboard'
       }
@@ -1395,6 +1422,8 @@ export default function ContractorDashboard() {
               onNavigateToProfile={() => setActiveTab('profile')}
             />
           )}
+
+          {activeTab === 'academy' && academyEnabled && <AcademyTab />}
 
           {activeTab === 'settings' && (
             <div className="max-w-3xl space-y-8">

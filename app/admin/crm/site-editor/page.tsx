@@ -103,7 +103,7 @@ export default function SiteEditorPage() {
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
     { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
     { id: 'newsletter', label: 'Newsletter', icon: Mail, href: '/admin/crm/newsletter' },
-    { id: 'settings', label: 'Settings', icon: Settings, disabled: true },
+    { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/crm/settings' },
   ], []);
 
   const checkAuth = async () => {
