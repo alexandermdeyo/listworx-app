@@ -19,44 +19,44 @@ const PATHWAY_STEPS = [
   {
     icon: GraduationCap,
     title: 'Get Licensed',
-    description: 'ACES exam prep in all 50 states',
+    description: 'Pass your state contractor exam with ACES — the national standard for contractor licensing prep in all 50 states.',
   },
   {
     icon: ShieldCheck,
     title: 'Get Verified',
-    description: 'IronClad certification — license, insurance, references confirmed',
+    description: 'Complete IronClad certification. License confirmed. Insurance confirmed. References checked. You\'re not just licensed — you\'re verified.',
   },
   {
     icon: ListChecks,
     title: 'Get Listed',
-    description: 'Your profile in the ListWorx contractor network',
+    description: 'Your IronClad profile goes live in the ListWorx contractor network — visible to realtors, builders, investors, and property managers in your area.',
   },
   {
     icon: Users,
     title: 'Get Referred',
-    description: 'Realtors, builders, and investors find you directly',
+    description: 'When someone needs a contractor, ListWorx matches them with up to 3 IronClad certified professionals. No bidding wars. No lead auctions. Just your name in front of the right people.',
   },
   {
     icon: TrendingUp,
     title: 'Grow',
-    description: 'Recurring project pipeline, no per-lead fees ever',
+    description: 'Every job builds your reputation. Every review strengthens your profile. Every referral adds to a pipeline that compounds over time. This is how you build a business that lasts.',
   },
 ];
 
 const CONTRACTOR_BENEFITS = [
-  'IronClad Verified badge on your profile',
-  'Matched with realtors, builders, and investors in your area',
-  'Flat monthly rate — no per-lead fees',
-  'ACES Trained badge on your ListWorx profile',
-  'Access to ListWorx Academy',
+  'Your IronClad badge tells realtors and builders you are verified before they even call you',
+  'Get matched directly — no competing against 15 other guys for the same lead',
+  'Flat monthly membership — you keep every dollar you earn',
+  'The ACES Trained badge on your profile tells the world you took your license seriously',
+  'ListWorx Academy gives you the tools to grow beyond just getting jobs',
 ];
 
 const ACES_BENEFITS = [
-  'Your courses featured inside ListWorx Academy',
-  'Referral tracking dashboard',
-  'Commission on every active subscriber',
-  'Co-branded marketing materials',
-  'Direct pipeline to licensed contractors seeking work',
+  'Your courses featured inside ListWorx Academy — visible to every active contractor on the platform',
+  'A referral dashboard showing exactly how many contractors came through your pipeline',
+  'Commission on every active subscriber who came through ACES',
+  'Co-branded materials your students can use when they join',
+  'A direct pipeline to licensed professionals who are actively looking to grow',
 ];
 
 export default function AcesPartnerPage() {
@@ -71,10 +71,10 @@ export default function AcesPartnerPage() {
             <div>
               <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-10 w-auto mb-6 rounded-md bg-white p-1.5" />
               <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
-                The Official Licensing Partner of ListWorx
+                You Prepare Them to Get Licensed. We Give Them Somewhere to Put That License to Work.
               </h1>
               <p className="text-lg md:text-xl text-zinc-400 mb-10 max-w-xl">
-                American Contractors Exam Services has helped 60,000+ contractors get licensed across all 50 states. Now their students have somewhere to put that license to work.
+                American Contractors Exam Services and ListWorx share the same belief — that American tradespeople deserve more than a participation trophy. They deserve credentials that mean something, a network that respects their craft, and a pipeline that rewards their professionalism.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/apply">
@@ -130,10 +130,10 @@ export default function AcesPartnerPage() {
       <section className="bg-lw-rust py-16 md:py-20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            ACES Students Get Priority Access
+            ACES Graduates Get Priority Access
           </h2>
           <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8">
-            Use code <span className="font-semibold">ACES10</span> when you apply to ListWorx for a discounted activation fee. Reserved for verified ACES students and graduates.
+            You already did the hard work to get licensed. Use code <span className="font-semibold">ACES10</span> when you apply to ListWorx and get a discounted activation fee reserved for ACES graduates and students. Because the work you put in to get licensed should count for something.
           </p>
           <div className="inline-block rounded-full bg-lw-dark px-8 py-3 mb-8">
             <span className="text-2xl md:text-3xl font-bold text-white tracking-widest">ACES10</span>
@@ -152,9 +152,13 @@ export default function AcesPartnerPage() {
       {/* SECTION 4 — WHAT YOU GET */}
       <section className="bg-lw-dark py-20 md:py-28">
         <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-16">
+            What This Partnership Actually Means
+          </h2>
+
           <div className="grid gap-12 md:grid-cols-2">
             <div>
-              <h3 className="text-2xl font-bold text-white mb-6">For Contractors</h3>
+              <h3 className="text-2xl font-bold text-white mb-6">What You Get</h3>
               <ul className="space-y-4">
                 {CONTRACTOR_BENEFITS.map((item) => (
                   <li key={item} className="flex items-start gap-3">
@@ -166,7 +170,7 @@ export default function AcesPartnerPage() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-bold text-white mb-6">For ACES</h3>
+              <h3 className="text-2xl font-bold text-white mb-6">What ACES Gets</h3>
               <ul className="space-y-4">
                 {ACES_BENEFITS.map((item) => (
                   <li key={item} className="flex items-start gap-3">
@@ -186,10 +190,12 @@ export default function AcesPartnerPage() {
           <div className="max-w-3xl mx-auto text-center">
             <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-14 w-auto mx-auto mb-8" />
             <h2 className="text-3xl md:text-4xl font-bold text-lw-text mb-6">
-              About American Contractors Exam Services
+              25 Years of Doing It Right
             </h2>
             <p className="text-lg text-lw-text/70 leading-relaxed mb-8">
-              25 years in business, serving all 50 states, 60,000+ customers served, with a 95% exam pass rate. Based in Nashville, Tennessee.
+              American Contractors Exam Services was founded on a simple idea — that getting a contractor&apos;s license should not be a guessing game. For 25 years they have served more than 60,000 contractors across all 50 states with classroom and online exam prep, a 95% pass rate, and a reputation built on results.
+              <br /><br />
+              They are based right here in Nashville, Tennessee — and they have been doing this work long before it was fashionable to care about the trades.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
@@ -218,7 +224,7 @@ export default function AcesPartnerPage() {
       <section className="bg-lw-dark py-20 md:py-28">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">
-            Ready to put your license to work?
+            The License Is the Foundation. ListWorx Is What You Build On Top of It.
           </h2>
           <Link href="/apply">
             <Button size="lg" className="text-base px-8 py-6">

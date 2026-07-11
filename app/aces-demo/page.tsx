@@ -3,14 +3,21 @@
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { DEMO_ROLE_CARDS, type DemoRoleCard } from '@/lib/demo/acesDemoData';
-import { Building2, Users, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Building2, Users, ShieldCheck, ArrowRight, Globe } from 'lucide-react';
 
 const ROLE_ICONS: Record<DemoRoleCard['id'], React.ElementType> = {
   contractor: Building2,
   requestor: Users,
   aces_partner: ShieldCheck,
 };
+
+const EXPLORE_LINKS = [
+  { label: 'ListWorx Home', href: 'https://listworx.co' },
+  { label: 'ListWorx Academy', href: 'https://listworx.co/academy' },
+  { label: 'ACES Partnership Page', href: 'https://listworx.co/partners/aces' },
+];
 
 export default function AcesDemoHomePage() {
   return (
@@ -35,7 +42,7 @@ export default function AcesDemoHomePage() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
           {DEMO_ROLE_CARDS.map((card) => {
             const Icon = ROLE_ICONS[card.id];
             return (
@@ -54,6 +61,25 @@ export default function AcesDemoHomePage() {
               </Link>
             );
           })}
+
+          <Card className="h-full p-8" style={{ borderColor: '#1B2A4A', borderWidth: '2px' }}>
+            <div className="h-12 w-12 rounded-xl bg-[#1B2A4A]/15 flex items-center justify-center mb-6">
+              <Globe className="h-6 w-6" style={{ color: '#1B2A4A' }} />
+            </div>
+            <h2 className="text-xl font-semibold mb-2">Explore ListWorx</h2>
+            <p className="text-sm lw-muted mb-6">
+              Browse the live ListWorx website as a visitor would — including the Academy page featuring ACES and the official partnership page.
+            </p>
+            <div className="flex flex-col gap-2">
+              {EXPLORE_LINKS.map((link) => (
+                <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" size="sm" className="w-full justify-center">
+                    {link.label}
+                  </Button>
+                </a>
+              ))}
+            </div>
+          </Card>
         </div>
       </div>
     </div>
