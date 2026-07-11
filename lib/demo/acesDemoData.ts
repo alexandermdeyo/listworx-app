@@ -43,6 +43,9 @@ export interface DemoContractorProfile {
   phone: string;
   website?: string;
   bio: string;
+  business_description?: string;
+  license_number?: string;
+  google_business_url?: string;
   trade: string;
   service_area_state: string;
   service_area_counties: string[];
@@ -272,11 +275,13 @@ export const DEMO_CONTRACTORS: DemoContractorProfile[] = [
     id: ACES_PARTNER_ID,
     company_name: 'Cumberland Valley Roofing',
     owner_name: 'Marcus Webb',
-    email: 'marcus@cumberlandvalleyroofing.example',
+    email: 'marcus@cumberlandvalleyroofing.com',
     phone: '(615) 555-0142',
-    website: 'cumberlandvalleyroofing.example',
-    bio: 'Full-service general contractor serving Middle Tennessee for over 15 years.',
-    trade: 'General Contractor',
+    website: 'cumberlandvalleyroofing.com',
+    bio: 'Full-service roofing contractor serving Middle Tennessee for 15+ years.',
+    business_description: 'We specialize in residential and commercial roofing, storm damage repair, and new construction roofing across the Nashville metro area.',
+    license_number: 'TN-CON-48821',
+    trade: 'Roofing',
     service_area_state: 'TN',
     service_area_counties: ['davidson', 'williamson', 'rutherford', 'wilson'],
     partner_status: 'active',
