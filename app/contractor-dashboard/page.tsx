@@ -768,6 +768,25 @@ export default function ContractorDashboard() {
   const formatExpiryDate = (dateStr: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
 
+  const getDaysUntil = (dateStr: string | null): number | null => {
+    if (!dateStr) return null;
+    const target = new Date(dateStr);
+    target.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  };
+
+  const formatDaysMessage = (days: number | null) => {
+    if (days === null) return '';
+    if (days < 0) return `expired ${Math.abs(days)} day${Math.abs(days) === 1 ? '' : 's'} ago`;
+    if (days === 0) return 'expires today';
+    return `expires in ${days} day${days === 1 ? '' : 's'}`;
+  };
+
+  const licenseDaysUntil = getDaysUntil(effectiveLicenseExpiration);
+  const insuranceDaysUntil = getDaysUntil(effectiveInsuranceExpiration);
+
   const navItems: NavItem[] = [
     {
       id: 'overview',
@@ -880,10 +899,10 @@ export default function ContractorDashboard() {
         {licenseExpiring && (
           <div
             className="w-full rounded-lg px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-            style={{ backgroundColor: '#E86B2B' }}
+            style={{ backgroundColor: '#b91c1c' }}
           >
             <p className="text-sm font-semibold text-white">
-              Your contractor license expires on {formatExpiryDate(effectiveLicenseExpiration)}. Renew your license through ListWorx Academy — powered by ACES, the national standard for contractor licensing in all 50 states.
+              Your contractor license {formatDaysMessage(licenseDaysUntil)} ({formatExpiryDate(effectiveLicenseExpiration)}). Renew your license through ListWorx Academy — powered by ACES, the national standard for contractor licensing in all 50 states — and upload your updated license to your profile to stay active with ListWorx.
             </p>
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
@@ -895,7 +914,7 @@ export default function ContractorDashboard() {
                   }
                 }}
                 className="rounded-md bg-white px-3 py-1.5 text-xs font-semibold whitespace-nowrap hover:bg-white/90 transition-colors"
-                style={{ color: '#E86B2B' }}
+                style={{ color: '#b91c1c' }}
               >
                 Go to Academy
               </button>
@@ -915,7 +934,7 @@ export default function ContractorDashboard() {
             style={{ backgroundColor: '#b91c1c' }}
           >
             <p className="text-sm font-semibold text-white">
-              Your insurance expires on {formatExpiryDate(effectiveInsuranceExpiration)}. Upload your updated Certificate of Insurance to stay active and eligible for referrals.
+              Your insurance {formatDaysMessage(insuranceDaysUntil)} ({formatExpiryDate(effectiveInsuranceExpiration)}). Renew your insurance and upload your updated Certificate of Insurance to your profile to stay active and eligible for referrals with ListWorx.
             </p>
             <button
               onClick={() => setActiveTab('documents')}
