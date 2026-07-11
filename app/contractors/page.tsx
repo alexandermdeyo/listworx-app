@@ -695,6 +695,10 @@ export default function ContractorsPage() {
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
                     <span>Credential tracking and compliance tools</span>
                   </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
+                    <span>ListWorx Academy access — including ACES Licensing and Exam Prep</span>
+                  </li>
                 </ul>
                 <Link href="/apply" className="block">
                   <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white">
@@ -729,6 +733,10 @@ export default function ContractorsPage() {
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
                     <span>Contractor Studio included — marketing tools built for the trades</span>
                   </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Full ListWorx Academy access — ACES licensing resources and ACES Trained badge on your profile</span>
+                  </li>
                 </ul>
                 <Link href="/apply" className="block">
                   <Button className="w-full bg-primary hover:bg-primary/90 text-white">
@@ -761,6 +769,10 @@ export default function ContractorsPage() {
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
                     <span>Professionally produced 60-second promo video <span className="text-xs italic">(annual plan)</span></span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="h-4 w-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Full ListWorx Academy access — ACES licensing resources, ACES Trained badge, and priority course placement</span>
                   </li>
                 </ul>
                 <Link href="/apply" className="block">

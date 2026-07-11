@@ -51,6 +51,7 @@ const TIERS: Tier[] = [
       'Standard placement in referral rotation',
       'Credential tracking and compliance tools',
       'Email notifications for new referrals',
+      'ListWorx Academy access — including ACES Licensing and Exam Prep',
     ],
     unavailableFeatures: [
       'Priority referral placement',
@@ -74,6 +75,7 @@ const TIERS: Tier[] = [
       'IronClad Certified Partner badge',
       'Referral analytics and reporting',
       'Dedicated account support',
+      'Full ListWorx Academy access — ACES licensing resources and ACES Trained badge on your profile',
     ],
     unavailableFeatures: [
       'Top-priority referral positioning',
@@ -96,6 +98,7 @@ const TIERS: Tier[] = [
       'Priority phone support',
       'Quarterly business review',
       'Annual: Professionally produced 60-second promo video',
+      'Full ListWorx Academy access — ACES licensing resources, ACES Trained badge, and priority course placement',
     ],
   },
 ];

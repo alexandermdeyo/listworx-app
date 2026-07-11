@@ -169,6 +169,7 @@ export const DEMO_TIERS: DemoTier[] = [
       'Basic contractor profile',
       'IronClad Standards certification',
       'Network membership',
+      'ListWorx Academy access — including ACES Licensing and Exam Prep',
     ],
     notIncluded: [
       'Profile Boost',
@@ -196,6 +197,7 @@ export const DEMO_TIERS: DemoTier[] = [
       'IronClad Digital Badge Kit on signup ($29 value)',
       '1 Profile Boost per quarter ($49 value)',
       'Access to all marketing add-ons',
+      'Full ListWorx Academy access — ACES licensing resources and ACES Trained badge on your profile',
     ],
     notIncluded: [
       'Additional Profile Boosts beyond quarterly',
@@ -225,6 +227,7 @@ export const DEMO_TIERS: DemoTier[] = [
       'Social Media Content Pack — 2 posts/month included',
       'Google Business Profile Optimization on signup ($149 value)',
       'Annual featured contractor spotlight on ListWorx social media',
+      'Full ListWorx Academy access — ACES licensing resources, ACES Trained badge, and priority course placement',
     ],
     notIncluded: [],
   },

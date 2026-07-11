@@ -6,9 +6,9 @@ import { PageShell } from '@/components/design-system';
 import { CheckCircle } from 'lucide-react';
 
 const standardPlans = [
-  ['Basic Partner', '$199/month', ['Included in referral rotation', 'Basic contractor profile', 'Standard positioning', 'IronClad Standards required'], 'Apply Now'],
-  ['Preferred Partner', '$349/month', ['Priority positioning in rotation', 'Enhanced contractor profile', 'Access to marketing add-on opportunities', 'IronClad Standards required'], 'Apply Now'],
-  ['Elite Partner', '$599/month', ['Top of rotation in your trade and county', 'Territory lock (limited spots)', 'Featured in requestor referral cards', 'Eligible for ListWorx media partnerships', 'IronClad Standards required'], 'Apply Now — Limited Spots'],
+  ['Basic Partner', '$199/month', ['Included in referral rotation', 'Basic contractor profile', 'Standard positioning', 'IronClad Standards required', 'ListWorx Academy access — including ACES Licensing and Exam Prep'], 'Apply Now'],
+  ['Preferred Partner', '$349/month', ['Priority positioning in rotation', 'Enhanced contractor profile', 'Access to marketing add-on opportunities', 'IronClad Standards required', 'Full ListWorx Academy access — ACES licensing resources and ACES Trained badge on your profile'], 'Apply Now'],
+  ['Elite Partner', '$599/month', ['Top of rotation in your trade and county', 'Territory lock (limited spots)', 'Featured in requestor referral cards', 'Eligible for ListWorx media partnerships', 'IronClad Standards required', 'Full ListWorx Academy access — ACES licensing resources, ACES Trained badge, and priority course placement'], 'Apply Now — Limited Spots'],
 ];
 
 const pricingRows = [
