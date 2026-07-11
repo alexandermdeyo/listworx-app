@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Bell } from 'lucide-react';
 
@@ -8,6 +9,7 @@ export interface DemoNavItem {
   label: string;
   icon: React.ElementType;
   badgeLabel?: string;
+  disabled?: boolean;
 }
 
 interface DemoDashboardShellProps {
@@ -15,6 +17,7 @@ interface DemoDashboardShellProps {
   userSubtitle?: string;
   avatarInitials?: string;
   avatarBg?: string;
+  avatarImageSrc?: string;
   tierBadge?: string | null;
   pageTitle: string;
   navItems: DemoNavItem[];
@@ -31,6 +34,7 @@ export default function DemoDashboardShell({
   userSubtitle,
   avatarInitials,
   avatarBg,
+  avatarImageSrc,
   tierBadge,
   pageTitle,
   navItems,
@@ -39,6 +43,7 @@ export default function DemoDashboardShell({
   children,
 }: DemoDashboardShellProps) {
   const isWordAvatar = !!avatarInitials && avatarInitials.length > 1;
+  const [avatarImageError, setAvatarImageError] = useState(false);
   return (
     <div className="flex min-h-screen" style={{ fontFamily: "'Barlow', Arial, sans-serif" }}>
       <aside
@@ -52,14 +57,23 @@ export default function DemoDashboardShell({
         </div>
 
         <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
-          <div
-            className={`flex items-center justify-center rounded-full flex-shrink-0 ${isWordAvatar ? 'h-9 w-9' : 'h-8 w-8'}`}
-            style={{ backgroundColor: avatarBg || 'rgba(255,255,255,0.1)' }}
-          >
-            <span className={`font-bold text-white uppercase ${isWordAvatar ? 'text-[8px]' : 'text-xs'}`}>
-              {avatarInitials || (userName || 'U')[0]}
-            </span>
-          </div>
+          {avatarImageSrc && !avatarImageError ? (
+            <img
+              src={avatarImageSrc}
+              alt={userName}
+              className="h-9 w-9 rounded-full object-cover flex-shrink-0 border border-white/10"
+              onError={() => setAvatarImageError(true)}
+            />
+          ) : (
+            <div
+              className={`flex items-center justify-center rounded-full flex-shrink-0 ${isWordAvatar ? 'h-9 w-9' : 'h-8 w-8'}`}
+              style={{ backgroundColor: avatarBg || 'rgba(255,255,255,0.1)' }}
+            >
+              <span className={`font-bold text-white uppercase ${isWordAvatar ? 'text-[8px]' : 'text-xs'}`}>
+                {avatarInitials || (userName || 'U')[0]}
+              </span>
+            </div>
+          )}
           <div className="min-w-0">
             <p className="text-sm font-medium text-white truncate">{userName || 'User'}</p>
             {userSubtitle && <p className="text-[11px] text-white/40 leading-snug">{userSubtitle}</p>}
@@ -80,12 +94,22 @@ export default function DemoDashboardShell({
             const Icon = item.icon;
 
             const baseClass = `flex w-full items-center gap-3 px-5 py-2.5 text-sm transition-colors ${
-              isActive ? 'text-white font-medium' : 'text-white/60 hover:text-white'
+              item.disabled
+                ? 'text-white/30 cursor-not-allowed'
+                : isActive
+                ? 'text-white font-medium'
+                : 'text-white/60 hover:text-white'
             }`;
-            const activeBg = isActive ? { backgroundColor: '#E8621A' } : {};
+            const activeBg = isActive && !item.disabled ? { backgroundColor: '#E8621A' } : {};
 
             return (
-              <button key={item.id} onClick={() => onNavSelect(item.id)} className={baseClass} style={activeBg}>
+              <button
+                key={item.id}
+                onClick={item.disabled ? undefined : () => onNavSelect(item.id)}
+                disabled={item.disabled}
+                className={baseClass}
+                style={activeBg}
+              >
                 <Icon className="h-4 w-4 flex-shrink-0" />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.badgeLabel && (

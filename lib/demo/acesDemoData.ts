@@ -977,3 +977,44 @@ export const DEMO_ACES_MARKETING_ASSETS: DemoAcesMarketingAsset[] = [
   { id: 'asset-qr', title: 'Referral Link QR Code', description: 'Scannable QR code linking to your referral page.', type: 'qr' },
   { id: 'asset-blurb', title: 'ACES Website Onboarding Blurb', description: 'Short partnership blurb for the ACES website.', type: 'blurb' },
 ];
+
+// ---------------------------------------------------------------------------
+// Contractor demo: Documents tab mock data
+// ---------------------------------------------------------------------------
+
+export type DemoComplianceStatus = 'APPROVED' | 'PENDING' | 'REJECTED' | 'EXPIRED';
+
+export interface DemoComplianceDoc {
+  fileName: string;
+  status: DemoComplianceStatus;
+  expirationDate: string | null;
+}
+
+export const DEMO_LICENSE_DOC: DemoComplianceDoc = {
+  fileName: 'TN_Contractor_License_2026.pdf',
+  status: 'APPROVED',
+  expirationDate: '2027-03-15',
+};
+
+export const DEMO_INSURANCE_DOC: DemoComplianceDoc = {
+  fileName: 'COI_CumberlandValleyRoofing_2026.pdf',
+  status: 'APPROVED',
+  expirationDate: '2026-11-01',
+};
+
+export type DemoAdditionalDocType = 'CERTIFICATION' | 'AWARD' | 'OTHER';
+
+export interface DemoAdditionalDocument {
+  id: string;
+  type: DemoAdditionalDocType;
+  label: string;
+  fileName: string;
+  isPublic: boolean;
+  uploadedAt: string;
+}
+
+export const DEMO_ADDITIONAL_DOCUMENTS: DemoAdditionalDocument[] = [
+  { id: 'demo-doc-1', type: 'CERTIFICATION', label: 'OSHA 10-Hour Certification', fileName: 'OSHA_10_Cert.pdf', isPublic: true, uploadedAt: '2026-02-10' },
+  { id: 'demo-doc-2', type: 'AWARD', label: 'BBB Torch Award for Ethics', fileName: 'BBB_Torch_Award.pdf', isPublic: true, uploadedAt: '2026-04-22' },
+  { id: 'demo-doc-3', type: 'OTHER', label: 'State License Renewal Confirmation', fileName: 'License_Renewal_2026.pdf', isPublic: true, uploadedAt: '2026-06-01' },
+];

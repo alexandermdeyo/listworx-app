@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { GraduationCap, Shield, DollarSign, HardHat, TrendingUp, Scale, PlayCircle, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { DEMO_ACADEMY_CATEGORIES, DEMO_ACADEMY_PROGRESS_PERCENT } from '@/lib/demo/acesDemoData';
@@ -10,6 +11,27 @@ function ProgressBar({ value }: { value: number }) {
     <div className="h-3 overflow-hidden rounded-full bg-gray-100">
       <div className="h-full rounded-full bg-lw-rust transition-all" style={{ width: `${bounded}%` }} />
     </div>
+  );
+}
+
+function AcesLogo() {
+  const [imageError, setImageError] = useState(false);
+
+  if (imageError) {
+    return (
+      <div className="h-10 w-10 rounded-lg bg-white border border-lw-rust/30 flex items-center justify-center flex-shrink-0">
+        <span className="text-sm font-black text-lw-rust">ACES</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src="/aces-logo.jpg"
+      alt="American Contractors Exam Services"
+      className="h-10 w-auto rounded-lg border border-lw-rust/30 bg-white p-1 flex-shrink-0"
+      onError={() => setImageError(true)}
+    />
   );
 }
 
@@ -53,9 +75,7 @@ export default function AcademyTab() {
             <div key={category.id} className="rounded-xl border-2 border-lw-rust bg-white shadow-sm overflow-hidden">
               <div className="bg-orange-50 px-5 py-4 border-b border-lw-rust/20 flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-white border border-lw-rust/30 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-black text-lw-rust">{fp.name}</span>
-                  </div>
+                  <AcesLogo />
                   <div>
                     <h3 className="font-bold text-gray-900 flex items-center gap-2">
                       <Icon className="h-4 w-4 text-lw-rust" /> {category.name}

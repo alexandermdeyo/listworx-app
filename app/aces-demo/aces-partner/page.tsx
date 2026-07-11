@@ -37,6 +37,7 @@ export default function AcesPartnerDashboard() {
       userSubtitle="American Contractors Exam Services"
       avatarInitials="ACES"
       avatarBg="#E8621A"
+      avatarImageSrc="/aces-logo.jpg"
       tierBadge="Verified Partner"
       pageTitle={TAB_TITLES[activeTab]}
       navItems={NAV_ITEMS}
