@@ -764,7 +764,6 @@ export default function ContractorDashboard() {
 
   const licenseExpiring = isExpiringSoonOrExpired(effectiveLicenseExpiration);
   const insuranceExpiring = isExpiringSoonOrExpired(effectiveInsuranceExpiration);
-  const hasExpiryWarning = licenseExpiring || insuranceExpiring;
 
   const formatExpiryDate = (dateStr: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
@@ -877,25 +876,55 @@ export default function ContractorDashboard() {
       hasNotifications={false}
     >
       <div className="p-6 space-y-6 text-gray-900">
-        {/* Expiry warning banner */}
-        {hasExpiryWarning && (
-          <button
-            onClick={() => setActiveTab('documents')}
-            className="w-full text-left flex items-start gap-3 rounded-lg border border-lw-rust/40 bg-orange-50 px-4 py-3 hover:bg-orange-100 transition-colors"
+        {/* Expiry warning banners */}
+        {licenseExpiring && (
+          <div
+            className="w-full rounded-lg px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+            style={{ backgroundColor: '#E86B2B' }}
           >
-            <div className="space-y-1">
-              {licenseExpiring && (
-                <p className="text-sm font-semibold text-lw-rust">
-                  ⚠️ Your License expires on {formatExpiryDate(effectiveLicenseExpiration)}. Please update it to stay active.
-                </p>
-              )}
-              {insuranceExpiring && (
-                <p className="text-sm font-semibold text-lw-rust">
-                  ⚠️ Your Insurance expires on {formatExpiryDate(effectiveInsuranceExpiration)}. Please update it to stay active.
-                </p>
-              )}
+            <p className="text-sm font-semibold text-white">
+              Your contractor license expires on {formatExpiryDate(effectiveLicenseExpiration)}. Renew your license through ListWorx Academy — powered by ACES, the national standard for contractor licensing in all 50 states.
+            </p>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                onClick={() => {
+                  if (academyEnabled) {
+                    setActiveTab('academy');
+                  } else {
+                    window.open('https://listworx.co/academy', '_blank', 'noopener,noreferrer');
+                  }
+                }}
+                className="rounded-md bg-white px-3 py-1.5 text-xs font-semibold whitespace-nowrap hover:bg-white/90 transition-colors"
+                style={{ color: '#E86B2B' }}
+              >
+                Go to Academy
+              </button>
+              <button
+                onClick={() => setActiveTab('documents')}
+                className="rounded-md border border-white/70 px-3 py-1.5 text-xs font-semibold text-white whitespace-nowrap hover:bg-white/10 transition-colors"
+              >
+                Update in Documents →
+              </button>
             </div>
-          </button>
+          </div>
+        )}
+
+        {insuranceExpiring && (
+          <div
+            className="w-full rounded-lg px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+            style={{ backgroundColor: '#b91c1c' }}
+          >
+            <p className="text-sm font-semibold text-white">
+              Your insurance expires on {formatExpiryDate(effectiveInsuranceExpiration)}. Upload your updated Certificate of Insurance to stay active and eligible for referrals.
+            </p>
+            <button
+              onClick={() => setActiveTab('documents')}
+              className="rounded-md bg-white px-3 py-1.5 text-xs font-semibold whitespace-nowrap hover:bg-white/90 transition-colors flex-shrink-0"
+              style={{ color: '#b91c1c' }}
+            >
+              Update Insurance →
+            </button>
+          </div>
         )}
 
         {/* Status card */}
