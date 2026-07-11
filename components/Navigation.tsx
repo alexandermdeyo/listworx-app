@@ -29,6 +29,18 @@ export default function Navigation() {
   const [loading, setLoading] = useState(true);
   const [dashboardHref, setDashboardHref] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [academyEnabled, setAcademyEnabled] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from('admin_settings')
+        .select('value')
+        .eq('key', 'academy_enabled')
+        .maybeSingle();
+      setAcademyEnabled(data?.value === 'true');
+    })();
+  }, [supabase]);
 
   useEffect(() => {
     let mounted = true;
@@ -175,6 +187,14 @@ export default function Navigation() {
           >
             For Contractors
           </Link>
+          {academyEnabled && (
+            <Link
+              href="/academy"
+              className="text-zinc-300 hover:text-white transition-colors"
+            >
+              Academy
+            </Link>
+          )}
           <Link
             href="/ironclad"
             className="text-lw-rust hover:text-orange-300 transition-colors"
@@ -267,6 +287,15 @@ export default function Navigation() {
             >
               For Contractors
             </Link>
+            {academyEnabled && (
+              <Link
+                href="/academy"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block rounded-md px-3 py-3 text-base font-medium text-zinc-300 hover:bg-lw-dark-card hover:text-white transition-colors"
+              >
+                Academy
+              </Link>
+            )}
             <Link
               href="/ironclad"
               onClick={() => setMobileMenuOpen(false)}
