@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase-browser';
 import ApplicationForm from '@/app/contractor-dashboard/ApplicationForm';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader as Loader2, CircleAlert as AlertCircle } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 
 export type FounderSelection = {
   tierId: string;
@@ -217,8 +218,8 @@ export default function ApplyPage() {
   }, [reloadTick, supabase]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
+      <Navigation variant="light" />
 
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         {checkingAuth ? (
@@ -236,7 +237,7 @@ export default function ApplyPage() {
         ) : !state ? null : (
           <div>
             {founderSelection && (
-                <div className="mb-6 rounded-xl border border-lw-rust/40 bg-lw-rust/5 px-5 py-4">
+                <Reveal className="mb-6 rounded-xl border border-lw-rust/40 bg-lw-rust/5 px-5 py-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-lw-rust">Founding Partner Selection</p>
@@ -255,10 +256,10 @@ export default function ApplyPage() {
                       Change selections
                     </a>
                   </div>
-                </div>
+                </Reveal>
               )}
 
-            <div className="bg-lw-surface-card rounded-2xl border border-lw-border-light p-6 sm:p-8 shadow-sm">
+            <Reveal delay={founderSelection ? 70 : 0} className="bg-lw-surface-card rounded-2xl border border-lw-border-light p-6 sm:p-8 shadow-sm">
               <ApplicationForm
                 userId={state.userId}
                 userEmail={state.userEmail}
@@ -266,7 +267,7 @@ export default function ApplyPage() {
                 founderSelection={founderSelection ?? undefined}
                 onSuccess={refreshFromApplication}
               />
-            </div>
+            </Reveal>
           </div>
         )}
       </div>

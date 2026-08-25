@@ -13,6 +13,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 
 // ─── Founding tier data ────────────────────────────────────────────────────────
 
@@ -139,17 +140,17 @@ export default function FoundingPartnerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
 
       {/* ── Orange accent bar ──────────────────────────────────────────────── */}
       <div className="h-1 bg-lw-rust w-full" />
 
       {/* ── Nav bar ───────────────────────────────────────────────────────── */}
-      <div className="border-b border-zinc-800 bg-zinc-950">
+      <div className="border-b border-zinc-200 bg-white">
         <div className="container mx-auto px-4 py-4">
           <Link
             href="/listing-studio"
-            className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-mkt-ink/60 hover:text-mkt-ink transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Listing Studio
@@ -158,47 +159,55 @@ export default function FoundingPartnerPage() {
       </div>
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28 border-b border-zinc-800">
+      <section className="py-20 md:py-28 border-b border-zinc-200">
         <div className="container mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-sm font-semibold text-amber-300 mb-8">
-            <Crown className="h-4 w-4" />
-            Founding Partner Program
-          </div>
+          <Reveal immediate delay={0}>
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-sm font-semibold text-amber-700 mb-8">
+              <Crown className="h-4 w-4" />
+              Founding Partner Program
+            </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight max-w-4xl mx-auto">
-            Lock your rate before this window closes.
-          </h1>
-          <p className="text-lg md:text-xl text-zinc-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Founding Partners get the rate they sign up at — permanently. As we grow and raise prices for new members, your rate stays exactly where it is. For life.
-          </p>
+            <h1 className="text-4xl md:text-6xl font-bold text-mkt-ink mb-6 leading-tight max-w-4xl mx-auto">
+              Lock your rate before this window closes.
+            </h1>
+          </Reveal>
+          <Reveal immediate delay={100}>
+            <p className="text-lg md:text-xl text-mkt-ink/70 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Founding Partners get the rate they sign up at — permanently. As we grow and raise prices for new members, your rate stays exactly where it is. For life.
+            </p>
+          </Reveal>
 
           {/* Stat callouts */}
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            {STATS.map((stat) => (
-              <div
+            {STATS.map((stat, index) => (
+              <Reveal
                 key={stat.label}
+                immediate
+                delay={200 + index * 70}
                 className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-6 py-4 text-center min-w-[160px]"
               >
-                <p className="text-2xl font-bold text-amber-300 mb-1">{stat.value}</p>
-                <p className="text-xs text-zinc-400">{stat.label}</p>
-              </div>
+                <p className="text-2xl font-bold text-amber-700 mb-1">{stat.value}</p>
+                <p className="text-xs text-mkt-ink/60">{stat.label}</p>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* ── Pricing cards ─────────────────────────────────────────────────── */}
-      <section className="py-20 border-b border-zinc-800">
+      <section className="py-20 border-b border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="grid gap-6 md:grid-cols-2">
-              {FOUNDING_TIERS.map((tier) => (
-                <div
+              {FOUNDING_TIERS.map((tier, index) => (
+                <Reveal
                   key={tier.id}
-                  className={`relative rounded-2xl p-8 flex flex-col ${
+                  delay={index * 70}
+                  pulse={tier.highlight}
+                  className={`lw-hover-lift relative rounded-2xl p-8 flex flex-col bg-white text-mkt-ink ${
                     tier.highlight
-                      ? 'bg-white text-zinc-900 shadow-2xl ring-2 ring-amber-400'
-                      : 'bg-zinc-900 border border-zinc-700 text-white'
+                      ? 'shadow-2xl ring-2 ring-amber-400'
+                      : 'border border-zinc-200 shadow-sm'
                   }`}
                 >
                   {/* Best Value badge */}
@@ -211,33 +220,27 @@ export default function FoundingPartnerPage() {
                   )}
 
                   {/* Lock indicator */}
-                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold w-fit mb-5 ${
-                    tier.highlight
-                      ? 'bg-amber-100 text-amber-700'
-                      : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
-                  }`}>
+                  <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold w-fit mb-5 bg-amber-100 text-amber-700">
                     <Lock className="h-3 w-3" />
                     Rate Locked Forever
                   </div>
 
                   {/* Plan name */}
-                  <p className={`text-xs font-bold uppercase tracking-widest mb-2 ${
-                    tier.highlight ? 'text-amber-600' : 'text-amber-400'
-                  }`}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-2 text-amber-600">
                     {tier.name}
                   </p>
 
                   {/* Price */}
                   <div className="flex items-end gap-1 mb-1">
                     <span className="text-5xl font-bold">${tier.lockedMonthly}</span>
-                    <span className={`text-sm mb-2 ${tier.highlight ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                    <span className="text-sm mb-2 text-mkt-ink/50">
                       /mo
                     </span>
                   </div>
-                  <p className={`text-sm mb-1 ${tier.highlight ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                  <p className="text-sm mb-1 text-mkt-ink/60">
                     ${tier.annualTotal.toLocaleString()}/yr billed annually
                   </p>
-                  <p className={`text-xs mb-6 ${tier.highlight ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                  <p className="text-xs mb-6 text-mkt-ink/50">
                     vs standard ${tier.standardMonthly}/mo — saves ${tier.savingsPerYear.toLocaleString()}/yr
                   </p>
 
@@ -245,10 +248,8 @@ export default function FoundingPartnerPage() {
                   <ul className="space-y-2.5 mb-8 flex-1">
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2 text-sm">
-                        <CheckCircle className={`h-4 w-4 mt-0.5 shrink-0 ${
-                          tier.highlight ? 'text-amber-500' : 'text-amber-400'
-                        }`} />
-                        <span className={tier.highlight ? 'text-zinc-700' : 'text-zinc-300'}>
+                        <CheckCircle className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
+                        <span className="text-mkt-ink/80">
                           {feature}
                         </span>
                       </li>
@@ -277,7 +278,7 @@ export default function FoundingPartnerPage() {
                       </>
                     )}
                   </Button>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -285,57 +286,58 @@ export default function FoundingPartnerPage() {
       </section>
 
       {/* ── Founding Realtor Badge ─────────────────────────────────────────── */}
-      <section className="py-20 border-b border-zinc-800">
+      <section className="py-20 border-b border-zinc-200">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
+          <Reveal as="div" className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-amber-500/10 border border-amber-500/20 mb-6">
-              <Crown className="h-8 w-8 text-amber-400" />
+              <Crown className="h-8 w-8 text-amber-600" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-mkt-ink mb-4">
               The Founding Realtor Badge
             </h2>
-            <p className="text-lg text-zinc-300 mb-6 leading-relaxed">
+            <p className="text-lg text-mkt-ink/70 mb-6 leading-relaxed">
               Every Founding Partner gets a permanent badge on their ListWorx profile marking them as one of the original members who helped build this platform. It stays there — forever — even as Listing Studio grows.
             </p>
-            <p className="text-zinc-400 leading-relaxed">
+            <p className="text-mkt-ink/60 leading-relaxed">
               It is a small thing, but it is real. The people who show up early deserve to be recognized for it.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* ── FAQ ───────────────────────────────────────────────────────────── */}
-      <section className="py-20 border-b border-zinc-800">
+      <section className="py-20 border-b border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-white mb-10 text-center">
+            <Reveal as="h2" className="text-3xl font-bold text-mkt-ink mb-10 text-center">
               Frequently asked questions
-            </h2>
+            </Reveal>
             <div className="space-y-3">
               {FAQS.map((faq, idx) => (
+                <Reveal key={idx} delay={idx * 70}>
                 <Card
-                  key={idx}
-                  className="border-zinc-800 bg-zinc-900 overflow-hidden"
+                  className="lw-card-light overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                     className="w-full flex items-center justify-between gap-4 p-5 text-left"
                   >
-                    <span className="font-semibold text-white text-sm leading-snug">
+                    <span className="font-semibold text-mkt-ink text-sm leading-snug">
                       {faq.q}
                     </span>
                     {openFaq === idx ? (
-                      <ChevronUp className="h-4 w-4 text-zinc-400 shrink-0" />
+                      <ChevronUp className="h-4 w-4 text-mkt-ink/50 shrink-0" />
                     ) : (
-                      <ChevronDown className="h-4 w-4 text-zinc-400 shrink-0" />
+                      <ChevronDown className="h-4 w-4 text-mkt-ink/50 shrink-0" />
                     )}
                   </button>
                   {openFaq === idx && (
-                    <div className="px-5 pb-5 text-sm text-zinc-400 leading-relaxed border-t border-zinc-800 pt-4">
+                    <div className="px-5 pb-5 text-sm text-mkt-ink/70 leading-relaxed border-t border-zinc-200 pt-4">
                       {faq.a}
                     </div>
                   )}
                 </Card>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -345,11 +347,11 @@ export default function FoundingPartnerPage() {
       {/* ── Footer note ───────────────────────────────────────────────────── */}
       <footer className="py-12">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-mkt-ink/60">
             Questions about the Founding Partner program?{' '}
             <a
               href="mailto:support@listworx.co"
-              className="text-zinc-400 hover:text-white underline transition-colors"
+              className="text-mkt-ink/70 hover:text-mkt-ink underline transition-colors"
             >
               support@listworx.co
             </a>

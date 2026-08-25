@@ -3,7 +3,42 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Youtube, Music2, Lock } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+// Public marketing routes get the light theme; everything else (dashboards, admin,
+// auth, the ACES demo, token-gated feedback) keeps the existing dark footer.
+const MARKETING_EXACT_PATHS = new Set([
+  '/',
+  '/about',
+  '/academy',
+  '/apply',
+  '/blog',
+  '/contact',
+  '/contractors',
+  '/faq',
+  '/founding-partner',
+  '/ironclad',
+  '/pricing',
+  '/privacy',
+  '/realtors',
+  '/terms',
+  '/media',
+  '/request',
+]);
+const MARKETING_PREFIXES = [
+  '/blog/',
+  '/contractors/',
+  '/contractor/',
+  '/partners/aces',
+  '/listing-studio',
+];
+
+function isMarketingPath(pathname: string) {
+  if (MARKETING_EXACT_PATHS.has(pathname)) return true;
+  return MARKETING_PREFIXES.some(prefix => pathname.startsWith(prefix));
+}
 
 const socials = [
   { key: 'company_facebook_url', label: 'Facebook', icon: Facebook },
@@ -20,6 +55,8 @@ function getContent(content: PublicContent, key: string, fallback = '') {
 }
 
 export default function Footer() {
+  const pathname = usePathname();
+  const light = isMarketingPath(pathname || '');
   const [content, setContent] = useState({} as PublicContent);
 
   useEffect(() => {
@@ -37,7 +74,7 @@ export default function Footer() {
     .filter(item => item.url.length > 0);
 
   return (
-    <footer className="bg-lw-dark text-zinc-400">
+    <footer className={cn(light ? 'bg-white text-mkt-ink/80' : 'bg-lw-dark text-zinc-400')}>
       <div className="container mx-auto px-4 pt-14 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
           <div className="md:col-span-4">
@@ -48,24 +85,24 @@ export default function Footer() {
                 className="h-8 w-auto"
               />
             </Link>
-            <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">{tagline}</p>
+            <p className={cn('text-sm leading-relaxed max-w-xs', light ? 'text-mkt-ink/70' : 'text-zinc-500')}>{tagline}</p>
 
             <div className="mt-6 space-y-3">
               {phone && (
-                <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} className="flex items-center gap-2.5 text-sm text-zinc-400 hover:text-lw-rust transition-colors">
+                <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} className={cn('flex items-center gap-2.5 text-sm hover:text-lw-rust transition-colors', light ? 'text-mkt-ink/80' : 'text-zinc-400')}>
                   <Phone className="h-4 w-4 text-lw-rust flex-shrink-0" />
                   {phone}
                 </a>
               )}
 
               {supportEmail && (
-                <a href={`mailto:${supportEmail}`} className="flex items-center gap-2.5 text-sm text-zinc-400 hover:text-lw-rust transition-colors">
+                <a href={`mailto:${supportEmail}`} className={cn('flex items-center gap-2.5 text-sm hover:text-lw-rust transition-colors', light ? 'text-mkt-ink/80' : 'text-zinc-400')}>
                   <Mail className="h-4 w-4 text-lw-rust flex-shrink-0" />
                   {supportEmail}
                 </a>
               )}
 
-              <div className="flex items-start gap-2.5 text-sm text-zinc-500">
+              <div className={cn('flex items-start gap-2.5 text-sm', light ? 'text-mkt-ink/70' : 'text-zinc-500')}>
                 <MapPin className="h-4 w-4 text-lw-rust flex-shrink-0 mt-0.5" />
                 <span>2147 Springdale Ln F104<br />Gallatin, TN 37066</span>
               </div>
@@ -76,7 +113,7 @@ export default function Footer() {
                 {visibleSocials.map(item => {
                   const Icon = item.icon;
                   return (
-                    <a key={item.key} href={item.url} target="_blank" rel="noreferrer" aria-label={item.label} className="flex h-9 w-9 items-center justify-center rounded-full border border-lw-dark-border text-zinc-400 hover:border-lw-rust hover:text-lw-rust transition-colors">
+                    <a key={item.key} href={item.url} target="_blank" rel="noreferrer" aria-label={item.label} className={cn('flex h-9 w-9 items-center justify-center rounded-full border hover:border-lw-rust hover:text-lw-rust transition-colors', light ? 'border-zinc-200 text-mkt-ink/70' : 'border-lw-dark-border text-zinc-400')}>
                       <Icon className="h-4 w-4" />
                     </a>
                   );
@@ -86,24 +123,24 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-2 md:col-start-6">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-zinc-300 mb-4">For Requestors</h4>
-            <ul className="space-y-2.5 text-sm"><li><Link href="/request" className="hover:text-lw-rust transition-colors">Request a Contractor</Link></li><li><Link href="/realtors" className="hover:text-lw-rust transition-colors">How It Works</Link></li><li><Link href="/requestor-dashboard" className="hover:text-lw-rust transition-colors">Your Dashboard</Link></li></ul>
+            <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4', light ? 'text-mkt-ink' : 'text-zinc-300')}>For Homeowners</h4>
+            <ul className="space-y-2.5 text-sm"><li><Link href="/request" className="hover:text-lw-rust transition-colors">Request a Contractor</Link></li><li><Link href="/#how-it-works" className="hover:text-lw-rust transition-colors">How It Works</Link></li><li><Link href="/realtors" className="hover:text-lw-rust transition-colors">For Realtors</Link></li><li><Link href="/requestor-dashboard" className="hover:text-lw-rust transition-colors">Your Dashboard</Link></li></ul>
           </div>
 
           <div className="md:col-span-2">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-zinc-300 mb-4 flex items-center gap-2">For Contractors<Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad" width={18} height={18} className="w-4 h-4 opacity-80" /></h4>
+            <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2', light ? 'text-mkt-ink' : 'text-zinc-300')}>For Contractors<Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad" width={18} height={18} className="w-4 h-4 opacity-80" /></h4>
             <ul className="space-y-2.5 text-sm"><li><Link href="/apply" className="hover:text-lw-rust transition-colors">Apply to Join</Link></li><li><Link href="/contractors" className="hover:text-lw-rust transition-colors">Why Partner With Us</Link></li><li><Link href="/ironclad" className="hover:text-lw-rust transition-colors">IronClad Standards</Link></li></ul>
           </div>
 
           <div className="md:col-span-2">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-zinc-300 mb-4">Company</h4>
-            <ul className="space-y-2.5 text-sm"><li><Link href="/about" className="hover:text-lw-rust transition-colors">About Us</Link></li><li><Link href="/contact" className="hover:text-lw-rust transition-colors">Contact</Link></li><li><Link href="/privacy" className="hover:text-lw-rust transition-colors">Privacy Policy</Link></li><li><Link href="/terms" className="hover:text-lw-rust transition-colors">Terms of Service</Link></li><li><Link href="/login" className="hover:text-lw-rust transition-colors">Login</Link></li></ul>
+            <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4', light ? 'text-mkt-ink' : 'text-zinc-300')}>Company</h4>
+            <ul className="space-y-2.5 text-sm"><li><Link href="/about" className="hover:text-lw-rust transition-colors">About Us</Link></li><li><Link href="/contact" className="hover:text-lw-rust transition-colors">Contact</Link></li><li><Link href="/faq" className="hover:text-lw-rust transition-colors">FAQ</Link></li><li><Link href="/privacy" className="hover:text-lw-rust transition-colors">Privacy Policy</Link></li><li><Link href="/terms" className="hover:text-lw-rust transition-colors">Terms of Service</Link></li><li><Link href="/login" className="hover:text-lw-rust transition-colors">Login</Link></li></ul>
           </div>
         </div>
 
-        <div className="border-t border-lw-dark-border pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-zinc-600">
+        <div className={cn('border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-sm', light ? 'border-zinc-200 text-mkt-ink/60' : 'border-lw-dark-border text-zinc-600')}>
           <p>&copy; 2026 ListWorx LLC. All rights reserved.</p>
-          <div className="flex items-center gap-4"><p className="text-xs text-zinc-700">Built in Gallatin, TN</p><Link href="/login?redirect=/admin/crm" className="inline-flex items-center gap-1.5 text-xs text-zinc-600 hover:text-lw-rust transition-colors"><Lock className="h-3.5 w-3.5" />Admin Login</Link></div>
+          <div className="flex items-center gap-4"><p className={cn('text-xs', light ? 'text-mkt-ink/50' : 'text-zinc-700')}>Built in Gallatin, TN</p><Link href="/login?redirect=/admin/crm" className={cn('inline-flex items-center gap-1.5 text-xs hover:text-lw-rust transition-colors', light ? 'text-mkt-ink/50' : 'text-zinc-600')}><Lock className="h-3.5 w-3.5" />Admin Login</Link></div>
         </div>
       </div>
     </footer>

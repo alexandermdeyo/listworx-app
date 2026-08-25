@@ -23,6 +23,7 @@ import {
   Building2,
   Star,
 } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 
 interface ContractorPublicProfile {
   id: string;
@@ -82,10 +83,10 @@ export default function ContractorPublicProfilePage() {
 
   if (loading) {
     return (
-      <PageShell surface="dark">
-        <Navigation />
+      <PageShell surface="marketing">
+        <Navigation variant="light" />
         <div className="flex min-h-[60vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-lw-rust" />
         </div>
       </PageShell>
     );
@@ -93,11 +94,11 @@ export default function ContractorPublicProfilePage() {
 
   if (notFound || !profile) {
     return (
-      <PageShell surface="dark">
-        <Navigation />
+      <PageShell surface="marketing">
+        <Navigation variant="light" />
         <div className="container mx-auto max-w-2xl px-4 py-20 text-center">
-          <h1 className="text-3xl font-bold mb-4">Contractor Not Found</h1>
-          <p className="text-muted-foreground mb-8">
+          <h1 className="text-3xl font-bold mb-4 text-mkt-ink">Contractor Not Found</h1>
+          <p className="text-mkt-ink/70 mb-8">
             This contractor profile is not available or has not been published yet.
           </p>
           <Link href="/contractors">
@@ -119,33 +120,33 @@ export default function ContractorPublicProfilePage() {
   });
 
   return (
-    <PageShell surface="dark">
-      <Navigation />
+    <PageShell surface="marketing">
+      <Navigation variant="light" />
 
       <div className="container mx-auto max-w-5xl px-4 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-start gap-6">
+            <Reveal immediate delay={0} className="flex items-start gap-6">
               {profile.logo_url ? (
                 <img
                   src={profile.logo_url}
                   alt={profile.company_name}
-                  className="h-20 w-20 rounded-xl border border-border bg-white p-1.5 object-contain flex-shrink-0"
+                  className="h-20 w-20 rounded-xl border border-zinc-200 bg-white p-1.5 object-contain flex-shrink-0"
                 />
               ) : (
-                <div className="h-20 w-20 rounded-xl border border-border bg-muted flex items-center justify-center flex-shrink-0">
-                  <Building2 className="h-8 w-8 text-muted-foreground" />
+                <div className="h-20 w-20 rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-center flex-shrink-0">
+                  <Building2 className="h-8 w-8 text-mkt-ink/50" />
                 </div>
               )}
 
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <h1 className="text-3xl font-bold text-foreground">
+                  <h1 className="text-3xl font-bold text-mkt-ink">
                     {profile.company_name}
                   </h1>
                 </div>
 
-                <p className="text-muted-foreground mb-3">{profile.owner_name}</p>
+                <p className="text-mkt-ink/70 mb-3">{profile.owner_name}</p>
 
                 <div className="flex flex-wrap gap-2">
                   {profile.ironclad_certified && (
@@ -161,74 +162,81 @@ export default function ContractorPublicProfilePage() {
                     </Badge>
                   )}
                   {tierLabel && (
-                    <Badge variant="secondary" className="gap-1">
+                    <Badge className="bg-lw-rust/10 text-lw-rust border-lw-rust/20 gap-1">
                       <Star className="h-3 w-3" />
                       {tierLabel}
                     </Badge>
                   )}
                 </div>
               </div>
-            </div>
+            </Reveal>
 
             {description && (
-              <Card className="p-6">
-                <h2 className="text-lg font-semibold mb-3">About</h2>
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                  {description}
-                </p>
-              </Card>
+              <Reveal delay={70}>
+                <Card className="p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm">
+                  <h2 className="text-lg font-semibold mb-3 text-mkt-ink">About</h2>
+                  <p className="text-mkt-ink/70 leading-relaxed whitespace-pre-line">
+                    {description}
+                  </p>
+                </Card>
+              </Reveal>
             )}
 
             {profile.trades.length > 0 && (
-              <Card className="p-6">
-                <h2 className="text-lg font-semibold mb-3">Trade Specialties</h2>
-                <div className="flex flex-wrap gap-2">
-                  {profile.trades.map((trade) => (
-                    <Badge key={trade.id} variant="outline" className="gap-1.5">
-                      <Briefcase className="h-3 w-3" />
-                      {trade.name}
-                    </Badge>
-                  ))}
-                </div>
-              </Card>
+              <Reveal delay={140}>
+                <Card className="p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm">
+                  <h2 className="text-lg font-semibold mb-3 text-mkt-ink">Trade Specialties</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.trades.map((trade) => (
+                      <Badge key={trade.id} className="gap-1.5 border-zinc-200 bg-white text-mkt-ink/70">
+                        <Briefcase className="h-3 w-3" />
+                        {trade.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </Card>
+              </Reveal>
             )}
 
             {Object.keys(countiesByState).length > 0 && (
-              <Card className="p-6">
-                <h2 className="text-lg font-semibold mb-3">Service Areas</h2>
-                <div className="space-y-4">
-                  {Object.entries(countiesByState).map(([stateCode, counties]) => (
-                    <div key={stateCode}>
-                      <p className="text-sm font-medium text-foreground mb-2">{stateCode}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {counties.sort().map((name) => (
-                          <span
-                            key={name}
-                            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs text-muted-foreground"
-                          >
-                            <MapPin className="h-3 w-3" />
-                            {name}
-                          </span>
-                        ))}
+              <Reveal delay={210}>
+                <Card className="p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm">
+                  <h2 className="text-lg font-semibold mb-3 text-mkt-ink">Service Areas</h2>
+                  <div className="space-y-4">
+                    {Object.entries(countiesByState).map(([stateCode, counties]) => (
+                      <div key={stateCode}>
+                        <p className="text-sm font-medium text-mkt-ink mb-2">{stateCode}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {counties.sort().map((name) => (
+                            <span
+                              key={name}
+                              className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs text-mkt-ink/70"
+                            >
+                              <MapPin className="h-3 w-3" />
+                              {name}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+                    ))}
+                  </div>
+                </Card>
+              </Reveal>
             )}
           </div>
 
           <div className="space-y-6">
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
+            <Reveal immediate delay={100}>
+            <Card className="p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm">
+              <h2 className="text-lg font-semibold mb-4 text-mkt-ink">Contact Information</h2>
               <div className="space-y-4">
                 {profile.phone && (
                   <a
                     href={`tel:${profile.phone}`}
-                    className="flex items-center gap-3 text-sm hover:text-primary transition-colors"
+                    className="flex items-center gap-3 text-sm text-mkt-ink hover:text-lw-rust transition-colors"
                   >
-                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Phone className="h-4 w-4 text-primary" />
+                    <div className="h-9 w-9 rounded-lg bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
+                      <Phone className="h-4 w-4 text-lw-rust" />
                     </div>
                     <span>{profile.phone}</span>
                   </a>
@@ -237,10 +245,10 @@ export default function ContractorPublicProfilePage() {
                 {profile.email && (
                   <a
                     href={`mailto:${profile.email}`}
-                    className="flex items-center gap-3 text-sm hover:text-primary transition-colors"
+                    className="flex items-center gap-3 text-sm text-mkt-ink hover:text-lw-rust transition-colors"
                   >
-                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Mail className="h-4 w-4 text-primary" />
+                    <div className="h-9 w-9 rounded-lg bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
+                      <Mail className="h-4 w-4 text-lw-rust" />
                     </div>
                     <span className="break-all">{profile.email}</span>
                   </a>
@@ -251,10 +259,10 @@ export default function ContractorPublicProfilePage() {
                     href={displayWebsite.startsWith('http') ? displayWebsite : `https://${displayWebsite}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-sm hover:text-primary transition-colors"
+                    className="flex items-center gap-3 text-sm text-mkt-ink hover:text-lw-rust transition-colors"
                   >
-                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Globe className="h-4 w-4 text-primary" />
+                    <div className="h-9 w-9 rounded-lg bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
+                      <Globe className="h-4 w-4 text-lw-rust" />
                     </div>
                     <span className="break-all">{displayWebsite}</span>
                   </a>
@@ -265,10 +273,10 @@ export default function ContractorPublicProfilePage() {
                     href={profile.google_business_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-sm hover:text-primary transition-colors"
+                    className="flex items-center gap-3 text-sm text-mkt-ink hover:text-lw-rust transition-colors"
                   >
-                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <ExternalLink className="h-4 w-4 text-primary" />
+                    <div className="h-9 w-9 rounded-lg bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
+                      <ExternalLink className="h-4 w-4 text-lw-rust" />
                     </div>
                     <span>Google Business Profile</span>
                   </a>
@@ -283,73 +291,78 @@ export default function ContractorPublicProfilePage() {
                 </Link>
               </div>
             </Card>
+            </Reveal>
 
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Quick Facts</h2>
-              <div className="space-y-3">
-                {profile.years_in_business != null && profile.years_in_business > 0 && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{profile.years_in_business} years in business</span>
+            <Reveal delay={70}>
+              <Card className="p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm">
+                <h2 className="text-lg font-semibold mb-4 text-mkt-ink">Quick Facts</h2>
+                <div className="space-y-3">
+                  {profile.years_in_business != null && profile.years_in_business > 0 && (
+                    <div className="flex items-center gap-3 text-sm text-mkt-ink/80">
+                      <Clock className="h-4 w-4 text-mkt-ink/50" />
+                      <span>{profile.years_in_business} years in business</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-3 text-sm text-mkt-ink/80">
+                    <MapPin className="h-4 w-4 text-mkt-ink/50" />
+                    <span>{profile.counties.length} counties served</span>
                   </div>
-                )}
-                <div className="flex items-center gap-3 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>{profile.counties.length} counties served</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <Briefcase className="h-4 w-4 text-muted-foreground" />
-                  <span>{profile.trades.length} trade specialties</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <Shield className="h-4 w-4 text-muted-foreground" />
-                  <span>
-                    Member since{' '}
-                    {new Date(profile.created_at).toLocaleDateString('en-US', {
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </div>
-              </div>
-            </Card>
-
-            {(profile.ironclad_certified || profile.founding_partner) && (
-              <Card className="p-6 bg-zinc-950 border-zinc-800">
-                <h2 className="text-lg font-semibold mb-4 text-white">Certifications</h2>
-                <div className="space-y-4">
-                  {profile.ironclad_certified && (
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src="/Ironclad_Cert_Partner_Final_Logo.png"
-                        alt="IronClad Certified"
-                        width={48}
-                        height={48}
-                        className="flex-shrink-0"
-                      />
-                      <div>
-                        <p className="text-sm font-semibold text-white">IronClad Certified</p>
-                        <p className="text-xs text-zinc-400">Vetted, verified, accountable</p>
-                      </div>
-                    </div>
-                  )}
-                  {profile.founding_partner && (
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src="/ironclad_founder_shield_logo.png"
-                        alt="Founding Partner"
-                        width={48}
-                        height={48}
-                        className="flex-shrink-0"
-                      />
-                      <div>
-                        <p className="text-sm font-semibold text-white">Founding Partner</p>
-                        <p className="text-xs text-zinc-400">Original network member</p>
-                      </div>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-3 text-sm text-mkt-ink/80">
+                    <Briefcase className="h-4 w-4 text-mkt-ink/50" />
+                    <span>{profile.trades.length} trade specialties</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-mkt-ink/80">
+                    <Shield className="h-4 w-4 text-mkt-ink/50" />
+                    <span>
+                      Member since{' '}
+                      {new Date(profile.created_at).toLocaleDateString('en-US', {
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  </div>
                 </div>
               </Card>
+            </Reveal>
+
+            {(profile.ironclad_certified || profile.founding_partner) && (
+              <Reveal delay={140}>
+                <Card className="p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm">
+                  <h2 className="text-lg font-semibold mb-4 text-mkt-ink">Certifications</h2>
+                  <div className="space-y-4">
+                    {profile.ironclad_certified && (
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src="/Ironclad_Cert_Partner_Final_Logo.png"
+                          alt="IronClad Certified"
+                          width={48}
+                          height={48}
+                          className="flex-shrink-0"
+                        />
+                        <div>
+                          <p className="text-sm font-semibold text-mkt-ink">IronClad Certified</p>
+                          <p className="text-xs text-mkt-ink/60">Vetted, verified, accountable</p>
+                        </div>
+                      </div>
+                    )}
+                    {profile.founding_partner && (
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src="/ironclad_founder_shield_logo.png"
+                          alt="Founding Partner"
+                          width={48}
+                          height={48}
+                          className="flex-shrink-0"
+                        />
+                        <div>
+                          <p className="text-sm font-semibold text-mkt-ink">Founding Partner</p>
+                          <p className="text-xs text-mkt-ink/60">Original network member</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </Reveal>
             )}
           </div>
         </div>

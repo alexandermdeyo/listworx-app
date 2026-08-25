@@ -6,7 +6,7 @@ export default function America250Banner() {
     <div className="w-full overflow-hidden shadow-lg" style={{ fontFamily: "'Barlow', sans-serif" }}>
 
       {/* Hero Banner Body */}
-      <div className="relative overflow-hidden flex flex-col" style={{ minHeight: 380, background: '#0B0E14' }}>
+      <div className="relative overflow-hidden flex flex-col" style={{ minHeight: 380, background: '#FFFFFF' }}>
 
         {/* Background flag image */}
         <div
@@ -18,8 +18,8 @@ export default function America250Banner() {
           }}
         />
 
-        {/* Dark cinematic overlay — ~60% dark */}
-        <div className="absolute inset-0 z-[1]" style={{ background: 'rgba(0,0,0,0.6)' }} />
+        {/* Light cinematic overlay — ~88% white, keeps the photo as a faint texture */}
+        <div className="absolute inset-0 z-[1]" style={{ background: 'rgba(255,255,255,0.88)' }} />
 
         {/* Orange left stripe */}
         <div className="absolute left-0 top-0 bottom-0 z-10" style={{ width: 5, background: '#E86B2B' }} />
@@ -55,14 +55,14 @@ export default function America250Banner() {
                 lineHeight: 1.0,
                 textTransform: 'uppercase',
                 letterSpacing: '-0.5px',
-                color: '#ffffff',
+                color: '#3F4041',
               }}
             >
-              <span style={{ color: '#ffffff' }}>America Wasn&apos;t</span><br />
-              <span style={{ color: '#ffffff' }}>Built By </span>
-              <span style={{ color: '#ffffff' }}>Algorithms.</span><br />
-              <span style={{ color: '#ffffff' }}>It Was Built By</span><br />
-              <span style={{ color: '#ffffff' }}>People Like You.</span>
+              <span style={{ color: '#3F4041' }}>America Wasn&apos;t</span><br />
+              <span style={{ color: '#3F4041' }}>Built By </span>
+              <span style={{ color: '#3F4041' }}>Algorithms.</span><br />
+              <span style={{ color: '#3F4041' }}>It Was Built By</span><br />
+              <span style={{ color: '#3F4041' }}>People Like You.</span>
             </h2>
 
             {/* Sub */}
@@ -72,7 +72,7 @@ export default function America250Banner() {
                 fontFamily: "'Barlow', sans-serif",
                 fontSize: 15,
                 fontWeight: 400,
-                color: '#C9CDD6',
+                color: 'rgba(63,64,65,0.75)',
                 lineHeight: 1.65,
                 maxWidth: 430,
                 paddingLeft: 14,
@@ -81,7 +81,7 @@ export default function America250Banner() {
             >
               250 years of tradespeople, craftsmen, and independent
               contractors — the hands that built everything worth having.{' '}
-              <strong style={{ color: '#ffffff', fontWeight: 600 }}>ListWorx is their network.</strong>
+              <strong style={{ color: '#3F4041', fontWeight: 600 }}>ListWorx is their network.</strong>
             </p>
 
             {/* CTA */}
@@ -123,10 +123,10 @@ export default function America250Banner() {
           </div>
         </div>
 
-        {/* Bottom bar — stays navy */}
+        {/* Bottom bar */}
         <div
           className="relative z-10 flex items-center justify-between px-8 md:px-16 py-3"
-          style={{ background: '#1B2A4A', borderTop: '3px solid #E86B2B' }}
+          style={{ background: '#F5F5F5', borderTop: '3px solid #E86B2B' }}
         >
           <p
             style={{
@@ -135,14 +135,14 @@ export default function America250Banner() {
               fontWeight: 600,
               letterSpacing: '3px',
               textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.45)',
+              color: 'rgba(63,64,65,0.6)',
             }}
           >
             Built on Trust. <span style={{ color: '#E86B2B' }}>Not Transactions.</span>
           </p>
           <div className="hidden sm:flex items-center gap-1.5">
             {[true, false, true, false, true, false, true].map((on, i) => (
-              <span key={i} style={{ color: on ? '#E86B2B' : 'rgba(255,255,255,0.18)', fontSize: 9 }}>★</span>
+              <span key={i} style={{ color: on ? '#E86B2B' : 'rgba(63,64,65,0.2)', fontSize: 9 }}>★</span>
             ))}
           </div>
           <p
@@ -153,10 +153,10 @@ export default function America250Banner() {
               fontWeight: 600,
               letterSpacing: '3px',
               textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.45)',
+              color: 'rgba(63,64,65,0.6)',
             }}
           >
-            <span style={{ color: '#ffffff' }}>ListWorx.co</span> — Largest Vetted Contractor Network in America
+            <span style={{ color: '#3F4041' }}>ListWorx.co</span> — Largest Vetted Contractor Network in America
           </p>
         </div>
       </div>

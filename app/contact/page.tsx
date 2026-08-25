@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { MapPin, Phone, Mail, Send } from 'lucide-react';
 import { useState } from 'react';
+import { Reveal } from '@/components/motion';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -53,26 +54,25 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
+      <Navigation variant="light" />
 
-      <div className="relative bg-lw-dark text-white overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:60px_60px]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-lw-dark to-transparent" />
-
+      <div className="relative bg-white overflow-hidden border-b border-zinc-200">
         <div className="relative container mx-auto px-4 py-24 md:py-32">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-block mb-6 px-4 py-2 bg-lw-rust/10 border border-lw-rust/20 rounded-full">
-              <span className="text-lw-rust font-semibold text-sm">Contact Us</span>
-            </div>
+            <Reveal immediate delay={0}>
+              <div className="inline-block mb-6 px-4 py-2 bg-lw-rust/10 border border-lw-rust/20 rounded-full">
+                <span className="text-lw-rust font-semibold text-sm">Contact Us</span>
+              </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-orange-100 to-white bg-clip-text text-transparent">
-              Get in Touch with ListWorx
-            </h1>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 text-mkt-ink">
+                Get in Touch with ListWorx
+              </h1>
 
-            <p className="text-xl text-zinc-300">
-              Have questions? We're here to help. Reach out and we'll get back to you as soon as possible.
-            </p>
+              <p className="text-xl text-mkt-ink/70">
+                Have questions? We're here to help. Reach out and we'll get back to you as soon as possible.
+              </p>
+            </Reveal>
           </div>
         </div>
       </div>
@@ -80,8 +80,8 @@ export default function ContactPage() {
       <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground mb-6">Send Us a Message</h2>
+            <Reveal as="div">
+              <h2 className="text-3xl font-bold text-mkt-ink mb-6">Send Us a Message</h2>
 
               {submitStatus === 'success' && (
                 <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
@@ -101,7 +101,7 @@ export default function ContactPage() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-mkt-ink mb-2">
                     Name *
                   </label>
                   <Input
@@ -117,7 +117,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-mkt-ink mb-2">
                     Email *
                   </label>
                   <Input
@@ -133,7 +133,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
+                  <label htmlFor="phone" className="block text-sm font-medium text-mkt-ink mb-2">
                     Phone
                   </label>
                   <Input
@@ -148,7 +148,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-mkt-ink mb-2">
                     Message *
                   </label>
                   <Textarea
@@ -173,11 +173,11 @@ export default function ContactPage() {
                   <Send className="ml-2 h-5 w-5" />
                 </Button>
               </form>
-            </div>
+            </Reveal>
 
-            <div className="space-y-8">
+            <Reveal as="div" delay={80} className="space-y-8">
               <div>
-                <h2 className="text-3xl font-bold text-foreground mb-6">Contact Information</h2>
+                <h2 className="text-3xl font-bold text-mkt-ink mb-6">Contact Information</h2>
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
@@ -185,8 +185,8 @@ export default function ContactPage() {
                       <MapPin className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Address</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="font-semibold text-mkt-ink mb-1">Address</h3>
+                      <p className="text-mkt-ink/70">
                         2147 Springdale Ln F104<br />
                         Gallatin, TN 37066
                       </p>
@@ -198,7 +198,7 @@ export default function ContactPage() {
                       <Phone className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Phone</h3>
+                      <h3 className="font-semibold text-mkt-ink mb-1">Phone</h3>
                       <a
                         href="tel:615-362-4996"
                         className="text-lw-rust hover:text-lw-rust-hover hover:underline transition-colors"
@@ -213,7 +213,7 @@ export default function ContactPage() {
                       <Mail className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Email</h3>
+                      <h3 className="font-semibold text-mkt-ink mb-1">Email</h3>
                       <a
                         href="mailto:adeyo@listworx.co"
                         className="text-lw-rust hover:text-lw-rust-hover hover:underline transition-colors"
@@ -225,21 +225,21 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="bg-muted/50 border border-border rounded-lg p-6">
-                <h3 className="font-semibold text-foreground mb-3">Office Hours</h3>
-                <div className="space-y-2 text-sm text-muted-foreground">
+              <div className="lw-card-light p-6">
+                <h3 className="font-semibold text-mkt-ink mb-3">Office Hours</h3>
+                <div className="space-y-2 text-sm text-mkt-ink/70">
                   <div className="flex justify-between">
                     <span>Monday - Friday:</span>
-                    <span className="font-medium text-foreground">9:00 AM - 5:00 PM CST</span>
+                    <span className="font-medium text-mkt-ink">9:00 AM - 5:00 PM CST</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Saturday - Sunday:</span>
-                    <span className="font-medium text-foreground">Closed</span>
+                    <span className="font-medium text-mkt-ink">Closed</span>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-lg overflow-hidden border border-border">
+              <div className="rounded-lg overflow-hidden border border-zinc-200">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3209.1234567890!2d-86.4526!3d36.3526!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDIxJzA5LjQiTiA4NsKwMjcnMDkuNCJX!5e0!3m2!1sen!2sus!4v1234567890"
                   width="100%"
@@ -251,7 +251,7 @@ export default function ContactPage() {
                   title="ListWorx Office Location"
                 ></iframe>
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </div>

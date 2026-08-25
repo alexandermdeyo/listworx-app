@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Navigation from '@/components/Navigation';
 import { PageShell } from '@/components/design-system';
+import { Reveal } from '@/components/motion';
 
 const PATHWAY_STEPS = [
   {
@@ -61,19 +62,19 @@ const ACES_BENEFITS = [
 
 export default function AcesPartnerPage() {
   return (
-    <PageShell surface="dark">
-      <Navigation />
+    <PageShell surface="marketing">
+      <Navigation variant="light" />
 
       {/* SECTION 1 — HERO */}
-      <section className="bg-lw-dark py-20 md:py-28">
+      <section className="bg-white py-20 md:py-28 border-b border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div>
-              <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-10 w-auto mb-6 rounded-md bg-white p-1.5" />
-              <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+            <Reveal immediate delay={0} as="div">
+              <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-10 w-auto mb-6 rounded-md bg-white p-1.5 border border-zinc-200" />
+              <h1 className="text-4xl md:text-6xl font-bold text-mkt-ink leading-tight mb-6">
                 You Prepare Them to Get Licensed. We Give Them Somewhere to Put That License to Work.
               </h1>
-              <p className="text-lg md:text-xl text-zinc-400 mb-10 max-w-xl">
+              <p className="text-lg md:text-xl text-mkt-ink/70 mb-10 max-w-xl">
                 American Contractors Exam Services and ListWorx share the same belief — that American tradespeople deserve more than a participation trophy. They deserve credentials that mean something, a network that respects their craft, and a pipeline that rewards their professionalism.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -84,18 +85,18 @@ export default function AcesPartnerPage() {
                   </Button>
                 </Link>
                 <a href="https://examprep.org" target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-base px-8 py-6">
+                  <Button size="lg" variant="outlineOrange" className="w-full sm:w-auto text-base px-8 py-6">
                     Learn About ACES
                   </Button>
                 </a>
               </div>
-            </div>
+            </Reveal>
 
-            <div className="flex justify-center lg:justify-end">
+            <Reveal immediate delay={100} as="div" className="flex justify-center lg:justify-end">
               <div className="rounded-2xl border-2 border-lw-rust bg-white p-10 md:p-14 shadow-xl">
                 <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="w-full max-w-sm h-auto" />
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -103,23 +104,23 @@ export default function AcesPartnerPage() {
       {/* SECTION 2 — THE PATHWAY */}
       <section className="bg-white py-20 md:py-28">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-bold text-lw-text text-center mb-16">
+          <Reveal as="h2" className="text-3xl md:text-5xl font-bold text-lw-text text-center mb-16">
             Get Licensed. Get Verified. Get Referred.
-          </h2>
+          </Reveal>
 
           <div className="relative">
             <div className="hidden lg:block absolute top-8 left-0 right-0 h-0.5 bg-lw-border-light" style={{ marginLeft: '10%', marginRight: '10%' }} />
 
             <div className="grid gap-10 lg:grid-cols-5">
               {PATHWAY_STEPS.map((step, i) => (
-                <div key={step.title} className="relative flex flex-col items-center text-center">
+                <Reveal key={step.title} delay={i * 70} className="relative flex flex-col items-center text-center">
                   <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-lw-rust text-white text-2xl font-bold shadow-md mb-5 bg-white border-4 border-lw-rust text-lw-rust">
                     {i + 1}
                   </div>
                   <step.icon className="h-6 w-6 text-lw-rust mb-3" />
                   <h3 className="font-bold text-lw-text mb-2">{step.title}</h3>
                   <p className="text-sm text-lw-text/60 max-w-[200px]">{step.description}</p>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -128,15 +129,15 @@ export default function AcesPartnerPage() {
 
       {/* SECTION 3 — PROMO CODE */}
       <section className="bg-lw-rust py-16 md:py-20">
-        <div className="container mx-auto px-4 text-center">
+        <Reveal as="div" className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
             ACES Graduates Get Priority Access
           </h2>
           <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8">
             You already did the hard work to get licensed. Use code <span className="font-semibold">ACES10</span> when you apply to ListWorx and get a discounted activation fee reserved for ACES graduates and students. Because the work you put in to get licensed should count for something.
           </p>
-          <div className="inline-block rounded-full bg-lw-dark px-8 py-3 mb-8">
-            <span className="text-2xl md:text-3xl font-bold text-white tracking-widest">ACES10</span>
+          <div className="inline-block rounded-full bg-white px-8 py-3 mb-8">
+            <span className="text-2xl md:text-3xl font-bold text-lw-rust tracking-widest">ACES10</span>
           </div>
           <div>
             <Link href="/apply">
@@ -146,48 +147,48 @@ export default function AcesPartnerPage() {
               </Button>
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* SECTION 4 — WHAT YOU GET */}
-      <section className="bg-lw-dark py-20 md:py-28">
+      <section className="bg-white py-20 md:py-28 border-t border-zinc-200">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-16">
+          <Reveal as="h2" className="text-3xl md:text-5xl font-bold text-mkt-ink text-center mb-16">
             What This Partnership Actually Means
-          </h2>
+          </Reveal>
 
           <div className="grid gap-12 md:grid-cols-2">
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-6">What You Get</h3>
+            <Reveal as="div">
+              <h3 className="text-2xl font-bold text-mkt-ink mb-6">What You Get</h3>
               <ul className="space-y-4">
                 {CONTRACTOR_BENEFITS.map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-lw-rust flex-shrink-0 mt-0.5" />
-                    <span className="text-zinc-300">{item}</span>
+                    <span className="text-mkt-ink/70">{item}</span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
 
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-6">What ACES Gets</h3>
+            <Reveal as="div" delay={80}>
+              <h3 className="text-2xl font-bold text-mkt-ink mb-6">What ACES Gets</h3>
               <ul className="space-y-4">
                 {ACES_BENEFITS.map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-lw-rust flex-shrink-0 mt-0.5" />
-                    <span className="text-zinc-300">{item}</span>
+                    <span className="text-mkt-ink/70">{item}</span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* SECTION 5 — ABOUT ACES */}
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-white py-20 md:py-28 border-t border-zinc-200">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
+          <Reveal as="div" className="max-w-3xl mx-auto text-center">
             <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-14 w-auto mx-auto mb-8" />
             <h2 className="text-3xl md:text-4xl font-bold text-lw-text mb-6">
               25 Years of Doing It Right
@@ -216,14 +217,14 @@ export default function AcesPartnerPage() {
             <a href="https://examprep.org" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-lw-rust hover:underline">
               examprep.org
             </a>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* SECTION 6 — CTA */}
-      <section className="bg-lw-dark py-20 md:py-28">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">
+      <section className="bg-white py-20 md:py-28 border-t border-zinc-200">
+        <Reveal as="div" className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-8">
             The License Is the Foundation. ListWorx Is What You Build On Top of It.
           </h2>
           <Link href="/apply">
@@ -232,7 +233,7 @@ export default function AcesPartnerPage() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
-        </div>
+        </Reveal>
       </section>
     </PageShell>
   );

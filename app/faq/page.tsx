@@ -3,6 +3,7 @@ import { CheckCircle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/design-system';
+import { Reveal } from '@/components/motion';
 
 const generalFaqs = [
   ['What is ListWorx?', 'ListWorx is a contractor referral network for realtors and homeowners. We match each request with up to three vetted, IronClad-certified contractors in your area. No referral fees. No bidding wars.'],
@@ -31,17 +32,17 @@ const requestorFaqs = [
 function FaqGroup({ title, faqs }: { title: string; faqs: string[][] }) {
   return (
     <section className="mb-12">
-      <h2 className="mb-6 text-3xl font-bold text-white">{title}</h2>
+      <h2 className="mb-6 text-3xl font-bold text-mkt-ink">{title}</h2>
       <div className="space-y-4">
         {faqs.map(([q, a]) => {
           const paragraphs = a.split('\n\n');
           return (
-            <div key={q} className="rounded-lg border border-lw-dark-border bg-lw-dark-card p-6">
-              <h3 className="mb-2 text-lg font-bold text-white">{q}</h3>
+            <div key={q} className="lw-card-light p-6">
+              <h3 className="mb-2 text-lg font-bold text-mkt-ink">{q}</h3>
               {paragraphs.map((para, i) => (
                 <p
                   key={i}
-                  className={`text-zinc-300 leading-relaxed${i < paragraphs.length - 1 ? ' mb-3' : ''}`}
+                  className={`text-mkt-ink/70 leading-relaxed${i < paragraphs.length - 1 ? ' mb-3' : ''}`}
                 >
                   {para}
                 </p>
@@ -56,26 +57,28 @@ function FaqGroup({ title, faqs }: { title: string; faqs: string[][] }) {
 
 export default function FaqPage() {
   return (
-    <PageShell surface="dark">
-      <Navigation />
+    <PageShell surface="marketing">
+      <Navigation variant="light" />
       <section className="container mx-auto px-4 py-16 md:py-24">
         <div className="mx-auto max-w-4xl">
-          <div className="mb-12 text-center">
-            <h1 className="mb-4 text-4xl md:text-6xl font-bold text-white">Frequently Asked Questions</h1>
-            <p className="text-lg text-zinc-300">Everything you need to know about ListWorx, IronClad certification, Founding Partner status, and how referrals work.</p>
-          </div>
-          <FaqGroup title="About ListWorx" faqs={generalFaqs} />
+          <Reveal as="div" className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl md:text-6xl font-bold text-mkt-ink">Frequently Asked Questions</h1>
+            <p className="text-lg text-mkt-ink/70">Everything you need to know about ListWorx, IronClad certification, Founding Partner status, and how referrals work.</p>
+          </Reveal>
+          <Reveal as="div">
+            <FaqGroup title="About ListWorx" faqs={generalFaqs} />
+          </Reveal>
           <FaqGroup title="Founding Partner Program" faqs={founderFaqs} />
           <FaqGroup title="For Realtors and Homeowners" faqs={requestorFaqs} />
-          <div className="mt-12 rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-zinc-900 to-zinc-800 p-8 text-center">
-            <h3 className="mb-3 text-2xl font-bold text-white">Still have questions?</h3>
-            <p className="mb-6 text-zinc-300">Email us at <a className="text-lw-rust hover:underline" href="mailto:adeyo@listworx.co">adeyo@listworx.co</a> and we will get back to you within one business day.</p>
+          <div className="mt-12 rounded-2xl border-2 border-lw-rust bg-orange-50/60 p-8 text-center">
+            <h3 className="mb-3 text-2xl font-bold text-mkt-ink">Still have questions?</h3>
+            <p className="mb-6 text-mkt-ink/70">Email us at <a className="text-lw-rust hover:underline" href="mailto:adeyo@listworx.co">adeyo@listworx.co</a> and we will get back to you within one business day.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/apply">
                 <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">Apply to Join the Network</Button>
               </Link>
               <Link href="/request">
-                <Button size="lg" variant="outline" className="border-lw-rust text-lw-rust hover:bg-lw-rust hover:text-white">Request a Referral</Button>
+                <Button size="lg" variant="outlineOrange">Request a Referral</Button>
               </Link>
             </div>
           </div>

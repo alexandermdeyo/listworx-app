@@ -18,6 +18,8 @@ const buttonVariants = cva(
           'bg-lw-dark-card text-lw-light border border-lw-dark-border hover:bg-zinc-700',
         ghost: 'hover:bg-lw-dark-card hover:text-lw-light',
         link: 'text-primary underline-offset-4 hover:underline',
+        outlineOrange:
+          'border-2 border-lw-rust bg-white text-lw-rust hover:bg-orange-50',
       },
       size: {
         default: 'h-10 px-4 py-2',

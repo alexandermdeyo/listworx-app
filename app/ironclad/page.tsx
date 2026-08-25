@@ -6,6 +6,7 @@ import { Shield, ChevronRight, Crown, Star, Award } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
+import { Reveal, RevealBadge } from '@/components/motion';
 
 const TM = () => (
   <sup style={{ fontSize: '0.45em', verticalAlign: 'super', opacity: 0.7, letterSpacing: 0 }}>™</sup>
@@ -66,22 +67,22 @@ const AGREEMENT_SECTIONS = [
 
 export default function IronCladStandardsPage() {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Navigation />
+    <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
+      <Navigation variant="light" />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-black">
+      <section className="relative overflow-hidden bg-white">
         <img
           src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1920&q=80"
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-black/70" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(220,38,38,0.12)_0%,_transparent_65%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-white/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(198,90,30,0.10)_0%,_transparent_65%)] pointer-events-none" />
         <div className="relative container mx-auto px-4 py-20 md:py-28">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="flex justify-center mb-8">
+            <RevealBadge className="flex justify-center mb-8">
               <Image
                 src="/Ironclad_Standards_Logo.png"
                 alt="IronClad Standards"
@@ -89,49 +90,51 @@ export default function IronCladStandardsPage() {
                 height={280}
                 className="w-44 md:w-60 h-auto"
               />
-            </div>
-            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-red-500/60 border border-red-900/30 rounded-full px-4 py-1.5 mb-7">
+            </RevealBadge>
+            <Reveal immediate delay={100} className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-lw-rust border border-mkt-navy/30 rounded-full px-4 py-1.5 mb-7">
               <Shield className="h-3 w-3" />
               The ListWorx Vetting &amp; Accountability Framework
-            </div>
-            <h1 className="font-display text-6xl md:text-8xl font-bold text-white mb-5 leading-none tracking-wide uppercase">
+            </Reveal>
+            <Reveal immediate delay={170} as="h1" className="font-display text-6xl md:text-8xl font-bold text-mkt-ink mb-5 leading-none tracking-wide uppercase">
               IronClad<br />
-              <span className="text-red-500">Standards<TM /></span>
-            </h1>
-            <p className="text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed mb-10">
-              The enforced compliance framework governing every contractor in the ListWorx network. Not a badge. A binding agreement.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/apply">
-                <Button size="lg" className="px-8 py-5 text-base rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold">
-                  Apply to Become a Partner
-                  <ChevronRight className="h-4 w-4 ml-1.5" />
-                </Button>
-              </Link>
-              <Link href="/request">
-                <Button size="lg" variant="outline" className="px-8 py-5 text-base rounded-lg border-zinc-700 text-zinc-200 hover:bg-zinc-900 hover:border-zinc-500">
-                  Request a Contractor
-                </Button>
-              </Link>
-            </div>
+              <span className="text-lw-rust">Standards<TM /></span>
+            </Reveal>
+            <Reveal immediate delay={240}>
+              <p className="text-lg text-mkt-ink/70 max-w-xl mx-auto leading-relaxed mb-10">
+                The enforced compliance framework governing every contractor in the ListWorx network. Not a badge. A binding agreement.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href="/apply">
+                  <Button size="lg" className="px-8 py-5 text-base rounded-lg bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold">
+                    Apply to Become a Partner
+                    <ChevronRight className="h-4 w-4 ml-1.5" />
+                  </Button>
+                </Link>
+                <Link href="/request">
+                  <Button size="lg" variant="outlineOrange" className="px-8 py-5 text-base rounded-lg">
+                    Request a Contractor
+                  </Button>
+                </Link>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* WHAT IT IS */}
-      <section className="py-14 md:py-18 bg-zinc-950 border-y border-zinc-800/60">
+      <section className="py-14 md:py-18 bg-white border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-5 gap-10 items-start">
               <div className="md:col-span-3">
-                <p className="text-xs font-semibold uppercase tracking-widest text-red-500/60 mb-3">What It Is</p>
-                <h2 className="font-display text-3xl md:text-4xl font-semibold text-white mb-5 leading-snug uppercase tracking-wide">
+                <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-3">What It Is</p>
+                <h2 className="font-display text-3xl md:text-4xl font-semibold text-mkt-ink mb-5 leading-snug uppercase tracking-wide">
                   A binding framework — not a badge
                 </h2>
-                <p className="text-zinc-400 text-base leading-[1.75] mb-4">
+                <p className="text-mkt-ink/70 text-base leading-[1.75] mb-4">
                   Every contractor in the ListWorx network must formally accept IronClad Standards before receiving a single referral. Acceptance is not a checkbox — it is a documented commitment covering licensing, insurance, communication, pricing, worksite conduct, and response to complaints.
                 </p>
-                <p className="text-zinc-400 text-base leading-[1.75]">
+                <p className="text-mkt-ink/70 text-base leading-[1.75]">
                   Approval is earned through manual review. It is not automatic, and it is not permanent. Contractors who fail to maintain these standards are removed from the network.
                 </p>
               </div>
@@ -141,11 +144,11 @@ export default function IronCladStandardsPage() {
                   { label: 'Not a one-time check', sub: 'Credentials and performance are monitored continuously' },
                   { label: 'Not optional', sub: 'All requirements are binding conditions of participation' },
                   { label: 'Not without consequence', sub: 'Violations are tracked and enforced progressively' },
-                ].map(item => (
-                  <div key={item.label} className="px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800">
-                    <p className="text-white font-semibold text-sm">{item.label}</p>
-                    <p className="text-zinc-500 text-xs mt-0.5">{item.sub}</p>
-                  </div>
+                ].map((item, index) => (
+                  <Reveal key={item.label} delay={index * 70} className="px-4 py-3 lw-card-light">
+                    <p className="text-mkt-ink font-semibold text-sm">{item.label}</p>
+                    <p className="text-mkt-ink/60 text-xs mt-0.5">{item.sub}</p>
+                  </Reveal>
                 ))}
               </div>
             </div>
@@ -154,18 +157,18 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* VETTING PROCESS */}
-      <section className="py-16 md:py-24 bg-black">
+      <section className="py-16 md:py-24 bg-white border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="mb-12">
-              <p className="text-xs font-semibold uppercase tracking-widest text-red-500/60 mb-3">Admission Process</p>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4 uppercase tracking-wide">How We Vet Contractors</h2>
-              <p className="text-zinc-400 text-base max-w-2xl leading-[1.75]">
+              <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-3">Admission Process</p>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-mkt-ink mb-4 uppercase tracking-wide">How We Vet Contractors</h2>
+              <p className="text-mkt-ink/70 text-base max-w-2xl leading-[1.75]">
                 Approval is a multi-step process. No contractor enters the network without completing each stage in sequence.
               </p>
             </div>
 
-            <div className="space-y-0 border border-zinc-800 rounded-xl overflow-hidden">
+            <div className="space-y-0 border border-zinc-200 rounded-xl overflow-hidden">
               {[
                 {
                   num: '01',
@@ -198,19 +201,19 @@ export default function IronCladStandardsPage() {
                   body: 'Approval is not permanent. License and insurance expiration dates are tracked in the system. Client and realtor feedback is collected after each referral. Performance data is reviewed on a continuous basis.',
                 },
               ].map((step, i, arr) => (
-                <div key={step.num} className={`flex gap-5 px-6 py-5 ${i < arr.length - 1 ? 'border-b border-zinc-800' : ''} bg-zinc-900/40`}>
-                  <div className="font-display text-3xl font-bold text-red-600/20 leading-none pt-0.5 min-w-[2.5rem]">{step.num}</div>
+                <Reveal key={step.num} delay={i * 80} className={`flex gap-5 px-6 py-5 ${i < arr.length - 1 ? 'border-b border-zinc-200' : ''} bg-white`}>
+                  <div className="font-display text-3xl font-bold text-lw-rust/20 leading-none pt-0.5 min-w-[2.5rem]">{step.num}</div>
                   <div>
-                    <h3 className="font-display text-base font-semibold text-white uppercase tracking-wide mb-1.5">{step.title}</h3>
-                    <p className="text-zinc-400 text-sm leading-[1.7]">{step.body}</p>
+                    <h3 className="font-display text-base font-semibold text-mkt-ink uppercase tracking-wide mb-1.5">{step.title}</h3>
+                    <p className="text-mkt-ink/70 text-sm leading-[1.7]">{step.body}</p>
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
 
-            <div className="mt-6 px-5 py-4 rounded-lg border border-red-900/30 bg-red-950/10">
-              <p className="text-zinc-300 text-sm leading-relaxed">
-                <strong className="text-white">No automatic approvals.</strong> Every application is reviewed by a ListWorx team member before any decision is made. This review may include direct outreach to verify submitted information.
+            <div className="mt-6 px-5 py-4 rounded-lg border border-lw-rust/30 bg-orange-50">
+              <p className="text-mkt-ink/80 text-sm leading-relaxed">
+                <strong className="text-mkt-ink">No automatic approvals.</strong> Every application is reviewed by a ListWorx team member before any decision is made. This review may include direct outreach to verify submitted information.
               </p>
             </div>
           </div>
@@ -218,21 +221,21 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* PARTNER AGREEMENT — WHITE CARD */}
-      <section className="py-16 md:py-24 bg-zinc-950 border-y border-zinc-800/60">
+      <section className="py-16 md:py-24 bg-white border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-10">
-              <p className="text-xs font-semibold uppercase tracking-widest text-red-500/60 mb-3">The Agreement</p>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-3 uppercase tracking-wide">
+              <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-3">The Agreement</p>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-mkt-ink mb-3 uppercase tracking-wide">
                 IronClad Standards<TM /> Partner Agreement
               </h2>
-              <p className="text-sm text-zinc-500">Version 1.0 &mdash; Effective February 2026</p>
+              <p className="text-sm text-mkt-ink/60">Version 1.0 &mdash; Effective February 2026</p>
             </div>
 
-            <div className="rounded-2xl overflow-hidden border border-zinc-300/20">
-              {/* Agreement header — dark branded bar */}
-              <div className="bg-zinc-900 border-b border-zinc-700/60 px-7 md:px-10 py-6">
-                <p className="text-zinc-300 text-[0.95rem] leading-[1.8]">
+            <div className="rounded-2xl overflow-hidden border border-zinc-200">
+              {/* Agreement header — branded bar */}
+              <div className="bg-orange-50 border-b border-zinc-200 px-7 md:px-10 py-6">
+                <p className="text-mkt-ink/80 text-[0.95rem] leading-[1.8]">
                   The IronClad Standards ("the Standards") establish the minimum performance, compliance, and accountability requirements for all ListWorx Partner Contractors. By formally accepting these Standards, Contractor commits to operating at a level of professionalism that protects Realtors, Homeowners, and the integrity of the ListWorx referral network. These Standards are a binding legal agreement — not a summary of preferences.
                 </p>
               </div>
@@ -242,10 +245,10 @@ export default function IronCladStandardsPage() {
                 {AGREEMENT_SECTIONS.map((section, i) => (
                   <div key={section.num}>
                     <div className="flex items-baseline gap-3 mb-3">
-                      <span className="font-display text-xs font-bold text-red-600 uppercase tracking-widest min-w-[1.5rem]">{section.num}.</span>
-                      <h4 className="font-display text-base font-bold text-zinc-900 uppercase tracking-wide">{section.title}</h4>
+                      <span className="font-display text-xs font-bold text-lw-rust uppercase tracking-widest min-w-[1.5rem]">{section.num}.</span>
+                      <h4 className="font-display text-base font-bold text-mkt-ink uppercase tracking-wide">{section.title}</h4>
                     </div>
-                    <p className="text-zinc-600 text-[0.9rem] leading-[1.85] pl-7">
+                    <p className="text-mkt-ink/70 text-[0.9rem] leading-[1.85] pl-7">
                       {section.body}
                     </p>
                     {i < AGREEMENT_SECTIONS.length - 1 && (
@@ -255,7 +258,7 @@ export default function IronCladStandardsPage() {
                 ))}
 
                 <div className="pt-2 border-t border-zinc-200 mt-4">
-                  <p className="text-zinc-400 text-xs text-center leading-relaxed">
+                  <p className="text-mkt-ink/60 text-xs text-center leading-relaxed">
                     IronClad Standards<TM /> is a trademark of ListWorx, LLC. All Partner Contractors must maintain continuous compliance as a condition of network participation. ListWorx reserves the right to amend these Standards with notice to active contractors.
                   </p>
                 </div>
@@ -266,13 +269,13 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ONGOING PERFORMANCE */}
-      <section className="py-16 md:py-24 bg-black">
+      <section className="py-16 md:py-24 bg-white border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="mb-12">
-              <p className="text-xs font-semibold uppercase tracking-widest text-red-500/60 mb-3">Section 3</p>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4 uppercase tracking-wide">Ongoing Expectations</h2>
-              <p className="text-zinc-400 text-base leading-[1.75] max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-3">Section 3</p>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-mkt-ink mb-4 uppercase tracking-wide">Ongoing Expectations</h2>
+              <p className="text-mkt-ink/70 text-base leading-[1.75] max-w-2xl">
                 Approval is the beginning — not the end. Active contractors are held to these standards continuously, and performance data is reviewed on an ongoing basis.
               </p>
             </div>
@@ -296,11 +299,11 @@ export default function IronCladStandardsPage() {
                   body: 'ListWorx tracks referral outcomes — including whether the client was contacted, whether an estimate was provided, and whether the job was completed. Persistent non-conversion without documented explanation is subject to formal performance review.',
                 },
               ].map(item => (
-                <div key={item.label} className="flex gap-5 p-5 rounded-xl border border-zinc-800 bg-zinc-900/50">
-                  <div className="w-1 bg-red-600 rounded-full flex-shrink-0" />
+                <div key={item.label} className="flex gap-5 p-5 lw-card-light">
+                  <div className="w-1 bg-lw-rust rounded-full flex-shrink-0" />
                   <div>
-                    <h3 className="font-display text-sm font-semibold text-white uppercase tracking-wide mb-2">{item.label}</h3>
-                    <p className="text-zinc-400 text-sm leading-[1.75]">{item.body}</p>
+                    <h3 className="font-display text-sm font-semibold text-mkt-ink uppercase tracking-wide mb-2">{item.label}</h3>
+                    <p className="text-mkt-ink/70 text-sm leading-[1.75]">{item.body}</p>
                   </div>
                 </div>
               ))}
@@ -312,9 +315,9 @@ export default function IronCladStandardsPage() {
                 { label: '100%', sub: 'Of contractors carry verified insurance on file' },
                 { label: 'Every Referral', sub: 'Generates a structured feedback request to the client' },
               ].map(stat => (
-                <div key={stat.label} className="text-center px-5 py-6 rounded-xl border border-zinc-800 bg-zinc-900/40">
-                  <div className="font-display text-3xl font-bold text-red-500 mb-1.5">{stat.label}</div>
-                  <div className="text-xs text-zinc-500 leading-snug">{stat.sub}</div>
+                <div key={stat.label} className="text-center px-5 py-6 lw-card-light">
+                  <div className="font-display text-3xl font-bold text-lw-rust mb-1.5">{stat.label}</div>
+                  <div className="text-xs text-mkt-ink/60 leading-snug">{stat.sub}</div>
                 </div>
               ))}
             </div>
@@ -323,18 +326,18 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ACCOUNTABILITY */}
-      <section className="py-16 md:py-24 bg-zinc-950 border-y border-zinc-800/60">
+      <section className="py-16 md:py-24 bg-white border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="mb-12">
-              <p className="text-xs font-semibold uppercase tracking-widest text-red-500/60 mb-3">Section 4</p>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4 uppercase tracking-wide">Accountability &amp; Review</h2>
-              <p className="text-zinc-400 text-base leading-[1.75] max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-3">Section 4</p>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-mkt-ink mb-4 uppercase tracking-wide">Accountability &amp; Review</h2>
+              <p className="text-mkt-ink/70 text-base leading-[1.75] max-w-2xl">
                 Feedback, complaints, and performance data are reviewed against each contractor's standing. The review process is documented, structured, and firm.
               </p>
             </div>
 
-            <div className="border border-zinc-800 rounded-xl overflow-hidden mb-6">
+            <div className="border border-zinc-200 rounded-xl overflow-hidden mb-6">
               {[
                 {
                   title: 'Structured Feedback',
@@ -349,15 +352,15 @@ export default function IronCladStandardsPage() {
                   body: 'Realtors in the ListWorx network may report conduct, missed responses, or performance issues directly. These reports are documented and contribute to the contractor\'s ongoing compliance record.',
                 },
               ].map((item, i, arr) => (
-                <div key={item.title} className={`px-6 py-5 ${i < arr.length - 1 ? 'border-b border-zinc-800' : ''} bg-zinc-900/40`}>
-                  <h3 className="font-display text-sm font-semibold text-white uppercase tracking-wide mb-2">{item.title}</h3>
-                  <p className="text-zinc-400 text-sm leading-[1.75]">{item.body}</p>
+                <div key={item.title} className={`px-6 py-5 ${i < arr.length - 1 ? 'border-b border-zinc-200' : ''} bg-white`}>
+                  <h3 className="font-display text-sm font-semibold text-mkt-ink uppercase tracking-wide mb-2">{item.title}</h3>
+                  <p className="text-mkt-ink/70 text-sm leading-[1.75]">{item.body}</p>
                 </div>
               ))}
             </div>
 
-            <div className="px-6 py-5 rounded-xl border border-zinc-700 bg-zinc-900/60">
-              <h3 className="font-display text-sm font-semibold text-white uppercase tracking-wide mb-3">Factors Reviewed in Performance Evaluations</h3>
+            <div className="px-6 py-5 lw-card-light">
+              <h3 className="font-display text-sm font-semibold text-mkt-ink uppercase tracking-wide mb-3">Factors Reviewed in Performance Evaluations</h3>
               <div className="grid sm:grid-cols-2 gap-2.5">
                 {[
                   'Referral response rate and response timing',
@@ -367,8 +370,8 @@ export default function IronCladStandardsPage() {
                   'Dispute resolution behavior and outcomes',
                   'Pattern of non-completion, ghosting, or abandonment',
                 ].map(item => (
-                  <div key={item} className="flex items-start gap-2.5 text-sm text-zinc-300">
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0 mt-1.5" />
+                  <div key={item} className="flex items-start gap-2.5 text-sm text-mkt-ink/80">
+                    <div className="w-1.5 h-1.5 rounded-full bg-lw-rust flex-shrink-0 mt-1.5" />
                     {item}
                   </div>
                 ))}
@@ -379,13 +382,13 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ENFORCEMENT */}
-      <section className="py-16 md:py-24 bg-black">
+      <section className="py-16 md:py-24 bg-white border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="mb-12">
-              <p className="text-xs font-semibold uppercase tracking-widest text-red-500/60 mb-3">Section 5</p>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4 uppercase tracking-wide">Enforcement &amp; Penalties</h2>
-              <p className="text-zinc-400 text-base leading-[1.75] max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-3">Section 5</p>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-mkt-ink mb-4 uppercase tracking-wide">Enforcement &amp; Penalties</h2>
+              <p className="text-mkt-ink/70 text-base leading-[1.75] max-w-2xl">
                 Standards without enforcement are not standards. The following actions apply progressively at ListWorx's discretion, based on the nature, frequency, and severity of documented violations.
               </p>
             </div>
@@ -396,33 +399,33 @@ export default function IronCladStandardsPage() {
                   level: 'Level 1',
                   trigger: 'First documented issue',
                   action: 'Written notice from ListWorx. Contractor is given the opportunity to respond and resolve the issue within a defined window.',
-                  border: 'border-amber-700/30',
-                  bg: 'bg-amber-950/15',
-                  badge: 'text-amber-400 border-amber-700/40',
+                  border: 'border-amber-200',
+                  bg: 'bg-amber-50',
+                  badge: 'text-amber-700 border-amber-300',
                 },
                 {
                   level: 'Level 2',
                   trigger: 'Repeated or unresolved issues',
                   action: 'Referral priority reduced. Contractor placed on formal performance review. Subscription tier may be downgraded pending resolution.',
-                  border: 'border-orange-700/30',
-                  bg: 'bg-orange-950/15',
-                  badge: 'text-orange-400 border-orange-700/40',
+                  border: 'border-orange-200',
+                  bg: 'bg-orange-50',
+                  badge: 'text-orange-700 border-orange-300',
                 },
                 {
                   level: 'Level 3',
                   trigger: 'Sustained violations or material breach',
                   action: 'Suspension from receiving new referrals. Access to the ListWorx network is paused pending a formal review and response from the contractor.',
-                  border: 'border-red-700/30',
-                  bg: 'bg-red-950/15',
-                  badge: 'text-red-400 border-red-700/40',
+                  border: 'border-red-200',
+                  bg: 'bg-red-50',
+                  badge: 'text-red-700 border-red-300',
                 },
                 {
                   level: 'Level 4',
                   trigger: 'Fraud, misrepresentation, or irreparable breach',
                   action: 'Immediate and permanent removal from the ListWorx network. No refund of subscription fees. The contractor may not reapply.',
-                  border: 'border-red-900/50',
-                  bg: 'bg-red-950/30',
-                  badge: 'text-red-300 border-red-800/50',
+                  border: 'border-red-300',
+                  bg: 'bg-red-100',
+                  badge: 'text-red-800 border-red-400',
                 },
               ].map(item => (
                 <div key={item.level} className={`p-5 rounded-xl border ${item.border} ${item.bg}`}>
@@ -432,12 +435,12 @@ export default function IronCladStandardsPage() {
                     </span>
                     <div className="flex-1 grid sm:grid-cols-2 gap-3">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-1">Trigger</p>
-                        <p className="text-zinc-200 text-sm leading-snug">{item.trigger}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-mkt-ink/60 mb-1">Trigger</p>
+                        <p className="text-mkt-ink text-sm leading-snug">{item.trigger}</p>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-1">Action Taken</p>
-                        <p className="text-zinc-200 text-sm leading-snug">{item.action}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-mkt-ink/60 mb-1">Action Taken</p>
+                        <p className="text-mkt-ink text-sm leading-snug">{item.action}</p>
                       </div>
                     </div>
                   </div>
@@ -445,9 +448,9 @@ export default function IronCladStandardsPage() {
               ))}
             </div>
 
-            <div className="p-6 md:p-7 rounded-xl border-2 border-red-900/40 bg-red-950/15">
-              <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide mb-3">Grounds for Immediate Removal</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed mb-4">
+            <div className="p-6 md:p-7 rounded-xl border-2 border-red-300 bg-red-50">
+              <h3 className="font-display text-sm font-bold text-mkt-ink uppercase tracking-wide mb-3">Grounds for Immediate Removal</h3>
+              <p className="text-mkt-ink/70 text-sm leading-relaxed mb-4">
                 The following are grounds for immediate and permanent removal from the network, without prior notice, without warning period, and without refund of any fees:
               </p>
               <div className="grid sm:grid-cols-2 gap-2.5">
@@ -459,7 +462,7 @@ export default function IronCladStandardsPage() {
                   'Criminal conduct related to contracting activities',
                   'Failure to disclose known material defects',
                 ].map(item => (
-                  <div key={item} className="flex items-start gap-2.5 text-sm text-zinc-300">
+                  <div key={item} className="flex items-start gap-2.5 text-sm text-mkt-ink/80">
                     <div className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0 mt-1.5" />
                     {item}
                   </div>
@@ -471,12 +474,12 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* WHY IT MATTERS */}
-      <section className="py-16 md:py-20 bg-zinc-950 border-y border-zinc-800/60">
+      <section className="py-16 md:py-20 bg-white border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="mb-10">
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-3 uppercase tracking-wide">Why It Matters</h2>
-              <p className="text-zinc-400 text-base leading-[1.75] max-w-2xl">
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-mkt-ink mb-3 uppercase tracking-wide">Why It Matters</h2>
+              <p className="text-mkt-ink/70 text-base leading-[1.75] max-w-2xl">
                 For realtors and homeowners, these standards translate directly into reduced risk, fewer surprises, and more predictable outcomes.
               </p>
             </div>
@@ -507,10 +510,10 @@ export default function IronCladStandardsPage() {
                   body: 'When you refer a contractor through ListWorx, you are referring someone who has passed a formal vetting process and is held to documented, enforceable standards.',
                 },
               ].map(item => (
-                <div key={item.title} className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/50 hover:border-red-900/40 transition-colors">
-                  <div className="w-1 h-4 bg-red-600 rounded-full mb-3" />
-                  <h3 className="font-display text-sm font-semibold text-white uppercase tracking-wide mb-2">{item.title}</h3>
-                  <p className="text-zinc-400 text-sm leading-[1.75]">{item.body}</p>
+                <div key={item.title} className="p-5 lw-card-light hover:border-lw-rust/40 transition-colors">
+                  <div className="w-1 h-4 bg-lw-rust rounded-full mb-3" />
+                  <h3 className="font-display text-sm font-semibold text-mkt-ink uppercase tracking-wide mb-2">{item.title}</h3>
+                  <p className="text-mkt-ink/70 text-sm leading-[1.75]">{item.body}</p>
                 </div>
               ))}
             </div>
@@ -519,7 +522,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* FOUNDING PARTNER CREDIBILITY */}
-      <section className="py-16 md:py-20 bg-black border-y border-amber-900/30">
+      <section className="py-16 md:py-20 bg-white border-t border-amber-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
@@ -533,26 +536,26 @@ export default function IronCladStandardsPage() {
                 />
               </div>
               <div className="text-center md:text-left">
-                <Badge className="mb-3 bg-amber-600/15 text-amber-500 border-amber-600/30">
+                <Badge className="mb-3 bg-amber-50 text-amber-700 border-amber-300">
                   <Crown className="h-3 w-3 mr-1" />
                   Network Launch — Limited Spots
                 </Badge>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                <h2 className="text-2xl md:text-3xl font-bold text-mkt-ink mb-3">
                   Founding Partners Set the Standard
                 </h2>
-                <p className="text-zinc-400 text-base leading-relaxed mb-5">
+                <p className="text-mkt-ink/70 text-base leading-relaxed mb-5">
                   The contractors who join the ListWorx network during the founding period earn permanent Founding Partner recognition. These are the professionals who believe in accountability-first contracting — and back it up by committing early. Founding Partner status is a permanent mark of credibility that cannot be earned after the launch window closes.
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center md:justify-start mb-6">
-                  <div className="flex items-center gap-2 text-sm text-amber-400">
+                  <div className="flex items-center gap-2 text-sm text-amber-700">
                     <Star className="h-4 w-4" />
                     <span>Permanent badge</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-amber-400">
+                  <div className="flex items-center gap-2 text-sm text-amber-700">
                     <Shield className="h-4 w-4" />
                     <span>Priority positioning</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-amber-400">
+                  <div className="flex items-center gap-2 text-sm text-amber-700">
                     <Award className="h-4 w-4" />
                     <span>Launch-period exclusive</span>
                   </div>
@@ -570,7 +573,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* BOTTOM CTA */}
-      <section className="py-20 md:py-28 bg-black">
+      <section className="py-20 md:py-28 bg-white border-t border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <Image
@@ -580,21 +583,21 @@ export default function IronCladStandardsPage() {
               height={100}
               className="w-16 md:w-20 h-auto mx-auto mb-8 opacity-90"
             />
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-4 uppercase tracking-wide">
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-mkt-ink mb-4 uppercase tracking-wide">
               Ready to Join the Network?
             </h2>
-            <p className="text-zinc-400 text-base mb-10 max-w-lg mx-auto leading-[1.75]">
+            <p className="text-mkt-ink/70 text-base mb-10 max-w-lg mx-auto leading-[1.75]">
               Applications are reviewed manually. If your credentials are in order and your business meets the standards above, approval typically takes 24–48 hours.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/apply">
-                <Button size="lg" className="px-10 py-5 text-base rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold">
+                <Button size="lg" className="px-10 py-5 text-base rounded-lg bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold">
                   Apply as a Contractor
                   <ChevronRight className="h-4 w-4 ml-1.5" />
                 </Button>
               </Link>
               <Link href="/request">
-                <Button size="lg" variant="outline" className="px-10 py-5 text-base rounded-lg border-zinc-700 text-zinc-200 hover:bg-zinc-900 hover:border-zinc-500">
+                <Button size="lg" variant="outlineOrange" className="px-10 py-5 text-base rounded-lg">
                   Request a Contractor
                 </Button>
               </Link>

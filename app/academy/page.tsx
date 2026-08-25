@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Navigation from '@/components/Navigation';
 import { PageShell } from '@/components/design-system';
+import { Reveal } from '@/components/motion';
 
 const COURSE_CATEGORIES = [
   {
@@ -56,23 +57,27 @@ const COURSE_CATEGORIES = [
 
 export default function AcademyPage() {
   return (
-    <PageShell surface="dark">
-      <Navigation />
+    <PageShell surface="marketing">
+      <Navigation variant="light" />
 
       {/* SECTION 1 — HERO */}
-      <section className="bg-lw-dark py-20 md:py-28">
+      <section className="bg-white py-20 md:py-28">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">We&apos;re Committed to Making You a Better Contractor.</h1>
-          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto">
-            ListWorx isn&apos;t just a referral network. We&apos;re building something bigger — a platform where American tradespeople get the resources, credentials, and connections they need to build a business that lasts. ListWorx Academy is part of that commitment.
-          </p>
+          <Reveal immediate delay={0}>
+            <h1 className="text-4xl md:text-6xl font-bold text-mkt-ink mb-6">We&apos;re Committed to Making You a Better Contractor.</h1>
+          </Reveal>
+          <Reveal immediate delay={100}>
+            <p className="text-lg md:text-xl text-mkt-ink/70 max-w-2xl mx-auto">
+              ListWorx isn&apos;t just a referral network. We&apos;re building something bigger — a platform where American tradespeople get the resources, credentials, and connections they need to build a business that lasts. ListWorx Academy is part of that commitment.
+            </p>
+          </Reveal>
         </div>
       </section>
 
       {/* SECTION 2 — FEATURED PARTNER */}
       <section className="bg-white py-20 md:py-28">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto rounded-2xl border-2 border-lw-rust bg-orange-50/40 p-8 md:p-12 text-center">
+          <Reveal as="div" className="max-w-4xl mx-auto rounded-2xl border-2 border-lw-rust bg-orange-50/40 p-8 md:p-12 text-center">
             <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-6">Official Licensing Partner</p>
             <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-14 w-auto mx-auto mb-8 rounded-md bg-white p-1.5 border border-lw-rust/20" />
             <p className="text-lg text-lw-text/80 leading-relaxed max-w-2xl mx-auto mb-8">
@@ -89,58 +94,59 @@ export default function AcademyPage() {
             <p className="text-sm text-lw-text/50">
               ListWorx members get access to ACES courses directly inside their contractor dashboard.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* SECTION 3 — COURSE CATEGORIES */}
       <section className="bg-white pb-20 md:pb-28">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-bold text-lw-text text-center mb-16">
+          <Reveal as="h2" className="text-3xl md:text-5xl font-bold text-lw-text text-center mb-16">
             What You Will Learn
-          </h2>
+          </Reveal>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-            {COURSE_CATEGORIES.map((category) => (
-              <div
-                key={category.title}
-                className={`rounded-xl border p-6 flex flex-col ${
-                  category.poweredByAces ? 'border-lw-rust border-2 bg-orange-50/30' : 'border-lw-border-light bg-white'
-                }`}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="p-2.5 rounded-lg bg-white border border-lw-border-light">
-                    <category.icon className="h-6 w-6 text-lw-rust" />
+            {COURSE_CATEGORIES.map((category, index) => (
+              <Reveal key={category.title} delay={index * 70}>
+                <div
+                  className={`lw-hover-lift rounded-xl border p-6 flex flex-col ${
+                    category.poweredByAces ? 'border-lw-rust border-2 bg-orange-50/30' : 'border-lw-border-light bg-white'
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="p-2.5 rounded-lg bg-white border border-lw-border-light">
+                      <category.icon className="h-6 w-6 text-lw-rust" />
+                    </div>
+                    <span
+                      className={`text-xs font-bold px-3 py-1 rounded-full ${
+                        category.status === 'Available Now'
+                          ? 'bg-lw-rust text-white'
+                          : 'bg-gray-200 text-gray-600'
+                      }`}
+                    >
+                      {category.status}
+                    </span>
                   </div>
-                  <span
-                    className={`text-xs font-bold px-3 py-1 rounded-full ${
-                      category.status === 'Available Now'
-                        ? 'bg-lw-rust text-white'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}
-                  >
-                    {category.status}
-                  </span>
+
+                  {category.poweredByAces && (
+                    <span className="inline-block text-[11px] font-bold uppercase tracking-wide text-lw-rust mb-1.5">
+                      Powered by ACES
+                    </span>
+                  )}
+
+                  <h3 className="font-bold text-lw-text mb-2">{category.title}</h3>
+                  <p className="text-sm text-lw-text/60 flex-1">{category.description}</p>
                 </div>
-
-                {category.poweredByAces && (
-                  <span className="inline-block text-[11px] font-bold uppercase tracking-wide text-lw-rust mb-1.5">
-                    Powered by ACES
-                  </span>
-                )}
-
-                <h3 className="font-bold text-lw-text mb-2">{category.title}</h3>
-                <p className="text-sm text-lw-text/60 flex-1">{category.description}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* SECTION 4 — CTA */}
-      <section className="bg-lw-dark py-20 md:py-28">
+      <Reveal as="section" className="bg-white border-t border-zinc-200 py-20 md:py-28">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">
+          <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-8">
             Your License Is the Start. We Help You Build the Rest.
           </h2>
           <Link href="/apply">
@@ -149,11 +155,11 @@ export default function AcademyPage() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
-          <p className="text-sm text-zinc-500 mt-6">
+          <p className="text-sm text-mkt-ink/60 mt-6">
             Already a ListWorx member? Access Academy from your contractor dashboard.
           </p>
         </div>
-      </section>
+      </Reveal>
     </PageShell>
   );
 }

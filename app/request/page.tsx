@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown, ExternalLink } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -76,9 +76,11 @@ function normalizeClientType(role: string | null | undefined) {
   return 'Homeowner';
 }
 
-export default function RequestPage() {
+function RequestPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
+  const [pendingCategoryName, setPendingCategoryName] = useState<string | null>(null);
 
   const [authReady, setAuthReady] = useState(false);
   const [dashboardUrl, setDashboardUrl] = useState<string | null>(null);
@@ -107,6 +109,36 @@ export default function RequestPage() {
     urgencyLevel: 'Standard',
     description: '',
   });
+
+  // Prefill from the homepage job-request widget (?category=&zip=). ZIP is an
+  // independent field, so it applies immediately; category selection depends
+  // on the county-scoped `categories` list below, so we stash the desired
+  // name and apply it once that list has loaded (see the effect after it).
+  useEffect(() => {
+    const zip = searchParams.get('zip');
+    const category = searchParams.get('category');
+
+    if (zip) {
+      setFormData((prev) => ({ ...prev, propertyZip: formatZipCode(zip) }));
+    }
+    if (category) {
+      setPendingCategoryName(category);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!pendingCategoryName || categories.length === 0) return;
+
+    const match = categories.find(
+      (c) => c.name.toLowerCase() === pendingCategoryName.toLowerCase()
+    );
+
+    if (match) {
+      setSelectedCategories((prev) => (prev.includes(match.id) ? prev : [...prev, match.id]));
+    }
+    setPendingCategoryName(null);
+  }, [categories, pendingCategoryName]);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -302,7 +334,7 @@ export default function RequestPage() {
 
   if (!authReady) {
     return (
-      <PageShell surface="dark" className="flex items-center justify-center">
+      <PageShell surface="marketing" className="flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </PageShell>
     );
@@ -310,13 +342,13 @@ export default function RequestPage() {
 
   if (matching) {
     return (
-      <PageShell surface="dark">
-        <Navigation />
+      <PageShell surface="marketing">
+        <Navigation variant="light" />
         <div className="container mx-auto px-4 py-16 flex justify-center">
-          <Card className="w-full max-w-xl p-10 text-center">
+          <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm w-full max-w-xl p-10 text-center">
             <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Finding Your Referrals</h2>
-            <p className="text-muted-foreground">
+            <h2 className="text-2xl font-bold mb-2 text-mkt-ink">Finding Your Referrals</h2>
+            <p className="text-mkt-ink/70">
               Matching your request with vetted contractors now.
             </p>
           </Card>
@@ -327,14 +359,14 @@ export default function RequestPage() {
 
   if (matched) {
     return (
-      <PageShell surface="dark">
-        <Navigation />
+      <PageShell surface="marketing">
+        <Navigation variant="light" />
         <div className="container mx-auto max-w-5xl px-4 py-12">
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold mb-3">
+            <h1 className="text-4xl font-bold mb-3 text-mkt-ink">
               {contractors.length > 0 ? 'Your Referrals Are Ready' : 'Request Received'}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-mkt-ink/70">
               {contractors.length > 0
                 ? `Here are your three vetted contractor matches. We've also sent this information to ${formData.clientEmail}, and you can find it anytime in your dashboard. Questions? Contact us at support@listworx.co.`
                 : 'Your request was saved successfully, but no active contractors matched yet.'}
@@ -343,46 +375,46 @@ export default function RequestPage() {
 
           {contractors.length > 0 ? (
             <>
-              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-lw-rust/10 p-4 text-sm text-zinc-200">These three contractors have been vetted by ListWorx and hold active IronClad Standards certification. Contact them directly — ListWorx does not manage scheduling or payments.</div>
+              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-orange-50 p-4 text-sm text-mkt-ink/80">These three contractors have been vetted by ListWorx and hold active IronClad Standards certification. Contact them directly — ListWorx does not manage scheduling or payments.</div>
               <div className="grid md:grid-cols-3 gap-6 mb-6">
               {contractors.map((contractor, index) => (
-                <Card key={contractor.id} className="p-6">
+                <Card key={contractor.id} className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
                   <div className="mb-4">
-                    <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                    <div className="text-xs uppercase tracking-wider text-mkt-ink/60 mb-1">
                       Referral {index + 1}
                     </div>
-                    <h3 className="text-xl font-bold">{contractor.company_name}</h3>
+                    <h3 className="text-xl font-bold text-mkt-ink">{contractor.company_name}</h3>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {contractor.ironclad_accepted !== false && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-xs text-emerald-500">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs text-emerald-700">
                           <Shield className="h-3 w-3" /> IronClad
                         </span>
                       )}
                       {contractor.founder_status && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-1 text-xs text-amber-500">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-1 text-xs text-amber-700">
                           <Crown className="h-3 w-3" /> Founding Partner
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                    <p className="text-sm text-mkt-ink/60 flex items-center gap-1">
                       <User className="h-3 w-3" />
                       {contractor.owner_name}
                     </p>
                   </div>
 
                   <div className="space-y-3 text-sm">
-                    <p className="text-muted-foreground">Trade: {contractor.trade || 'Home service'}</p>
-                    <p className="text-muted-foreground">Years in business: {contractor.years_in_business ?? 'Available on request'}</p>
-                    <p className="text-muted-foreground">Response time: {contractor.response_time || 'Typically within 24 hours'}</p>
+                    <p className="text-mkt-ink/60">Trade: {contractor.trade || 'Home service'}</p>
+                    <p className="text-mkt-ink/60">Years in business: {contractor.years_in_business ?? 'Available on request'}</p>
+                    <p className="text-mkt-ink/60">Response time: {contractor.response_time || 'Typically within 24 hours'}</p>
                     <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4 text-primary" />
-                      <a href={`tel:${contractor.phone}`} className="hover:text-primary">
+                      <a href={`tel:${contractor.phone}`} className="text-mkt-ink hover:text-primary">
                         {contractor.phone}
                       </a>
                     </div>
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 text-primary" />
-                      <a href={`mailto:${contractor.email}`} className="hover:text-primary break-all">
+                      <a href={`mailto:${contractor.email}`} className="text-mkt-ink hover:text-primary break-all">
                         {contractor.email}
                       </a>
                     </div>
@@ -397,14 +429,14 @@ export default function RequestPage() {
                           }
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="hover:text-primary break-all"
+                          className="text-mkt-ink hover:text-primary break-all"
                         >
                           {contractor.website}
                         </a>
                       </div>
                     )}
                     {contractor.bio && (
-                      <p className="text-muted-foreground pt-2">{contractor.bio}</p>
+                      <p className="text-mkt-ink/60 pt-2">{contractor.bio}</p>
                     )}
                     <a
                       href={`/contractors/${contractor.id}`}
@@ -419,25 +451,25 @@ export default function RequestPage() {
                 </Card>
               ))}
               </div>
-              <p className="mb-10 text-center text-sm text-zinc-400">Didn&apos;t hear back within 24 hours? Let us know at support@listworx.co and we&apos;ll follow up with the contractor on your behalf.</p>
+              <p className="mb-10 text-center text-sm text-mkt-ink/60">Didn&apos;t hear back within 24 hours? Let us know at support@listworx.co and we&apos;ll follow up with the contractor on your behalf.</p>
             </>
           ) : (
-            <Card className="p-8 text-center mb-10">
-              <p className="text-muted-foreground">
+            <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8 text-center mb-10">
+              <p className="text-mkt-ink/60">
                 No contractors matched yet. Your request is still saved in your dashboard.
               </p>
             </Card>
           )}
 
           <div className="flex justify-center gap-4">
-            <Button variant="outline" onClick={() => router.push('/requestor-dashboard')}>
+            <Button variant="outlineOrange" onClick={() => router.push('/requestor-dashboard')}>
               View My Requests
             </Button>
             <Button onClick={resetForm}>Submit Another Request</Button>
           </div>
 
           {requestId && (
-            <p className="text-center text-xs text-muted-foreground mt-6">
+            <p className="text-center text-xs text-mkt-ink/50 mt-6">
               Request ID: {requestId}
             </p>
           )}
@@ -447,11 +479,11 @@ export default function RequestPage() {
   }
 
   return (
-    <PageShell surface="dark">
-      <Navigation />
+    <PageShell surface="marketing">
+      <Navigation variant="light" />
       {dashboardUrl && (
-        <div className="w-full bg-zinc-900 border-l-4 border-lw-rust px-6 py-3 flex items-center justify-between">
-          <p className="text-sm text-zinc-300">
+        <div className="w-full bg-orange-50 border-l-4 border-lw-rust px-6 py-3 flex items-center justify-between">
+          <p className="text-sm text-mkt-ink/80">
             You are already logged in. Want to go to your dashboard instead?
           </p>
           <Link
@@ -469,7 +501,7 @@ export default function RequestPage() {
           className="absolute inset-0 h-full w-full object-cover"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-black/65" />
+        <div className="absolute inset-0 bg-white/90" />
         <div className="relative z-10 container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-10">
           <img
@@ -478,19 +510,19 @@ export default function RequestPage() {
             className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
             aria-hidden="true"
           />
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4 break-words">Request a Contractor Referral</h1>
-          <p className="text-xl text-muted-foreground">
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4 break-words text-mkt-ink">Request a Contractor Referral</h1>
+          <p className="text-xl text-mkt-ink/70">
             Submit your job details below. We&apos;ll return exactly three vetted, IronClad-certified contractors in your area — instantly, in under 30 seconds. No account required.
           </p>
         </div>
 
-        <Card className="p-8">
+        <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>
-              <h2 className="text-2xl font-bold mb-4">Your Information</h2>
+              <h2 className="text-2xl font-bold mb-4 text-mkt-ink">Your Information</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <Label>I am a *</Label>
+                  <Label className="text-mkt-ink">I am a *</Label>
                   <Select
                     value={formData.clientType}
                     onValueChange={(value) => setFormData({ ...formData, clientType: value })}
@@ -507,7 +539,7 @@ export default function RequestPage() {
                 </div>
 
                 <div>
-                  <Label>Full Name *</Label>
+                  <Label className="text-mkt-ink">Full Name *</Label>
                   <Input
                     value={formData.clientName}
                     onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
@@ -517,7 +549,7 @@ export default function RequestPage() {
 
                 {formData.clientType !== 'Homeowner' && (
                   <div className="md:col-span-2">
-                    <Label>Company Name *</Label>
+                    <Label className="text-mkt-ink">Company Name *</Label>
                     <Input
                       value={formData.companyName}
                       onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
@@ -527,7 +559,7 @@ export default function RequestPage() {
                 )}
 
                 <div>
-                  <Label>Email *</Label>
+                  <Label className="text-mkt-ink">Email *</Label>
                   <Input
                     type="email"
                     value={formData.clientEmail}
@@ -537,7 +569,7 @@ export default function RequestPage() {
                 </div>
 
                 <div>
-                  <Label>Phone</Label>
+                  <Label className="text-mkt-ink">Phone</Label>
                   <Input
                     value={formData.clientPhone}
                     onChange={(e) =>
@@ -550,10 +582,10 @@ export default function RequestPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Property Location</h2>
+              <h2 className="text-2xl font-bold mb-4 text-mkt-ink">Property Location</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
-                  <Label>Property Address *</Label>
+                  <Label className="text-mkt-ink">Property Address *</Label>
                   <Input
                     value={formData.propertyAddressLine1}
                     onChange={(e) =>
@@ -564,7 +596,7 @@ export default function RequestPage() {
                 </div>
 
                 <div>
-                  <Label>City *</Label>
+                  <Label className="text-mkt-ink">City *</Label>
                   <Input
                     value={formData.propertyCity}
                     onChange={(e) => setFormData({ ...formData, propertyCity: e.target.value })}
@@ -573,7 +605,7 @@ export default function RequestPage() {
                 </div>
 
                 <div>
-                  <Label>State *</Label>
+                  <Label className="text-mkt-ink">State *</Label>
                   <Select
                     value={formData.propertyStateCode}
                     onValueChange={(value) =>
@@ -598,7 +630,7 @@ export default function RequestPage() {
                 </div>
 
                 <div>
-                  <Label>County *</Label>
+                  <Label className="text-mkt-ink">County *</Label>
                   <Select
                     value={formData.propertyCountyId}
                     onValueChange={(value) =>
@@ -619,7 +651,7 @@ export default function RequestPage() {
                 </div>
 
                 <div>
-                  <Label>Zip Code *</Label>
+                  <Label className="text-mkt-ink">Zip Code *</Label>
                   <Input
                     value={formData.propertyZip}
                     onChange={(e) =>
@@ -632,7 +664,7 @@ export default function RequestPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Job Type / Trade Needed *</h2>
+              <h2 className="text-2xl font-bold mb-4 text-mkt-ink">Job Type / Trade Needed *</h2>
               <div className="grid md:grid-cols-2 gap-3">
                 {categories.map((category) => (
                   <div key={category.id} className="flex items-center gap-2">
@@ -641,7 +673,7 @@ export default function RequestPage() {
                       checked={selectedCategories.includes(category.id)}
                       onCheckedChange={() => handleCategoryToggle(category.id)}
                     />
-                    <label htmlFor={category.id} className="text-sm cursor-pointer">
+                    <label htmlFor={category.id} className="text-sm cursor-pointer text-mkt-ink">
                       {category.name}
                     </label>
                   </div>
@@ -650,10 +682,10 @@ export default function RequestPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Job Details</h2>
+              <h2 className="text-2xl font-bold mb-4 text-mkt-ink">Job Details</h2>
               <div className="space-y-6">
                 <div>
-                  <Label>Urgency *</Label>
+                  <Label className="text-mkt-ink">Urgency *</Label>
                   <Select
                     value={formData.urgencyLevel}
                     onValueChange={(value) => setFormData({ ...formData, urgencyLevel: value })}
@@ -671,7 +703,7 @@ export default function RequestPage() {
                 </div>
 
                 <div>
-                  <Label>Job Description *</Label>
+                  <Label className="text-mkt-ink">Job Description *</Label>
                   <Textarea
                     rows={6}
                     value={formData.description}
@@ -682,8 +714,8 @@ export default function RequestPage() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-4 pt-6 border-t">
-              <Button type="button" variant="outline" onClick={() => router.push('/')}>
+            <div className="flex justify-end gap-4 pt-6 border-t border-zinc-200">
+              <Button type="button" variant="outlineOrange" onClick={() => router.push('/')}>
                 Cancel
               </Button>
               <Button
@@ -699,5 +731,13 @@ export default function RequestPage() {
         </div>
       </section>
     </PageShell>
+  );
+}
+
+export default function RequestPage() {
+  return (
+    <Suspense fallback={null}>
+      <RequestPageContent />
+    </Suspense>
   );
 }

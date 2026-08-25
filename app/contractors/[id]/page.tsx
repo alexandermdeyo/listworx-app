@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/design-system';
+import { Reveal } from '@/components/motion';
 import {
   Award,
   Briefcase,
@@ -240,26 +241,26 @@ export default async function ContractorProfilePage({ params }: { params: { id: 
   ].filter((item) => item.url);
 
   return (
-    <PageShell surface="dark">
-      <Navigation />
+    <PageShell surface="marketing">
+      <Navigation variant="light" />
       <main className="container mx-auto max-w-6xl px-4 py-12">
-        <section className="rounded-3xl border border-zinc-800 bg-zinc-950 p-8 shadow-xl">
+        <Reveal as="section" className="rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm">
           <div className="grid gap-8 lg:grid-cols-[1fr,260px]">
             <div className="flex flex-col gap-6 sm:flex-row">
               {profile.logo_url ? (
-                <img src={profile.logo_url} alt={`${businessName} logo`} className="h-28 w-28 rounded-2xl border border-zinc-800 bg-white object-contain p-3" />
+                <img src={profile.logo_url} alt={`${businessName} logo`} className="h-28 w-28 rounded-2xl border border-zinc-200 bg-white object-contain p-3" />
               ) : (
-                <div className="flex h-28 w-28 items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900"><Building2 className="h-10 w-10 text-zinc-500" /></div>
+                <div className="flex h-28 w-28 items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-100"><Building2 className="h-10 w-10 text-mkt-ink/40" /></div>
               )}
               <div className="min-w-0 flex-1">
-                <h1 className="text-4xl font-bold text-white md:text-5xl">{businessName}</h1>
-                {profile.tagline && <p className="mt-3 text-xl text-zinc-300">{profile.tagline}</p>}
+                <h1 className="text-4xl font-bold text-mkt-ink md:text-5xl">{businessName}</h1>
+                {profile.tagline && <p className="mt-3 text-xl text-mkt-ink/70">{profile.tagline}</p>}
                 <div className="mt-5 flex flex-wrap gap-2">
                   {trades.map((trade) => <Badge key={trade.id} className="bg-lw-rust text-white"><Briefcase className="mr-1 h-3 w-3" />{trade.name}</Badge>)}
-                  {isActiveIronClad(profile) && <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30"><Shield className="mr-1 h-3 w-3" />IronClad Certified</Badge>}
-                  {isFoundingPartner(profile) && <Badge className="bg-amber-500/10 text-amber-300 border-amber-500/30"><Award className="mr-1 h-3 w-3" />Founding Partner</Badge>}
+                  {isActiveIronClad(profile) && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-300"><Shield className="mr-1 h-3 w-3" />IronClad Certified</Badge>}
+                  {isFoundingPartner(profile) && <Badge className="bg-amber-50 text-amber-700 border-amber-300"><Award className="mr-1 h-3 w-3" />Founding Partner</Badge>}
                 </div>
-                <div className="mt-5 flex flex-wrap gap-4 text-sm text-zinc-400">
+                <div className="mt-5 flex flex-wrap gap-4 text-sm text-mkt-ink/70">
                   {profile.years_in_business ? <span><Star className="mr-1 inline h-4 w-4" />{profile.years_in_business} years in business</span> : null}
                   {counties.length > 0 ? <span><MapPin className="mr-1 inline h-4 w-4" />Serving {counties.map((county) => county.name).join(', ')}</span> : null}
                 </div>
@@ -267,106 +268,122 @@ export default async function ContractorProfilePage({ params }: { params: { id: 
             </div>
             {profile.profile_photo_url && <img src={profile.profile_photo_url} alt={`${businessName} profile photo`} className="h-64 w-full rounded-2xl object-cover" />}
           </div>
-        </section>
+        </Reveal>
 
         <section className="mt-8 grid gap-8 lg:grid-cols-[1fr,340px]">
           <div className="space-y-8">
             {hasPublicContact ? (
-              <Card className="border-zinc-800 bg-zinc-950 p-6">
-                <h2 className="mb-4 text-2xl font-bold text-white">Contact / Action</h2>
-                <div className="flex flex-wrap gap-3">
-                  {website && <a href={normalizeWebsiteUrl(website)} target="_blank" rel="noopener noreferrer"><Button className="bg-lw-rust text-white hover:bg-lw-rust-hover"><Globe className="mr-2 h-4 w-4" />Visit Website</Button></a>}
-                  {profile.show_phone_public && profile.phone && <a href={`tel:${profile.phone.replace(/[^0-9+]/g, '')}`}><Button variant="outline" className="border-zinc-700 text-white hover:bg-zinc-900"><Phone className="mr-2 h-4 w-4" />{profile.phone}</Button></a>}
-                  {profile.show_email_public && profile.email && <a href={`mailto:${profile.email}`}><Button variant="outline" className="border-zinc-700 text-white hover:bg-zinc-900"><Mail className="mr-2 h-4 w-4" />Email Contractor</Button></a>}
-                </div>
-              </Card>
+              <Reveal delay={0}>
+                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
+                  <h2 className="mb-4 text-2xl font-bold text-mkt-ink">Contact / Action</h2>
+                  <div className="flex flex-wrap gap-3">
+                    {website && <a href={normalizeWebsiteUrl(website)} target="_blank" rel="noopener noreferrer"><Button className="bg-lw-rust text-white hover:bg-lw-rust-hover"><Globe className="mr-2 h-4 w-4" />Visit Website</Button></a>}
+                    {profile.show_phone_public && profile.phone && <a href={`tel:${profile.phone.replace(/[^0-9+]/g, '')}`}><Button variant="outlineOrange"><Phone className="mr-2 h-4 w-4" />{profile.phone}</Button></a>}
+                    {profile.show_email_public && profile.email && <a href={`mailto:${profile.email}`}><Button variant="outlineOrange"><Mail className="mr-2 h-4 w-4" />Email Contractor</Button></a>}
+                  </div>
+                </Card>
+              </Reveal>
             ) : (
-              <Card className="border-zinc-800 bg-zinc-950 p-6">
-                <p className="text-zinc-300">Contact information provided when referred by ListWorx.</p>
-                <Link href="/request"><Button className="mt-4 bg-lw-rust text-white hover:bg-lw-rust-hover">Need this contractor? Submit a job request →</Button></Link>
-              </Card>
+              <Reveal delay={0}>
+                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
+                  <p className="text-mkt-ink/70">Contact information provided when referred by ListWorx.</p>
+                  <Link href="/request"><Button className="mt-4 bg-lw-rust text-white hover:bg-lw-rust-hover">Need this contractor? Submit a job request →</Button></Link>
+                </Card>
+              </Reveal>
             )}
 
             {description && (
-              <Card className="border-zinc-800 bg-zinc-950 p-6">
-                <h2 className="mb-4 text-2xl font-bold text-white">About {businessName}</h2>
-                <p className="whitespace-pre-line leading-7 text-zinc-300">{description}</p>
-                {profile.google_business_url && <a href={normalizeWebsiteUrl(profile.google_business_url)} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center text-lw-rust hover:underline">View our Google reviews <ExternalLink className="ml-1 h-4 w-4" /></a>}
-              </Card>
+              <Reveal delay={70}>
+                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
+                  <h2 className="mb-4 text-2xl font-bold text-mkt-ink">About {businessName}</h2>
+                  <p className="whitespace-pre-line leading-7 text-mkt-ink/70">{description}</p>
+                  {profile.google_business_url && <a href={normalizeWebsiteUrl(profile.google_business_url)} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center text-lw-rust hover:underline">View our Google reviews <ExternalLink className="ml-1 h-4 w-4" /></a>}
+                </Card>
+              </Reveal>
             )}
 
             {photos.length > 0 && (
-              <Card className="border-zinc-800 bg-zinc-950 p-6">
-                <h2 className="mb-5 text-2xl font-bold text-white">Our Work</h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {photos.map((photo) => (
-                    <a key={photo.id} href={photo.public_url || '#'} target="_blank" rel="noopener noreferrer" className="group overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900">
-                      <img src={photo.public_url || ''} alt={photo.caption || `${businessName} work photo`} className="h-52 w-full object-cover transition group-hover:scale-105" />
-                      {photo.caption && <p className="p-3 text-sm text-zinc-300">{photo.caption}</p>}
-                    </a>
-                  ))}
-                </div>
-              </Card>
+              <Reveal delay={140}>
+                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
+                  <h2 className="mb-5 text-2xl font-bold text-mkt-ink">Our Work</h2>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {photos.map((photo) => (
+                      <a key={photo.id} href={photo.public_url || '#'} target="_blank" rel="noopener noreferrer" className="group overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+                        <img src={photo.public_url || ''} alt={photo.caption || `${businessName} work photo`} className="h-52 w-full object-cover transition group-hover:scale-105" />
+                        {photo.caption && <p className="p-3 text-sm text-mkt-ink/70">{photo.caption}</p>}
+                      </a>
+                    ))}
+                  </div>
+                </Card>
+              </Reveal>
             )}
 
             {videos.length > 0 && (
-              <Card className="border-zinc-800 bg-zinc-950 p-6">
-                <h2 className="mb-5 text-2xl font-bold text-white">Watch Our Work</h2>
-                <div className="grid gap-5 md:grid-cols-2">
-                  {videos.map((video) => {
-                    const embedUrl = getVideoEmbedUrl(video.video_url);
-                    if (!embedUrl) return null;
-                    return (
-                      <div key={video.id} className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900">
-                        <iframe src={embedUrl} title={video.caption || 'Contractor work video'} className="aspect-video w-full" allowFullScreen />
-                        {video.caption && <p className="p-3 text-sm text-zinc-300">{video.caption}</p>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </Card>
+              <Reveal delay={210}>
+                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
+                  <h2 className="mb-5 text-2xl font-bold text-mkt-ink">Watch Our Work</h2>
+                  <div className="grid gap-5 md:grid-cols-2">
+                    {videos.map((video) => {
+                      const embedUrl = getVideoEmbedUrl(video.video_url);
+                      if (!embedUrl) return null;
+                      return (
+                        <div key={video.id} className="overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+                          <iframe src={embedUrl} title={video.caption || 'Contractor work video'} className="aspect-video w-full" allowFullScreen />
+                          {video.caption && <p className="p-3 text-sm text-mkt-ink/70">{video.caption}</p>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Card>
+              </Reveal>
             )}
           </div>
 
           <aside className="space-y-8">
             {socialLinks.length > 0 && (
-              <Card className="border-zinc-800 bg-zinc-950 p-6">
-                <h2 className="mb-4 text-xl font-bold text-white">Find Us Online</h2>
-                <div className="flex flex-wrap gap-3">
-                  {socialLinks.map((item) => {
-                    const Icon = item.icon;
-                    return <a key={item.label} href={normalizeWebsiteUrl(item.url!)} target="_blank" rel="noopener noreferrer" className="rounded-full border border-zinc-700 p-3 text-zinc-300 hover:border-lw-rust hover:text-lw-rust"><Icon className="h-5 w-5" /><span className="sr-only">{item.label}</span></a>;
-                  })}
-                </div>
-              </Card>
+              <Reveal delay={0}>
+                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
+                  <h2 className="mb-4 text-xl font-bold text-mkt-ink">Find Us Online</h2>
+                  <div className="flex flex-wrap gap-3">
+                    {socialLinks.map((item) => {
+                      const Icon = item.icon;
+                      return <a key={item.label} href={normalizeWebsiteUrl(item.url!)} target="_blank" rel="noopener noreferrer" className="rounded-full border border-zinc-200 p-3 text-mkt-ink/60 hover:border-lw-rust hover:text-lw-rust"><Icon className="h-5 w-5" /><span className="sr-only">{item.label}</span></a>;
+                    })}
+                  </div>
+                </Card>
+              </Reveal>
             )}
 
             {verifiedCredentials.length > 0 && (
-              <Card className="border-zinc-800 bg-zinc-950 p-6">
-                <h2 className="mb-4 text-xl font-bold text-white">Verified Credentials</h2>
-                <div className="space-y-3">
-                  {verifiedCredentials.map((credential) => <div key={credential.id} className="flex items-center gap-2 text-sm text-zinc-300"><CheckCircle2 className="h-4 w-4 text-emerald-400" />{getDocumentLabel(credential.document_type)}: Verified</div>)}
-                </div>
-                {lastCredentialDate && <p className="mt-4 text-xs text-zinc-500">Credentials verified by ListWorx as of {new Date(lastCredentialDate).toLocaleDateString('en-US')}.</p>}
-              </Card>
+              <Reveal delay={70}>
+                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
+                  <h2 className="mb-4 text-xl font-bold text-mkt-ink">Verified Credentials</h2>
+                  <div className="space-y-3">
+                    {verifiedCredentials.map((credential) => <div key={credential.id} className="flex items-center gap-2 text-sm text-mkt-ink/70"><CheckCircle2 className="h-4 w-4 text-emerald-600" />{getDocumentLabel(credential.document_type)}: Verified</div>)}
+                  </div>
+                  {lastCredentialDate && <p className="mt-4 text-xs text-mkt-ink/50">Credentials verified by ListWorx as of {new Date(lastCredentialDate).toLocaleDateString('en-US')}.</p>}
+                </Card>
+              </Reveal>
             )}
 
             {isActiveIronClad(profile) && (
-              <Card className="border-emerald-500/30 bg-emerald-500/10 p-6">
-                <Shield className="mb-3 h-8 w-8 text-emerald-400" />
-                <h2 className="mb-3 text-xl font-bold text-white">IronClad Standards</h2>
-                <p className="text-sm leading-6 text-zinc-300">This contractor is a member of the ListWorx network and maintains IronClad Standards — including 24-hour response time, valid insurance, and professional conduct. IronClad certification is monitored continuously.</p>
-                <Link href="/ironclad" className="mt-4 inline-flex text-sm font-semibold text-emerald-300 hover:underline">Learn more about IronClad Standards</Link>
-              </Card>
+              <Reveal delay={140}>
+                <Card className="border-emerald-300 bg-emerald-50 p-6">
+                  <Shield className="mb-3 h-8 w-8 text-emerald-600" />
+                  <h2 className="mb-3 text-xl font-bold text-mkt-ink">IronClad Standards</h2>
+                  <p className="text-sm leading-6 text-mkt-ink/70">This contractor is a member of the ListWorx network and maintains IronClad Standards — including 24-hour response time, valid insurance, and professional conduct. IronClad certification is monitored continuously.</p>
+                  <Link href="/ironclad" className="mt-4 inline-flex text-sm font-semibold text-emerald-700 hover:underline">Learn more about IronClad Standards</Link>
+                </Card>
+              </Reveal>
             )}
           </aside>
         </section>
 
-        <section className="mt-12 rounded-3xl border border-lw-rust/30 bg-lw-rust/10 p-8 text-center">
-          <h2 className="text-3xl font-bold text-white">Referred by ListWorx? You&apos;re in good hands.</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-zinc-300">ListWorx only refers vetted, IronClad-certified contractors.</p>
+        <Reveal as="section" className="mt-12 rounded-3xl border border-lw-rust/30 bg-lw-rust/10 p-8 text-center">
+          <h2 className="text-3xl font-bold text-mkt-ink">Referred by ListWorx? You&apos;re in good hands.</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-mkt-ink/70">ListWorx only refers vetted, IronClad-certified contractors.</p>
           <Link href="/request"><Button className="mt-6 bg-lw-rust text-white hover:bg-lw-rust-hover">Submit a job request</Button></Link>
-        </section>
+        </Reveal>
       </main>
     </PageShell>
   );

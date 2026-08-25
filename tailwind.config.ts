@@ -79,6 +79,11 @@ const config: Config = {
           'light-bg': '#F5F5F5',
           'secondary-text': '#B0B0B0',
         },
+        mkt: {
+          bg: '#FFFFFF',
+          ink: '#3F4041',
+          navy: '#010333',
+        },
       },
       keyframes: {
         'accordion-down': {

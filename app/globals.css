@@ -145,3 +145,127 @@ html {
     color: var(--lw-secondary-text);
   }
 }
+
+/* ---------------------------------------------------------------------
+ * Marketing motion system
+ * Scoped entirely under `.mkt-scope` (applied by PageShell surface="marketing"
+ * and the hand-rolled marketing page wrappers) so none of this ever reaches
+ * dashboards/admin/auth. See components/motion.tsx for the Reveal component
+ * that drives .reveal/.is-visible via IntersectionObserver.
+ * ------------------------------------------------------------------- */
+
+@keyframes lw-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lw-pulse-once {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+@keyframes lw-badge-wipe {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; transform: scale(0.94); }
+  to { clip-path: inset(0 0 0 0); opacity: 1; transform: scale(1); }
+}
+
+@keyframes lw-stroke-draw {
+  from { stroke-dashoffset: var(--lw-stroke-length, 100); }
+  to { stroke-dashoffset: 0; }
+}
+
+.mkt-scope .reveal {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.mkt-scope .reveal.is-visible {
+  animation: lw-fade-up 450ms ease-out forwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.mkt-scope .pulse-once-visible {
+  animation: lw-pulse-once 500ms ease-out;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+.mkt-scope .badge-draw {
+  opacity: 0;
+}
+
+.mkt-scope .badge-draw.is-visible {
+  animation: lw-badge-wipe 550ms ease-out forwards;
+}
+
+.mkt-scope .stroke-draw {
+  stroke-dasharray: var(--lw-stroke-length, 100);
+  stroke-dashoffset: var(--lw-stroke-length, 100);
+}
+
+.mkt-scope .stroke-draw.is-visible {
+  animation: lw-stroke-draw 550ms ease-out forwards;
+}
+
+/* CTA depth on hover: scale only, no color/hue change (color already
+   darkens via the existing bg-lw-rust-hover / hover:bg-orange-50 classes). */
+.mkt-scope button.bg-lw-rust:not(:disabled),
+.mkt-scope button.border-lw-rust:not(:disabled) {
+  transition: transform 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+}
+.mkt-scope button.bg-lw-rust:not(:disabled):hover,
+.mkt-scope button.border-lw-rust:not(:disabled):hover {
+  transform: scale(1.02);
+}
+
+/* Pricing / feature cards: lift + deepen shadow on hover */
+.mkt-scope .lw-hover-lift {
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+.mkt-scope .lw-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -12px rgba(63, 64, 65, 0.25);
+}
+
+/* Nav link underline slide-in from left */
+.mkt-nav-link {
+  position: relative;
+}
+.mkt-nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms ease;
+}
+.mkt-nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mkt-scope .reveal,
+  .mkt-scope .badge-draw,
+  .mkt-scope .stroke-draw {
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+    clip-path: none !important;
+  }
+  .mkt-scope .reveal.is-visible,
+  .mkt-scope .badge-draw.is-visible,
+  .mkt-scope .stroke-draw.is-visible,
+  .mkt-scope .pulse-once-visible,
+  .mkt-scope button.bg-lw-rust:hover,
+  .mkt-scope button.border-lw-rust:hover,
+  .mkt-scope .lw-hover-lift:hover,
+  .mkt-nav-link::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

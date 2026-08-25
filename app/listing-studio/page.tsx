@@ -28,6 +28,7 @@ import {
   Map,
   Layers,
 } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 
 // ─── Sample output data ───────────────────────────────────────────────────────
 
@@ -121,31 +122,31 @@ function SampleOutputSection() {
   }
 
   return (
-    <section className="py-20 bg-lw-dark border-b border-lw-dark-border">
+    <section className="py-20 bg-white border-b border-zinc-200">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
 
           {/* Section header */}
-          <div className="text-center mb-12">
-            <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3">
+          <Reveal as="div" className="text-center mb-12">
+            <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-3">
               Real Output. Real Listing.
             </p>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">
               See What ListWorx{' '}
               <span className="relative inline-block">
                 Generates
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-amber-400 rounded-full" />
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-lw-rust rounded-full" />
               </span>
             </h2>
-            <p className="text-lg text-zinc-400 max-w-xl mx-auto mt-3">
+            <p className="text-lg text-mkt-ink/70 max-w-xl mx-auto mt-3">
               Here&apos;s a real sample for a Nashville listing — generated in seconds.
             </p>
             {/* Listing chip */}
-            <div className="inline-flex items-center gap-2 mt-5 rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-300">
-              <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0" />
+            <div className="inline-flex items-center gap-2 mt-5 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm text-mkt-ink/80">
+              <span className="h-2 w-2 rounded-full bg-lw-rust shrink-0" />
               412 Maple Creek Drive, Hendersonville TN · 4 bd / 3 ba · $489,000
             </div>
-          </div>
+          </Reveal>
 
           {/* Tab bar */}
           <div className="flex gap-1 overflow-x-auto pb-px mb-6 scrollbar-none">
@@ -155,8 +156,8 @@ function SampleOutputSection() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-all shrink-0 ${
                   activeTab === tab.id
-                    ? 'bg-amber-400 text-zinc-900 shadow font-semibold'
-                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white border border-zinc-700'
+                    ? 'bg-lw-rust text-white shadow font-semibold'
+                    : 'bg-white text-mkt-ink/60 hover:bg-zinc-50 hover:text-mkt-ink border border-zinc-200'
                 }`}
               >
                 {tab.label}
@@ -165,18 +166,18 @@ function SampleOutputSection() {
           </div>
 
           {/* Content card */}
-          <div className="rounded-2xl border border-zinc-700 bg-zinc-900 overflow-hidden">
+          <div className="lw-card-light overflow-hidden">
             {/* Card header */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-800 bg-zinc-900/80">
-              <p className="text-xs font-bold uppercase tracking-widest text-amber-400">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-200 bg-zinc-50">
+              <p className="text-xs font-bold uppercase tracking-widest text-lw-rust">
                 {SAMPLE_TABS.find((t) => t.id === activeTab)!.label}
               </p>
               <button
                 onClick={handleCopy}
                 className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                   copiedTab === activeTab
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-white text-mkt-ink/70 hover:bg-zinc-50 hover:text-mkt-ink border border-zinc-200'
                 }`}
               >
                 {copiedTab === activeTab ? (
@@ -195,14 +196,14 @@ function SampleOutputSection() {
 
             {/* Output text */}
             <div className="p-6 md:p-8">
-              <pre className="text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap font-sans">
+              <pre className="text-sm text-mkt-ink leading-relaxed whitespace-pre-wrap font-sans">
                 {activeContent}
               </pre>
             </div>
           </div>
 
           {/* Footer note */}
-          <p className="text-center text-zinc-500 text-sm mt-6">
+          <p className="text-center text-mkt-ink/50 text-sm mt-6">
             This output was generated by ListWorx from a real property description. Every listing gets a full package like this — in about 30 seconds.
           </p>
 
@@ -346,68 +347,74 @@ export default function ListingStudioPage() {
   }
 
   return (
-    <PageShell surface="dark">
-      <Navigation />
+    <PageShell surface="marketing">
+      <Navigation variant="light" />
 
       {/* ── SECTION 1 — HERO ──────────────────────────────────────────────── */}
-      <section className="relative py-24 md:py-36 overflow-hidden bg-zinc-950 border-b border-zinc-800">
+      <section className="relative py-24 md:py-36 overflow-hidden bg-white border-b border-zinc-200">
         {/* Subtle radial glow behind the heading */}
         <div
           className="pointer-events-none absolute inset-0 z-0"
           aria-hidden="true"
           style={{
             background:
-              'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,98,26,0.14) 0%, transparent 70%)',
+              'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(198,90,30,0.10) 0%, transparent 70%)',
           }}
         />
 
         <div className="relative z-10 container mx-auto px-4 text-center">
-          {/* Label chip */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-1.5 text-sm font-semibold text-lw-rust mb-8">
-            <Zap className="h-4 w-4" />
-            Listing Studio
-          </div>
+          <Reveal immediate delay={0}>
+            {/* Label chip */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-1.5 text-sm font-semibold text-lw-rust mb-8">
+              <Zap className="h-4 w-4" />
+              Listing Studio
+            </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight max-w-5xl mx-auto">
-            Stop spending your evenings writing captions nobody asked you to write.
-          </h1>
-          <p className="text-lg md:text-xl text-zinc-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Listing Studio is built into your ListWorx account. Put in your listing details. Walk away with everything you need to market it — in about 30 seconds.
-          </p>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-mkt-ink mb-6 leading-tight max-w-5xl mx-auto">
+              Stop spending your evenings writing captions nobody asked you to write.
+            </h1>
+          </Reveal>
+          <Reveal immediate delay={100}>
+            <p className="text-lg md:text-xl text-mkt-ink/70 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Listing Studio is built into your ListWorx account. Put in your listing details. Walk away with everything you need to market it — in about 30 seconds.
+            </p>
+          </Reveal>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#pricing">
-              <Button
-                size="lg"
-                className="text-lg px-8 py-6 bg-lw-rust hover:bg-lw-rust-hover text-white font-bold shadow-lg"
-              >
-                See Plans
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </a>
-            <Link href="/login">
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-lg px-8 py-6 border-zinc-600 text-zinc-300 hover:border-zinc-400 hover:bg-zinc-900 hover:text-white"
-              >
-                Already a member? Log in
-              </Button>
-            </Link>
-          </div>
+          <Reveal immediate delay={200}>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="#pricing">
+                <Button
+                  size="lg"
+                  className="text-lg px-8 py-6 bg-lw-rust hover:bg-lw-rust-hover text-white font-bold shadow-lg"
+                >
+                  See Plans
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </a>
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  variant="outlineOrange"
+                  className="text-lg px-8 py-6"
+                >
+                  Already a member? Log in
+                </Button>
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* ── SECTION 2 — HOW IT WORKS ──────────────────────────────────────── */}
-      <section className="py-20 bg-lw-dark border-b border-lw-dark-border">
+      <section className="py-20 bg-white border-b border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">How it works</h2>
-              <p className="text-lg text-zinc-400 max-w-xl mx-auto">
+            <Reveal as="div" className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">How it works</h2>
+              <p className="text-lg text-mkt-ink/70 max-w-xl mx-auto">
                 Three steps. Two minutes of your time. Everything else is automatic.
               </p>
-            </div>
+            </Reveal>
 
             <div className="grid md:grid-cols-3 gap-10 md:gap-8">
               {[
@@ -430,7 +437,7 @@ export default function ListingStudioPage() {
                   body: 'Everything lands in your dashboard. Copy what you need. Paste it where it goes. Done. No reformatting. No rewriting. No staring at a blank screen.',
                 },
               ].map((item, idx) => (
-                <div key={item.step} className="flex flex-col items-center text-center">
+                <Reveal key={item.step} delay={idx * 70} className="flex flex-col items-center text-center">
                   {/* Icon with step number badge */}
                   <div className="relative mb-6">
                     <div className="h-20 w-20 rounded-full bg-lw-rust/10 border border-lw-rust/30 flex items-center justify-center">
@@ -442,11 +449,11 @@ export default function ListingStudioPage() {
                   </div>
                   {/* Connector line — desktop only, between cards */}
                   {idx < 2 && (
-                    <div className="hidden md:block absolute left-[calc(33.33%+2.5rem)] right-0 top-10 h-px bg-zinc-700 pointer-events-none" />
+                    <div className="hidden md:block absolute left-[calc(33.33%+2.5rem)] right-0 top-10 h-px bg-zinc-200 pointer-events-none" />
                   )}
-                  <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                  <p className="text-zinc-400 leading-relaxed">{item.body}</p>
-                </div>
+                  <h3 className="text-xl font-bold text-mkt-ink mb-3">{item.title}</h3>
+                  <p className="text-mkt-ink/70 leading-relaxed">{item.body}</p>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -454,19 +461,20 @@ export default function ListingStudioPage() {
       </section>
 
       {/* ── SECTION 3 — FEATURE BREAKDOWN ─────────────────────────────────── */}
-      <section className="py-20 bg-zinc-950 border-b border-zinc-800">
+      <section className="py-20 bg-white border-b border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-14">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            <Reveal as="div" className="text-center mb-14">
+              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">
                 Everything that comes out the other side
               </h2>
-            </div>
+            </Reveal>
 
             <div className="space-y-5">
 
               {/* Feature 1 — Content Packages */}
-              <Card className="border-zinc-800 bg-zinc-900/60 p-8">
+              <Reveal delay={0}>
+              <Card className="lw-hover-lift bg-white border-zinc-200 text-mkt-ink shadow-sm p-8">
                 <div className="flex items-start gap-4 mb-6">
                   <div className="h-12 w-12 rounded-xl bg-lw-rust/10 border border-lw-rust/20 flex items-center justify-center shrink-0">
                     <Layers className="h-6 w-6 text-lw-rust" />
@@ -475,7 +483,7 @@ export default function ListingStudioPage() {
                     <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-1.5">
                       Content Packages
                     </p>
-                    <h3 className="text-xl md:text-2xl font-bold text-white">
+                    <h3 className="text-xl md:text-2xl font-bold text-mkt-ink">
                       One content package covers a full listing launch.
                     </h3>
                   </div>
@@ -491,14 +499,16 @@ export default function ListingStudioPage() {
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <CheckCircle className="h-4 w-4 text-lw-rust shrink-0 mt-0.5" />
-                      <span className="text-zinc-300 text-sm leading-relaxed">{item}</span>
+                      <span className="text-mkt-ink/80 text-sm leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>
               </Card>
+              </Reveal>
 
               {/* Feature 2 — Landing Pages */}
-              <Card className="border-zinc-800 bg-zinc-900/60 p-8">
+              <Reveal delay={70}>
+              <Card className="lw-hover-lift bg-white border-zinc-200 text-mkt-ink shadow-sm p-8">
                 <div className="flex items-start gap-4 mb-5">
                   <div className="h-12 w-12 rounded-xl bg-lw-rust/10 border border-lw-rust/20 flex items-center justify-center shrink-0">
                     <Globe className="h-6 w-6 text-lw-rust" />
@@ -507,21 +517,23 @@ export default function ListingStudioPage() {
                     <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-1.5">
                       Listing Landing Pages
                     </p>
-                    <h3 className="text-xl md:text-2xl font-bold text-white">
+                    <h3 className="text-xl md:text-2xl font-bold text-mkt-ink">
                       A real URL for every property. Ready the same day.
                     </h3>
                   </div>
                 </div>
-                <p className="text-zinc-300 leading-relaxed mb-3">
+                <p className="text-mkt-ink/80 leading-relaxed mb-3">
                   Every listing you create gets its own shareable page on ListWorx. Your photos. Your stats. Your branding. Your contact info. Text the link to a client. Drop it in your Instagram bio. Put it in your email. It just works.
                 </p>
-                <p className="text-zinc-400 leading-relaxed">
+                <p className="text-mkt-ink/60 leading-relaxed">
                   No coding. No Squarespace. No asking your nephew to build you something.
                 </p>
               </Card>
+              </Reveal>
 
               {/* Feature 3 — PDF Flyers */}
-              <Card className="border-zinc-800 bg-zinc-900/60 p-8">
+              <Reveal delay={140}>
+              <Card className="lw-hover-lift bg-white border-zinc-200 text-mkt-ink shadow-sm p-8">
                 <div className="flex items-start gap-4 mb-5">
                   <div className="h-12 w-12 rounded-xl bg-lw-rust/10 border border-lw-rust/20 flex items-center justify-center shrink-0">
                     <FileDown className="h-6 w-6 text-lw-rust" />
@@ -530,18 +542,20 @@ export default function ListingStudioPage() {
                     <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-1.5">
                       PDF Flyers
                     </p>
-                    <h3 className="text-xl md:text-2xl font-bold text-white">
+                    <h3 className="text-xl md:text-2xl font-bold text-mkt-ink">
                       Print them. Email them. Hand them out at the open house.
                     </h3>
                   </div>
                 </div>
-                <p className="text-zinc-300 leading-relaxed">
+                <p className="text-mkt-ink/80 leading-relaxed">
                   Listing flyers and open house flyers built from your property data and branded to you. Download as PDF. Done.
                 </p>
               </Card>
+              </Reveal>
 
               {/* Feature 4 — Brand */}
-              <Card className="border-zinc-800 bg-zinc-900/60 p-8">
+              <Reveal delay={210}>
+              <Card className="lw-hover-lift bg-white border-zinc-200 text-mkt-ink shadow-sm p-8">
                 <div className="flex items-start gap-4 mb-5">
                   <div className="h-12 w-12 rounded-xl bg-lw-rust/10 border border-lw-rust/20 flex items-center justify-center shrink-0">
                     <Palette className="h-6 w-6 text-lw-rust" />
@@ -550,37 +564,39 @@ export default function ListingStudioPage() {
                     <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-1.5">
                       Your Brand On Everything
                     </p>
-                    <h3 className="text-xl md:text-2xl font-bold text-white">
+                    <h3 className="text-xl md:text-2xl font-bold text-mkt-ink">
                       This is not generic content. It is yours.
                     </h3>
                   </div>
                 </div>
-                <p className="text-zinc-300 leading-relaxed">
+                <p className="text-mkt-ink/80 leading-relaxed">
                   Your name. Your headshot. Your brokerage. Your colors. Every asset that comes out of Listing Studio has your brand on it. Not ListWorx&apos;s. Yours.
                 </p>
               </Card>
+              </Reveal>
 
               {/* Feature 5 — Coming Soon */}
-              <Card className="border-zinc-700/50 bg-zinc-900/30 p-8">
+              <Reveal delay={280}>
+              <Card className="lw-hover-lift bg-white border-zinc-200 text-mkt-ink shadow-sm p-8">
                 <div className="flex items-start gap-4 mb-5">
-                  <div className="h-12 w-12 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0">
-                    <Rocket className="h-6 w-6 text-zinc-400" />
+                  <div className="h-12 w-12 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0">
+                    <Rocket className="h-6 w-6 text-mkt-ink/50" />
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                      <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+                      <p className="text-xs font-bold uppercase tracking-widest text-mkt-ink/50">
                         Coming Soon
                       </p>
-                      <Badge className="bg-zinc-800 text-zinc-400 border border-zinc-700 text-[10px] font-semibold">
+                      <Badge className="bg-zinc-100 text-mkt-ink/60 border border-zinc-200 text-[10px] font-semibold">
                         In Development
                       </Badge>
                     </div>
-                    <h3 className="text-xl md:text-2xl font-bold text-zinc-300">
+                    <h3 className="text-xl md:text-2xl font-bold text-mkt-ink/80">
                       We are not done building.
                     </h3>
                   </div>
                 </div>
-                <p className="text-zinc-400 leading-relaxed mb-5">
+                <p className="text-mkt-ink/60 leading-relaxed mb-5">
                   These are coming to Listing Studio subscribers first:
                 </p>
                 <ul className="space-y-3.5">
@@ -607,15 +623,16 @@ export default function ListingStudioPage() {
                     },
                   ].map((item) => (
                     <li key={item.text} className="flex items-start gap-2.5">
-                      <item.icon className="h-4 w-4 text-zinc-500 shrink-0 mt-0.5" />
-                      <span className="text-zinc-400 text-sm leading-relaxed">{item.text}</span>
+                      <item.icon className="h-4 w-4 text-mkt-ink/40 shrink-0 mt-0.5" />
+                      <span className="text-mkt-ink/60 text-sm leading-relaxed">{item.text}</span>
                     </li>
                   ))}
                 </ul>
-                <p className="mt-6 text-sm text-zinc-500 border-t border-zinc-800 pt-5">
+                <p className="mt-6 text-sm text-mkt-ink/50 border-t border-zinc-200 pt-5">
                   Subscribers get early access to every feature as it launches. No extra charge.
                 </p>
               </Card>
+              </Reveal>
 
             </div>
           </div>
@@ -623,14 +640,14 @@ export default function ListingStudioPage() {
       </section>
 
       {/* ── SECTION 4 — TRANSPARENCY ──────────────────────────────────────── */}
-      <section className="py-20 bg-lw-dark border-b border-lw-dark-border">
+      <section className="py-20 bg-white border-b border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            <div className="rounded-2xl border border-lw-dark-border bg-lw-dark-card p-8 md:p-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 leading-tight">
+            <Reveal as="div" className="lw-card-light p-8 md:p-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-mkt-ink mb-8 leading-tight">
                 What Listing Studio is. And what it is not.
               </h2>
-              <div className="space-y-5 text-lg text-zinc-300 leading-relaxed">
+              <div className="space-y-5 text-lg text-mkt-ink/80 leading-relaxed">
                 <p>We want to be straight with you about this because we think you deserve that.</p>
                 <p>
                   Listing Studio generates marketing content. It does not connect to your MLS. It does not pull listing data automatically. You put in what you want it to use and it works with that.
@@ -644,35 +661,35 @@ export default function ListingStudioPage() {
                 <p>
                   We are building fast. Some features listed above are coming soon. Subscribers get them as they launch — no waiting, no upsells, no surprise charges.
                 </p>
-                <p className="text-white font-semibold">
+                <p className="text-mkt-ink font-semibold">
                   That is the deal. If it sounds right for how you work, we would love to have you.
                 </p>
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* ── SECTION 5 — PRICING ───────────────────────────────────────────── */}
-      <section id="pricing" className="py-20 bg-zinc-950 border-b border-zinc-800">
+      <section id="pricing" className="py-20 bg-white border-b border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
 
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            <Reveal as="div" className="text-center mb-10">
+              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">
                 Simple pricing. No surprises.
               </h2>
-            </div>
+            </Reveal>
 
             {/* Monthly / Annual toggle */}
             <div className="flex justify-center mb-10">
-              <div className="inline-flex items-center rounded-full bg-zinc-900 border border-zinc-700 p-1">
+              <div className="inline-flex items-center rounded-full bg-white border border-zinc-200 p-1">
                 <button
                   onClick={() => setPeriod('monthly')}
                   className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${
                     period === 'monthly'
                       ? 'bg-lw-rust text-white shadow'
-                      : 'text-zinc-400 hover:text-white'
+                      : 'text-mkt-ink/60 hover:text-mkt-ink'
                   }`}
                 >
                   Monthly
@@ -682,12 +699,12 @@ export default function ListingStudioPage() {
                   className={`rounded-full px-5 py-2 text-sm font-medium transition-all flex items-center gap-2 ${
                     period === 'annual'
                       ? 'bg-lw-rust text-white shadow'
-                      : 'text-zinc-400 hover:text-white'
+                      : 'text-mkt-ink/60 hover:text-mkt-ink'
                   }`}
                 >
                   Annual
                   {period === 'monthly' ? (
-                    <span className="rounded-full bg-amber-400/20 text-amber-300 px-2 py-0.5 text-xs font-semibold">
+                    <span className="rounded-full bg-amber-50 text-amber-700 px-2 py-0.5 text-xs font-semibold">
                       Save ~17%
                     </span>
                   ) : (
@@ -701,16 +718,18 @@ export default function ListingStudioPage() {
 
             {/* Tier cards */}
             <div className="grid gap-6 md:grid-cols-3 mb-6">
-              {TIERS.map((tier) => {
+              {TIERS.map((tier, index) => {
                 const price = period === 'monthly' ? tier.monthlyPrice : tier.annualPrice;
 
                 return (
-                  <div
+                  <Reveal
                     key={tier.id}
-                    className={`relative rounded-2xl p-7 flex flex-col transition-all min-w-0 w-full ${
+                    delay={index * 70}
+                    pulse={tier.highlight}
+                    className={`lw-hover-lift relative rounded-2xl p-7 flex flex-col transition-all min-w-0 w-full ${
                       tier.highlight
-                        ? 'bg-white text-zinc-900 shadow-2xl ring-2 ring-lw-rust'
-                        : 'bg-zinc-900 border border-zinc-700 text-white'
+                        ? 'bg-white text-mkt-ink shadow-2xl ring-2 ring-lw-rust'
+                        : 'bg-white border border-zinc-200 text-mkt-ink'
                     }`}
                   >
                     {/* Most Popular badge */}
@@ -726,35 +745,23 @@ export default function ListingStudioPage() {
                     <div className="mb-5">
                       <p
                         className={`text-xs font-bold uppercase tracking-widest mb-2 ${
-                          tier.highlight ? 'text-lw-rust' : 'text-zinc-400'
+                          tier.highlight ? 'text-lw-rust' : 'text-mkt-ink/60'
                         }`}
                       >
                         {tier.name}
                       </p>
                       <div className="flex items-end gap-1">
                         <span className="text-4xl font-bold">${price}</span>
-                        <span
-                          className={`text-sm mb-1.5 ${
-                            tier.highlight ? 'text-zinc-500' : 'text-zinc-400'
-                          }`}
-                        >
+                        <span className="text-sm mb-1.5 text-mkt-ink/50">
                           /mo
                         </span>
                       </div>
                       {period === 'annual' ? (
-                        <p
-                          className={`text-xs mt-1 ${
-                            tier.highlight ? 'text-gray-500' : 'text-zinc-500'
-                          }`}
-                        >
+                        <p className="text-xs mt-1 text-mkt-ink/50">
                           Billed annually — ${tier.annualTotal.toLocaleString()}/year
                         </p>
                       ) : (
-                        <p
-                          className={`text-xs mt-1 ${
-                            tier.highlight ? 'text-gray-400' : 'text-zinc-600'
-                          }`}
-                        >
+                        <p className="text-xs mt-1 text-mkt-ink/50">
                           Or ${tier.annualPrice}/mo billed annually
                         </p>
                       )}
@@ -769,7 +776,7 @@ export default function ListingStudioPage() {
                               tier.highlight ? 'text-lw-rust' : 'text-lw-rust/60'
                             }`}
                           />
-                          <span className={tier.highlight ? 'text-zinc-700' : 'text-zinc-300'}>
+                          <span className="text-mkt-ink/80">
                             {feature}
                           </span>
                         </li>
@@ -783,7 +790,7 @@ export default function ListingStudioPage() {
                       className={`w-full font-semibold ${
                         tier.highlight
                           ? 'bg-lw-rust hover:bg-lw-rust-hover text-white'
-                          : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600'
+                          : 'border-2 border-lw-rust bg-white text-lw-rust hover:bg-orange-50'
                       }`}
                     >
                       {loadingTier === tier.id ? (
@@ -795,29 +802,29 @@ export default function ListingStudioPage() {
                         'Get Started'
                       )}
                     </Button>
-                  </div>
+                  </Reveal>
                 );
               })}
             </div>
 
             {/* Note below cards */}
-            <p className="text-center text-zinc-400 text-sm mb-10">
+            <p className="text-center text-mkt-ink/60 text-sm mb-10">
               All plans include the referral matching service at no extra charge. That part is always free.
             </p>
 
             {/* Founding Partner bar */}
-            <div className="rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-950/20 via-zinc-900 to-amber-950/20 p-6 md:p-8">
+            <Reveal as="div" className="rounded-xl border border-amber-300 bg-gradient-to-r from-amber-50 via-white to-amber-50 p-6 md:p-8">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                 <div className="flex items-start gap-3">
-                  <Crown className="h-6 w-6 text-amber-400 shrink-0 mt-0.5" />
+                  <Crown className="h-6 w-6 text-amber-600 shrink-0 mt-0.5" />
                   <div>
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <p className="font-bold text-white text-lg">Founding Partner — Lock Your Rate Forever</p>
-                      <span className="rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2.5 py-0.5 text-xs font-semibold">
+                      <p className="font-bold text-mkt-ink text-lg">Founding Partner — Lock Your Rate Forever</p>
+                      <span className="rounded-full bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-0.5 text-xs font-semibold">
                         Limited Spots
                       </span>
                     </div>
-                    <p className="text-sm text-zinc-400 mt-1">
+                    <p className="text-sm text-mkt-ink/60 mt-1">
                       Agent Pro at $199/mo or Elite at $399/mo — locked forever.
                     </p>
                   </div>
@@ -847,7 +854,7 @@ export default function ListingStudioPage() {
                   </Button>
                 </div>
               </div>
-            </div>
+            </Reveal>
 
           </div>
         </div>
@@ -859,7 +866,7 @@ export default function ListingStudioPage() {
       {/* ── SECTION 7 — BOTTOM CTA ────────────────────────────────────────── */}
       <section className="py-24 bg-lw-rust">
         <div className="container mx-auto px-4 text-center">
-          <div className="max-w-3xl mx-auto">
+          <Reveal as="div" className="max-w-3xl mx-auto">
             <Zap className="h-14 w-14 text-white mx-auto mb-6 opacity-90" />
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
               Ready to stop doing this the hard way?
@@ -883,7 +890,7 @@ export default function ListingStudioPage() {
                 support@listworx.co
               </a>
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 

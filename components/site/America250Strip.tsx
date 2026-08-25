@@ -7,8 +7,9 @@ const STORAGE_KEY = 'lw_america250_strip_dismissed';
 // Strip is live through July 6 2026
 const EXPIRY_DATE = new Date('2026-07-07T00:00:00Z');
 
-export default function America250Strip() {
+export default function America250Strip({ variant = 'dark' }: { variant?: 'dark' | 'light' }) {
   const [visible, setVisible] = useState(false);
+  const light = variant === 'light';
 
   useEffect(() => {
     if (new Date() >= EXPIRY_DATE) return;
@@ -23,11 +24,15 @@ export default function America250Strip() {
 
   if (!visible) return null;
 
+  const textColor = light ? '#3F4041' : '#ffffff';
+  const dividerColor = light ? 'rgba(63,64,65,0.15)' : 'rgba(255,255,255,0.2)';
+  const watermarkColor = light ? 'rgba(63,64,65,0.05)' : 'rgba(255,255,255,0.025)';
+
   return (
     <div
       className="relative w-full overflow-hidden"
       style={{
-        background: 'linear-gradient(90deg, #0a1628 0%, #1B2A4A 40%, #142240 70%, #0a1628 100%)',
+        background: light ? '#F5F5F5' : 'linear-gradient(90deg, #0a1628 0%, #1B2A4A 40%, #142240 70%, #0a1628 100%)',
         borderTop: '3px solid #E86B2B',
         borderBottom: '3px solid #E86B2B',
       }}
@@ -42,7 +47,7 @@ export default function America250Strip() {
           className="absolute inset-0 flex items-center overflow-hidden pointer-events-none"
           style={{
             fontSize: 28,
-            color: 'rgba(255,255,255,0.025)',
+            color: watermarkColor,
             letterSpacing: 20,
             whiteSpace: 'nowrap',
           }}
@@ -57,11 +62,11 @@ export default function America250Strip() {
           ★ &nbsp;1776 — 2026&nbsp; ★
         </span>
 
-        <div className="hidden sm:block w-px h-4 bg-white/20 flex-shrink-0 relative z-10" />
+        <div className="hidden sm:block w-px h-4 flex-shrink-0 relative z-10" style={{ background: dividerColor }} />
 
         <p
           className="relative z-10 text-center flex-1 hidden sm:block"
-          style={{ fontSize: 13, fontWeight: 600, color: '#ffffff', letterSpacing: '1.5px', textTransform: 'uppercase' }}
+          style={{ fontSize: 13, fontWeight: 600, color: textColor, letterSpacing: '1.5px', textTransform: 'uppercase' }}
         >
           Honoring{' '}
           <span style={{ color: '#E86B2B' }}>250 Years</span>{' '}
@@ -73,12 +78,12 @@ export default function America250Strip() {
         {/* Mobile shorter text */}
         <p
           className="relative z-10 text-center flex-1 sm:hidden"
-          style={{ fontSize: 11, fontWeight: 600, color: '#ffffff', letterSpacing: '1px', textTransform: 'uppercase' }}
+          style={{ fontSize: 11, fontWeight: 600, color: textColor, letterSpacing: '1px', textTransform: 'uppercase' }}
         >
           Honoring <span style={{ color: '#E86B2B' }}>America&apos;s 250th</span> — <strong>ListWorx</strong>
         </p>
 
-        <div className="hidden sm:block w-px h-4 bg-white/20 flex-shrink-0 relative z-10" />
+        <div className="hidden sm:block w-px h-4 flex-shrink-0 relative z-10" style={{ background: dividerColor }} />
 
         <Link
           href="/founding-partner"
@@ -87,7 +92,7 @@ export default function America250Strip() {
             fontFamily: "'Oswald', sans-serif",
             fontSize: 11,
             fontWeight: 700,
-            color: '#1B2A4A',
+            color: '#ffffff',
             background: '#E86B2B',
             padding: '5px 14px',
             letterSpacing: '1.5px',
@@ -103,8 +108,10 @@ export default function America250Strip() {
           type="button"
           onClick={dismiss}
           aria-label="Dismiss announcement"
-          className="relative z-10 flex-shrink-0 ml-2 text-white/50 hover:text-white transition-colors"
-          style={{ fontSize: 16, lineHeight: 1, background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
+          className="relative z-10 flex-shrink-0 ml-2 transition-colors"
+          style={{ fontSize: 16, lineHeight: 1, background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px', color: light ? 'rgba(63,64,65,0.5)' : 'rgba(255,255,255,0.5)' }}
+          onMouseEnter={e => { e.currentTarget.style.color = light ? '#3F4041' : '#ffffff'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = light ? 'rgba(63,64,65,0.5)' : 'rgba(255,255,255,0.5)'; }}
         >
           ✕
         </button>
