@@ -78,8 +78,7 @@ export default function IronCladStandardsPage() {
           className="absolute inset-0 h-full w-full object-cover"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-white/90" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(198,90,30,0.10)_0%,_transparent_65%)] pointer-events-none" />
+        <div className="lw-photo-scrim" />
         <div className="relative container mx-auto px-4 py-20 md:py-28">
           <div className="max-w-3xl mx-auto text-center">
             <RevealBadge className="flex justify-center mb-8">
@@ -91,16 +90,16 @@ export default function IronCladStandardsPage() {
                 className="w-44 md:w-60 h-auto"
               />
             </RevealBadge>
-            <Reveal immediate delay={100} className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-lw-rust border border-mkt-navy/30 rounded-full px-4 py-1.5 mb-7">
+            <Reveal immediate delay={100} className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-lw-rust border border-white/30 rounded-full px-4 py-1.5 mb-7">
               <Shield className="h-3 w-3" />
               The ListWorx Vetting &amp; Accountability Framework
             </Reveal>
-            <Reveal immediate delay={170} as="h1" className="font-display text-6xl md:text-8xl font-bold text-mkt-ink mb-5 leading-none tracking-wide uppercase">
+            <Reveal immediate delay={170} as="h1" className="font-display text-6xl md:text-8xl font-bold text-white mb-5 leading-none tracking-wide uppercase">
               IronClad<br />
               <span className="text-lw-rust">Standards<TM /></span>
             </Reveal>
             <Reveal immediate delay={240}>
-              <p className="text-lg text-mkt-ink/70 max-w-xl mx-auto leading-relaxed mb-10">
+              <p className="text-lg text-white/80 max-w-xl mx-auto leading-relaxed mb-10">
                 The enforced compliance framework governing every contractor in the ListWorx network. Not a badge. A binding agreement.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">

@@ -19,19 +19,19 @@ export default function AboutPage() {
           className="absolute inset-0 h-full w-full object-cover"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-white/85" />
+        <div className="lw-photo-scrim" />
         <div className="relative z-10 mx-auto px-6" style={{ maxWidth: '1200px' }}>
           <div className="mx-auto text-center" style={{ maxWidth: '820px' }}>
             <Reveal immediate delay={0}>
               <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-5">
                 About ListWorx
               </p>
-              <h1 className="text-4xl md:text-6xl font-bold text-mkt-ink leading-[1.1] mb-6 tracking-tight">
+              <h1 className="text-4xl md:text-6xl font-bold text-white leading-[1.1] mb-6 tracking-tight">
                 Built to Fix What's Broken in Home Services
               </h1>
             </Reveal>
             <Reveal immediate delay={100}>
-              <p className="text-lg md:text-xl text-mkt-ink/70 leading-relaxed mb-10">
+              <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-10">
                 ListWorx connects homeowners and realtors with contractors who are vetted, accountable, and ready to do the job right.
               </p>
             </Reveal>

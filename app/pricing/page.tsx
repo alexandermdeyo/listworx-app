@@ -60,11 +60,15 @@ export default function PricingPage() {
         </Reveal>
       </section>
 
-      <Reveal as="section" className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-4xl font-bold text-mkt-ink">Free for Realtors and Homeowners</h2>
-        <p className="mx-auto my-5 max-w-2xl text-mkt-ink/70">Job referrals are always free for realtors and homeowners. Always. That part never changes. Realtors who want access to Listing Studio — our marketing and content platform — can add that separately. More on that below.</p>
-        <Link href="/request"><Button variant="outlineOrange">Request a Referral</Button></Link>
-      </Reveal>
+      <section className="bg-mkt-navy py-16 md:py-20">
+        <div className="container mx-auto px-4 text-center">
+          <Reveal as="div">
+            <h2 className="text-4xl font-bold text-white">Free for Realtors and Homeowners</h2>
+            <p className="mx-auto my-5 max-w-2xl text-white/70">Job referrals are always free for realtors and homeowners. Always. That part never changes. Realtors who want access to Listing Studio — our marketing and content platform — can add that separately. More on that below.</p>
+            <Link href="/request"><Button variant="outlineOrange">Request a Referral</Button></Link>
+          </Reveal>
+        </div>
+      </section>
     </PageShell>
   );
 }

@@ -133,6 +133,18 @@ html {
     @apply rounded-2xl border border-zinc-200 bg-white shadow-sm;
   }
 
+  /* Marketing "luxury" dark-section cards — frosted glass on navy/slate
+     backgrounds. Use with white/white-opacity text, never dark text. */
+  .lw-card-dark-mkt {
+    @apply rounded-2xl border border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm;
+  }
+
+  /* Full-bleed hero/section photography scrim — keeps the photo visible
+     (not washed out) while guaranteeing white-text contrast. */
+  .lw-photo-scrim {
+    @apply absolute inset-0 bg-black/60;
+  }
+
   .lw-panel {
     @apply rounded-2xl border border-lw-dark-border/80 bg-lw-dark-card/80 p-6;
   }

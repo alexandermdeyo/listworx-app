@@ -144,9 +144,9 @@ export default function AcademyPage() {
       </section>
 
       {/* SECTION 4 — CTA */}
-      <Reveal as="section" className="bg-white border-t border-zinc-200 py-20 md:py-28">
+      <Reveal as="section" className="bg-mkt-navy py-20 md:py-28">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-8">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">
             Your License Is the Start. We Help You Build the Rest.
           </h2>
           <Link href="/apply">
@@ -155,7 +155,7 @@ export default function AcademyPage() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
-          <p className="text-sm text-mkt-ink/60 mt-6">
+          <p className="text-sm text-white/60 mt-6">
             Already a ListWorx member? Access Academy from your contractor dashboard.
           </p>
         </div>

@@ -59,18 +59,20 @@ export default function FoundingPartnerPage() {
         </Reveal>
       </section>
 
-      <section className="container mx-auto px-4 py-12">
-        <h2 className="mb-8 text-4xl font-bold text-mkt-ink">What You Get</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {features.map(([title, body], index) => (
-            <Reveal key={title} delay={index * 70}>
-              <Card className="lw-hover-lift bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
-                <CheckCircle className="mb-4 h-6 w-6 text-amber-500" />
-                <h3 className="mb-3 text-xl font-bold text-mkt-ink">{title}</h3>
-                <p className="text-mkt-ink/70 leading-relaxed">{body}</p>
-              </Card>
-            </Reveal>
-          ))}
+      <section className="bg-mkt-ink py-16 md:py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="mb-8 text-4xl font-bold text-white">What You Get</h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {features.map(([title, body], index) => (
+              <Reveal key={title} delay={index * 70}>
+                <Card className="border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm p-6 h-full">
+                  <CheckCircle className="mb-4 h-6 w-6 text-amber-500" />
+                  <h3 className="mb-3 text-xl font-bold text-white">{title}</h3>
+                  <p className="text-white/70 leading-relaxed">{body}</p>
+                </Card>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

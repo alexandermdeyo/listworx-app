@@ -186,14 +186,16 @@ export default function AcesPartnerPage() {
       </section>
 
       {/* SECTION 5 — ABOUT ACES */}
-      <section className="bg-white py-20 md:py-28 border-t border-zinc-200">
+      <section className="bg-mkt-ink py-20 md:py-28">
         <div className="container mx-auto px-4">
           <Reveal as="div" className="max-w-3xl mx-auto text-center">
-            <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-14 w-auto mx-auto mb-8" />
-            <h2 className="text-3xl md:text-4xl font-bold text-lw-text mb-6">
+            <div className="inline-block rounded-lg bg-white p-3 mb-8">
+              <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-14 w-auto" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               25 Years of Doing It Right
             </h2>
-            <p className="text-lg text-lw-text/70 leading-relaxed mb-8">
+            <p className="text-lg text-white/70 leading-relaxed mb-8">
               American Contractors Exam Services was founded on a simple idea — that getting a contractor&apos;s license should not be a guessing game. For 25 years they have served more than 60,000 contractors across all 50 states with classroom and online exam prep, a 95% pass rate, and a reputation built on results.
               <br /><br />
               They are based right here in Nashville, Tennessee — and they have been doing this work long before it was fashionable to care about the trades.
@@ -208,12 +210,12 @@ export default function AcesPartnerPage() {
               ].map((stat) => (
                 <div key={stat.label}>
                   <div className="text-3xl font-bold text-lw-rust">{stat.value}</div>
-                  <div className="text-xs uppercase tracking-wide text-lw-text/50 mt-1">{stat.label}</div>
+                  <div className="text-xs uppercase tracking-wide text-white/50 mt-1">{stat.label}</div>
                 </div>
               ))}
             </div>
 
-            <p className="text-sm text-lw-text/60 mb-1">5000 Linbar Drive, Suite 250, Nashville, TN 37211</p>
+            <p className="text-sm text-white/60 mb-1">5000 Linbar Drive, Suite 250, Nashville, TN 37211</p>
             <a href="https://examprep.org" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-lw-rust hover:underline">
               examprep.org
             </a>

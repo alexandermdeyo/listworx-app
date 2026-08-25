@@ -501,21 +501,23 @@ function RequestPageContent() {
           className="absolute inset-0 h-full w-full object-cover"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-white/90" />
-        <div className="relative z-10 container mx-auto px-4 max-w-4xl">
-        <div className="text-center mb-10">
+        <div className="lw-photo-scrim" />
+        <div className="relative z-10 container mx-auto px-4 max-w-4xl text-center">
           <img
             src="/Ironclad_Standards_Logo.png"
             alt=""
             className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
             aria-hidden="true"
           />
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4 break-words text-mkt-ink">Request a Contractor Referral</h1>
-          <p className="text-xl text-mkt-ink/70">
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4 break-words text-white">Request a Contractor Referral</h1>
+          <p className="text-xl text-white/80">
             Submit your job details below. We&apos;ll return exactly three vetted, IronClad-certified contractors in your area — instantly, in under 30 seconds. No account required.
           </p>
         </div>
+      </section>
 
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
         <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>

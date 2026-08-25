@@ -17,33 +17,30 @@ export default function HomeownerHero() {
 
   return (
     <>
-      <section className="relative overflow-hidden py-20 text-center md:py-28">
-        <div className="absolute inset-0 bg-white" aria-hidden="true" />
+      <section className="relative overflow-hidden py-24 text-center md:py-32">
         <img
           src="/Hero_Handshake.png"
           alt=""
-          className="absolute inset-0 mx-auto h-full w-auto max-w-full object-contain object-center opacity-25"
+          className="absolute inset-0 h-full w-full object-cover object-center"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-white/70" />
+        <div className="lw-photo-scrim" aria-hidden="true" />
         <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.55) 25%, rgba(255,255,255,0.55) 75%, rgba(255,255,255,1) 100%)'
-          }}
+          className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, #FFFFFF 100%)' }}
           aria-hidden="true"
         />
         <div className="relative z-10 container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <Reveal immediate delay={0}>
-              <div className="mb-6 inline-flex items-center rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-2 text-sm font-semibold text-lw-rust">
+              <div className="mb-6 inline-flex items-center rounded-full border border-lw-rust/40 bg-lw-rust/15 px-4 py-2 text-sm font-semibold text-lw-rust">
                 <Shield className="mr-2 h-4 w-4" />
                 IronClad Verified Contractors
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold text-mkt-ink leading-tight mb-4">
+              <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-4">
                 Find the Right Contractor. Every Time.
               </h1>
-              <p className="mx-auto mb-10 max-w-2xl text-lg md:text-xl text-mkt-ink/70 leading-relaxed">
+              <p className="mx-auto mb-10 max-w-2xl text-lg md:text-xl text-white/80 leading-relaxed">
                 Every pro on ListWorx is IronClad Verified — licensed, insured, and held to real standards.
               </p>
             </Reveal>

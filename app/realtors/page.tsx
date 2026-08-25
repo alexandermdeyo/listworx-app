@@ -24,22 +24,22 @@ export default function RealtorsPage() {
             className="w-full h-full object-cover"
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-white/85" />
+          <div className="lw-photo-scrim" />
         </div>
         <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
           <Reveal immediate delay={0}>
-            <Badge className="mb-6 bg-lw-rust/10 text-lw-rust border-lw-rust/20 hover:bg-lw-rust/20">
+            <Badge className="mb-6 bg-lw-rust/15 text-lw-rust border-lw-rust/30 hover:bg-lw-rust/25">
               <Star className="h-3 w-3 mr-1" />
               Built for Real Estate Professionals
             </Badge>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-mkt-ink mb-6 referraling-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
               Refer Contractors<br className="hidden md:block" />
               <span className="text-lw-rust"> With Confidence.</span>
             </h1>
           </Reveal>
           <Reveal immediate delay={100}>
-            <p className="text-lg md:text-xl lg:text-2xl text-mkt-ink/70 mb-10 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl lg:text-2xl text-white/80 mb-10 max-w-3xl mx-auto">
               ListWorx gives you instant access to vetted, IronClad-certified contractors — for free. Submit one request, receive up to 3 qualified matches, and choose who to contact. No spam. No pressure. Your reputation stays protected.
             </p>
           </Reveal>
@@ -59,15 +59,15 @@ export default function RealtorsPage() {
             <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
               <div className="text-center">
                 <div className="text-4xl font-bold text-lw-rust mb-2">Free</div>
-                <div className="text-sm text-mkt-ink/70">Always — No Fees, Ever</div>
+                <div className="text-sm text-white/70">Always — No Fees, Ever</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-lw-rust mb-2">3 Matches</div>
-                <div className="text-sm text-mkt-ink/70">Max Per Request</div>
+                <div className="text-sm text-white/70">Max Per Request</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-lw-rust mb-2">{'<'}24h</div>
-                <div className="text-sm text-mkt-ink/70">Contractor Response Time</div>
+                <div className="text-sm text-white/70">Contractor Response Time</div>
               </div>
             </div>
           </Reveal>

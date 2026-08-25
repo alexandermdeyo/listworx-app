@@ -406,12 +406,12 @@ export default function ListingStudioPage() {
       </section>
 
       {/* ── SECTION 2 — HOW IT WORKS ──────────────────────────────────────── */}
-      <section className="py-20 bg-white border-b border-zinc-200">
+      <section className="py-20 bg-mkt-ink">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <Reveal as="div" className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">How it works</h2>
-              <p className="text-lg text-mkt-ink/70 max-w-xl mx-auto">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">How it works</h2>
+              <p className="text-lg text-white/70 max-w-xl mx-auto">
                 Three steps. Two minutes of your time. Everything else is automatic.
               </p>
             </Reveal>
@@ -449,10 +449,10 @@ export default function ListingStudioPage() {
                   </div>
                   {/* Connector line — desktop only, between cards */}
                   {idx < 2 && (
-                    <div className="hidden md:block absolute left-[calc(33.33%+2.5rem)] right-0 top-10 h-px bg-zinc-200 pointer-events-none" />
+                    <div className="hidden md:block absolute left-[calc(33.33%+2.5rem)] right-0 top-10 h-px bg-white/20 pointer-events-none" />
                   )}
-                  <h3 className="text-xl font-bold text-mkt-ink mb-3">{item.title}</h3>
-                  <p className="text-mkt-ink/70 leading-relaxed">{item.body}</p>
+                  <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                  <p className="text-white/70 leading-relaxed">{item.body}</p>
                 </Reveal>
               ))}
             </div>

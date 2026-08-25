@@ -286,19 +286,19 @@ export default function FoundingPartnerPage() {
       </section>
 
       {/* ── Founding Realtor Badge ─────────────────────────────────────────── */}
-      <section className="py-20 border-b border-zinc-200">
+      <section className="bg-mkt-navy py-20">
         <div className="container mx-auto px-4">
           <Reveal as="div" className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-amber-500/10 border border-amber-500/20 mb-6">
               <Crown className="h-8 w-8 text-amber-600" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-mkt-ink mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               The Founding Realtor Badge
             </h2>
-            <p className="text-lg text-mkt-ink/70 mb-6 leading-relaxed">
+            <p className="text-lg text-white/70 mb-6 leading-relaxed">
               Every Founding Partner gets a permanent badge on their ListWorx profile marking them as one of the original members who helped build this platform. It stays there — forever — even as Listing Studio grows.
             </p>
-            <p className="text-mkt-ink/60 leading-relaxed">
+            <p className="text-white/60 leading-relaxed">
               It is a small thing, but it is real. The people who show up early deserve to be recognized for it.
             </p>
           </Reveal>

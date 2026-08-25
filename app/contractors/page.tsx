@@ -121,25 +121,25 @@ export default function ContractorsPage() {
             className="w-full h-full object-cover"
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-white/88" />
+          <div className="lw-photo-scrim" />
         </div>
         <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
           <Reveal immediate delay={0}>
-            <Badge className="mb-6 bg-lw-rust/10 text-lw-rust border-lw-rust/20 hover:bg-lw-rust/20">
+            <Badge className="mb-6 bg-lw-rust/15 text-lw-rust border-lw-rust/30 hover:bg-lw-rust/25">
               <Briefcase className="h-3 w-3 mr-1" />
               IronClad Partner Network · Expanding Nationally
             </Badge>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-mkt-ink mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
               First Position. Locked Rate.<br className="hidden md:block" />
               <span className="text-lw-rust">National Network.</span>
             </h1>
           </Reveal>
           <Reveal immediate delay={100}>
-            <p className="text-lg md:text-xl lg:text-2xl text-mkt-ink/70 mb-4 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl lg:text-2xl text-white/80 mb-4 max-w-3xl mx-auto">
               You do the work. We make sure the right people know your name — everywhere we go.
             </p>
-            <p className="text-base md:text-lg text-mkt-ink/70 mb-10 max-w-3xl mx-auto">
+            <p className="text-base md:text-lg text-white/70 mb-10 max-w-3xl mx-auto">
               ListWorx is building the largest vetted independent contractor network in America. Founding Partners lock their rate the day they join and hold first position in their trade and county as we expand. That position doesn&apos;t get auctioned off. It doesn&apos;t get renegotiated. It&apos;s yours.
             </p>
           </Reveal>
