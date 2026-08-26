@@ -21,10 +21,10 @@ export default function HomeownerHero() {
         <img
           src="/Hero_Handshake.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="absolute inset-0 h-full w-full object-cover object-[center_20%]"
           aria-hidden="true"
         />
-        <div className="lw-photo-scrim" aria-hidden="true" />
+        <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
         <div
           className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
           style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, #FFFFFF 100%)' }}

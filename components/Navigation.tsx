@@ -253,7 +253,7 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
           {light && (
             <Link href="/request" className="hidden sm:block">
               <Button className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-                Post a Job
+                Find a Contractor
               </Button>
             </Link>
           )}
@@ -312,7 +312,7 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
                   onClick={() => setMobileMenuOpen(false)}
                   className="block rounded-md px-3 py-3 text-base font-semibold transition-colors text-lw-rust hover:bg-zinc-100"
                 >
-                  Post a Job
+                  Find a Contractor
                 </Link>
               </>
             ) : (
