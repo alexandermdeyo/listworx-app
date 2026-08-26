@@ -379,12 +379,15 @@ export default async function ContractorProfilePage({ params }: { params: { id: 
           </aside>
         </section>
 
-        <Reveal as="section" className="mt-12 rounded-3xl border border-lw-rust/30 bg-lw-rust/10 p-8 text-center">
-          <h2 className="text-3xl font-bold text-mkt-ink">Referred by ListWorx? You&apos;re in good hands.</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-mkt-ink/70">ListWorx only refers vetted, IronClad-certified contractors.</p>
-          <Link href="/request"><Button className="mt-6 bg-lw-rust text-white hover:bg-lw-rust-hover">Submit a job request</Button></Link>
-        </Reveal>
       </main>
+
+      <Reveal as="section" className="mt-12 bg-mkt-ink py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-white">Referred by ListWorx? You&apos;re in good hands.</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-white/70">ListWorx only refers vetted, IronClad-certified contractors.</p>
+          <Link href="/request"><Button className="mt-6 bg-lw-rust text-white hover:bg-lw-rust-hover">Submit a job request</Button></Link>
+        </div>
+      </Reveal>
     </PageShell>
   );
 }

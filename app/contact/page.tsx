@@ -176,17 +176,17 @@ export default function ContactPage() {
             </Reveal>
 
             <Reveal as="div" delay={80} className="space-y-8">
-              <div>
-                <h2 className="text-3xl font-bold text-mkt-ink mb-6">Contact Information</h2>
+              <div className="bg-mkt-navy rounded-2xl p-8">
+                <h2 className="text-3xl font-bold text-white mb-6">Contact Information</h2>
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="p-3 bg-lw-rust/10 rounded-lg">
+                    <div className="p-3 bg-white/10 rounded-lg">
                       <MapPin className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-mkt-ink mb-1">Address</h3>
-                      <p className="text-mkt-ink/70">
+                      <h3 className="font-semibold text-white mb-1">Address</h3>
+                      <p className="text-white/70">
                         2147 Springdale Ln F104<br />
                         Gallatin, TN 37066
                       </p>
@@ -194,14 +194,14 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="p-3 bg-lw-rust/10 rounded-lg">
+                    <div className="p-3 bg-white/10 rounded-lg">
                       <Phone className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-mkt-ink mb-1">Phone</h3>
+                      <h3 className="font-semibold text-white mb-1">Phone</h3>
                       <a
                         href="tel:615-362-4996"
-                        className="text-lw-rust hover:text-lw-rust-hover hover:underline transition-colors"
+                        className="text-white/90 hover:text-lw-rust hover:underline transition-colors"
                       >
                         615-362-4996
                       </a>
@@ -209,14 +209,14 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="p-3 bg-lw-rust/10 rounded-lg">
+                    <div className="p-3 bg-white/10 rounded-lg">
                       <Mail className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-mkt-ink mb-1">Email</h3>
+                      <h3 className="font-semibold text-white mb-1">Email</h3>
                       <a
                         href="mailto:adeyo@listworx.co"
-                        className="text-lw-rust hover:text-lw-rust-hover hover:underline transition-colors"
+                        className="text-white/90 hover:text-lw-rust hover:underline transition-colors"
                       >
                         adeyo@listworx.co
                       </a>

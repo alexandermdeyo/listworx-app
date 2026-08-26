@@ -496,7 +496,7 @@ function RequestPageContent() {
       )}
       <section className="relative overflow-hidden py-16">
         <img
-          src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1920&q=80"
+          src="https://images.unsplash.com/photo-1742900280864-bcc27353ceba?auto=format&fit=crop&w=1920&q=80"
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
           aria-hidden="true"

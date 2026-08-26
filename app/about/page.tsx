@@ -168,14 +168,14 @@ export default function AboutPage() {
       </div>
 
       {/* WHO IT'S FOR */}
-      <section className="py-20 md:py-28">
+      <section className="bg-mkt-navy py-20 md:py-28">
         <div className="mx-auto px-6" style={{ maxWidth: '1200px' }}>
           <div className="mx-auto text-center mb-14" style={{ maxWidth: '600px' }}>
             <Reveal as="div">
               <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-5">
                 Who This Is Built For
               </p>
-              <h2 className="text-3xl md:text-4xl font-bold text-mkt-ink leading-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">
                 Three groups. One standard.
               </h2>
             </Reveal>
@@ -202,11 +202,11 @@ export default function AboutPage() {
               },
             ].map((item, index) => (
               <Reveal key={item.audience} delay={index * 70}>
-                <div className="lw-hover-lift lw-card-light p-8 flex flex-col">
+                <div className="lw-hover-lift lw-card-dark-mkt p-8 flex flex-col">
                   <div className="text-lw-rust font-bold text-xs uppercase tracking-widest mb-4">
                     {item.audience}
                   </div>
-                  <p className="text-mkt-ink/80 text-base leading-relaxed mb-6 flex-1">{item.body}</p>
+                  <p className="text-white/70 text-base leading-relaxed mb-6 flex-1">{item.body}</p>
                   <Link
                     href={item.href}
                     className="text-sm text-lw-rust font-semibold hover:underline inline-flex items-center gap-1.5"

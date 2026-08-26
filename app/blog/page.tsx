@@ -99,14 +99,14 @@ export default function BlogPage() {
       <Navigation variant="light" />
 
       {/* Hero */}
-      <section className="py-20 md:py-28 border-b border-zinc-200">
+      <section className="bg-mkt-ink py-20 md:py-28">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-4">ListWorx Blog</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-mkt-ink mb-5 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-5 leading-tight">
               Insights & Updates
             </h1>
-            <p className="text-mkt-ink/70 text-lg leading-relaxed max-w-xl">
+            <p className="text-white/70 text-lg leading-relaxed max-w-xl">
               Guides, contractor tips, market updates, and everything you need to know about the ListWorx IronClad network.
             </p>
           </div>

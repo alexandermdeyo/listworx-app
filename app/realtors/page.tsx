@@ -302,17 +302,17 @@ export default function RealtorsPage() {
       </section>
 
       {/* WHY IRONCLAD */}
-      <section className="py-16 bg-white border-y border-zinc-200">
+      <section className="py-16 bg-mkt-ink">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <Reveal as="div" className="text-center mb-12">
-              <div className="flex justify-center mb-4">
+              <div className="inline-block rounded-lg bg-white p-3 mb-4">
                 <Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad Certified" width={80} height={80} className="w-16 h-auto" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-mkt-ink mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                 What IronClad Certification Means for You
               </h2>
-              <p className="text-lg text-mkt-ink/70 max-w-2xl mx-auto">
+              <p className="text-lg text-white/70 max-w-2xl mx-auto">
                 When you refer an IronClad Partner, you're not guessing. You know exactly what standards they've agreed to and are held accountable for.
               </p>
             </Reveal>
@@ -325,10 +325,10 @@ export default function RealtorsPage() {
                 { icon: CheckCircle, title: 'Standards Enforced', desc: 'Non-compliance means removal from the network' },
               ].map((item, index) => (
                 <Reveal key={item.title} delay={index * 70}>
-                  <Card className="lw-hover-lift p-5 text-center bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust hover:shadow-md transition-all">
+                  <Card className="lw-hover-lift p-5 text-center border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm hover:shadow-lg transition-all">
                     <item.icon className="h-8 w-8 text-lw-rust mx-auto mb-3" />
-                    <h4 className="font-semibold text-mkt-ink text-sm mb-1">{item.title}</h4>
-                    <p className="text-xs text-mkt-ink/70">{item.desc}</p>
+                    <h4 className="font-semibold text-white text-sm mb-1">{item.title}</h4>
+                    <p className="text-xs text-white/70">{item.desc}</p>
                   </Card>
                 </Reveal>
               ))}

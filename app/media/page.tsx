@@ -231,10 +231,10 @@ export default function MediaPage() {
       </section>
 
       {/* CTA */}
-      <Reveal as="section" className="py-16 border-t border-zinc-200">
+      <Reveal as="section" className="bg-mkt-navy py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold text-mkt-ink mb-3">Ready to join the network?</h2>
-          <p className="text-mkt-ink/70 text-sm mb-6 max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-white mb-3">Ready to join the network?</h2>
+          <p className="text-white/70 text-sm mb-6 max-w-md mx-auto">
             Partner with ListWorx as a vetted contractor or submit a request as a realtor.
           </p>
           <div className="flex gap-3 justify-center flex-wrap">

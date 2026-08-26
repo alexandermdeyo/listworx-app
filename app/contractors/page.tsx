@@ -116,7 +116,7 @@ export default function ContractorsPage() {
       <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1920&q=80"
+            src="https://images.unsplash.com/photo-1633759593085-1eaeb724fc88?auto=format&fit=crop&w=1920&q=80"
             alt=""
             className="w-full h-full object-cover"
             aria-hidden="true"
@@ -182,21 +182,21 @@ export default function ContractorsPage() {
       </section>
 
       {/* BRAND MESSAGE */}
-      <section className="py-16 md:py-20 bg-white border-y border-zinc-200">
+      <section className="py-16 md:py-20 bg-mkt-navy">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <Reveal as="div" className="text-center mb-10">
-              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-5">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-5">
                 This Isn&apos;t a Lead Platform. It&apos;s a Network.
               </h2>
             </Reveal>
 
             <Reveal delay={70}>
-              <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6 md:p-8 mb-8">
-                <p className="text-base md:text-lg text-mkt-ink/70 leading-relaxed">
+              <Card className="border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm p-6 md:p-8 mb-8">
+                <p className="text-base md:text-lg text-white/70 leading-relaxed">
                   Lead platforms make money when you fail. They charge you per contact, sell that same contact to fifteen other contractors, and pocket the spread while you race to underbid everyone. That&apos;s the business model. That&apos;s why it feels bad — because it is.
                 </p>
-                <p className="text-base md:text-lg text-mkt-ink/70 leading-relaxed mt-5">
+                <p className="text-base md:text-lg text-white/70 leading-relaxed mt-5">
                   ListWorx is built the other direction. Flat membership. Three referrals max per request. IronClad Standards required for everyone in the network. When a realtor or homeowner gets a name from us, they&apos;re getting someone who earned it.
                 </p>
               </Card>
@@ -209,8 +209,8 @@ export default function ContractorsPage() {
                 'You compete against two other vetted pros — not fifteen strangers.',
               ].map((line, index) => (
                 <Reveal key={line} delay={index * 70}>
-                  <div className="rounded-lg border border-lw-rust/30 bg-white px-4 py-4 text-center shadow-sm">
-                    <p className="text-sm md:text-base font-semibold text-mkt-ink">{line}</p>
+                  <div className="rounded-lg border border-white/20 bg-white/[0.07] backdrop-blur-sm px-4 py-4 text-center shadow-sm">
+                    <p className="text-sm md:text-base font-semibold text-white">{line}</p>
                   </div>
                 </Reveal>
               ))}

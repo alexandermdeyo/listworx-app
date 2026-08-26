@@ -173,8 +173,11 @@ export default function BlogPostPage() {
           <p className="text-mkt-ink/60 italic">No content for this post yet.</p>
         )}
 
-        {/* Footer */}
-        <div className="mt-12 pt-8 border-t border-zinc-200">
+      </article>
+
+      {/* Footer CTA */}
+      <section className="bg-mkt-navy py-12 md:py-16">
+        <div className="container mx-auto px-4 max-w-3xl">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <Link href="/blog">
               <Button variant="outlineOrange">
@@ -191,7 +194,7 @@ export default function BlogPostPage() {
             </div>
           </div>
         </div>
-      </article>
+      </section>
     </div>
   );
 }

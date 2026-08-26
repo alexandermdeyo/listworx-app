@@ -70,17 +70,20 @@ export default function FaqPage() {
           </Reveal>
           <FaqGroup title="Founding Partner Program" faqs={founderFaqs} />
           <FaqGroup title="For Realtors and Homeowners" faqs={requestorFaqs} />
-          <div className="mt-12 rounded-2xl border-2 border-lw-rust bg-orange-50/60 p-8 text-center">
-            <h3 className="mb-3 text-2xl font-bold text-mkt-ink">Still have questions?</h3>
-            <p className="mb-6 text-mkt-ink/70">Email us at <a className="text-lw-rust hover:underline" href="mailto:adeyo@listworx.co">adeyo@listworx.co</a> and we will get back to you within one business day.</p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/apply">
-                <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">Apply to Join the Network</Button>
-              </Link>
-              <Link href="/request">
-                <Button size="lg" variant="outlineOrange">Request a Referral</Button>
-              </Link>
-            </div>
+        </div>
+      </section>
+
+      <section className="bg-mkt-ink py-16 md:py-20">
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <h3 className="mb-3 text-2xl font-bold text-white">Still have questions?</h3>
+          <p className="mb-6 text-white/70">Email us at <a className="text-lw-rust hover:underline" href="mailto:adeyo@listworx.co">adeyo@listworx.co</a> and we will get back to you within one business day.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link href="/apply">
+              <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">Apply to Join the Network</Button>
+            </Link>
+            <Link href="/request">
+              <Button size="lg" variant="outlineOrange">Request a Referral</Button>
+            </Link>
           </div>
         </div>
       </section>
