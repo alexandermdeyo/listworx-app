@@ -496,12 +496,17 @@ function RequestPageContent() {
       )}
       <section className="relative overflow-hidden py-16">
         <img
-          src="https://images.pexels.com/photos/6474135/pexels-photo-6474135.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="/painter-warm-wall.jpg"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
           aria-hidden="true"
         />
         <div className="lw-photo-scrim" />
+        <div
+          className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, rgba(1,3,51,0) 0%, #010333 100%)' }}
+          aria-hidden="true"
+        />
         <div className="relative z-10 container mx-auto px-4 max-w-4xl text-center">
           <img
             src="/Ironclad_Standards_Logo.png"

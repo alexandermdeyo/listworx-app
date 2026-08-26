@@ -181,40 +181,85 @@ export default function ContractorsPage() {
         </div>
       </section>
 
-      {/* BRAND MESSAGE */}
+      {/* FOUNDING PARTNER CAMPAIGN */}
       <section className="py-16 md:py-20 bg-mkt-navy">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <Reveal as="div" className="text-center mb-10">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-5">
-                This Isn&apos;t a Lead Platform. It&apos;s a Network.
-              </h2>
-            </Reveal>
-
-            <Reveal delay={70}>
-              <Card className="border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm p-6 md:p-8 mb-8">
-                <p className="text-base md:text-lg text-white/70 leading-relaxed">
-                  Lead platforms make money when you fail. They charge you per contact, sell that same contact to fifteen other contractors, and pocket the spread while you race to underbid everyone. That&apos;s the business model. That&apos;s why it feels bad — because it is.
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <RevealBadge className="mx-auto mb-6 w-32 md:w-40">
+                <Image
+                  src="/ironclad_founder_shield_logo.png"
+                  alt="IronClad Founding Partner"
+                  width={160}
+                  height={160}
+                  className="w-32 md:w-40 h-auto mx-auto"
+                />
+              </RevealBadge>
+              <Reveal as="div" delay={70}>
+                <Badge className="mb-4 bg-amber-400/15 text-amber-300 border-amber-400/30">
+                  <Crown className="h-3 w-3 mr-1" />
+                  National Ground Floor — Limited Spots by Trade & County
+                </Badge>
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                  Founding Partner Program
+                </h2>
+                <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
+                  The people who join now are the people who own their position in the network — permanently. As ListWorx expands nationally, Founding Partners are already there. That&apos;s not available later.
                 </p>
-                <p className="text-base md:text-lg text-white/70 leading-relaxed mt-5">
-                  ListWorx is built the other direction. Flat membership. Three referrals max per request. IronClad Standards required for everyone in the network. When a realtor or homeowner gets a name from us, they&apos;re getting someone who earned it.
-                </p>
-              </Card>
-            </Reveal>
-
-            <div className="grid sm:grid-cols-3 gap-4">
-              {[
-                'No per-referral fees. Ever.',
-                "No lead auctions. You don't bid for your own name.",
-                'You compete against two other vetted pros — not fifteen strangers.',
-              ].map((line, index) => (
-                <Reveal key={line} delay={index * 70}>
-                  <div className="rounded-lg border border-white/20 bg-white/[0.07] backdrop-blur-sm px-4 py-4 text-center shadow-sm">
-                    <p className="text-sm md:text-base font-semibold text-white">{line}</p>
-                  </div>
-                </Reveal>
-              ))}
+              </Reveal>
             </div>
+
+            <div className="grid md:grid-cols-2 gap-5 mb-10">
+              <Reveal delay={0}>
+                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
+                  <Star className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-base font-semibold text-white mb-1">Permanent Badge. Permanent Status.</h3>
+                    <p className="text-sm text-white/70">Your Founding Partner badge stays on your profile for the life of your membership — visible to every realtor and homeowner who finds you in the network. It cannot be bought later.</p>
+                  </div>
+                </div>
+              </Reveal>
+              <Reveal delay={70}>
+                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
+                  <TrendingUp className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-base font-semibold text-white mb-1">First Position in Your Trade & County</h3>
+                    <p className="text-sm text-white/70">Founding Partners hold first position in referral matching for their trade and county. As the network expands, that position is already yours.</p>
+                  </div>
+                </div>
+              </Reveal>
+              <Reveal delay={140}>
+                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
+                  <Shield className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-base font-semibold text-white mb-1">Rate Locked From Day One</h3>
+                    <p className="text-sm text-white/70">The rate you lock in today is the rate you pay — forever. Standard pricing goes up when the founding window closes. Yours doesn&apos;t.</p>
+                  </div>
+                </div>
+              </Reveal>
+              <Reveal delay={210}>
+                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
+                  <Lock className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-base font-semibold text-white mb-1">Closes When It Fills — No Exceptions</h3>
+                    <p className="text-sm text-white/70">Founding Partner spots are limited by trade and county. When yours fills, the program closes in your market. There is no waitlist and no reopening.</p>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+
+            <Reveal as="div" className="text-center">
+              <Link href="/apply">
+                <Button size="lg" className="text-lg px-8 py-6 rounded-lg shadow-lg bg-amber-500 hover:bg-amber-600 text-white">
+                  <Award className="mr-2 h-5 w-5" />
+                  Apply for Founding Partner Status
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <p className="text-sm text-white/60 mt-4">
+                Available to qualified contractors during the network launch period only.
+              </p>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -271,6 +316,44 @@ export default function ContractorsPage() {
                     </div>
                     <h3 className="text-base font-bold text-mkt-ink mb-2">{item.title}</h3>
                     <p className="text-sm text-mkt-ink/70">{item.desc}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BRAND MESSAGE */}
+      <section className="py-16 md:py-20 bg-mkt-navy">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <Reveal as="div" className="text-center mb-10">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-5">
+                This Isn&apos;t a Lead Platform. It&apos;s a Network.
+              </h2>
+            </Reveal>
+
+            <Reveal delay={70}>
+              <Card className="border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm p-6 md:p-8 mb-8">
+                <p className="text-base md:text-lg text-white/70 leading-relaxed">
+                  Lead platforms make money when you fail. They charge you per contact, sell that same contact to fifteen other contractors, and pocket the spread while you race to underbid everyone. That&apos;s the business model. That&apos;s why it feels bad — because it is.
+                </p>
+                <p className="text-base md:text-lg text-white/70 leading-relaxed mt-5">
+                  ListWorx is built the other direction. Flat membership. Three referrals max per request. IronClad Standards required for everyone in the network. When a realtor or homeowner gets a name from us, they&apos;re getting someone who earned it.
+                </p>
+              </Card>
+            </Reveal>
+
+            <div className="grid sm:grid-cols-3 gap-4">
+              {[
+                'No per-referral fees. Ever.',
+                "No lead auctions. You don't bid for your own name.",
+                'You compete against two other vetted pros — not fifteen strangers.',
+              ].map((line, index) => (
+                <Reveal key={line} delay={index * 70}>
+                  <div className="rounded-lg border border-white/20 bg-white/[0.07] backdrop-blur-sm px-4 py-4 text-center shadow-sm">
+                    <p className="text-sm md:text-base font-semibold text-white">{line}</p>
                   </div>
                 </Reveal>
               ))}
@@ -626,99 +709,20 @@ export default function ContractorsPage() {
         </div>
       </section>
 
-      {/* FOUNDING PARTNER CAMPAIGN */}
-      <section className="py-16 md:py-20 bg-mkt-navy">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-10">
-              <RevealBadge className="mx-auto mb-6 w-32 md:w-40">
-                <Image
-                  src="/ironclad_founder_shield_logo.png"
-                  alt="IronClad Founding Partner"
-                  width={160}
-                  height={160}
-                  className="w-32 md:w-40 h-auto mx-auto"
-                />
-              </RevealBadge>
-              <Reveal as="div" delay={70}>
-                <Badge className="mb-4 bg-amber-400/15 text-amber-300 border-amber-400/30">
-                  <Crown className="h-3 w-3 mr-1" />
-                  National Ground Floor — Limited Spots by Trade & County
-                </Badge>
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-                  Founding Partner Program
-                </h2>
-                <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
-                  The people who join now are the people who own their position in the network — permanently. As ListWorx expands nationally, Founding Partners are already there. That&apos;s not available later.
-                </p>
-              </Reveal>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-5 mb-10">
-              <Reveal delay={0}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
-                  <Star className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-base font-semibold text-white mb-1">Permanent Badge. Permanent Status.</h3>
-                    <p className="text-sm text-white/70">Your Founding Partner badge stays on your profile for the life of your membership — visible to every realtor and homeowner who finds you in the network. It cannot be bought later.</p>
-                  </div>
-                </div>
-              </Reveal>
-              <Reveal delay={70}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
-                  <TrendingUp className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-base font-semibold text-white mb-1">First Position in Your Trade & County</h3>
-                    <p className="text-sm text-white/70">Founding Partners hold first position in referral matching for their trade and county. As the network expands, that position is already yours.</p>
-                  </div>
-                </div>
-              </Reveal>
-              <Reveal delay={140}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
-                  <Shield className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-base font-semibold text-white mb-1">Rate Locked From Day One</h3>
-                    <p className="text-sm text-white/70">The rate you lock in today is the rate you pay — forever. Standard pricing goes up when the founding window closes. Yours doesn&apos;t.</p>
-                  </div>
-                </div>
-              </Reveal>
-              <Reveal delay={210}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
-                  <Lock className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-base font-semibold text-white mb-1">Closes When It Fills — No Exceptions</h3>
-                    <p className="text-sm text-white/70">Founding Partner spots are limited by trade and county. When yours fills, the program closes in your market. There is no waitlist and no reopening.</p>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-
-            <Reveal as="div" className="text-center">
-              <Link href="/apply">
-                <Button size="lg" className="text-lg px-8 py-6 rounded-lg shadow-lg bg-amber-500 hover:bg-amber-600 text-white">
-                  <Award className="mr-2 h-5 w-5" />
-                  Apply for Founding Partner Status
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <p className="text-sm text-white/60 mt-4">
-                Available to qualified contractors during the network launch period only.
-              </p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
 
       {/* PARTNERSHIP TIERS */}
       <section className="py-16 md:py-20 bg-white border-y border-zinc-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <Reveal as="div" className="text-center mb-12">
+              <span className="inline-block mb-4 rounded-full bg-mkt-ink/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-mkt-ink">
+                Regular Pricing — After Founding Spots Close
+              </span>
               <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">
                 Choose Your Spot in the Network
               </h2>
               <p className="text-lg md:text-xl text-mkt-ink/70 mb-2">
-                Flat monthly pricing. No per-referral surprises. Pick the level that matches where your business is headed.
+                These are our regular, ongoing monthly prices. Flat pricing. No per-referral surprises. Pick the level that matches where your business is headed.
               </p>
               <p className="text-base md:text-lg font-semibold text-mkt-ink">
                 Your reputation matters. So does ours.
