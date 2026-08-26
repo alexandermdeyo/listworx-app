@@ -34,12 +34,12 @@ const howItWorks = [
   {
     icon: Search,
     title: 'Get matched',
-    body: 'We connect you with a verified contractor in your area who handles that work.',
+    body: 'You get three verified contractors to choose from. Your info stays private until you reach out.',
   },
   {
     icon: ShieldCheck,
     title: 'Get it done',
-    body: 'Your contractor reaches out, the job gets scheduled, it gets done right.',
+    body: 'You reach out to the contractor you pick, schedule the job, and get it done right.',
   },
 ];
 
