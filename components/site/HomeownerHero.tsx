@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Shield } from 'lucide-react';
+import { Shield, MapPin } from 'lucide-react';
 import { Reveal } from '@/components/motion';
 import JobRequestWidget from './JobRequestWidget';
 import { SERVICE_CATEGORIES } from './categories';
@@ -33,9 +33,15 @@ export default function HomeownerHero() {
         <div className="relative z-10 container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <Reveal immediate delay={0}>
-              <div className="mb-6 inline-flex items-center rounded-full border border-lw-rust/40 bg-lw-rust/15 px-4 py-2 text-sm font-semibold text-lw-rust">
-                <Shield className="mr-2 h-4 w-4" />
-                IronClad Verified Contractors
+              <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
+                <div className="inline-flex items-center rounded-full border border-lw-rust/40 bg-lw-rust/15 px-4 py-2 text-sm font-semibold text-lw-rust">
+                  <Shield className="mr-2 h-4 w-4" />
+                  IronClad Verified Contractors
+                </div>
+                <div className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  Now Serving Middle Tennessee
+                </div>
               </div>
               <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-4">
                 Find the Right Contractor. Every Time.

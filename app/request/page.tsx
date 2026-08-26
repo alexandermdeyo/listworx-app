@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown, ExternalLink } from 'lucide-react';
+import { Loader as Loader2, Phone, Mail, Globe, User, Shield, Crown, ExternalLink, FileText, Search, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Navigation from '@/components/Navigation';
 import { createClient } from '@/lib/supabase-browser';
@@ -494,11 +494,11 @@ function RequestPageContent() {
           </Link>
         </div>
       )}
-      <section className="relative overflow-hidden py-16">
+      <section className="relative overflow-hidden flex items-center min-h-[85vh] md:min-h-[720px] py-20">
         <img
-          src="/painter-warm-wall.jpg"
+          src="/kitchen-painter.jpg"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
+          className="absolute inset-0 h-full w-full object-cover object-[center_38%]"
           aria-hidden="true"
         />
         <div className="lw-photo-scrim" />
@@ -514,10 +514,33 @@ function RequestPageContent() {
             className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
             aria-hidden="true"
           />
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4 break-words text-white">Request a Contractor Referral</h1>
-          <p className="text-xl text-white/80">
-            Submit your job details below. We&apos;ll return exactly three vetted, IronClad-certified contractors in your area — instantly, in under 30 seconds. No account required.
+          <h1 className="text-3xl sm:text-5xl font-bold mb-5 break-words text-white">Request a Contractor Referral</h1>
+          <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+            Tell us about your project and we&apos;ll match you with three IronClad-verified contractors — licensed, insured, and background-checked — usually in under 30 seconds. No bidding wars, no spam calls, no guessing who&apos;s legit. Review their profiles and reach out to the ones you like. It&apos;s free, with no obligation to hire anyone.
           </p>
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto text-left">
+            <div className="flex items-start gap-3 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <FileText className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-white">1. Describe It</p>
+                <p className="text-xs text-white/70">Tell us the job and where you&apos;re located.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <Search className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-white">2. Get Matched</p>
+                <p className="text-xs text-white/70">See 3 vetted pros in your area, instantly.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+              <ShieldCheck className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-white">3. Choose With Confidence</p>
+                <p className="text-xs text-white/70">Every pro is IronClad Verified — no guesswork.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

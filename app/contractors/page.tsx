@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Award, Briefcase, FileText, Clock, Target, CheckCheck, Phone, CircleAlert as AlertCircle, ArrowRight, Lock, Star, Crown } from 'lucide-react';
+import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Award, Briefcase, FileText, Clock, Target, CheckCheck, Phone, CircleAlert as AlertCircle, ArrowRight, Lock, Star, Crown, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
@@ -29,10 +29,16 @@ export default function ContractorsPage() {
         <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
           <Reveal immediate delay={0}>
-            <Badge className="mb-6 bg-lw-rust/15 text-lw-rust border-lw-rust/30 hover:bg-lw-rust/25">
-              <Briefcase className="h-3 w-3 mr-1" />
-              IronClad Partner Network · Expanding Nationally
-            </Badge>
+            <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
+              <Badge className="bg-lw-rust/15 text-lw-rust border-lw-rust/30 hover:bg-lw-rust/25">
+                <Briefcase className="h-3 w-3 mr-1" />
+                IronClad Partner Network · Expanding Nationally
+              </Badge>
+              <Badge className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/15">
+                <MapPin className="h-3 w-3 mr-1" />
+                Now Recruiting in Middle Tennessee
+              </Badge>
+            </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
               First Position. Locked Rate.<br className="hidden md:block" />
               <span className="text-lw-rust">National Network.</span>

@@ -156,13 +156,22 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
       <America250Strip variant={variant} />
     <div className={cn('border-b backdrop-blur', light ? 'border-zinc-200 bg-white/95' : 'border-lw-dark-border bg-zinc-900/95')}>
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
-        <Link href="/" className="flex items-center" aria-label="ListWorx home">
-          <img
-            src="/Listworx_wordmark_logo.png"
-            alt="ListWorx"
-            className="h-8 md:h-10 w-auto"
-          />
-        </Link>
+        <div className="flex items-center gap-2 md:gap-3">
+          <Link href="/" className="flex items-center" aria-label="ListWorx home">
+            <img
+              src="/Listworx_wordmark_logo.png"
+              alt="ListWorx"
+              className="h-8 md:h-10 w-auto"
+            />
+          </Link>
+          <Link href="/ironclad" className="flex items-center shrink-0" aria-label="IronClad Certified Standards">
+            <img
+              src="/Ironclad_Cert_Partner_Final_Logo.png"
+              alt="IronClad Certified"
+              className="h-7 md:h-9 w-auto"
+            />
+          </Link>
+        </div>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           {light ? (

@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 @layer base {
@@ -62,7 +62,7 @@ html {
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   h1,
