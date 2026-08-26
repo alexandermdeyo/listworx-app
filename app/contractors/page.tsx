@@ -15,103 +15,6 @@ export default function ContractorsPage() {
     <PageShell surface="marketing">
       <Navigation variant="light" />
 
-      {/* FOUNDING PARTNER — REDESIGNED */}
-      <section className="bg-white border-b border-zinc-200">
-        <div className="border-l-[6px] border-lw-rust py-16 md:py-20">
-          <div className="container mx-auto px-4">
-
-            {/* Badge */}
-            <Reveal as="div" className="mb-8 text-center">
-              <span className="inline-block rounded-full bg-lw-rust px-5 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
-                Founding Partner Program — National Ground Floor
-              </span>
-            </Reveal>
-
-            {/* Heading */}
-            <Reveal as="h2" delay={70} className="mb-4 text-center text-4xl font-bold text-mkt-ink md:text-6xl">
-              Lock Your Rate. Hold Your Territory. Join the National Network.
-            </Reveal>
-
-            {/* Subheading */}
-            <Reveal as="div" delay={140} className="mx-auto mb-12 max-w-2xl text-center text-lg text-mkt-ink/70">
-              Founding Partners are the people who were here first. When ListWorx expands into a new market, Founding Partners in that trade and county already have their position. The rate they locked is the rate they keep — for as long as they&apos;re in the network.
-            </Reveal>
-
-            {/* Tier cards */}
-            <div className="mx-auto mb-8 grid max-w-5xl gap-6 md:grid-cols-3">
-
-              {/* Basic Founder */}
-              <Reveal delay={0}>
-                <div className="lw-hover-lift lw-card-light p-7 text-center">
-                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Basic Founder</h3>
-                  <div className="mb-1 text-5xl font-bold text-mkt-ink">
-                    $159<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
-                  </div>
-                  <p className="mb-2 text-sm text-mkt-ink/60">vs $199/mo standard</p>
-                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $40 every month forever</p>
-                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
-                  <Link href="/founding-partner" className="block">
-                    <Button variant="outlineOrange" className="w-full">
-                      Claim Your Spot
-                    </Button>
-                  </Link>
-                </div>
-              </Reveal>
-
-              {/* Preferred Founder — highlighted */}
-              <Reveal delay={70} pulse>
-                <div className="lw-hover-lift relative rounded-2xl border-2 border-lw-rust bg-white p-7 text-center shadow-lg shadow-lw-rust/10">
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-lw-rust px-4 py-1 text-xs font-bold text-white">Most Popular</span>
-                  </div>
-                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Preferred Founder</h3>
-                  <div className="mb-1 text-5xl font-bold text-mkt-ink">
-                    $279<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
-                  </div>
-                  <p className="mb-2 text-sm text-mkt-ink/60">vs $349/mo standard</p>
-                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $70 every month forever</p>
-                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
-                  <Link href="/founding-partner" className="block">
-                    <Button className="w-full bg-lw-rust text-white hover:bg-lw-rust-hover">
-                      Claim Your Spot
-                    </Button>
-                  </Link>
-                </div>
-              </Reveal>
-
-              {/* Elite Founder */}
-              <Reveal delay={140}>
-                <div className="lw-hover-lift lw-card-light p-7 text-center">
-                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Elite Founder</h3>
-                  <div className="mb-1 text-5xl font-bold text-mkt-ink">
-                    $479<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
-                  </div>
-                  <p className="mb-2 text-sm text-mkt-ink/60">vs $599/mo standard</p>
-                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $120 every month forever</p>
-                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
-                  <Link href="/founding-partner" className="block">
-                    <Button variant="outlineOrange" className="w-full">
-                      Claim Your Spot
-                    </Button>
-                  </Link>
-                </div>
-              </Reveal>
-            </div>
-
-            {/* Below-cards copy */}
-            <Reveal as="div" className="text-center">
-              <p className="mb-3 text-sm text-mkt-ink/70">
-                $75 activation. Billing starts immediately at your locked rate. No trial. No games.
-              </p>
-              <p className="mx-auto max-w-xl text-sm text-mkt-ink/60">
-                Every Founding Partner profile displays the IronClad Founding Partner badge — a permanent marker that you were here from the beginning.
-              </p>
-            </Reveal>
-
-          </div>
-        </div>
-      </section>
-
       {/* HERO */}
       <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -165,19 +68,116 @@ export default function ContractorsPage() {
             <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
               <div className="text-center">
                 <div className="text-4xl font-bold text-lw-rust mb-2">First</div>
-                <div className="text-sm text-mkt-ink/70">Position — In Your Trade & County</div>
+                <div className="text-sm text-white/70">Position — In Your Trade & County</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-lw-rust mb-2">Flat</div>
-                <div className="text-sm text-mkt-ink/70">Rate — No Per-Referral Fees, Ever</div>
+                <div className="text-sm text-white/70">Rate — No Per-Referral Fees, Ever</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-lw-rust mb-2">National</div>
-                <div className="text-sm text-mkt-ink/70">Expanding Market by Market</div>
+                <div className="text-sm text-white/70">Expanding Market by Market</div>
               </div>
             </div>
           </Reveal>
         </div>
+        </div>
+      </section>
+
+      {/* FOUNDING PARTNER — REDESIGNED */}
+      <section className="bg-white border-b border-zinc-200">
+        <div className="border-l-[6px] border-lw-rust py-16 md:py-20">
+          <div className="container mx-auto px-4">
+
+            {/* Badge */}
+            <Reveal as="div" className="mb-8 text-center">
+              <span className="inline-block rounded-full bg-lw-rust px-5 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
+                Founding Partner Subscription Pricing
+              </span>
+            </Reveal>
+
+            {/* Heading */}
+            <Reveal as="h2" delay={70} className="mb-4 text-center text-4xl font-bold text-mkt-ink md:text-6xl">
+              Choose Your Founding Partner Tier
+            </Reveal>
+
+            {/* Subheading */}
+            <Reveal as="div" delay={140} className="mx-auto mb-4 max-w-2xl text-center text-lg text-mkt-ink/70">
+              These are your normal, ongoing monthly rates — locked in from the day you join. Not a trial. Not an introductory offer. This is what you&apos;ll pay every month, for as long as you&apos;re a Founding Partner.
+            </Reveal>
+
+            {/* Tier cards */}
+            <div className="mx-auto mb-8 grid max-w-5xl gap-6 md:grid-cols-3">
+
+              {/* Basic Founder */}
+              <Reveal delay={0}>
+                <div className="lw-hover-lift lw-card-light p-7 text-center">
+                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Basic Founder</h3>
+                  <div className="mb-1 text-5xl font-bold text-mkt-ink">
+                    $159<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
+                  </div>
+                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $199/mo standard</p>
+                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $40 every month forever</p>
+                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
+                  <Link href="/founding-partner" className="block">
+                    <Button variant="outlineOrange" className="w-full">
+                      Claim Your Spot
+                    </Button>
+                  </Link>
+                </div>
+              </Reveal>
+
+              {/* Preferred Founder — highlighted */}
+              <Reveal delay={70} pulse>
+                <div className="lw-hover-lift relative rounded-2xl border-2 border-lw-rust bg-white p-7 text-center shadow-lg shadow-lw-rust/10">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                    <span className="rounded-full bg-lw-rust px-4 py-1 text-xs font-bold text-white">Most Popular</span>
+                  </div>
+                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Preferred Founder</h3>
+                  <div className="mb-1 text-5xl font-bold text-mkt-ink">
+                    $279<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
+                  </div>
+                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $349/mo standard</p>
+                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $70 every month forever</p>
+                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
+                  <Link href="/founding-partner" className="block">
+                    <Button className="w-full bg-lw-rust text-white hover:bg-lw-rust-hover">
+                      Claim Your Spot
+                    </Button>
+                  </Link>
+                </div>
+              </Reveal>
+
+              {/* Elite Founder */}
+              <Reveal delay={140}>
+                <div className="lw-hover-lift lw-card-light p-7 text-center">
+                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Elite Founder</h3>
+                  <div className="mb-1 text-5xl font-bold text-mkt-ink">
+                    $479<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
+                  </div>
+                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $599/mo standard</p>
+                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $120 every month forever</p>
+                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
+                  <Link href="/founding-partner" className="block">
+                    <Button variant="outlineOrange" className="w-full">
+                      Claim Your Spot
+                    </Button>
+                  </Link>
+                </div>
+              </Reveal>
+            </div>
+
+            {/* Below-cards copy */}
+            <Reveal as="div" className="text-center">
+              <p className="mb-3 text-sm text-mkt-ink/70">
+                $75 one-time activation. Billing starts immediately at your locked rate — this is your normal monthly subscription going forward, not an introductory price. No trial. No games.
+              </p>
+              <p className="mx-auto max-w-xl text-sm text-mkt-ink/60">
+                Every Founding Partner profile displays the IronClad Founding Partner badge — a permanent marker that you were here from the beginning.
+              </p>
+            </Reveal>
+
+          </div>
         </div>
       </section>
 

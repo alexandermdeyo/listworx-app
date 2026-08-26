@@ -705,12 +705,11 @@ function RequestPageContent() {
                 </div>
 
                 <div>
-                  <Label className="text-mkt-ink">Job Description *</Label>
+                  <Label className="text-mkt-ink">Job Description</Label>
                   <Textarea
                     rows={6}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    required
                   />
                 </div>
               </div>
