@@ -280,31 +280,31 @@ export default function ContractorsPage() {
       </section>
 
       {/* WHY LISTWORX */}
-      <section className="py-20 bg-white border-y border-zinc-200">
+      <section className="py-20 bg-mkt-ink">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <Reveal as="div" className="text-center mb-12">
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-center mb-6 rounded-xl bg-white p-3 w-fit mx-auto">
                 <Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad Standards" width={120} height={120} className="w-24 h-auto" />
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-6">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
                 Why the Network Model Wins
               </h2>
-              <p className="text-lg md:text-xl text-mkt-ink/70 max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-white/70 max-w-3xl mx-auto">
                 Lead platforms are built to extract money from contractors. A network is built to protect them.
               </p>
             </Reveal>
 
             <div className="grid md:grid-cols-2 gap-8">
               <Reveal delay={0}>
-                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8 hover:border-lw-rust transition-all">
+                <Card className="border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm p-8">
                   <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
+                    <div className="h-12 w-12 rounded-full bg-lw-rust/15 flex items-center justify-center flex-shrink-0">
                       <Target className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-mkt-ink mb-2">High-Intent Referrals Only</h3>
-                      <p className="text-mkt-ink/70">
+                      <h3 className="text-xl font-bold text-white mb-2">High-Intent Referrals Only</h3>
+                      <p className="text-white/70">
                         Every request comes from a realtor managing an active transaction or a homeowner with a real project. No tire-kickers. No price shoppers browsing for quotes they&apos;ll never act on.
                       </p>
                     </div>
@@ -313,14 +313,14 @@ export default function ContractorsPage() {
               </Reveal>
 
               <Reveal delay={70}>
-                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8 hover:border-lw-rust transition-all">
+                <Card className="border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm p-8">
                   <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
+                    <div className="h-12 w-12 rounded-full bg-lw-rust/15 flex items-center justify-center flex-shrink-0">
                       <Lock className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-mkt-ink mb-2">Maximum 3 Contractors Per Request</h3>
-                      <p className="text-mkt-ink/70">
+                      <h3 className="text-xl font-bold text-white mb-2">Maximum 3 Contractors Per Request</h3>
+                      <p className="text-white/70">
                         Your referral isn&apos;t sold to 15 other contractors. You compete against at most 2 others — both vetted professionals. Higher close rates. Better margins. No race to the bottom.
                       </p>
                     </div>
@@ -329,14 +329,14 @@ export default function ContractorsPage() {
               </Reveal>
 
               <Reveal delay={140}>
-                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8 hover:border-lw-rust transition-all">
+                <Card className="border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm p-8">
                   <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
+                    <div className="h-12 w-12 rounded-full bg-lw-rust/15 flex items-center justify-center flex-shrink-0">
                       <TrendingUp className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-mkt-ink mb-2">Predictable Business Costs</h3>
-                      <p className="text-mkt-ink/70">
+                      <h3 className="text-xl font-bold text-white mb-2">Predictable Business Costs</h3>
+                      <p className="text-white/70">
                         One flat monthly rate — no per-referral fees, no surprise charges, no bidding for priority. Know your marketing spend up front and build your business around it.
                       </p>
                     </div>
@@ -345,14 +345,14 @@ export default function ContractorsPage() {
               </Reveal>
 
               <Reveal delay={210}>
-                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8 hover:border-lw-rust transition-all">
+                <Card className="border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm p-8">
                   <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
+                    <div className="h-12 w-12 rounded-full bg-lw-rust/15 flex items-center justify-center flex-shrink-0">
                       <Shield className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-mkt-ink mb-2">The IronClad Badge Builds Your Brand</h3>
-                      <p className="text-mkt-ink/70">
+                      <h3 className="text-xl font-bold text-white mb-2">The IronClad Badge Builds Your Brand</h3>
+                      <p className="text-white/70">
                         Being an IronClad Partner signals professionalism to every realtor and homeowner you work with. It&apos;s third-party credibility built into every referral you receive.
                       </p>
                     </div>
@@ -627,7 +627,7 @@ export default function ContractorsPage() {
       </section>
 
       {/* FOUNDING PARTNER CAMPAIGN */}
-      <section className="py-16 md:py-20 bg-white border-y border-amber-200">
+      <section className="py-16 md:py-20 bg-mkt-navy">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-10">
@@ -641,14 +641,14 @@ export default function ContractorsPage() {
                 />
               </RevealBadge>
               <Reveal as="div" delay={70}>
-                <Badge className="mb-4 bg-amber-50 text-amber-700 border-amber-300">
+                <Badge className="mb-4 bg-amber-400/15 text-amber-300 border-amber-400/30">
                   <Crown className="h-3 w-3 mr-1" />
                   National Ground Floor — Limited Spots by Trade & County
                 </Badge>
-                <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
                   Founding Partner Program
                 </h2>
-                <p className="text-lg md:text-xl text-mkt-ink/70 max-w-2xl mx-auto">
+                <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
                   The people who join now are the people who own their position in the network — permanently. As ListWorx expands nationally, Founding Partners are already there. That&apos;s not available later.
                 </p>
               </Reveal>
@@ -656,38 +656,38 @@ export default function ContractorsPage() {
 
             <div className="grid md:grid-cols-2 gap-5 mb-10">
               <Reveal delay={0}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-200 bg-amber-50/60">
-                  <Star className="h-6 w-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
+                  <Star className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-base font-semibold text-mkt-ink mb-1">Permanent Badge. Permanent Status.</h3>
-                    <p className="text-sm text-mkt-ink/70">Your Founding Partner badge stays on your profile for the life of your membership — visible to every realtor and homeowner who finds you in the network. It cannot be bought later.</p>
+                    <h3 className="text-base font-semibold text-white mb-1">Permanent Badge. Permanent Status.</h3>
+                    <p className="text-sm text-white/70">Your Founding Partner badge stays on your profile for the life of your membership — visible to every realtor and homeowner who finds you in the network. It cannot be bought later.</p>
                   </div>
                 </div>
               </Reveal>
               <Reveal delay={70}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-200 bg-amber-50/60">
-                  <TrendingUp className="h-6 w-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
+                  <TrendingUp className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-base font-semibold text-mkt-ink mb-1">First Position in Your Trade & County</h3>
-                    <p className="text-sm text-mkt-ink/70">Founding Partners hold first position in referral matching for their trade and county. As the network expands, that position is already yours.</p>
+                    <h3 className="text-base font-semibold text-white mb-1">First Position in Your Trade & County</h3>
+                    <p className="text-sm text-white/70">Founding Partners hold first position in referral matching for their trade and county. As the network expands, that position is already yours.</p>
                   </div>
                 </div>
               </Reveal>
               <Reveal delay={140}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-200 bg-amber-50/60">
-                  <Shield className="h-6 w-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
+                  <Shield className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-base font-semibold text-mkt-ink mb-1">Rate Locked From Day One</h3>
-                    <p className="text-sm text-mkt-ink/70">The rate you lock in today is the rate you pay — forever. Standard pricing goes up when the founding window closes. Yours doesn&apos;t.</p>
+                    <h3 className="text-base font-semibold text-white mb-1">Rate Locked From Day One</h3>
+                    <p className="text-sm text-white/70">The rate you lock in today is the rate you pay — forever. Standard pricing goes up when the founding window closes. Yours doesn&apos;t.</p>
                   </div>
                 </div>
               </Reveal>
               <Reveal delay={210}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-200 bg-amber-50/60">
-                  <Lock className="h-6 w-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-4 p-5 rounded-xl border border-amber-400/25 bg-amber-400/[0.08]">
+                  <Lock className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-base font-semibold text-mkt-ink mb-1">Closes When It Fills — No Exceptions</h3>
-                    <p className="text-sm text-mkt-ink/70">Founding Partner spots are limited by trade and county. When yours fills, the program closes in your market. There is no waitlist and no reopening.</p>
+                    <h3 className="text-base font-semibold text-white mb-1">Closes When It Fills — No Exceptions</h3>
+                    <p className="text-sm text-white/70">Founding Partner spots are limited by trade and county. When yours fills, the program closes in your market. There is no waitlist and no reopening.</p>
                   </div>
                 </div>
               </Reveal>
@@ -701,7 +701,7 @@ export default function ContractorsPage() {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <p className="text-sm text-mkt-ink/60 mt-4">
+              <p className="text-sm text-white/60 mt-4">
                 Available to qualified contractors during the network launch period only.
               </p>
             </Reveal>

@@ -496,7 +496,7 @@ function RequestPageContent() {
       )}
       <section className="relative overflow-hidden py-16">
         <img
-          src="https://images.unsplash.com/photo-1742900280864-bcc27353ceba?auto=format&fit=crop&w=1920&q=80"
+          src="https://images.pexels.com/photos/6474135/pexels-photo-6474135.jpeg?auto=compress&cs=tinysrgb&w=1920"
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
           aria-hidden="true"
@@ -516,9 +516,9 @@ function RequestPageContent() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
+      <section className="bg-mkt-navy py-16">
         <div className="container mx-auto px-4 max-w-4xl">
-        <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8">
+        <Card className="bg-white border-zinc-200 text-mkt-ink shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>
               <h2 className="text-2xl font-bold mb-4 text-mkt-ink">Your Information</h2>
