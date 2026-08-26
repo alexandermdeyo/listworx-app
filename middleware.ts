@@ -216,11 +216,7 @@ export async function middleware(req: NextRequest) {
   }
 
 
-  if (path.startsWith('/apply')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/contractor-portal', req.url));
-    }
-
+  if (path.startsWith('/apply') && user) {
     if (role === 'ADMIN') {
       return NextResponse.redirect(new URL('/admin/crm', req.url));
     }

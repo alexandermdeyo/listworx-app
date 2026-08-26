@@ -2,9 +2,39 @@ import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/design-system';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Crown } from 'lucide-react';
 import { Reveal } from '@/components/motion';
+
+const foundingPlans = [
+  {
+    name: 'Basic Founder',
+    price: '$159',
+    highlight: false,
+    extra: null as string | null,
+  },
+  {
+    name: 'Preferred Founder',
+    price: '$279',
+    highlight: true,
+    extra: 'Priority matching + higher referral volume',
+  },
+  {
+    name: 'Elite Founder',
+    price: '$479',
+    highlight: false,
+    extra: 'Top-priority matching + the highest referral volume',
+  },
+];
+
+const BASE_FEATURES = [
+  'IronClad Verified badge',
+  'Profile on the ListWorx platform',
+  'Access to homeowner referrals',
+  'Verified reviews system',
+  'Availability & service-area controls',
+];
 
 const standardPlans = [
   ['Basic Partner', '$199/month', ['Included in referral rotation', 'Basic contractor profile', 'Standard positioning', 'IronClad Standards required', 'ListWorx Academy access — including ACES Licensing and Exam Prep'], 'Apply Now'],
@@ -12,52 +42,92 @@ const standardPlans = [
   ['Elite Partner', '$599/month', ['Top of rotation in your trade and county', 'Territory lock (limited spots)', 'Featured in requestor referral cards', 'Eligible for ListWorx media partnerships', 'IronClad Standards required', 'Full ListWorx Academy access — ACES licensing resources, ACES Trained badge, and priority course placement'], 'Apply Now — Limited Spots'],
 ];
 
-const pricingRows = [
-  ['Activation Fee', '$75 one-time', '$75 one-time', '$75 one-time'],
-  ['Locked Monthly Rate', '$159/mo', '$279/mo', '$479/mo'],
-  ['Standard Rate', '$199/month', '$349/month', '$599/month'],
-  ['You Save', '$40/mo forever', '$70/mo forever', '$120/mo forever'],
-  ['Spots Per County', '10 per trade', '5 per trade', '2 per trade'],
-];
-
 export default function PricingPage() {
   return (
     <PageShell surface="marketing">
       <Navigation variant="light" />
       <section className="bg-lw-rust py-4 text-center text-white">
-        <p className="font-semibold">⚡ Founding Partner spots are open in Nashville and Sumner County. Limited per trade. Reserve yours before your county fills. <a href="#founder" className="underline">See Founding Partner pricing →</a></p>
+        <p className="font-semibold">⚡ Founding Partner spots are open in Nashville and Sumner County. Limited per trade. When they&apos;re gone, they&apos;re gone.</p>
       </section>
 
-      <section className="container mx-auto px-4 py-16">
-        <h1 className="mb-2 text-5xl font-bold text-mkt-ink">Standard Contractor Pricing</h1>
-        <p className="mb-8 text-mkt-ink/70">For contractors joining after Founding Partner spots close.</p>
-        <div className="grid gap-6 md:grid-cols-3">
-          {standardPlans.map(([name, price, features, cta], index) => (
-            <Reveal key={name as string} delay={index * 70} pulse={index === 1}>
-              <Card className={`lw-hover-lift bg-white text-mkt-ink shadow-sm p-6 ${index === 1 ? 'border-2 border-lw-rust' : 'border-zinc-200'}`}>
-                <h2 className="text-2xl font-bold text-mkt-ink">{name}</h2>
-                <p className="mb-5 mt-2 text-3xl font-bold text-lw-rust">{price}</p>
-                <div className="mb-6 space-y-3">{(features as string[]).map(feature => <div key={feature} className="flex gap-2 text-mkt-ink/80"><CheckCircle className="h-4 w-4 shrink-0 text-lw-rust" />{feature}</div>)}</div>
-                <Link href="/apply"><Button className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white">{cta}</Button></Link>
+      <section className="container mx-auto px-4 pt-16 pb-8 text-center">
+        <Badge className="bg-lw-rust/15 text-lw-rust border-lw-rust/30 mb-4">
+          <Crown className="h-3 w-3 mr-1" />
+          Founding Member Pricing
+        </Badge>
+        <h1 className="mb-4 text-4xl md:text-5xl font-bold text-mkt-ink">Founding Partner Pricing</h1>
+        <p className="mx-auto max-w-2xl text-mkt-ink/70 text-lg">
+          One-time $75 activation fee covers your IronClad Verified business review — entity, license, and insurance. Your monthly rate locks in the day you join and stays locked for as long as you&apos;re an active member. You will never be moved to the post-launch rate.
+        </p>
+      </section>
+
+      <section className="container mx-auto px-4 pb-16">
+        <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
+          {foundingPlans.map((plan, index) => (
+            <Reveal key={plan.name} delay={index * 70} pulse={plan.highlight}>
+              <Card
+                className={`lw-hover-lift relative flex h-full flex-col bg-white text-mkt-ink shadow-sm p-6 ${
+                  plan.highlight ? 'border-2 border-lw-rust shadow-lg' : 'border-zinc-200'
+                }`}
+              >
+                {plan.highlight && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-lw-rust px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                    Most Popular
+                  </span>
+                )}
+                <Badge className="mb-4 w-fit bg-mkt-navy/10 text-mkt-navy border-mkt-navy/20">
+                  Founding Member
+                </Badge>
+                <h2 className="text-2xl font-bold text-mkt-ink">{plan.name}</h2>
+                <p className="mb-1 mt-2 text-3xl font-bold text-lw-rust">
+                  {plan.price}<span className="text-base font-semibold text-mkt-ink/60">/mo</span>
+                </p>
+                <p className="mb-5 text-xs text-mkt-ink/60">+ $75 one-time activation fee</p>
+                <div className="mb-4 space-y-3 flex-1">
+                  {BASE_FEATURES.map(feature => (
+                    <div key={feature} className="flex gap-2 text-mkt-ink/80 text-sm">
+                      <CheckCircle className="h-4 w-4 shrink-0 text-lw-rust mt-0.5" />
+                      {feature}
+                    </div>
+                  ))}
+                  {plan.extra && (
+                    <div className="flex gap-2 text-mkt-ink font-semibold text-sm pt-1 border-t border-zinc-100 mt-3">
+                      <CheckCircle className="h-4 w-4 shrink-0 text-lw-rust mt-0.5" />
+                      {plan.extra}
+                    </div>
+                  )}
+                </div>
+                <Link href="/founding-partner">
+                  <Button className={`w-full text-white ${plan.highlight ? 'bg-lw-rust hover:bg-lw-rust-hover' : 'bg-mkt-navy hover:bg-mkt-navy/90'}`}>
+                    Claim This Spot
+                  </Button>
+                </Link>
               </Card>
             </Reveal>
           ))}
         </div>
+        <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-mkt-ink/60">
+          Founding slots are limited per trade, per county. Once they&apos;re gone, this pricing is gone with them — new contractors join at the standard rate below.
+        </p>
       </section>
 
-      <section id="founder" className="container mx-auto px-4 py-16">
-        <Reveal as="div">
-          <h2 className="text-4xl font-bold text-mkt-ink">Founding Partner Pricing</h2>
-          <p className="mb-6 text-mkt-ink/70">Limited spots. When they're gone, this offer closes for good. Your rate locks in on day one — and nobody joining after you will ever see it again.</p>
-          <div className="overflow-x-auto rounded-xl border border-zinc-200">
-            <table className="w-full min-w-[760px] bg-white text-left text-sm">
-              <thead><tr>{['', 'Basic Founder', 'Preferred Founder', 'Elite Founder'].map(h => <th key={h} className="p-4 text-mkt-ink">{h}</th>)}</tr></thead>
-              <tbody>{pricingRows.map(row => <tr key={row[0]} className="border-t border-zinc-200">{row.map((cell, i) => <td key={`${row[0]}-${i}`} className={`p-4 ${i === 0 ? 'font-semibold text-mkt-ink' : 'text-mkt-ink/70'}`}>{cell}</td>)}</tr>)}</tbody>
-            </table>
+      <section className="bg-zinc-50 py-14">
+        <div className="container mx-auto px-4">
+          <h2 className="mb-2 text-center text-2xl font-bold text-mkt-ink">Standard Pricing — After Founding Spots Close</h2>
+          <p className="mb-8 text-center text-mkt-ink/70">For contractors joining after Founding Partner spots close in their county.</p>
+          <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
+            {standardPlans.map(([name, price, features, cta], index) => (
+              <Reveal key={name as string} delay={index * 70}>
+                <Card className="bg-white text-mkt-ink shadow-sm p-6 border-zinc-200">
+                  <h3 className="text-xl font-bold text-mkt-ink">{name}</h3>
+                  <p className="mb-5 mt-2 text-2xl font-bold text-mkt-ink/80">{price}</p>
+                  <div className="mb-6 space-y-3">{(features as string[]).map(feature => <div key={feature} className="flex gap-2 text-mkt-ink/70 text-sm"><CheckCircle className="h-4 w-4 shrink-0 text-mkt-ink/40 mt-0.5" />{feature}</div>)}</div>
+                  <Link href="/apply"><Button variant="outlineOrange" className="w-full">{cta}</Button></Link>
+                </Card>
+              </Reveal>
+            ))}
           </div>
-          <p className="my-6 text-mkt-ink/80">Standard pricing will not change for existing subscribers — but Founding Partner spots will close permanently once each trade fills per county. There is no second round.</p>
-          <Link href="/founding-partner"><Button className="bg-amber-500 text-black hover:bg-amber-400">Reserve My Founding Partner Spot</Button></Link>
-        </Reveal>
+        </div>
       </section>
 
       <section className="bg-mkt-navy py-16 md:py-20">

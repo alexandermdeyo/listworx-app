@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Award, Briefcase, FileText, Clock, Target, CheckCheck, Phone, CircleAlert as AlertCircle, ArrowRight, Lock, Star, Crown, MapPin } from 'lucide-react';
+import { CircleCheck as CheckCircle, Shield, TrendingUp, Users, DollarSign, Award, Briefcase, FileText, Clock, Target, CheckCheck, Phone, CircleAlert as AlertCircle, ArrowRight, Lock, Star, Crown, MapPin, Layers, SlidersHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
@@ -270,61 +270,68 @@ export default function ContractorsPage() {
         </div>
       </section>
 
-      {/* HOW THE NETWORK WORKS */}
-      <section className="py-20 bg-white border-y border-zinc-200">
+      {/* HOW IT WORKS */}
+      <section id="how-it-works" className="py-20 bg-white border-y border-zinc-200">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <Reveal as="div" className="text-center mb-12">
+          <div className="max-w-3xl mx-auto">
+            <Reveal as="div" className="text-center mb-14">
               <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">
                 How It Works
               </h2>
-              <p className="text-lg md:text-xl text-mkt-ink/70 max-w-3xl mx-auto">
-                From application to first referral — here&apos;s exactly how you get in and what happens next.
+              <p className="text-lg md:text-xl text-mkt-ink/70 max-w-2xl mx-auto">
+                No bidding wars. No pay-per-lead. A predictable subscription, and referrals that actually fit your business.
               </p>
             </Reveal>
 
-            <div className="grid md:grid-cols-4 gap-6">
-              {[
-                {
-                  step: '01',
-                  icon: FileText,
-                  title: 'Apply',
-                  desc: 'Submit your license, insurance, and trade. We verify credentials within 48 hours.',
-                },
-                {
-                  step: '02',
-                  icon: Shield,
-                  title: 'Get Approved',
-                  desc: 'IronClad Standards verified. Your profile activates in the network.',
-                },
-                {
-                  step: '03',
-                  icon: DollarSign,
-                  title: 'Lock Your Rate',
-                  desc: 'Founding Partners pay one activation fee and their monthly rate never moves — not next year, not ever.',
-                },
-                {
-                  step: '04',
-                  icon: Target,
-                  title: 'Receive Referrals',
-                  desc: "When someone in your trade and county needs work, you get the call. Not fifteen other people. You.",
-                },
-              ].map((item, index) => (
-                <Reveal key={item.step} delay={index * 70}>
-                  <div className="text-center">
-                    <div className="relative inline-flex mb-4">
-                      <div className="h-14 w-14 rounded-full bg-lw-rust/10 flex items-center justify-center">
-                        <item.icon className="h-7 w-7 text-lw-rust" />
+            <div className="relative">
+              <div className="absolute left-7 top-2 bottom-2 w-px bg-zinc-200" aria-hidden="true" />
+              <div className="space-y-10">
+                {[
+                  {
+                    step: '1',
+                    icon: FileText,
+                    title: 'Apply & Get Verified',
+                    desc: "Submit your application and pay the one-time $75 founding activation fee. We confirm your business is legitimate — entity, license, and insurance. This is business-level verification, not a review of every job, every employee, or every trade you touch.",
+                  },
+                  {
+                    step: '2',
+                    icon: Layers,
+                    title: 'Choose Your Subscription',
+                    desc: "Basic, Preferred, or Elite. Pick the tier that fits your business. Higher tiers get priority matching and more referrals per month — but every tier gets real referrals, not a spot in someone else's bidding war.",
+                  },
+                  {
+                    step: '3',
+                    icon: Target,
+                    title: 'Receive Qualified Referrals',
+                    desc: "When a homeowner's request matches your service area, trade category, and availability, we route it to you. You're not one of fifteen contractors bidding on a lead — you're matched because you're a fit.",
+                  },
+                  {
+                    step: '4',
+                    icon: Star,
+                    title: 'Build Your Reputation',
+                    desc: "Finish the job, and the homeowner leaves a verified review through ListWorx — tied to a confirmed project, not an anonymous post from who-knows-where. Your reputation builds on real work, not gamed ratings.",
+                  },
+                  {
+                    step: '5',
+                    icon: SlidersHorizontal,
+                    title: 'Grow on Your Terms',
+                    desc: "Turn your availability on or off whenever you need to. Control your service counties and categories yourself. No penalty for pausing — it's your business, not ours.",
+                  },
+                ].map((item, index) => (
+                  <Reveal key={item.step} delay={index * 70}>
+                    <div className="relative flex gap-6">
+                      <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white border-2 border-lw-rust">
+                        <item.icon className="h-6 w-6 text-lw-rust" />
                       </div>
-                      <span className="absolute -top-1 -right-1 text-xs font-bold bg-lw-rust text-white rounded-full h-5 w-5 flex items-center justify-center">
-                        {item.step}
-                      </span>
+                      <div className="pt-1">
+                        <span className="text-xs font-bold uppercase tracking-widest text-lw-rust">Step {item.step}</span>
+                        <h3 className="text-xl font-bold text-mkt-ink mt-1 mb-2">{item.title}</h3>
+                        <p className="text-mkt-ink/70 leading-relaxed">{item.desc}</p>
+                      </div>
                     </div>
-                    <h3 className="text-base font-bold text-mkt-ink mb-2">{item.title}</h3>
-                    <p className="text-sm text-mkt-ink/70">{item.desc}</p>
-                  </div>
-                </Reveal>
-              ))}
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -2,11 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { createClient } from '@/lib/supabase-browser';
 import ApplicationForm from '@/app/contractor-dashboard/ApplicationForm';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader as Loader2, CircleAlert as AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Loader as Loader2,
+  CircleAlert as AlertCircle,
+  ArrowRight,
+  CircleCheck as CheckCircle2,
+  Shield,
+} from 'lucide-react';
 import { Reveal } from '@/components/motion';
 
 export type FounderSelection = {
@@ -87,9 +95,11 @@ export default function ApplyPage() {
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
   const searchParams = useSearchParams();
+  const formSectionRef = useRef<HTMLDivElement>(null);
 
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [authError, setAuthError] = useState('');
+  const [authRequired, setAuthRequired] = useState(false);
   const [state, setState] = useState<AuthenticatedContractorState | null>(null);
   const [reloadTick, setReloadTick] = useState(0);
   const [founderSelection, setFounderSelection] = useState<FounderSelection | null>(null);
@@ -108,19 +118,17 @@ export default function ApplyPage() {
     async function resolveApplyState() {
       setCheckingAuth(true);
       setAuthError('');
+      setAuthRequired(false);
 
       try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError) {
-          throw new Error(userError.message || 'Could not verify your session.');
-        }
+        const { data: { user } } = await supabase.auth.getUser();
 
         if (!user?.id) {
-          window.location.replace('/contractor-portal');
+          if (!cancelled) {
+            setAuthRequired(true);
+            setState(null);
+            setCheckingAuth(false);
+          }
           return;
         }
 
@@ -217,11 +225,95 @@ export default function ApplyPage() {
     };
   }, [reloadTick, supabase]);
 
+  const scrollToForm = () => {
+    formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
       <Navigation variant="light" />
 
-      <div className="container mx-auto px-4 py-12 max-w-6xl">
+      {/* ABOVE THE FOLD */}
+      <section className="bg-mkt-navy py-16 md:py-24 text-center">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <Reveal immediate delay={0}>
+            <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-4">Founding Contractor Applications</p>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">
+              Founding Contractor Spots Are Open
+            </h1>
+          </Reveal>
+          <Reveal immediate delay={100}>
+            <ul className="mx-auto mb-10 max-w-lg space-y-3 text-left">
+              <li className="flex items-start gap-3 text-white/85">
+                <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+                A predictable monthly subscription — not a per-lead fee, not a bidding war.
+              </li>
+              <li className="flex items-start gap-3 text-white/85">
+                <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+                One-time $75 activation fee covers your IronClad Verified business review.
+              </li>
+              <li className="flex items-start gap-3 text-white/85">
+                <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+                Founding rates lock in permanently — you&apos;ll never pay the post-launch price.
+              </li>
+            </ul>
+          </Reveal>
+          <Reveal immediate delay={180}>
+            <Button
+              size="lg"
+              onClick={scrollToForm}
+              className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold px-8"
+            >
+              Start Your Application
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* BELOW THE FOLD: rate reminder / verified / urgency */}
+      <section className="py-14 bg-white border-b border-zinc-200">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="grid gap-6 sm:grid-cols-3 mb-10">
+            {[
+              { name: 'Basic', price: '$159/mo' },
+              { name: 'Preferred', price: '$279/mo' },
+              { name: 'Elite', price: '$479/mo' },
+            ].map((tier) => (
+              <div key={tier.name} className="lw-card-light p-5 text-center">
+                <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-1">{tier.name}</p>
+                <p className="text-2xl font-bold text-mkt-ink">{tier.price}</p>
+                <p className="text-xs text-mkt-ink/60 mt-1">Locked in permanently for founding members</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
+            <div className="flex items-start gap-3">
+              <Shield className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+              <p className="text-sm text-mkt-ink/80">
+                <span className="font-semibold text-mkt-ink">$75 one-time activation fee.</span> Not recurring — it covers your IronClad Verified business review.
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Shield className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
+              <p className="text-sm text-mkt-ink/80">
+                <span className="font-semibold text-mkt-ink">IronClad Verified</span> means ListWorx has confirmed your business entity, license, and insurance — before homeowners ever see your profile.{' '}
+                <Link href="/ironclad" target="_blank" rel="noopener noreferrer" className="text-lw-rust underline underline-offset-2">
+                  Read the standards
+                </Link>.
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-8 text-center text-sm font-semibold text-mkt-ink/70">
+            Spots are limited in your market. Founding pricing closes when the launch cohort is full.
+          </p>
+        </div>
+      </section>
+
+      {/* APPLICATION FORM */}
+      <div ref={formSectionRef} className="container mx-auto px-4 py-12 max-w-6xl">
         {checkingAuth ? (
           <div className="py-20 flex items-center justify-center text-lw-text/60 gap-3">
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -233,6 +325,19 @@ export default function ApplyPage() {
               <AlertCircle className="h-4 w-4 text-red-600" />
               <AlertDescription className="text-red-700">{authError}</AlertDescription>
             </Alert>
+          </div>
+        ) : authRequired ? (
+          <div className="max-w-xl mx-auto text-center lw-card-light p-8">
+            <h2 className="text-xl font-bold text-mkt-ink mb-3">Create your free account to get started</h2>
+            <p className="text-mkt-ink/70 mb-6">
+              Your application takes about 10 minutes. Create a free contractor account first — no payment required until after approval.
+            </p>
+            <Link href="/contractor-portal">
+              <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold px-8">
+                Continue to Create Account
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         ) : !state ? null : (
           <div>

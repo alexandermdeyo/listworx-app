@@ -104,7 +104,7 @@ export default function AboutPage() {
               <div className="space-y-6 text-lg text-mkt-ink/70 leading-[1.85]">
                 <p>I didn't build ListWorx from a boardroom. I built it from real life.</p>
                 <p>
-                  I'm an Air Force veteran, truck driver, former chef, photographer, business owner, and someone who has worked around homes, contractors, and real estate from more than one angle. I've seen what happens when people don't show up, don't communicate, and don't take pride in their work. I've also seen what happens when good people get overlooked because there's no better system in place.
+                  I'm Alex Deyo — an Air Force veteran, truck driver, former chef, photographer, business owner, and someone who has worked around homes, contractors, and real estate from more than one angle. I've seen what happens when people don't show up, don't communicate, and don't take pride in their work. I've also seen what happens when good people get overlooked because there's no better system in place.
                 </p>
                 <p>
                   I've seen contractors struggle to get steady work. I've seen homeowners take risks and regret it. I've seen realtors deal with the fallout when the wrong person gets trusted with the job.
@@ -114,6 +114,9 @@ export default function AboutPage() {
                 </p>
                 <p>
                   I moved to Tennessee not just for a better quality of life, but to build this company in a place where I can grow it the right way. Nashville is the starting point. The vision is much bigger. I want to build something here that can scale across the country and help people everywhere.
+                </p>
+                <p>
+                  ListWorx is currently in its launch phase — headquartered in Nashville, Tennessee, and accepting founding contractor applications across Middle Tennessee.
                 </p>
               </div>
             </Reveal>
@@ -142,7 +145,7 @@ export default function AboutPage() {
                   The home services industry runs on trust — but it's built on almost none. Contractors disappear. Reviews get gamed. Nobody's accountable after the check clears.
                 </p>
                 <p>
-                  ListWorx exists to change that. Every contractor in our network is vetted for licensing, insurance, and professionalism before they're ever seen by a client. That's not a feature — it's the foundation.
+                  ListWorx exists to change that. Every contractor in our network is IronClad Verified at the business level — entity, license, and insurance confirmed — before they're ever seen by a client. That's not a feature — it's the foundation.
                 </p>
                 <p>
                   IronClad Standards is the framework that makes it real. It defines what we expect, how performance is measured, and what happens when those standards aren't met. Contractors who maintain the standard earn more trust, more visibility, and more work. Those who don't are removed.

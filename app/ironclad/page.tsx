@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Shield, ChevronRight, Crown, Star, Award } from 'lucide-react';
+import { Shield, ChevronRight, Crown, Star, Award, Building2, FileCheck, ShieldCheck, CircleX as XCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
@@ -151,6 +151,70 @@ export default function IronCladStandardsPage() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT IRONCLAD VERIFIED MEANS */}
+      <section className="py-16 md:py-24 bg-white border-t border-zinc-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-3">Plain Language</p>
+              <h2 className="font-display text-3xl md:text-4xl font-semibold text-mkt-ink mb-5 leading-snug">
+                What IronClad Verified Means
+              </h2>
+              <p className="text-mkt-ink/70 text-base leading-[1.75] max-w-2xl mx-auto">
+                IronClad Verified means ListWorx has confirmed:
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-6 mb-10">
+              {[
+                { icon: Building2, text: 'The business entity is legitimate and registered' },
+                { icon: FileCheck, text: 'The contractor holds the required licenses for their primary trade' },
+                { icon: ShieldCheck, text: 'The contractor carries required insurance' },
+              ].map((item, index) => (
+                <Reveal key={item.text} delay={index * 70}>
+                  <div className="lw-card-light p-6 h-full text-center">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-lw-rust/10">
+                      <item.icon className="h-6 w-6 text-lw-rust" />
+                    </div>
+                    <p className="text-mkt-ink text-sm font-medium leading-relaxed">{item.text}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+
+            <Reveal className="rounded-2xl border-2 border-mkt-ink/15 bg-zinc-50 p-6 md:p-8 mb-8">
+              <p className="text-mkt-ink font-bold text-base mb-4">IronClad Verified does NOT mean:</p>
+              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                {[
+                  'Every technician or employee is individually certified',
+                  "ListWorx has verified the contractor's work quality",
+                  'Individual jobs or trades beyond the primary are verified',
+                  'The contractor has passed a background check at the employee level',
+                ].map((text) => (
+                  <div key={text} className="flex items-start gap-2.5">
+                    <XCircle className="h-4 w-4 text-mkt-ink/50 shrink-0 mt-0.5" />
+                    <p className="text-mkt-ink/70 text-sm leading-relaxed">{text}</p>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+
+            <Reveal className="text-center max-w-2xl mx-auto mb-14">
+              <p className="text-mkt-ink/70 text-base leading-[1.75]">
+                This is business-level verification only. The badge tells homeowners the business is real, licensed, and insured — not that the work is guaranteed.
+              </p>
+            </Reveal>
+
+            <Reveal className="max-w-2xl mx-auto text-center border-t border-zinc-200 pt-10">
+              <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-3">Why It Matters For Contractors</p>
+              <p className="text-mkt-ink/70 text-base leading-[1.75]">
+                The IronClad Verified badge sets ListWorx contractors apart from unlicensed or uninsured competitors showing up on generic platforms. Homeowners on ListWorx know they&apos;re being matched with verified professionals — which means the referrals you receive come from homeowners who are specifically seeking that.
+              </p>
+            </Reveal>
           </div>
         </div>
       </section>
