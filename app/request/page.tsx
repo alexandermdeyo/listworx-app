@@ -496,15 +496,15 @@ function RequestPageContent() {
       )}
       <section className="relative overflow-hidden flex items-center min-h-[85vh] md:min-h-[720px] py-20">
         <img
-          src="/kitchen-painter.jpg"
+          src="/painter-fireplace.jpg"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[center_38%]"
+          className="absolute inset-0 h-full w-full object-cover object-[35%_center]"
           aria-hidden="true"
         />
         <div className="lw-photo-scrim" />
         <div
           className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, rgba(1,3,51,0) 0%, #010333 100%)' }}
+          style={{ background: 'linear-gradient(to bottom, rgba(74,74,74,0) 0%, #4A4A4A 100%)' }}
           aria-hidden="true"
         />
         <div className="relative z-10 container mx-auto px-4 max-w-4xl text-center">
@@ -544,7 +544,7 @@ function RequestPageContent() {
         </div>
       </section>
 
-      <section className="bg-mkt-navy py-16">
+      <section className="bg-lw-gray py-16">
         <div className="container mx-auto px-4 max-w-4xl">
         <Card className="bg-white border-zinc-200 text-mkt-ink shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
