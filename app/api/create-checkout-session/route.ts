@@ -3,7 +3,7 @@ import { createStripeServerClient } from '@/lib/stripe-server';
 import {
   STRIPE_PRICES,
   getTierPriceId,
-  getFounderActivationPriceId,
+  getFounderRenewalPriceId,
   getAddonPriceId,
   getAddonMode,
   type TierId,
@@ -49,10 +49,18 @@ export async function POST(request: NextRequest) {
     let addonLineItems: any[] = [];
 
     if (isFounderActivation) {
-      resolvedPriceId = getFounderActivationPriceId() || '';
-      sessionMode = 'payment';
+      // Founding members no longer pay a separate one-time activation fee.
+      // This checkout IS their first subscription payment, at their locked
+      // founder rate — Stripe creates the recurring subscription directly as
+      // part of this session (see stripe-webhook's handleFounderActivationCheckout,
+      // which reads session.subscription rather than creating a second one).
+      const normalizedFounderTierId = (tierId || '').trim().toLowerCase() as TierId;
+      const normalizedFounderBilling: BillingPeriod =
+        (billingPeriod || '').trim().toLowerCase() === 'annual' ? 'annual' : 'monthly';
+      resolvedPriceId = getFounderRenewalPriceId(normalizedFounderTierId, normalizedFounderBilling);
+      sessionMode = 'subscription';
       if (!resolvedPriceId) {
-        return NextResponse.json({ error: 'Missing founder activation price ID' }, { status: 500 });
+        return NextResponse.json({ error: 'Missing founder renewal price ID' }, { status: 500 });
       }
 
       // Look up bundled add-on prices

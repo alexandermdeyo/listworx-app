@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { CircleCheck as CheckCircle, Circle as CircleIcon, Shield, Zap, Crown, Truck, Star, CircleAlert as AlertCircle, Loader as Loader2, Lock, CreditCard, CircleArrowUp as ArrowUpCircle } from 'lucide-react';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import { ADDON_LIST } from '@/lib/tiers-config';
+import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
 
 interface Tier {
   id: 'basic' | 'preferred' | 'elite';
@@ -39,19 +40,20 @@ interface AddOn {
 const TIERS: Tier[] = [
   {
     id: 'basic',
-    name: 'Basic Partner',
-    monthlyPrice: 199,
-    annualPrice: 1990,
+    name: 'Network Member — Standard',
+    monthlyPrice: 249,
+    annualPrice: 2490,
     icon: Shield,
     badgeText: 'Entry Level',
     description: 'Get listed and start receiving referrals',
     features: [
-      'Public profile in the contractor directory',
-      'Eligible for referral matching in your service area',
-      'Standard placement in referral rotation',
-      'Credential tracking and compliance tools',
-      'Email notifications for new referrals',
-      'ListWorx Academy access — including ACES Licensing and Exam Prep',
+      'IronClad Verified status',
+      'Profile on the ListWorx platform',
+      'Listed in referral rotation — standard priority',
+      'Contractor dashboard access',
+      'Email notifications when you’re matched',
+      'Verified reviews system',
+      'Availability and service-area controls',
     ],
     unavailableFeatures: [
       'Priority referral placement',
@@ -61,21 +63,21 @@ const TIERS: Tier[] = [
   },
   {
     id: 'preferred',
-    name: 'Preferred Partner',
-    monthlyPrice: 349,
-    annualPrice: 3490,
+    name: 'Network Partner — Standard',
+    monthlyPrice: 429,
+    annualPrice: 4290,
     icon: Zap,
     badgeText: 'Most Popular',
     highlight: true,
     description: 'Better placement and enhanced visibility',
     features: [
-      'Everything in Basic',
-      'Priority placement in referral matching',
-      'Enhanced visibility with logo in your listing',
-      'IronClad Certified Partner badge',
-      'Referral analytics and reporting',
-      'Dedicated account support',
-      'Full ListWorx Academy access — ACES licensing resources and ACES Trained badge on your profile',
+      'Everything in Network Member, plus:',
+      'Priority placement — above all Network Members',
+      'Enhanced profile with additional photos and expanded bio',
+      'IronClad Digital Badge Kit included (vehicle, digital, print)',
+      'SMS + email notifications for every match',
+      'Monthly performance report (referrals received, match rate)',
+      'Quarterly profile boost',
     ],
     unavailableFeatures: [
       'Top-priority referral positioning',
@@ -84,21 +86,20 @@ const TIERS: Tier[] = [
   },
   {
     id: 'elite',
-    name: 'Elite Partner',
-    monthlyPrice: 599,
-    annualPrice: 5990,
+    name: 'Network Elite — Standard',
+    monthlyPrice: 729,
+    annualPrice: 7290,
     icon: Crown,
     badgeText: 'Top Tier',
     description: 'Maximum referral priority and premium benefits',
     features: [
-      'Everything in Preferred',
-      'Top-priority referral positioning',
-      'Premium profile placement and IronClad Elite badge',
-      'Advanced analytics dashboard',
-      'Priority phone support',
-      'Quarterly business review',
-      'Annual: Professionally produced 60-second promo video',
-      'Full ListWorx Academy access — ACES licensing resources, ACES Trained badge, and priority course placement',
+      'Everything in Network Partner, plus:',
+      'Top of rotation — always above Partner and Member',
+      'Territory lock — maximum 2 Elite per trade per county',
+      'Monthly profile boost (not quarterly)',
+      '2 social media posts per month featuring your work',
+      'Google Business Profile optimization on signup',
+      'Annual featured contractor spotlight',
     ],
   },
 ];
@@ -128,47 +129,47 @@ const ADD_ONS: AddOn[] = [
 const FOUNDER_TIERS = [
   {
     id: 'basic',
-    name: 'Basic Founder',
-    renewalRate: 159,
-    standardRate: 199,
-    savings: 40,
+    name: 'Network Member — Founding',
+    renewalRate: 199,
+    standardRate: 249,
+    savings: 50,
     spots: 10,
     features: [
-      'Public profile in the contractor directory',
-      'Eligible for referral matching in your service area',
-      'Standard placement in referral rotation',
-      'Credential tracking and compliance tools',
-      'Email notifications for new referrals',
+      'IronClad Verified status',
+      'Profile on the ListWorx platform',
+      'Listed in referral rotation — standard priority',
+      'Contractor dashboard access',
+      'Email notifications when you’re matched',
     ],
   },
   {
     id: 'preferred',
-    name: 'Preferred Founder',
-    renewalRate: 279,
-    standardRate: 349,
-    savings: 70,
+    name: 'Network Partner — Founding',
+    renewalRate: 349,
+    standardRate: 429,
+    savings: 80,
     spots: 5,
     features: [
-      'Everything in Basic',
+      'Everything in Network Member',
       'Priority placement in referral matching',
-      'Enhanced visibility with logo in your listing',
-      'IronClad Certified Partner badge',
-      'Referral analytics and reporting',
+      'Enhanced profile with logo in your listing',
+      'IronClad Digital Badge Kit included',
+      'Monthly performance report',
     ],
   },
   {
     id: 'elite',
-    name: 'Elite Founder',
-    renewalRate: 479,
-    standardRate: 599,
-    savings: 120,
+    name: 'Network Elite — Founding',
+    renewalRate: 599,
+    standardRate: 729,
+    savings: 130,
     spots: 2,
     features: [
-      'Everything in Preferred',
+      'Everything in Network Partner',
       'Top-priority referral positioning',
       'Premium placement and Elite IronClad badge',
-      'Advanced analytics dashboard',
-      'Priority phone support',
+      'Territory lock — max 2 per trade per county',
+      'Monthly profile boost',
     ],
   },
 ] as const;
@@ -180,6 +181,7 @@ type SubscriptionSectionProps = {
 export default function SubscriptionSection({
   contractorProfileId: contractorProfileIdProp = null,
 }: SubscriptionSectionProps) {
+  const academyEnabled = useAcademyEnabled();
   const [isAnnual, setIsAnnual] = useState(false);
   const [selectedFounderTier, setSelectedFounderTier] = useState<'basic' | 'preferred' | 'elite'>('preferred');
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
@@ -214,7 +216,7 @@ export default function SubscriptionSection({
     return sum + price;
   }, 0);
 
-  const founderTotalCents = 75 + addonsTotalCents;
+  const founderTotalCents = addonsTotalCents;
 
   function toggleAddon(addonId: string) {
     setSelectedAddons((prev) =>
@@ -454,7 +456,8 @@ export default function SubscriptionSection({
         body: JSON.stringify({
           contractorId: contractorProfileId,
           tierId: selectedFounderTier,
-          tierName: founderTier?.name || 'Basic Founder',
+          tierName: founderTier?.name || 'Network Member — Founding',
+          billingPeriod: isAnnual ? 'annual' : 'monthly',
           isFounderActivation: true,
           bundledAddonIds: selectedAddons,
         }),
@@ -839,7 +842,7 @@ export default function SubscriptionSection({
               </div>
               <h3 className="text-2xl font-bold text-white">Become a Founding Partner</h3>
               <p className="mt-1 text-sm text-zinc-300">
-                One-time $75 activation. Your locked rate starts immediately — and it never goes up. Ever.
+                Your locked rate starts immediately — and it never goes up. Ever.
               </p>
             </div>
             <div className="flex flex-col items-center gap-3">
@@ -848,10 +851,6 @@ export default function SubscriptionSection({
                 alt="IronClad Founding Partner Badge"
                 className="h-24 w-auto md:h-28 drop-shadow-lg"
               />
-              <div className="rounded-xl bg-zinc-900/60 border border-lw-rust/40 px-5 py-3 text-center">
-                <div className="text-3xl font-bold text-lw-rust">$75</div>
-                <div className="text-xs text-zinc-400">one-time activation</div>
-              </div>
             </div>
           </div>
 
@@ -895,8 +894,8 @@ export default function SubscriptionSection({
               <div className="mb-4">
                 <h4 className="text-lg font-bold text-white">Customize Your Founder Kit (optional)</h4>
                 <p className="text-sm text-zinc-400">
-                  Bundle these one-time add-ons with your $75 activation.
-                  Monthly services like Profile Boost can be added anytime after activation.
+                  Bundle these one-time add-ons with your membership.
+                  Monthly services like Profile Boost can be added anytime after you join.
                 </p>
               </div>
               <div className="space-y-3">
@@ -934,8 +933,7 @@ export default function SubscriptionSection({
               {addonsTotalCents > 0 && (
                 <div className="mt-4 rounded-lg border border-lw-rust/40 bg-zinc-900/60 p-3 text-center">
                   <p className="text-sm text-zinc-300">
-                    $75 activation + ${addonsTotalCents} add-ons =
-                    <span className="ml-1 font-bold text-white">${founderTotalCents} total</span>
+                    ${founderTotalCents} in one-time add-ons, billed with your first payment
                   </p>
                 </div>
               )}
@@ -950,7 +948,7 @@ export default function SubscriptionSection({
           >
             {checkoutLoading === 'founder-activation'
               ? 'Loading checkout...'
-              : `Activate as ${FOUNDER_TIERS.find((t) => t.id === selectedFounderTier)?.name} — $${founderTotalCents}`}
+              : `Join the Network — ${FOUNDER_TIERS.find((t) => t.id === selectedFounderTier)?.name}`}
           </Button>
 
           <p className="mt-3 text-center text-xs text-zinc-400">
@@ -1048,6 +1046,12 @@ export default function SubscriptionSection({
                       <span className="text-sm text-lw-text/80">{feature}</span>
                     </div>
                   ))}
+                  {academyEnabled && (
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-lw-text/80">ListWorx Academy access — powered by ACES</span>
+                    </div>
+                  )}
                   {tier.unavailableFeatures?.map((feature) => (
                     <div key={feature} className="flex items-start gap-2 opacity-50">
                       <CircleIcon className="h-4 w-4 text-lw-text/30 mt-0.5 flex-shrink-0" />

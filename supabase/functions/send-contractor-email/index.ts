@@ -341,16 +341,16 @@ Deno.serve(async (req: Request) => {
         html = layout(
           'Elite Video Package',
           `Your Annual Elite benefit is ready to activate, ${contractorName}.`,
-          `${p(`As an <strong style="color:${C.heading};">Annual Elite Partner</strong>, you're entitled to our Professional Promotional Video Package — a $499 value included with your membership.`)}
+          `${p(`As an <strong style="color:${C.heading};">Annual Network Elite</strong> member, you're entitled to our Professional Promotional Video Package — a $499 value included with your membership.`)}
           ${sectionLabel("What's Included")}
           ${infoCard(checkList(['Professional video shoot at your job site or office','Listing-quality footage and professional editing','Marketing-ready 60–90 second promotional video','Full usage rights for your website and social media','Featured rotating placement on the ListWorx homepage']))}
-          ${p(`This benefit is exclusive to <strong style="color:${C.heading};">Annual Elite Partners</strong> only. Monthly Elite members do not receive this package.`)}
+          ${p(`This benefit is exclusive to <strong style="color:${C.heading};">Annual Network Elite</strong> members only. Monthly Elite members do not receive this package.`)}
           ${cta('Schedule Your Video Shoot &rarr;', 'mailto:marketing@listworx.co?subject=Schedule My Elite Video Package')}
           ${divider()}
           ${small('Our production team will reach out within 2 business days to coordinate timing and location.')}`,
           'Your Annual Elite video package benefit is ready to schedule.'
         );
-        text = `Your Elite Video Package\n\nHi ${contractorName},\n\nAs an Annual Elite Partner, you're entitled to our Professional Promotional Video Package ($499 value).\n\nEmail marketing@listworx.co to schedule.\n\n— The ListWorx Marketing Team`;
+        text = `Your Elite Video Package\n\nHi ${contractorName},\n\nAs an Annual Network Elite member, you're entitled to our Professional Promotional Video Package ($499 value).\n\nEmail marketing@listworx.co to schedule.\n\n— The ListWorx Marketing Team`;
         break;
 
       case 'addon_purchase_confirmation':

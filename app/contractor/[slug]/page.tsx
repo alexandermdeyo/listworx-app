@@ -51,9 +51,9 @@ interface ContractorPublicProfile {
 function getTierLabel(tier: string | null): string | null {
   if (!tier || tier === 'none') return null;
   const t = tier.toLowerCase();
-  if (t.includes('elite')) return 'Elite Partner';
-  if (t.includes('preferred')) return 'Preferred Partner';
-  if (t.includes('basic')) return 'Partner';
+  if (t.includes('elite')) return 'Network Elite';
+  if (t.includes('preferred')) return 'Network Partner';
+  if (t.includes('basic')) return 'Network Member';
   return null;
 }
 

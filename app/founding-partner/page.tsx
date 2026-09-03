@@ -17,10 +17,9 @@ const features = [
 ];
 
 const pricingRows = [
-  ['Activation Fee', '$75 one-time', '$75 one-time', '$75 one-time'],
-  ['Locked Monthly Rate', '$159/mo', '$279/mo', '$479/mo'],
-  ['Standard Rate', '$199/month', '$349/month', '$599/month'],
-  ['You Save', '$40/mo forever', '$70/mo forever', '$120/mo forever'],
+  ['Locked Monthly Rate', '$199/mo', '$349/mo', '$599/mo'],
+  ['Standard Rate', '$249/month', '$429/month', '$729/month'],
+  ['You Save', '$50/mo forever', '$80/mo forever', '$130/mo forever'],
   ['Spots Per County', '10 per trade', '5 per trade', '2 per trade'],
 ];
 
@@ -30,7 +29,6 @@ const spots = [
 ];
 
 const faqs = [
-  ['Is the $75 a monthly fee?', "Here's how it works — you pay the $75 activation fee to lock in your spot. That's a one-time thing. Then your monthly billing kicks in immediately at your locked founder rate. Basic founders pay $159/month. Preferred pay $279. Elite pay $479. Those numbers never go up. Ever. People who join after the founding period closes will pay standard pricing — $199, $349, or $599 a month. You won't."],
   ['What happens if I cancel and want to come back?', 'If you cancel your subscription, your Founding Partner pricing is permanently forfeited. You would re-enter at standard pricing. We recommend pausing rather than canceling if you need a break — contact us and we will work with you.'],
   ['Can my Founding Partner status be taken away?', 'Yes. Founders who violate IronClad Standards — ghosting customers, letting insurance lapse, unprofessional conduct — lose Founding Partner status and may be removed from the network entirely. This is how we protect the network for everyone.'],
   ['What is the referral volume guarantee?', 'There is none. ListWorx does not guarantee a specific number of referrals. What we guarantee is that when requestors in your area submit a job in your trade, you are in the rotation to be one of the three referrals returned — prioritized by tier and IronClad compliance. Referral volume grows as the network grows.'],
@@ -79,14 +77,14 @@ export default function FoundingPartnerPage() {
       <section className="container mx-auto px-4 py-12">
         <Reveal as="div">
           <h2 className="text-4xl font-bold text-mkt-ink">Founding Partner Pricing</h2>
-          <p className="mb-6 text-mkt-ink/70">One-time $75 activation fee covers all tiers. Your renewal rate depends on the tier you choose.</p>
+          <p className="mb-6 text-mkt-ink/70">Your renewal rate depends on the tier you choose — and it&apos;s locked for life.</p>
           <p className="sm:hidden mb-2 text-xs text-mkt-ink/50 flex items-center gap-1">
             <span>←</span> Swipe to compare tiers <span>→</span>
           </p>
           <div className="overflow-x-auto rounded-xl border border-zinc-200 -webkit-overflow-scrolling-touch">
             <table className="w-full min-w-[680px] bg-white text-left text-sm">
-              <thead><tr>{['', 'Basic Founder', 'Preferred Founder', 'Elite Founder'].map(h => <th key={h} className="p-4 text-mkt-ink whitespace-nowrap">{h}</th>)}</tr></thead>
-              <tbody>{pricingRows.map(row => <tr key={row[0]} className="border-t border-zinc-200">{row.map((cell, i) => <td key={cell} className={`p-4 whitespace-nowrap ${i === 0 ? 'font-semibold text-mkt-ink' : 'text-mkt-ink/70'}`}>{cell}</td>)}</tr>)}</tbody>
+              <thead><tr>{['', 'Network Member', 'Network Partner', 'Network Elite'].map(h => <th key={h} className="p-4 text-mkt-ink whitespace-nowrap">{h}</th>)}</tr></thead>
+              <tbody>{pricingRows.map(row => <tr key={row[0]} className="border-t border-zinc-200">{row.map((cell, i) => <td key={`${row[0]}-${i}`} className={`p-4 whitespace-nowrap ${i === 0 ? 'font-semibold text-mkt-ink' : 'text-mkt-ink/70'}`}>{cell}</td>)}</tr>)}</tbody>
             </table>
           </div>
           <div className="mt-5 flex gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-amber-900">

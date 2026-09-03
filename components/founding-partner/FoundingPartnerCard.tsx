@@ -11,7 +11,6 @@ const FOUNDER_ONETIME_ADDONS = ADDON_LIST.filter(
   (a) => a.type === 'onetime' && a.id !== 'decal_package_standard'
 );
 
-const ACTIVATION_FEE = 75;
 const LS_KEY = 'lw_founder_selection';
 
 export default function FoundingPartnerCard() {
@@ -45,13 +44,11 @@ export default function FoundingPartnerCard() {
     return sum + getAddonPriceForTier(addon, selectedTier.baseTierId);
   }, 0);
 
-  const todayTotal = ACTIVATION_FEE + addonsTotal;
-
   function buildButtonLabel() {
     const tierName = selectedTier.name;
     if (checkedAddons.length === 0) return `Apply as ${tierName} →`;
     const plural = checkedAddons.length === 1 ? '1 Add-on' : `${checkedAddons.length} Add-ons`;
-    return `Apply as ${tierName} + ${plural} ($${todayTotal} today) →`;
+    return `Apply as ${tierName} + ${plural} →`;
   }
 
   function handleApply() {
@@ -59,7 +56,7 @@ export default function FoundingPartnerCard() {
       tierId: selectedTierId,
       tierName: selectedTier.name,
       addons: checkedAddons,
-      total: todayTotal,
+      total: addonsTotal,
     };
     try {
       localStorage.setItem(LS_KEY, JSON.stringify(selection));
@@ -70,7 +67,7 @@ export default function FoundingPartnerCard() {
     const params = new URLSearchParams();
     params.set('tier', selectedTierId);
     if (checkedAddons.length > 0) params.set('addons', checkedAddons.join(','));
-    params.set('total', String(todayTotal));
+    params.set('total', String(addonsTotal));
 
     router.push(`/apply?${params.toString()}`);
   }
@@ -123,7 +120,7 @@ export default function FoundingPartnerCard() {
       <div className="mb-6 border-t border-zinc-700 pt-6">
         <p className="text-sm font-semibold text-zinc-300 mb-1">Bundle one-time add-ons (optional)</p>
         <p className="text-xs text-zinc-500 mb-4">
-          Add these to your $75 activation today. Monthly services can be added anytime from your dashboard.
+          Optional. Monthly services can be added anytime from your dashboard.
         </p>
 
         <div className="space-y-2.5">
@@ -177,10 +174,6 @@ export default function FoundingPartnerCard() {
 
       {/* Running total */}
       <div className="mb-6 rounded-xl border border-lw-rust/40 bg-zinc-900/60 px-5 py-4">
-        <div className="flex items-center justify-between text-sm text-zinc-400 mb-1">
-          <span>Activation fee (one-time)</span>
-          <span className="text-zinc-200">${ACTIVATION_FEE}</span>
-        </div>
         {checkedAddons.map((id) => {
           const addon = ADDON_LIST.find((a) => a.id === id);
           if (!addon) return null;
@@ -192,12 +185,12 @@ export default function FoundingPartnerCard() {
             </div>
           );
         })}
-        <div className="mt-2 pt-2 border-t border-zinc-700 flex items-center justify-between">
-          <span className="text-sm font-semibold text-white">Due today</span>
-          <span className="text-xl font-bold text-white">${todayTotal}</span>
+        <div className={`flex items-center justify-between ${checkedAddons.length > 0 ? 'mt-2 pt-2 border-t border-zinc-700' : ''}`}>
+          <span className="text-sm font-semibold text-white">Your rate — locked for life</span>
+          <span className="text-xl font-bold text-white">${selectedTier.renewalRate}/mo</span>
         </div>
         <p className="text-xs text-zinc-500 mt-1.5">
-          then ${selectedTier.renewalRate}/mo forever · standard rate is ${selectedTier.standardRate}/mo
+          Billing starts after approval. Standard rate is ${selectedTier.standardRate}/mo.
         </p>
       </div>
 

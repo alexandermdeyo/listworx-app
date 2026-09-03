@@ -134,7 +134,7 @@ export default function AcesPartnerPage() {
             ACES Graduates Get Priority Access
           </h2>
           <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8">
-            You already did the hard work to get licensed. Use code <span className="font-semibold">ACES10</span> when you apply to ListWorx and get a discounted activation fee reserved for ACES graduates and students. Because the work you put in to get licensed should count for something.
+            You already did the hard work to get licensed. Use code <span className="font-semibold">ACES10</span> when you apply to ListWorx and get priority application review reserved for ACES graduates and students. Because the work you put in to get licensed should count for something.
           </p>
           <div className="inline-block rounded-full bg-white px-8 py-3 mb-8">
             <span className="text-2xl md:text-3xl font-bold text-lw-rust tracking-widest">ACES10</span>

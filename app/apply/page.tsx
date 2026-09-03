@@ -30,7 +30,7 @@ function readFounderSelection(params: URLSearchParams): FounderSelection | null 
   const tierId = params.get('tier');
   if (tierId) {
     const addons = params.get('addons') ? params.get('addons')!.split(',').filter(Boolean) : [];
-    const total = Number(params.get('total') || 75);
+    const total = Number(params.get('total') || 0);
     // derive a display name from the id
     const tierName = tierId
       .split('_')
@@ -250,7 +250,7 @@ export default function ApplyPage() {
               </li>
               <li className="flex items-start gap-3 text-white/85">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
-                One-time $75 activation fee covers your IronClad Verified business review.
+                Every profile is IronClad Verified — business entity, license, and insurance confirmed.
               </li>
               <li className="flex items-start gap-3 text-white/85">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
@@ -276,9 +276,9 @@ export default function ApplyPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="grid gap-6 sm:grid-cols-3 mb-10">
             {[
-              { name: 'Basic', price: '$159/mo' },
-              { name: 'Preferred', price: '$279/mo' },
-              { name: 'Elite', price: '$479/mo' },
+              { name: 'Network Member', price: '$199/mo' },
+              { name: 'Network Partner', price: '$349/mo' },
+              { name: 'Network Elite', price: '$599/mo' },
             ].map((tier) => (
               <div key={tier.name} className="lw-card-light p-5 text-center">
                 <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-1">{tier.name}</p>
@@ -292,7 +292,7 @@ export default function ApplyPage() {
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
               <p className="text-sm text-mkt-ink/80">
-                <span className="font-semibold text-mkt-ink">$75 one-time activation fee.</span> Not recurring — it covers your IronClad Verified business review.
+                <span className="font-semibold text-mkt-ink">No bidding wars.</span> You&apos;re matched by fit — trade, service area, and availability — not by who pays the most.
               </p>
             </div>
             <div className="flex items-start gap-3">
@@ -351,7 +351,11 @@ export default function ApplyPage() {
                         {founderSelection.addons.length > 0 && (
                           <> + {founderSelection.addons.length} add-on{founderSelection.addons.length !== 1 ? 's' : ''}</>
                         )}
-                        <span className="ml-2 text-lw-text/60">${founderSelection.total} due today after approval</span>
+                        {founderSelection.total > 0 && (
+                          <span className="ml-2 text-lw-text/60">
+                            ${founderSelection.total} in add-ons billed after approval
+                          </span>
+                        )}
                       </p>
                     </div>
                     <a

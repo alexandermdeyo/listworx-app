@@ -3,7 +3,7 @@ import type Stripe from 'stripe';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import { createStripeServerClient } from '@/lib/stripe-server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
-import { getFounderRenewalPriceId, normalizeFounderTier } from '@/lib/stripe-prices';
+import { normalizeFounderTier } from '@/lib/stripe-prices';
 import { sendEmail } from '@/lib/send-email';
 
 function getStripe() {
@@ -225,28 +225,23 @@ async function handleCheckoutCompleted(session: any) {
 
 
 async function handleFounderActivationCheckout(session: any, contractorId: string, tierName: string) {
-  const stripe = getStripe();
   const supabase = getSupabase();
   const founderTier = normalizeFounderTier(tierName);
-  const renewalPriceId = getFounderRenewalPriceId(founderTier);
-
-  if (!renewalPriceId) {
-    console.error(`[stripe-webhook] Missing founder renewal price for tier ${founderTier}`);
-    return;
-  }
 
   const customerId = session.customer;
 
-  const subscription = await stripe.subscriptions.create({
-    customer: customerId,
-    items: [{ price: renewalPriceId }],
-    metadata: {
-      contractor_id: contractorId,
-      contractorId,
-      tier: founderTier,
-      type: 'founder',
-    },
-  });
+  // The founder checkout session (create-checkout-session/route.ts) is now
+  // created directly in `subscription` mode at the founder's locked renewal
+  // rate — there is no separate one-time activation charge anymore. Stripe
+  // has already created the recurring subscription as part of this same
+  // checkout session, so we just read its id rather than creating a second
+  // one (which would double-bill the contractor).
+  const subscriptionId = session.subscription;
+
+  if (!subscriptionId) {
+    console.error('[stripe-webhook] Founder activation session has no subscription id — expected subscription-mode checkout', { sessionId: session.id });
+    return;
+  }
 
   const now = new Date().toISOString();
   const { data: contractor } = await supabase
@@ -259,7 +254,7 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
     .from('contractor_profiles')
     .update({
       stripe_customer_id: customerId,
-      stripe_subscription_id: subscription.id,
+      stripe_subscription_id: subscriptionId,
       subscription_status: 'active',
       subscription_tier: founderTier,
       founder_status: true,
@@ -294,7 +289,7 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
   }
 
   if (contractor?.email) {
-    const renewalAmount = founderTier === 'elite' ? '$479' : founderTier === 'preferred' ? '$279' : '$159';
+    const renewalAmount = founderTier === 'elite' ? '$599' : founderTier === 'preferred' ? '$349' : '$199';
     const territory = [contractor.service_area_counties?.[0], contractor.service_area_state].filter(Boolean).join(', ') || 'your approved service area';
     await sendEmail({
       to: contractor.email,

@@ -466,7 +466,7 @@ export const contractorEmails = {
       'Elite Video Package',
       `Your Annual Elite benefit is ready to activate, ${contractorName}.`,
       `
-      ${p(`As an <strong style="color:${C.white};">Annual Elite Partner</strong>, you're entitled to our Professional Promotional Video Package — a $499 value included with your membership.`)}
+      ${p(`As an <strong style="color:${C.white};">Annual Network Elite</strong> member, you're entitled to our Professional Promotional Video Package — a $499 value included with your membership.`)}
 
       ${sectionLabel("What's Included")}
       ${infoCard(`
@@ -479,7 +479,7 @@ export const contractorEmails = {
         ])}
       `)}
 
-      ${p(`This benefit is exclusive to <strong style="color:${C.white};">Annual Elite Partners</strong> only. Monthly Elite members do not receive this package.`)}
+      ${p(`This benefit is exclusive to <strong style="color:${C.white};">Annual Network Elite</strong> members only. Monthly Elite members do not receive this package.`)}
 
       ${cta('Schedule Your Video Shoot &rarr;', 'mailto:marketing@listworx.com?subject=Schedule My Elite Video Package')}
 
@@ -489,7 +489,7 @@ export const contractorEmails = {
       'Your Annual Elite video package benefit is ready to schedule.',
       'contractor'
     ),
-    text: `Your Elite Video Package\n\nHi ${contractorName},\n\nAs an Annual Elite Partner, you're entitled to our Professional Promotional Video Package (a $499 value).\n\nIncludes: professional video shoot, editing, 60-90 second promo, full usage rights, and featured homepage placement.\n\nThis benefit is exclusive to Annual Elite members.\n\nEmail marketing@listworx.com to schedule.\n\n— The ListWorx Marketing Team`,
+    text: `Your Elite Video Package\n\nHi ${contractorName},\n\nAs an Annual Network Elite member, you're entitled to our Professional Promotional Video Package (a $499 value).\n\nIncludes: professional video shoot, editing, 60-90 second promo, full usage rights, and featured homepage placement.\n\nThis benefit is exclusive to Annual Elite members.\n\nEmail marketing@listworx.com to schedule.\n\n— The ListWorx Marketing Team`,
   }),
 
   subscriptionCancellation: (contractorName: string, companyName: string, tierName: string, endDate: string): EmailTemplate => ({

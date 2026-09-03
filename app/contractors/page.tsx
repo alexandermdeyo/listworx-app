@@ -9,8 +9,10 @@ import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { PageShell } from '@/components/design-system';
 import { Reveal, RevealBadge } from '@/components/motion';
+import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
 
 export default function ContractorsPage() {
+  const academyEnabled = useAcademyEnabled();
   return (
     <PageShell surface="marketing">
       <Navigation variant="light" />
@@ -115,58 +117,55 @@ export default function ContractorsPage() {
             {/* Tier cards */}
             <div className="mx-auto mb-8 grid max-w-5xl gap-6 md:grid-cols-3">
 
-              {/* Basic Founder */}
+              {/* Network Member — Founding */}
               <Reveal delay={0}>
                 <div className="lw-hover-lift lw-card-light p-7 text-center">
-                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Basic Founder</h3>
+                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Network Member — Founding</h3>
                   <div className="mb-1 text-5xl font-bold text-mkt-ink">
-                    $159<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
+                    $199<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
                   </div>
-                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $199/mo standard</p>
-                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $40 every month forever</p>
-                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
+                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $249/mo standard</p>
+                  <p className="mb-6 text-sm font-semibold text-lw-rust">Save $50 every month forever</p>
                   <Link href="/founding-partner" className="block">
                     <Button variant="outlineOrange" className="w-full">
-                      Claim Your Spot
+                      Join the Network
                     </Button>
                   </Link>
                 </div>
               </Reveal>
 
-              {/* Preferred Founder — highlighted */}
+              {/* Network Partner — Founding — highlighted */}
               <Reveal delay={70} pulse>
                 <div className="lw-hover-lift relative rounded-2xl border-2 border-lw-rust bg-white p-7 text-center shadow-lg shadow-lw-rust/10">
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                     <span className="rounded-full bg-lw-rust px-4 py-1 text-xs font-bold text-white">Most Popular</span>
                   </div>
-                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Preferred Founder</h3>
+                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Network Partner — Founding</h3>
                   <div className="mb-1 text-5xl font-bold text-mkt-ink">
-                    $279<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
+                    $349<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
                   </div>
-                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $349/mo standard</p>
-                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $70 every month forever</p>
-                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
+                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $429/mo standard</p>
+                  <p className="mb-6 text-sm font-semibold text-lw-rust">Save $80 every month forever</p>
                   <Link href="/founding-partner" className="block">
                     <Button className="w-full bg-lw-rust text-white hover:bg-lw-rust-hover">
-                      Claim Your Spot
+                      Join the Network
                     </Button>
                   </Link>
                 </div>
               </Reveal>
 
-              {/* Elite Founder */}
+              {/* Network Elite — Founding */}
               <Reveal delay={140}>
                 <div className="lw-hover-lift lw-card-light p-7 text-center">
-                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Elite Founder</h3>
+                  <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-mkt-ink/60">Network Elite — Founding</h3>
                   <div className="mb-1 text-5xl font-bold text-mkt-ink">
-                    $479<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
+                    $599<span className="text-xl font-normal text-mkt-ink/50">/mo</span>
                   </div>
-                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $599/mo standard</p>
-                  <p className="mb-5 text-sm font-semibold text-lw-rust">Save $120 every month forever</p>
-                  <p className="mb-6 text-xs text-mkt-ink/50">$75 one-time activation</p>
+                  <p className="mb-2 text-sm text-mkt-ink/60">Your normal rate — vs $729/mo standard</p>
+                  <p className="mb-6 text-sm font-semibold text-lw-rust">Save $130 every month forever</p>
                   <Link href="/founding-partner" className="block">
                     <Button variant="outlineOrange" className="w-full">
-                      Claim Your Spot
+                      Join the Network — Limited Spots
                     </Button>
                   </Link>
                 </div>
@@ -176,7 +175,7 @@ export default function ContractorsPage() {
             {/* Below-cards copy */}
             <Reveal as="div" className="text-center">
               <p className="mb-3 text-sm text-mkt-ink/70">
-                $75 one-time activation. Billing starts immediately at your locked rate — this is your normal monthly subscription going forward, not an introductory price. No trial. No games.
+                Billing starts immediately at your locked rate — this is your normal monthly subscription going forward, not an introductory price. No trial. No games.
               </p>
               <p className="mx-auto max-w-xl text-sm text-mkt-ink/60">
                 Every Founding Partner profile displays the IronClad Founding Partner badge — a permanent marker that you were here from the beginning.
@@ -291,7 +290,7 @@ export default function ContractorsPage() {
                     step: '1',
                     icon: FileText,
                     title: 'Apply & Get Verified',
-                    desc: "Submit your application and pay the one-time $75 founding activation fee. We confirm your business is legitimate — entity, license, and insurance. This is business-level verification, not a review of every job, every employee, or every trade you touch.",
+                    desc: "Submit your application. We confirm your business is legitimate — entity, license, and insurance. This is business-level verification, not a review of every job, every employee, or every trade you touch.",
                   },
                   {
                     step: '2',
@@ -748,30 +747,36 @@ export default function ContractorsPage() {
             <div className="grid md:grid-cols-3 gap-6 mb-12">
               <Reveal delay={0}>
                 <Card className="lw-hover-lift bg-white border-zinc-200 text-mkt-ink shadow-sm p-6 shadow-sm hover:shadow-lg transition-all text-center">
-                  <div className="text-4xl font-bold text-lw-rust mb-2">$199</div>
+                  <div className="text-4xl font-bold text-lw-rust mb-2">$249</div>
                   <div className="text-sm text-mkt-ink/70 mb-4">per month</div>
-                  <h3 className="text-lg font-semibold mb-4 text-mkt-ink">Basic Partner</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-mkt-ink">Network Member</h3>
                   <ul className="text-sm text-mkt-ink/70 space-y-2 text-left mb-6">
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Public profile in the contractor directory</span>
+                      <span>IronClad Verified status</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Eligible for referral matching in your service area</span>
+                      <span>Profile on the ListWorx platform</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Standard placement in referral rotation</span>
+                      <span>Listed in referral rotation — standard priority</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Credential tracking and compliance tools</span>
+                      <span>Verified reviews system</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>ListWorx Academy access — including ACES Licensing and Exam Prep</span>
+                      <span>Availability and service-area controls</span>
                     </li>
+                    {academyEnabled && (
+                      <li className="flex items-start">
+                        <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
+                        <span>ListWorx Academy access — powered by ACES</span>
+                      </li>
+                    )}
                   </ul>
                   <Link href="/apply" className="block">
                     <Button variant="outlineOrange" className="w-full">
@@ -784,34 +789,40 @@ export default function ContractorsPage() {
               <Reveal delay={70}>
                 <Card className="lw-hover-lift p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all text-center border-2 border-lw-rust bg-white relative">
                   <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-lw-rust text-white">Most Popular</Badge>
-                  <div className="text-4xl font-bold text-lw-rust mb-2">$349</div>
+                  <div className="text-4xl font-bold text-lw-rust mb-2">$429</div>
                   <div className="text-sm text-mkt-ink/70 mb-4">per month</div>
-                  <h3 className="text-lg font-semibold mb-4 text-mkt-ink">Preferred Partner</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-mkt-ink">Network Partner</h3>
                   <ul className="text-sm text-mkt-ink/70 space-y-2 text-left mb-6">
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Everything in Basic</span>
+                      <span>Everything in Network Member</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Priority placement in referral matching</span>
+                      <span>Priority placement — above all Network Members</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Enhanced visibility with logo in your listing</span>
+                      <span>Enhanced profile with additional photos and expanded bio</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>IronClad Certified Partner badge</span>
+                      <span>IronClad Digital Badge Kit included (vehicle, digital, print)</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Contractor Studio included — marketing tools built for the trades</span>
+                      <span>Monthly performance report</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Full ListWorx Academy access — ACES licensing resources and ACES Trained badge on your profile</span>
+                      <span>Quarterly profile boost</span>
                     </li>
+                    {academyEnabled && (
+                      <li className="flex items-start">
+                        <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
+                        <span>Full ListWorx Academy access — powered by ACES</span>
+                      </li>
+                    )}
                   </ul>
                   <Link href="/apply" className="block">
                     <Button className="w-full bg-lw-rust hover:bg-lw-rust-hover text-white">
@@ -823,34 +834,40 @@ export default function ContractorsPage() {
 
               <Reveal delay={140}>
                 <Card className="lw-hover-lift bg-white border-zinc-200 text-mkt-ink shadow-sm p-6 shadow-sm hover:shadow-lg transition-all text-center">
-                  <div className="text-4xl font-bold text-lw-rust mb-2">$599</div>
+                  <div className="text-4xl font-bold text-lw-rust mb-2">$729</div>
                   <div className="text-sm text-mkt-ink/70 mb-4">per month</div>
-                  <h3 className="text-lg font-semibold mb-4 text-mkt-ink">Elite Partner</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-mkt-ink">Network Elite</h3>
                   <ul className="text-sm text-mkt-ink/70 space-y-2 text-left mb-6">
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Everything in Preferred</span>
+                      <span>Everything in Network Partner</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Top-priority referral positioning</span>
+                      <span>Top of rotation — always above Partner and Member</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Premium profile placement and IronClad Elite badge</span>
+                      <span>Territory lock — maximum 2 Elite per trade per county</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Contractor Studio included — full access to all tools</span>
+                      <span>Monthly profile boost (not quarterly)</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Professionally produced 60-second promo video <span className="text-xs italic">(annual plan)</span></span>
+                      <span>2 social media posts per month featuring your work</span>
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Full ListWorx Academy access — ACES licensing resources, ACES Trained badge, and priority course placement</span>
+                      <span>Google Business Profile optimization on signup</span>
                     </li>
+                    {academyEnabled && (
+                      <li className="flex items-start">
+                        <CheckCircle className="h-4 w-4 text-lw-rust mr-2 mt-0.5 flex-shrink-0" />
+                        <span>Full ListWorx Academy access — powered by ACES</span>
+                      </li>
+                    )}
                   </ul>
                   <Link href="/apply" className="block">
                     <Button variant="outlineOrange" className="w-full">
