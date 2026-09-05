@@ -7,7 +7,6 @@ import {
   ClipboardList,
   MessageSquareText,
   ArrowRight,
-  Quote,
 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -312,8 +311,7 @@ export default function LandingPage() {
 
           <div className="lg:pl-6">
             <Reveal>
-              <Quote className="h-10 w-10 text-lw-rust/30" />
-              <p className="mt-4 text-2xl font-bold leading-snug tracking-tight text-mkt-ink md:text-3xl">
+              <p className="text-2xl font-bold leading-snug tracking-tight text-mkt-ink md:text-3xl">
                 The job&apos;s done when you&apos;d recommend them without thinking
                 twice.
               </p>
