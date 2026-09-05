@@ -71,6 +71,93 @@ export default function LandingPage() {
       <HomeownerHero />
 
       {/* ============================================================= */}
+      {/* HOW IT WORKS — asymmetric, light                             */}
+      {/* ============================================================= */}
+      <section id="how-it-works" className="container mx-auto scroll-mt-24 px-4 py-20 md:py-28">
+        <Reveal className="mb-14 max-w-2xl">
+          <p className="lw-label-lg mb-3 !text-lw-rust">How it works</p>
+          <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
+            Three steps. No profile scrolling.
+          </h2>
+        </Reveal>
+
+        <div className="space-y-16 md:space-y-24">
+          {/* Row 1 — copy left, photo right (balanced halves) */}
+          <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
+            <div className="flex gap-5">
+              <span className="text-5xl font-bold text-lw-rust/25">{steps[0].n}</span>
+              <div>
+                <h3 className="text-xl font-bold text-mkt-ink">{steps[0].title}</h3>
+                <p className="mt-2 text-mkt-ink/70">{steps[0].body}</p>
+              </div>
+            </div>
+            <div className="lw-figure-zoom aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm">
+              <img
+                src="/images/redesign/jobrequest_phone-screenshot-man-dog.webp"
+                alt="A homeowner starting a job request on his phone"
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </Reveal>
+
+          {/* Row 2 — middle step, centered, carried by the numbers instead of a photo */}
+          <Reveal className="border-y border-zinc-200 py-14 text-center">
+            <span className="mx-auto block text-5xl font-bold text-lw-rust/25">{steps[1].n}</span>
+            <h3 className="mt-2 text-xl font-bold text-mkt-ink">{steps[1].title}</h3>
+            <p className="mx-auto mt-2 max-w-xl text-mkt-ink/70">{steps[1].body}</p>
+            <div className="mx-auto mt-10 flex flex-col items-center gap-8 sm:flex-row sm:justify-center sm:gap-14">
+              <div className="flex items-baseline gap-3">
+                <span className="text-6xl font-bold text-lw-rust md:text-7xl">
+                  <CountUp value={3} />
+                </span>
+                <span className="max-w-[9rem] text-left text-sm font-medium uppercase tracking-widest text-mkt-ink/60">
+                  verified matches, max
+                </span>
+              </div>
+              <span className="hidden h-14 w-px bg-zinc-300 sm:block" />
+              <div className="flex items-baseline gap-3">
+                <span className="text-6xl font-bold text-mkt-ink md:text-7xl">
+                  <CountUp value={30} prefix="<" suffix="s" />
+                </span>
+                <span className="max-w-[10rem] text-left text-sm font-medium uppercase tracking-widest text-mkt-ink/60">
+                  to see them on screen
+                </span>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Row 3 — photo left, copy right (mirror of row 1) */}
+          <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
+            <div className="lw-figure-zoom order-2 aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm md:order-1">
+              <img
+                src="/images/redesign/results_kitchen-white-cabinets.webp"
+                alt="A finished kitchen with new white cabinetry"
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div className="order-1 flex gap-5 md:order-2">
+              <span className="text-5xl font-bold text-lw-rust/25">{steps[2].n}</span>
+              <div>
+                <h3 className="text-xl font-bold text-mkt-ink">{steps[2].title}</h3>
+                <p className="mt-2 text-mkt-ink/70">{steps[2].body}</p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <Reveal className="mt-14">
+          <Link href="/request">
+            <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+              Start a request — free
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </Reveal>
+      </section>
+
+      {/* ============================================================= */}
       {/* IRONCLAD STANDARDS — dark mailer band, no photo               */}
       {/* ============================================================= */}
       <section className="relative overflow-hidden bg-mailer-black text-white">
@@ -156,93 +243,6 @@ export default function LandingPage() {
             </Reveal>
           </div>
         </div>
-      </section>
-
-      {/* ============================================================= */}
-      {/* HOW IT WORKS — asymmetric, light                             */}
-      {/* ============================================================= */}
-      <section id="how-it-works" className="container mx-auto scroll-mt-24 px-4 py-20 md:py-28">
-        <Reveal className="mb-14 max-w-2xl">
-          <p className="lw-label-lg mb-3 !text-lw-rust">How it works</p>
-          <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
-            Three steps. No profile scrolling.
-          </h2>
-        </Reveal>
-
-        <div className="space-y-16 md:space-y-24">
-          {/* Row 1 — copy left, photo right (balanced halves) */}
-          <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
-            <div className="flex gap-5">
-              <span className="text-5xl font-bold text-lw-rust/25">{steps[0].n}</span>
-              <div>
-                <h3 className="text-xl font-bold text-mkt-ink">{steps[0].title}</h3>
-                <p className="mt-2 text-mkt-ink/70">{steps[0].body}</p>
-              </div>
-            </div>
-            <div className="lw-figure-zoom aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm">
-              <img
-                src="/images/redesign/jobrequest_phone-screenshot-man-dog.webp"
-                alt="A homeowner starting a job request on his phone"
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-          </Reveal>
-
-          {/* Row 2 — middle step, centered, carried by the numbers instead of a photo */}
-          <Reveal className="border-y border-zinc-200 py-14 text-center">
-            <span className="mx-auto block text-5xl font-bold text-lw-rust/25">{steps[1].n}</span>
-            <h3 className="mt-2 text-xl font-bold text-mkt-ink">{steps[1].title}</h3>
-            <p className="mx-auto mt-2 max-w-xl text-mkt-ink/70">{steps[1].body}</p>
-            <div className="mx-auto mt-10 flex flex-col items-center gap-8 sm:flex-row sm:justify-center sm:gap-14">
-              <div className="flex items-baseline gap-3">
-                <span className="text-6xl font-bold text-lw-rust md:text-7xl">
-                  <CountUp value={3} />
-                </span>
-                <span className="max-w-[9rem] text-left text-sm font-medium uppercase tracking-widest text-mkt-ink/60">
-                  verified matches, max
-                </span>
-              </div>
-              <span className="hidden h-14 w-px bg-zinc-300 sm:block" />
-              <div className="flex items-baseline gap-3">
-                <span className="text-6xl font-bold text-mkt-ink md:text-7xl">
-                  <CountUp value={30} prefix="<" suffix="s" />
-                </span>
-                <span className="max-w-[10rem] text-left text-sm font-medium uppercase tracking-widest text-mkt-ink/60">
-                  to see them on screen
-                </span>
-              </div>
-            </div>
-          </Reveal>
-
-          {/* Row 3 — photo left, copy right (mirror of row 1) */}
-          <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
-            <div className="lw-figure-zoom order-2 aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm md:order-1">
-              <img
-                src="/images/redesign/results_kitchen-white-cabinets.webp"
-                alt="A finished kitchen with new white cabinetry"
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-            <div className="order-1 flex gap-5 md:order-2">
-              <span className="text-5xl font-bold text-lw-rust/25">{steps[2].n}</span>
-              <div>
-                <h3 className="text-xl font-bold text-mkt-ink">{steps[2].title}</h3>
-                <p className="mt-2 text-mkt-ink/70">{steps[2].body}</p>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-
-        <Reveal className="mt-14">
-          <Link href="/request">
-            <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-              Start a request — free
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </Reveal>
       </section>
 
       {/* ============================================================= */}
