@@ -218,23 +218,23 @@ export default function ContractorsPage() {
           priority
         />
         <div className="absolute inset-0 z-[1] bg-black/[0.12]" aria-hidden="true" />
-        {/* TN state-flag tri-star, layered behind the hero copy — subdued so the
-           photo reads through it */}
+        {/* TN state-flag tri-star, tucked behind the "Now Recruiting" badge in the
+           upper-right — subdued so the photo reads through it */}
         <TristarMark
           variant="flag"
-          className="pointer-events-none absolute left-1/2 top-[46%] z-[2] h-64 w-64 -translate-x-1/2 -translate-y-1/2 opacity-40 sm:h-80 sm:w-80 md:h-[26rem] md:w-[26rem] md:opacity-[0.32]"
+          className="pointer-events-none absolute left-[70%] top-[19%] z-[2] h-32 w-32 -translate-x-1/2 -translate-y-1/2 opacity-40 sm:h-40 sm:w-40 md:left-[66%] md:top-[24%] md:h-48 md:w-48 md:opacity-[0.32]"
         />
 
         <div className="relative z-10 container mx-auto px-4">
           <div className="mx-auto max-w-5xl text-center">
             <Reveal immediate delay={0}>
               <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
-                <Badge className="border-lw-rust/40 bg-lw-rust/15 text-lw-rust hover:bg-lw-rust/25">
-                  <Briefcase className="mr-1 h-3 w-3" />
+                <Badge className="border-transparent bg-lw-rust px-3.5 py-1.5 text-[0.8rem] text-white shadow-sm hover:bg-lw-rust">
+                  <Briefcase className="mr-1.5 h-3.5 w-3.5" />
                   IronClad Partner Network · Expanding Nationally
                 </Badge>
-                <Badge className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/15">
-                  <MapPin className="mr-1 h-3 w-3" />
+                <Badge className="border-white/50 bg-black/45 px-3.5 py-1.5 text-[0.8rem] text-white shadow-sm backdrop-blur-md hover:bg-black/55">
+                  <MapPin className="mr-1.5 h-3.5 w-3.5" />
                   Now Recruiting in Middle Tennessee
                 </Badge>
               </div>
