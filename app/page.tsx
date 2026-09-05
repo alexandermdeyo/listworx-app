@@ -250,21 +250,27 @@ export default function LandingPage() {
       {/* WHAT "VERIFIED" MEANS — light, photo-led, image bleeds left  */}
       {/* ============================================================= */}
       <section className="overflow-hidden border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
-        <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-2">
-          <Reveal className="lw-figure-zoom relative overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_30px_60px_-40px_rgba(31,31,31,0.5)]">
-            <img
-              src="/images/redesign/contractor_cleaning-crew.webp"
-              alt="A ListWorx contractor crew working carefully inside a client's home"
-              className="block w-full object-cover"
-              loading="lazy"
+        <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <Reveal className="flex justify-center">
+            <IroncladBadge
+              variant="standards"
+              reveal
+              className="h-64 drop-shadow-2xl sm:h-72 md:h-80 lg:h-[22rem]"
+              href="/ironclad"
             />
           </Reveal>
 
           <Reveal>
-            <p className="lw-label mb-3 !text-lw-rust">What &ldquo;verified&rdquo; means</p>
+            <p className="lw-label mb-3 !text-lw-rust">The IronClad badge</p>
             <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
-              It&apos;s not a badge we hand out. It&apos;s one we can pull.
+              See this badge? The contractor&apos;s been vetted.
             </h2>
+            <p className="mt-4 text-lg text-mkt-ink/75">
+              Every pro on ListWorx carries the IronClad Standards badge. It&apos;s your signal that
+              the business is verified, the work is rated by real homeowners, and the contractor is
+              held to a standard they can be removed for breaking — it&apos;s a badge we can pull, not
+              one we hand out.
+            </p>
             <ul className="mt-6 space-y-4">
               {[
                 'License, insurance, and entity checked before the first referral.',
@@ -278,8 +284,7 @@ export default function LandingPage() {
                 </Reveal>
               ))}
             </ul>
-            <div className="mt-8 flex items-center gap-4">
-              <IroncladBadge variant="standards" className="h-14" href="/ironclad" />
+            <div className="mt-8">
               <Link href="/ironclad">
                 <Button variant="outlineOrange">
                   See every standard
