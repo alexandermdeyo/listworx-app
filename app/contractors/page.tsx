@@ -378,7 +378,7 @@ export default function ContractorsPage() {
       {/* ================= WHY FOUNDING (photo left · points right) ================= */}
       <section className="overflow-hidden bg-mailer-ink py-16 md:py-24">
         <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <Reveal className="min-w-0 lg:-ml-[8vw] lg:w-[calc(100%+8vw)]">
+          <Reveal className="min-w-0">
             <PhotoDark
               src="/images/redesign/contractor_hvac-crop.webp"
               alt="An IronClad-verified HVAC technician on a service call"
@@ -509,7 +509,7 @@ export default function ContractorsPage() {
             </div>
           </div>
 
-          <Reveal className="hidden min-w-0 lg:block lg:sticky lg:top-24 lg:-mr-[8vw] lg:w-[calc(100%+8vw)]">
+          <Reveal className="hidden min-w-0 lg:block lg:sticky lg:top-24">
             <PhotoDark
               src="/images/redesign/contractor_home-inspector-FLAGGED-logo.webp"
               alt="A verified contractor walking a client through a home system check"
@@ -802,7 +802,7 @@ export default function ContractorsPage() {
             </div>
           </Reveal>
 
-          <Reveal className="min-w-0 lg:-mr-[8vw] lg:w-[calc(100%+8vw)]">
+          <Reveal className="min-w-0">
             <PhotoDark
               src="/images/redesign/contractor_video-crew-content-shoot.webp"
               alt="A content crew filming a contractor's work for their marketing"
@@ -941,7 +941,7 @@ export default function ContractorsPage() {
       {/* ================= BOTTOM CTA ================= */}
       <section className="relative overflow-hidden bg-mailer-ink py-20">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
-        <TristarMark className="pointer-events-none absolute -bottom-10 left-1/2 h-56 w-56 -translate-x-1/2 text-white/[0.04]" />
+        <TristarMark className="pointer-events-none absolute bottom-4 left-1/2 h-48 w-48 -translate-x-1/2 text-white/[0.04]" />
         <div className="container relative mx-auto px-4">
           <Reveal className="mx-auto max-w-3xl text-center">
             <div className="mb-6 flex justify-center">
