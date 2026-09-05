@@ -4,7 +4,6 @@ import { useRef, useState } from 'react';
 import { Shield, MapPin, MoveRight } from 'lucide-react';
 import { Reveal } from '@/components/motion';
 import JobRequestWidget from './JobRequestWidget';
-import TristarMark from './TristarMark';
 import { SERVICE_CATEGORIES } from './categories';
 
 export default function HomeownerHero() {
@@ -20,10 +19,6 @@ export default function HomeownerHero() {
     <>
       {/* ---------- HERO ---------------------------------------------------- */}
       <section className="relative overflow-hidden border-b border-zinc-200 bg-white">
-        {/* quiet corner mark */}
-        <TristarMark
-          className="pointer-events-none absolute right-4 top-4 h-32 w-32 text-mkt-ink/[0.06] md:right-6 md:top-6 md:h-52 md:w-52"
-        />
         {/* warm wash bottom-left, keeps it from feeling clinical */}
         <div
           aria-hidden="true"
