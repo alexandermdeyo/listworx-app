@@ -53,7 +53,7 @@ const steps = [
     n: '02',
     icon: MessageSquareText,
     title: 'Get matched',
-    body: 'Up to three verified contractors for your trade, area, and timeline. Your details stay private until you reach out.',
+    body: "Up to three verified contractors for your trade, area, and timeline — you'll only see trades a verified pro actually covers in your county. Your details stay private until you reach out.",
   },
   {
     n: '03',

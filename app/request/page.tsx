@@ -92,6 +92,11 @@ function RequestPageContent() {
   const [counties, setCounties] = useState<CountyItem[]>([]);
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  // Whether the trade list is scoped to verified pros actually covering the
+  // chosen county. `covered` = at least one active pro serves it (list is a
+  // real subset); when false the API fell back to showing every trade because
+  // no pro covers the county yet.
+  const [tradeCoverage, setTradeCoverage] = useState<{ covered: boolean } | null>(null);
   const [contractors, setContractors] = useState<Contractor[]>([]);
   const [requestId, setRequestId] = useState<string | null>(null);
 
@@ -246,6 +251,7 @@ function RequestPageContent() {
     if (!formData.propertyCountyId) {
       setCategories([]);
       setSelectedCategories([]);
+      setTradeCoverage(null);
       return;
     }
 
@@ -255,8 +261,14 @@ function RequestPageContent() {
       )}&stateCode=${encodeURIComponent(formData.propertyStateCode)}`
     )
       .then((r) => r.json())
-      .then((data) => setCategories(Array.isArray(data?.categories) ? data.categories : []))
-      .catch(() => setCategories([]));
+      .then((data) => {
+        setCategories(Array.isArray(data?.categories) ? data.categories : []);
+        setTradeCoverage({ covered: data?.covered === true });
+      })
+      .catch(() => {
+        setCategories([]);
+        setTradeCoverage(null);
+      });
   }, [formData.propertyCountyId, formData.propertyStateCode]);
 
   const handleCategoryToggle = (id: string) => {
@@ -694,7 +706,40 @@ function RequestPageContent() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4 text-mkt-ink">Job Type / Trade Needed *</h2>
+              <h2 className="text-2xl font-bold mb-1 text-mkt-ink">Job Type / Trade Needed *</h2>
+
+              {formData.propertyCountyId && tradeCoverage && (
+                <p className="mb-4 rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-sm leading-relaxed text-mkt-ink/70">
+                  {tradeCoverage.covered ? (
+                    <>
+                      This list shows the trades that verified ListWorx pros currently cover in{' '}
+                      <span className="font-semibold text-mkt-ink">
+                        {counties.find((c) => c.id === formData.propertyCountyId)?.name ??
+                          'your county'}
+                      </span>
+                      . If the trade you need isn&apos;t here, we don&apos;t have a verified pro for
+                      it in your county yet — submit anyway with a description and we&apos;ll reach
+                      out if one comes into range.
+                    </>
+                  ) : (
+                    <>
+                      ListWorx is still adding verified pros in{' '}
+                      <span className="font-semibold text-mkt-ink">
+                        {counties.find((c) => c.id === formData.propertyCountyId)?.name ??
+                          'your county'}
+                      </span>
+                      . You&apos;re seeing every trade we handle — submit your request and we&apos;ll
+                      follow up as soon as there&apos;s a match in your area.
+                    </>
+                  )}
+                </p>
+              )}
+              {!formData.propertyCountyId && (
+                <p className="mb-4 text-sm text-mkt-ink/55">
+                  Pick your county above to see the trades available near you.
+                </p>
+              )}
+
               <div className="grid md:grid-cols-2 gap-3">
                 {categories.map((category) => (
                   <div key={category.id} className="flex items-center gap-2">
