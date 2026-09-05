@@ -384,11 +384,11 @@ export default function ContractorsPage() {
               alt="An IronClad-verified HVAC technician on a service call"
               className="lw-photo-dark--contractor min-h-[440px] rounded-2xl lg:min-h-[560px]"
               angle="to bottom"
-              a1={0.77}
-              a2={0.56}
-              a3={0.36}
-              bri={0.67}
-              sat={0.44}
+              a1={0.65}
+              a2={0.48}
+              a3={0.31}
+              bri={0.77}
+              sat={0.51}
               objectPositionMobile="center 50%"
             >
               <div className="absolute left-4 top-4 z-[3] md:left-5 md:top-5">
