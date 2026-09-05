@@ -146,6 +146,57 @@ const HOW_IT_WORKS = [
   },
 ];
 
+/**
+ * A mid-page prompt to create an account. Two low-key styles so the scattered
+ * placements don't read as the same button three times.
+ */
+function JoinCta({
+  variant = 'bar',
+  headline,
+  sub,
+}: {
+  variant?: 'bar' | 'inline';
+  headline: string;
+  sub?: string;
+}) {
+  if (variant === 'inline') {
+    return (
+      <section className="bg-mailer-black">
+        <div className="container mx-auto px-4">
+          <Reveal className="flex flex-col items-start gap-3 border-t border-mailer-border py-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-lg font-semibold text-white">{headline}</p>
+            <Link
+              href="/contractor-portal?intent=apply"
+              className="inline-flex shrink-0 items-center gap-2 text-sm font-bold uppercase tracking-widest text-lw-rust transition-colors hover:text-white"
+            >
+              Create your account
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+    );
+  }
+  return (
+    <section className="bg-mailer-ink">
+      <div className="container mx-auto px-4 py-12 md:py-16">
+        <Reveal className="mx-auto flex max-w-3xl flex-col items-center gap-5 rounded-2xl border border-lw-rust/30 bg-lw-rust/[0.07] p-6 text-center md:flex-row md:text-left">
+          <div className="flex-1">
+            <p className="text-lg font-bold text-white">{headline}</p>
+            {sub ? <p className="mt-1 text-sm text-white/60">{sub}</p> : null}
+          </div>
+          <Link href="/contractor-portal?intent=apply" className="shrink-0">
+            <Button className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+              Create your account
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 export default function ContractorsPage() {
   const academyEnabled = useAcademyEnabled();
 
@@ -200,7 +251,7 @@ export default function ContractorsPage() {
 
             <Reveal immediate delay={200}>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Link href="/apply">
+                <Link href="/contractor-portal?intent=apply">
                   <Button size="lg" className="rounded-lg bg-lw-rust px-8 py-6 text-lg text-white shadow-lg transition-all hover:bg-lw-rust-hover hover:shadow-xl">
                     <Award className="mr-2 h-5 w-5" />
                     Apply to Join the Network
@@ -406,7 +457,7 @@ export default function ContractorsPage() {
             </div>
 
             <Reveal delay={120} className="mt-8">
-              <Link href="/apply" className="block sm:inline-block">
+              <Link href="/contractor-portal?intent=apply" className="block sm:inline-block">
                 <Button size="lg" className="w-full whitespace-normal rounded-lg bg-amber-500 px-6 py-6 text-base text-white shadow-lg hover:bg-amber-600 sm:w-auto sm:px-8 sm:text-lg">
                   <Award className="mr-2 h-5 w-5 shrink-0" />
                   Apply for Founding Partner Status
@@ -469,6 +520,11 @@ export default function ContractorsPage() {
           </Reveal>
         </div>
       </section>
+
+      <JoinCta
+        variant="inline"
+        headline="Licensed, insured, and ready to work? Start your application."
+      />
 
       {/* ================= BRAND MESSAGE (full-bleed photo band) ================= */}
       <section className="relative">
@@ -642,6 +698,11 @@ export default function ContractorsPage() {
         </div>
       </section>
 
+      <JoinCta
+        headline="Stop bidding for your own name."
+        sub="Flat monthly subscription, three matches max per request, and every contractor you're up against is IronClad-verified too."
+      />
+
       {/* ================= REQUIREMENTS (badge highlight · concept) ================= */}
       <section className="bg-mailer-ink py-16 md:py-24">
         <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
@@ -814,6 +875,11 @@ export default function ContractorsPage() {
         </div>
       </section>
 
+      <JoinCta
+        variant="inline"
+        headline="Sound like a fit? Founding spots are limited by trade and county."
+      />
+
       {/* ================= REGULAR PRICING (stripped — details are up top) ================= */}
       <section className="bg-mailer-black py-16 md:py-24">
         <div className="container mx-auto px-4">
@@ -848,7 +914,7 @@ export default function ContractorsPage() {
                     <div className="mt-1 text-sm text-white/45">per month</div>
                     <h3 className="mt-4 text-lg font-semibold text-white">{tier.name}</h3>
                     <p className="mt-2 flex-1 text-sm text-white/60">{tier.blurb}</p>
-                    <Link href="/apply" className="mt-6 block">
+                    <Link href="/contractor-portal?intent=apply" className="mt-6 block">
                       <Button
                         className={
                           tier.highlighted
@@ -889,7 +955,7 @@ export default function ContractorsPage() {
               pipeline inside the largest vetted contractor network in America. Applications reviewed
               within 48 hours.
             </p>
-            <Link href="/apply" className="mt-8 inline-block">
+            <Link href="/contractor-portal?intent=apply" className="mt-8 inline-block">
               <Button size="lg" className="rounded-lg bg-lw-rust px-8 py-6 text-lg text-white shadow-lg hover:bg-lw-rust-hover hover:shadow-xl md:px-10">
                 <Award className="mr-2 h-5 w-5" />
                 Submit Your Application

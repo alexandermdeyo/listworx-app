@@ -124,11 +124,9 @@ export default function ApplyPage() {
         const { data: { user } } = await supabase.auth.getUser();
 
         if (!user?.id) {
-          if (!cancelled) {
-            setAuthRequired(true);
-            setState(null);
-            setCheckingAuth(false);
-          }
+          // No account yet — creating one is step 1. Send them straight to the
+          // contractor create-account page instead of a scroll-to-a-card dance.
+          window.location.replace('/contractor-portal?intent=apply');
           return;
         }
 
