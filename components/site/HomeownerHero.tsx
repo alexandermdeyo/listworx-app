@@ -22,7 +22,7 @@ export default function HomeownerHero() {
       <section className="relative overflow-hidden border-b border-zinc-200 bg-white">
         {/* quiet corner mark */}
         <TristarMark
-          className="pointer-events-none absolute -right-6 -top-8 h-40 w-40 text-mkt-ink/[0.06] md:h-56 md:w-56"
+          className="pointer-events-none absolute right-4 top-4 h-32 w-32 text-mkt-ink/[0.06] md:right-6 md:top-6 md:h-52 md:w-52"
         />
         {/* warm wash bottom-left, keeps it from feeling clinical */}
         <div
@@ -69,13 +69,13 @@ export default function HomeownerHero() {
             </Reveal>
           </div>
 
-          {/* right: the actual product, bleeding off the edge on large screens */}
+          {/* right: the actual product */}
           <Reveal
             immediate
             delay={200}
             className="relative hidden lg:block"
           >
-            <div className="lw-figure-zoom relative ml-auto w-[46vw] max-w-[720px] overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_40px_80px_-40px_rgba(31,31,31,0.5)] lg:-mr-[8vw] xl:-mr-[10vw]">
+            <div className="lw-figure-zoom relative ml-auto w-full max-w-[600px] overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_40px_80px_-40px_rgba(31,31,31,0.5)]">
               <img
                 src="/images/redesign/jobrequest_laptop-screenshot-woman-kitchen.webp"
                 alt="A homeowner submitting a job request on ListWorx from her kitchen"

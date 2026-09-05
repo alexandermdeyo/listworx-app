@@ -76,7 +76,7 @@ export default function IronCladStandardsPage() {
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-mailer-black">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
-        <TristarMark className="pointer-events-none absolute -right-8 -top-6 h-48 w-48 text-white/[0.04] md:h-64 md:w-64" />
+        <TristarMark className="pointer-events-none absolute right-5 top-5 h-40 w-40 text-white/[0.04] md:h-56 md:w-56" />
         <div className="relative container mx-auto px-4 py-20 md:py-28">
           <div className="mx-auto max-w-3xl text-center">
             <RevealBadge className="mb-8 flex justify-center">
@@ -587,7 +587,7 @@ export default function IronCladStandardsPage() {
       {/* ================= BOTTOM CTA ================= */}
       <section className="relative overflow-hidden bg-mailer-black py-20 md:py-28">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
-        <TristarMark className="pointer-events-none absolute -bottom-10 left-1/2 h-56 w-56 -translate-x-1/2 text-white/[0.04]" />
+        <TristarMark className="pointer-events-none absolute bottom-4 left-1/2 h-48 w-48 -translate-x-1/2 text-white/[0.04]" />
         <div className="relative container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <Image

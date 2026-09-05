@@ -76,7 +76,7 @@ export default function LandingPage() {
       {/* ============================================================= */}
       <section className="relative overflow-hidden bg-mailer-black text-white">
         <div className="h-1 w-full bg-lw-rust" />
-        <TristarMark className="pointer-events-none absolute -bottom-10 -right-10 h-52 w-52 text-white/[0.04]" />
+        <TristarMark className="pointer-events-none absolute bottom-6 right-6 h-48 w-48 text-white/[0.04]" />
 
         <div className="container mx-auto grid gap-12 px-4 py-20 md:py-28 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <Reveal className="flex justify-center lg:justify-start">
@@ -253,7 +253,7 @@ export default function LandingPage() {
       {/* ============================================================= */}
       <section className="overflow-hidden border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
         <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-2">
-          <Reveal className="lw-figure-zoom relative overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_30px_60px_-40px_rgba(31,31,31,0.5)] lg:-ml-[10vw] lg:w-[calc(100%+10vw)]">
+          <Reveal className="lw-figure-zoom relative overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_30px_60px_-40px_rgba(31,31,31,0.5)]">
             <img
               src="/images/redesign/contractor_cleaning-crew.webp"
               alt="A ListWorx contractor crew working carefully inside a client's home"
@@ -361,7 +361,7 @@ export default function LandingPage() {
             </Link>
           </Reveal>
 
-          <Reveal className="lw-figure-zoom relative order-1 overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_30px_60px_-40px_rgba(31,31,31,0.5)] lg:order-2 lg:-mr-[10vw] lg:w-[calc(100%+10vw)]">
+          <Reveal className="lw-figure-zoom relative order-1 overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_30px_60px_-40px_rgba(31,31,31,0.5)] lg:order-2">
             <img
               src="/images/redesign/realtor_couple-consultation-laptop.webp"
               alt="A real estate agent reviewing options with clients at a kitchen table"
