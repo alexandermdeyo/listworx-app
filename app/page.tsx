@@ -144,12 +144,14 @@ export default function LandingPage() {
                     Verified matches / request
                   </div>
                 </div>
-                <Link
-                  href="/ironclad"
-                  className="ml-auto inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-lw-rust"
-                >
-                  Read the full standard
-                  <ArrowRight className="h-4 w-4" />
+                <Link href="/ironclad" className="ml-auto">
+                  <Button
+                    variant="outline"
+                    className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                  >
+                    Read the full standard
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </Link>
               </div>
             </Reveal>
@@ -280,12 +282,11 @@ export default function LandingPage() {
             </ul>
             <div className="mt-8 flex items-center gap-4">
               <IroncladBadge variant="standards" className="h-14" href="/ironclad" />
-              <Link
-                href="/ironclad"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-mkt-ink hover:text-lw-rust"
-              >
-                See every standard
-                <ArrowRight className="h-4 w-4" />
+              <Link href="/ironclad">
+                <Button variant="outlineOrange">
+                  See every standard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </Link>
             </div>
           </Reveal>

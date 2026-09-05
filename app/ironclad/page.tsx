@@ -273,16 +273,15 @@ export default function IronCladStandardsPage() {
       {/* ================= CTA — mid page ================= */}
       <section className="bg-mailer-ink">
         <div className="container mx-auto px-4">
-          <Reveal className="flex flex-col items-start gap-3 border-y border-mailer-border py-8 sm:flex-row sm:items-center sm:justify-between">
+          <Reveal className="flex flex-col items-start gap-4 border-y border-mailer-border py-8 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-lg font-semibold text-white">
               Credentials in order? Applications are reviewed in 24&ndash;48 hours.
             </p>
-            <Link
-              href={APPLY_HREF}
-              className="inline-flex shrink-0 items-center gap-2 text-sm font-bold uppercase tracking-widest text-lw-rust transition-colors hover:text-white"
-            >
-              Create your account
-              <ChevronRight className="h-4 w-4" />
+            <Link href={APPLY_HREF} className="shrink-0">
+              <Button className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+                Create your account
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
             </Link>
           </Reveal>
         </div>
