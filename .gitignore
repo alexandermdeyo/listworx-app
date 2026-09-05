@@ -31,6 +31,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# redesign photo originals — heavy source PNGs kept locally for re-cropping.
+# The web-optimized WebP derivatives in public/images/redesign/ are committed.
+/listworx-redesign-photos
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# supabase CLI local artifacts
+/supabase/.temp

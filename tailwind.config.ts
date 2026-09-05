@@ -84,6 +84,17 @@ const config: Config = {
           ink: '#3F4041',
           navy: '#010333',
         },
+        // Mailer-kit dark system — warm near-blacks for contractor-facing /
+        // general dark pages. Distinct from the bluish mkt.navy on purpose.
+        mailer: {
+          black: '#0A0806',
+          ink: '#12100E',
+          surface: '#1A1613',
+          card: '#221D19',
+          border: '#332B25',
+          bone: '#F4F1EC',
+          orange: '#E8621A',
+        },
       },
       keyframes: {
         'accordion-down': {

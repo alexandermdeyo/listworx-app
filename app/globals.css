@@ -6,6 +6,13 @@
 
 html {
   overflow-x: clip;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 @layer base {
@@ -73,6 +80,14 @@ html {
   h6 {
     font-family: var(--font-display);
     letter-spacing: -0.015em;
+  }
+
+  /* Keep images from blowing out grid/flex tracks on the marketing pages
+     (a raw <img> reports its intrinsic width as min-content, which can push a
+     column wider than the viewport). Scoped to marketing so it can't surprise
+     the app UI. */
+  .mkt-scope img {
+    max-width: 100%;
   }
 
   input:-webkit-autofill,
@@ -143,6 +158,98 @@ html {
      (not washed out) while guaranteeing white-text contrast. */
   .lw-photo-scrim {
     @apply absolute inset-0 bg-black/60;
+  }
+
+  /* Mailer-style dark treatment for photos on black sections. The overlay is
+     a CSS gradient (never baked into the file): warm near-black, heaviest
+     toward the bottom-left where copy usually sits, fading to near-clear at
+     the top-right. Every value is a custom property so each placement can
+     dial it in — override on the element's `style` or a wrapper class.
+       --pd-angle   gradient direction (default: to top right)
+       --pd-a1/2/3  alpha at 0% / 38% / 72%
+       --pd-sat/con/bri  image filter (desaturate + gentle contrast) */
+  .lw-photo-dark {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  /* The media fills the frame absolutely so it always covers the container's
+     full height — `min-height` alone doesn't make a percentage height resolve,
+     which otherwise leaves a dark strip below the photo. Every PhotoDark sets
+     an explicit min-height (or inset-0), so the frame never collapses. */
+  .lw-photo-dark > img,
+  .lw-photo-dark > picture {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .lw-photo-dark > img,
+  .lw-photo-dark > picture > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--pd-obj, 50% 50%);
+    filter: saturate(var(--pd-sat, 0.82)) contrast(var(--pd-con, 1.05))
+      brightness(var(--pd-bri, 0.9));
+  }
+  @media (max-width: 767px) {
+    .lw-photo-dark > img,
+    .lw-photo-dark > picture > img {
+      object-position: var(--pd-obj-m, var(--pd-obj, 50% 50%));
+    }
+  }
+  .lw-photo-dark::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    /* Two stacked layers: the directional wash (heaviest toward the text
+       corner) plus a gentle full-height floor so low-sitting copy stays
+       legible even when the photo behind it is bright (tall mobile crops). */
+    background:
+      linear-gradient(
+        to top,
+        rgba(10, 8, 6, var(--pd-floor, 0.5)) 0%,
+        rgba(10, 8, 6, 0) 55%
+      ),
+      linear-gradient(
+        var(--pd-angle, to top right),
+        rgba(10, 8, 6, var(--pd-a1, 0.94)) 0%,
+        rgba(18, 13, 10, var(--pd-a2, 0.68)) 38%,
+        rgba(20, 16, 12, var(--pd-a3, 0.24)) 72%,
+        rgba(20, 16, 12, 0.06) 100%
+      );
+  }
+  .lw-photo-dark > .lw-photo-dark__content {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* The contractor-band treatment — the mailer "hit". Full-bleed photo whose
+     copy sits over the whole height, so on phones (tall + narrow frame) it
+     goes near-vertical and heavy, and opens back up to the directional wash
+     on wider/shorter viewports. Lightened twice from the first cut (~15% each
+     pass) so the grit reads through; shared standard for the homepage
+     contractor section AND the /contractors hero. Vars live on the class (not
+     inline) so the media query can win. */
+  .lw-photo-dark--contractor {
+    --pd-angle: to top;
+    --pd-a1: 0.7;
+    --pd-a2: 0.65;
+    --pd-a3: 0.51;
+    --pd-floor: 0.49;
+  }
+  @media (min-width: 768px) {
+    .lw-photo-dark--contractor {
+      --pd-angle: to top right;
+      --pd-a1: 0.69;
+      --pd-a2: 0.56;
+      --pd-a3: 0.29;
+      --pd-floor: 0.37;
+    }
   }
 
   .lw-panel {
@@ -237,6 +344,51 @@ html {
 .mkt-scope .lw-hover-lift:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px -12px rgba(63, 64, 65, 0.25);
+}
+
+/* Dark-section card variant — glow instead of grey drop-shadow. */
+.mkt-scope .lw-hover-lift-dark {
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+.mkt-scope .lw-hover-lift-dark:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -16px rgba(232, 98, 26, 0.35);
+  border-color: rgba(232, 98, 26, 0.45);
+}
+
+/* IronClad badge / seal: a slow, subtle lift + warm halo on hover. Never a
+   colour flip — the art doesn't change, it just comes forward. */
+.mkt-scope .lw-badge-hover {
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), filter 300ms ease;
+  will-change: transform;
+}
+.mkt-scope .lw-badge-hover:hover {
+  transform: scale(1.035);
+  filter: drop-shadow(0 8px 22px rgba(232, 98, 26, 0.35));
+}
+
+/* Media figures: ease the photo itself up a touch inside its frame. */
+.mkt-scope .lw-figure-zoom {
+  overflow: hidden;
+}
+.mkt-scope .lw-figure-zoom img {
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mkt-scope .lw-figure-zoom:hover img {
+  transform: scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mkt-scope .lw-hover-lift-dark,
+  .mkt-scope .lw-hover-lift-dark:hover,
+  .mkt-scope .lw-badge-hover,
+  .mkt-scope .lw-badge-hover:hover,
+  .mkt-scope .lw-figure-zoom img,
+  .mkt-scope .lw-figure-zoom:hover img {
+    transform: none !important;
+    transition: none !important;
+    filter: none !important;
+  }
 }
 
 /* Nav link underline slide-in from left */
