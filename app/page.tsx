@@ -249,47 +249,110 @@ export default function LandingPage() {
       {/* WHAT "VERIFIED" MEANS — light, photo-led, image bleeds left  */}
       {/* ============================================================= */}
       <section className="overflow-hidden border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
-        <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <Reveal className="flex justify-center">
-            <IroncladBadge
-              variant="standards"
-              reveal
-              className="h-64 drop-shadow-2xl sm:h-72 md:h-80 lg:h-[22rem]"
-              href="/ironclad"
-            />
-          </Reveal>
+        <div className="container mx-auto px-4">
+          <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+            <Reveal className="flex justify-center">
+              <IroncladBadge
+                variant="standards"
+                reveal
+                className="h-64 drop-shadow-2xl sm:h-72 md:h-80 lg:h-[22rem]"
+                href="/ironclad"
+              />
+            </Reveal>
 
-          <Reveal>
-            <p className="lw-label-lg mb-3 !text-lw-rust">The IronClad badge</p>
-            <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
-              See this badge? The contractor&apos;s been vetted.
-            </h2>
-            <p className="mt-4 text-lg text-mkt-ink/75">
-              Every pro on ListWorx carries the IronClad Standards badge. It&apos;s your signal that
-              the business is verified, the work is rated by real homeowners, and the contractor is
-              held to a standard they can be removed for breaking — it&apos;s a badge we can pull, not
-              one we hand out.
-            </p>
-            <ul className="mt-6 space-y-4">
-              {[
-                'License, insurance, and entity checked before the first referral.',
-                'Coverage monitored for as long as they’re in the network.',
-                'Rated by verified homeowners after real, confirmed jobs.',
-                'Slip below the standard and the referrals stop.',
-              ].map((line, i) => (
-                <Reveal as="li" key={line} delay={i * 70} className="flex items-start gap-3">
-                  <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
-                  <span className="text-mkt-ink/75">{line}</span>
-                </Reveal>
-              ))}
-            </ul>
-            <div className="mt-8">
-              <Link href="/ironclad">
-                <Button variant="outlineOrange">
-                  See every standard
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+            <Reveal>
+              <p className="lw-label-lg mb-3 !text-lw-rust">The IronClad badge</p>
+              <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
+                See this badge? The contractor&apos;s been vetted.
+              </h2>
+              <p className="mt-4 text-lg text-mkt-ink/75">
+                Every pro on ListWorx carries the IronClad Standards badge. It&apos;s your signal that
+                the business is verified, the work is rated by real homeowners, and the contractor is
+                held to a standard they can be removed for breaking — it&apos;s a badge we can pull, not
+                one we hand out.
+              </p>
+              <ul className="mt-6 space-y-4">
+                {[
+                  'License, insurance, and entity checked before the first referral.',
+                  'Coverage monitored for as long as they’re in the network.',
+                  'Rated by verified homeowners after real, confirmed jobs.',
+                  'Slip below the standard and the referrals stop.',
+                ].map((line, i) => (
+                  <Reveal as="li" key={line} delay={i * 70} className="flex items-start gap-3">
+                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+                    <span className="text-mkt-ink/75">{line}</span>
+                  </Reveal>
+                ))}
+              </ul>
+              <div className="mt-8">
+                <Link href="/ironclad">
+                  <Button variant="outlineOrange">
+                    See every standard
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* The three marks — dark lineup so every badge, including the
+             founder seal with its baked background, sits on matching stock */}
+          <Reveal className="mt-16 md:mt-20">
+            <div className="rounded-3xl border border-mailer-border bg-mailer-ink p-8 md:p-12">
+              <p className="lw-label-lg mb-2 !text-lw-rust">The three marks</p>
+              <h3 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
+                One standard. Three ways it shows up.
+              </h3>
+              <p className="mt-3 max-w-2xl text-white/70">
+                Every badge here traces back to the same IronClad Standard. The difference is how
+                far a contractor has gone to earn it.
+              </p>
+
+              <div className="mt-10 grid gap-6 sm:grid-cols-3 sm:gap-8">
+                {(
+                  [
+                    {
+                      variant: 'standards',
+                      href: '/ironclad',
+                      name: 'IronClad Standards',
+                      blurb:
+                        'The standard every ListWorx contractor is checked against, monitored on, and held to — the badge homeowners look for.',
+                    },
+                    {
+                      variant: 'partner',
+                      href: '/ironclad',
+                      name: 'IronClad Certified Partner',
+                      blurb:
+                        'A contractor who has cleared IronClad certification and holds an active place in the network.',
+                    },
+                    {
+                      variant: 'founder',
+                      href: '/contractors',
+                      name: 'IronClad Certified Founding Partner',
+                      blurb:
+                        'Our founding contractors — the ones who have been with us from the start. Founding Partners hold first position in their trade and county, a standing that is not for sale and is not offered twice.',
+                    },
+                  ] as const
+                ).map((b, i) => (
+                  <Reveal
+                    key={b.name}
+                    delay={i * 90}
+                    className="rounded-2xl border border-mailer-border bg-mailer-card p-6 text-center"
+                  >
+                    <div className="flex justify-center">
+                      <IroncladBadge
+                        variant={b.variant}
+                        reveal
+                        hover={false}
+                        href={b.href}
+                        className="h-28 md:h-32"
+                      />
+                    </div>
+                    <p className="mt-5 font-bold text-white">{b.name}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-white/75">{b.blurb}</p>
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </Reveal>
         </div>
