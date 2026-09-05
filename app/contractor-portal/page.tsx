@@ -173,6 +173,7 @@ export default function ContractorPortalPage() {
   const [message, setMessage] = useState('');
   const modeParam = searchParams.get('mode');
   const emailParam = searchParams.get('email');
+  const joiningNetwork = searchParams.get('intent') === 'apply';
   const redirectTarget = sanitizeRedirect(searchParams.get('redirect')); // kept for handoff/sanitization behavior
 
   const handleEmailChange = (nextEmail: string) => {
@@ -290,11 +291,7 @@ export default function ContractorPortalPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 404) {
-          setError('No application found with this email. Please submit an application first at /apply');
-        } else {
-          setError(data.error || 'Failed to create account');
-        }
+        setError(data.error || 'Failed to create account');
         return;
       }
 
@@ -361,9 +358,13 @@ export default function ContractorPortalPage() {
               className="h-12 w-auto mx-auto mb-6"
             />
           </Link>
-          <CardTitle className="text-3xl font-bold">Contractor Portal</CardTitle>
+          <CardTitle className="text-3xl font-bold">
+            {joiningNetwork ? 'Join the ListWorx Network' : 'Contractor Portal'}
+          </CardTitle>
           <CardDescription className="text-base mt-2">
-            Sign in to your account or create a new one
+            {joiningNetwork
+              ? 'Step 1: create your contractor account. Next you’ll complete your business application — license, insurance, and service area. No payment until you’re approved.'
+              : 'Sign in to your account or create a new one'}
           </CardDescription>
         </CardHeader>
 
