@@ -147,8 +147,9 @@ const HOW_IT_WORKS = [
 ];
 
 /**
- * A mid-page prompt to create an account. Two low-key styles so the scattered
- * placements don't read as the same button three times.
+ * A mid-page prompt to create an account — orange button, white text. Two
+ * layouts (a thin bordered row vs. a tinted card) so the scattered placements
+ * don't all look identical.
  */
 function JoinCta({
   variant = 'bar',
@@ -163,14 +164,13 @@ function JoinCta({
     return (
       <section className="bg-mailer-black">
         <div className="container mx-auto px-4">
-          <Reveal className="flex flex-col items-start gap-3 border-t border-mailer-border py-8 sm:flex-row sm:items-center sm:justify-between">
+          <Reveal className="flex flex-col items-start gap-4 border-t border-mailer-border py-8 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-lg font-semibold text-white">{headline}</p>
-            <Link
-              href="/contractor-portal?intent=apply"
-              className="inline-flex shrink-0 items-center gap-2 text-sm font-bold uppercase tracking-widest text-lw-rust transition-colors hover:text-white"
-            >
-              Create your account
-              <ArrowRight className="h-4 w-4" />
+            <Link href="/contractor-portal?intent=apply" className="shrink-0">
+              <Button className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+                Create your account
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
             </Link>
           </Reveal>
         </div>
