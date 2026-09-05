@@ -118,6 +118,7 @@ export const STANDARD_TIERS: StandardTier[] = [
       'Priority placement — above all Network Members',
       'Enhanced profile with additional photos and expanded bio',
       'IronClad Digital Badge Kit included (vehicle, digital, print)',
+      'AI Marketing Toolkit — social posts, follow-up emails, job templates',
       'SMS + email notifications for every match',
       'Monthly performance report (referrals received, match rate)',
       'Quarterly profile boost',
@@ -125,7 +126,6 @@ export const STANDARD_TIERS: StandardTier[] = [
     notIncluded: [
       'Additional Profile Boosts beyond quarterly',
       'Social Media Content Pack',
-      'Google Business Optimization',
       'Territory lock',
     ],
   },
@@ -148,7 +148,6 @@ export const STANDARD_TIERS: StandardTier[] = [
       'Territory lock — maximum 2 Elite per trade per county',
       'Monthly profile boost (not quarterly)',
       '2 social media posts per month featuring your work',
-      'Google Business Profile optimization on signup',
       'Annual featured contractor spotlight',
     ],
     notIncluded: [],
@@ -198,6 +197,7 @@ export const FOUNDER_TIERS: FounderTier[] = [
       'Priority placement — above all Network Members',
       'Enhanced profile with additional photos and expanded bio',
       'IronClad Digital Badge Kit included (vehicle, digital, print)',
+      'AI Marketing Toolkit — social posts, follow-up emails, job templates',
       'SMS + email notifications for every match',
       'Monthly performance report (referrals received, match rate)',
       'Quarterly profile boost',
@@ -224,7 +224,6 @@ export const FOUNDER_TIERS: FounderTier[] = [
       'Territory lock — maximum 2 Elite per trade per county',
       'Monthly profile boost (not quarterly)',
       '2 social media posts per month featuring your work',
-      'Google Business Profile optimization on signup',
       'Annual featured contractor spotlight',
       'Founding Partner badge — permanent',
       'Territory reservation — highest priority',
@@ -352,12 +351,10 @@ export const ADDON_LIST: AddOn[] = [
     description: 'Generate social posts, estimate follow-up emails, and job description templates using AI — built specifically for contractors.',
     type: 'monthly',
     price: 79,
-    preferredPrice: 59,
-    elitePrice: 49,
-    includedIn: [],
+    // Included at no charge with Network Partner and Network Elite; Network
+    // Member can add it for $79/mo.
+    includedIn: ['preferred', 'elite'],
     stripeMonthlyEnvVar: 'STRIPE_ADDON_AI_TOOLKIT_BASIC_MONTHLY',
-    preferredStripeMonthlyEnvVar: 'STRIPE_ADDON_AI_TOOLKIT_PREFERRED_MONTHLY',
-    eliteStripeMonthlyEnvVar: 'STRIPE_ADDON_AI_TOOLKIT_ELITE_MONTHLY',
     highlight: false,
   },
   {
@@ -424,4 +421,38 @@ export function getAddonEnvVarForTier(addOn: AddOn, tierId?: string | null, bill
   if (tierId === 'elite' && addOn.eliteStripeMonthlyEnvVar) return addOn.eliteStripeMonthlyEnvVar;
   if (tierId === 'preferred' && addOn.preferredStripeMonthlyEnvVar) return addOn.preferredStripeMonthlyEnvVar;
   return addOn.stripeMonthlyEnvVar ?? null;
+}
+
+/**
+ * Resolve a contractor's effective base tier from the `subscription_tier` /
+ * `founder_tier` columns on `contractor_profiles`. Founder tiers map back to
+ * their base ('preferred_founder' -> 'preferred'). Returns null when nothing
+ * is set so callers can decide how to treat an unknown tier.
+ */
+export function resolveBaseTierId(
+  profile: { subscription_tier?: string | null; founder_tier?: string | null } | null | undefined,
+): StandardTierId | null {
+  if (!profile) return null;
+  const raw = String(profile.founder_tier || profile.subscription_tier || '').toLowerCase();
+  if (!raw) return null;
+  if (raw.includes('elite')) return 'elite';
+  if (raw.includes('preferred') || raw.includes('partner')) return 'preferred';
+  if (raw.includes('basic') || raw.includes('member')) return 'basic';
+  return null;
+}
+
+/** Base tiers that include the AI Marketing Toolkit at no extra charge. */
+export const AI_TOOLKIT_TIERS: StandardTierId[] = ['preferred', 'elite'];
+
+/**
+ * Whether this contractor gets the AI Marketing Toolkit as part of their plan.
+ * Fails open when the tier is unknown/unset so we never lock out a legitimate
+ * contractor while tier data is still being backfilled.
+ */
+export function contractorHasAiToolkit(
+  profile: Parameters<typeof resolveBaseTierId>[0],
+): boolean {
+  const tier = resolveBaseTierId(profile);
+  if (tier == null) return true;
+  return AI_TOOLKIT_TIERS.includes(tier);
 }

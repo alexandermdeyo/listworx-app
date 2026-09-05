@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Loader as Loader2, Copy, Check, Zap, ChevronDown, ChevronUp } from 'lucide-react';
+import { contractorHasAiToolkit } from '@/lib/tiers-config';
 
 // TODO: Gate by purchase of ai_toolkit / ai_marketing_toolkit add-on once that flow exists.
 
@@ -129,6 +130,29 @@ export default function AIToolkitPage() {
       <Loader2 className="h-8 w-8 animate-spin text-[#E8621A]" />
     </div>
   );
+
+  if (!contractorHasAiToolkit(profile)) {
+    return (
+      <div className="min-h-screen bg-zinc-950 py-10 px-4">
+        <div className="mx-auto max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center">
+          <Zap className="mx-auto mb-4 h-8 w-8 text-[#E8621A]" />
+          <h1 className="text-xl font-bold text-white">The AI Marketing Toolkit is a Network Partner feature</h1>
+          <p className="mt-3 text-sm text-zinc-400">
+            Generate social posts, estimate follow-up emails, and job description templates — included
+            free with Network Partner and Network Elite. Upgrade your plan to unlock it.
+          </p>
+          <div className="mt-6 flex justify-center gap-3">
+            <Button onClick={() => router.push('/contractor-dashboard')} className="bg-[#E8621A] text-white hover:bg-[#cf5516]">
+              View plans
+            </Button>
+            <Button variant="outline" onClick={() => router.push('/contractor-dashboard')} className="border-zinc-700 text-zinc-300">
+              Back to dashboard
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 py-10 px-4">

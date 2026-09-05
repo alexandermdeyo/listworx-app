@@ -30,6 +30,8 @@ export interface ContractorProfile {
   ironclad_accepted_at?: string;
   partner_status: string;
   tier?: string;
+  subscription_tier?: string | null;
+  founder_tier?: string | null;
   stripe_customer_id?: string;
   logo_url?: string;
   founder_status?: boolean;
@@ -137,6 +139,7 @@ export const TIERS: TierDisplay[] = [
       'Priority placement — above all Network Members',
       'Enhanced profile with additional photos and expanded bio',
       'IronClad Digital Badge Kit included',
+      'AI Marketing Toolkit — social posts, follow-up emails, job templates',
       'Monthly performance report',
       'Quarterly profile boost',
     ],
@@ -157,7 +160,6 @@ export const TIERS: TierDisplay[] = [
       'Territory lock — maximum 2 Elite per trade per county',
       'Monthly profile boost',
       '2 social media posts per month featuring your work',
-      'Google Business Profile optimization on signup',
       'Annual featured contractor spotlight',
     ],
     notIncluded: [],
