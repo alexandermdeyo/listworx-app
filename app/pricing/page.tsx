@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/design-system';
-import { CheckCircle, Crown } from 'lucide-react';
+import { CheckCircle, Crown, TrendingUp } from 'lucide-react';
 import { Reveal } from '@/components/motion';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
+import { TIER_GROWTH_NOTE } from '@/lib/tiers-config';
 
 const BASE_FEATURES = [
   'IronClad Verified status',
@@ -170,6 +171,11 @@ export default function PricingPage() {
         <p className="mx-auto mt-6 max-w-2xl text-center text-sm text-mkt-ink/60">
           Elite spots are limited by trade and county. Once filled, Elite is closed to new members in that market.
         </p>
+
+        <div className="mx-auto mt-6 flex max-w-3xl items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/5 p-5">
+          <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+          <p className="text-sm leading-relaxed text-mkt-ink/80">{TIER_GROWTH_NOTE}</p>
+        </div>
       </section>
 
       <section className="bg-zinc-50 py-14">
@@ -204,6 +210,11 @@ export default function PricingPage() {
                 </Card>
               </Reveal>
             ))}
+          </div>
+
+          <div className="mx-auto mt-6 flex max-w-3xl items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/5 p-5">
+            <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+            <p className="text-sm leading-relaxed text-mkt-ink/80">{TIER_GROWTH_NOTE}</p>
           </div>
         </div>
       </section>

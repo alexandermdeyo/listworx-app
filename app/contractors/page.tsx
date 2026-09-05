@@ -32,6 +32,7 @@ import PhotoDark from '@/components/site/PhotoDark';
 import TristarMark from '@/components/site/TristarMark';
 import IroncladBadge from '@/components/site/IroncladBadge';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
+import { TIER_GROWTH_NOTE } from '@/lib/tiers-config';
 
 const FOUNDER_PERKS = [
   'Your rate locked from day one — forever',
@@ -217,7 +218,12 @@ export default function ContractorsPage() {
           priority
         />
         <div className="absolute inset-0 z-[1] bg-black/[0.12]" aria-hidden="true" />
-        <TristarMark className="pointer-events-none absolute right-5 top-5 z-[2] h-24 w-24 text-white/10 md:right-10 md:top-10 md:h-36 md:w-36" />
+        {/* TN state-flag tri-star, layered behind the hero copy — subdued so the
+           photo reads through it */}
+        <TristarMark
+          variant="flag"
+          className="pointer-events-none absolute left-1/2 top-[46%] z-[2] h-64 w-64 -translate-x-1/2 -translate-y-1/2 opacity-40 sm:h-80 sm:w-80 md:h-[26rem] md:w-[26rem] md:opacity-[0.32]"
+        />
 
         <div className="relative z-10 container mx-auto px-4">
           <div className="mx-auto max-w-5xl text-center">
@@ -365,6 +371,11 @@ export default function ContractorsPage() {
               </Reveal>
             ))}
           </div>
+
+          <Reveal className="mt-6 flex items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/[0.07] p-5">
+            <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+            <p className="text-sm leading-relaxed text-white/85">{TIER_GROWTH_NOTE}</p>
+          </Reveal>
 
           <Reveal className="mt-8 flex flex-col gap-2 text-sm text-white/55 md:flex-row md:items-center md:gap-6">
             <span>Billing starts immediately at your locked rate — no trial, no games.</span>
@@ -929,6 +940,11 @@ export default function ContractorsPage() {
                 </Reveal>
               ))}
             </div>
+
+            <Reveal className="mx-auto mt-6 flex max-w-3xl items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/[0.07] p-5 text-left">
+              <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+              <p className="text-sm leading-relaxed text-white/85">{TIER_GROWTH_NOTE}</p>
+            </Reveal>
 
             <Reveal className="mt-8 text-center text-sm text-white/50">
               All plans include credential tracking, compliance monitoring, and referral management

@@ -17,7 +17,7 @@ import IroncladBadge from '@/components/site/IroncladBadge';
 import TristarMark from '@/components/site/TristarMark';
 import PhotoDark from '@/components/site/PhotoDark';
 import CountUp from '@/components/site/CountUp';
-import PartnerLogoSplash from '@/components/site/PartnerLogoSplash';
+import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 
 const standards = [
   {
@@ -69,6 +69,12 @@ export default function LandingPage() {
       <Navigation variant="light" />
 
       <HomeownerHero />
+
+      {/* ============================================================= */}
+      {/* TRUST BARS — partner companies + featured network contractors */}
+      {/* admin: /admin/crm/partners  &  /admin/crm/contractors        */}
+      {/* ============================================================= */}
+      <HomepageTrustBars />
 
       {/* ============================================================= */}
       {/* HOW IT WORKS — asymmetric, light                             */}
@@ -396,11 +402,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* ============================================================= */}
-      {/* PARTNER LOGO SPLASH — admin-managed; renders only if populated */}
-      {/* ============================================================= */}
-      <PartnerLogoSplash />
 
       {/* ============================================================= */}
       {/* REALTORS BRIDGE — light, image right                         */}
