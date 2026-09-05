@@ -83,9 +83,6 @@ export default function HomeownerHero() {
                 loading="eager"
               />
             </div>
-            <span className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-mkt-ink shadow-sm backdrop-blur">
-              The real thing — this is the request form.
-            </span>
           </Reveal>
         </div>
       </section>
