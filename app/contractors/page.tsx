@@ -222,7 +222,7 @@ export default function ContractorsPage() {
            upper-right — subdued so the photo reads through it */}
         <TristarMark
           variant="flag"
-          className="pointer-events-none absolute left-[70%] top-[19%] z-[2] h-32 w-32 -translate-x-1/2 -translate-y-1/2 opacity-40 sm:h-40 sm:w-40 md:left-[66%] md:top-[24%] md:h-48 md:w-48 md:opacity-[0.32]"
+          className="pointer-events-none absolute right-3 top-1 z-[2] h-40 w-40 opacity-40 sm:h-52 sm:w-52 md:right-8 md:top-2 md:h-60 md:w-60 md:opacity-[0.32]"
         />
 
         <div className="relative z-10 container mx-auto px-4">
