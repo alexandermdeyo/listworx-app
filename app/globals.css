@@ -260,6 +260,12 @@ html {
     @apply text-xs font-bold uppercase tracking-[0.2em] text-lw-rust;
   }
 
+  /* Louder section marker — used for the top-of-section eyebrows on the
+   * homepage so each section announces itself as you scroll past. */
+  .lw-label-lg {
+    @apply text-sm font-bold uppercase tracking-[0.18em] text-lw-rust md:text-base;
+  }
+
   .lw-muted {
     color: var(--lw-secondary-text);
   }

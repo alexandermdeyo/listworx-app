@@ -89,7 +89,7 @@ export default function LandingPage() {
 
           <div>
             <Reveal>
-              <p className="lw-label mb-3">The IronClad Standard</p>
+              <p className="lw-label-lg mb-3">The IronClad Standard</p>
               <h2 className="text-3xl font-bold tracking-tight md:text-5xl">
                 A badge only means something if it can be taken away.
               </h2>
@@ -163,7 +163,7 @@ export default function LandingPage() {
       {/* ============================================================= */}
       <section id="how-it-works" className="container mx-auto scroll-mt-24 px-4 py-20 md:py-28">
         <Reveal className="mb-14 max-w-2xl">
-          <p className="lw-label mb-3 !text-lw-rust">How it works</p>
+          <p className="lw-label-lg mb-3 !text-lw-rust">How it works</p>
           <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
             Three steps. No profile scrolling.
           </h2>
@@ -260,7 +260,7 @@ export default function LandingPage() {
           </Reveal>
 
           <Reveal>
-            <p className="lw-label mb-3 !text-lw-rust">The IronClad badge</p>
+            <p className="lw-label-lg mb-3 !text-lw-rust">The IronClad badge</p>
             <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
               See this badge? The contractor&apos;s been vetted.
             </h2>
@@ -345,7 +345,7 @@ export default function LandingPage() {
       <section className="overflow-hidden border-y border-zinc-200 bg-white py-20 md:py-28">
         <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-2">
           <Reveal className="order-2 lg:order-1">
-            <p className="lw-label mb-3 !text-lw-rust">For real estate pros</p>
+            <p className="lw-label-lg mb-3 !text-lw-rust">For real estate pros</p>
             <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
               Refer a contractor without putting your name on the line.
             </h2>
@@ -387,9 +387,9 @@ export default function LandingPage() {
           <TristarMark className="pointer-events-none absolute right-6 top-6 h-24 w-24 text-white/10 md:right-10 md:top-10 md:h-32 md:w-32" />
           <div className="lw-photo-dark__content container mx-auto flex min-h-[560px] flex-col justify-end px-4 py-16 md:min-h-[620px] md:py-20">
             <Reveal className="max-w-2xl">
-              <div className="mb-5 flex items-center gap-4">
-                <p className="lw-label">For contractors</p>
-                <IroncladBadge variant="partner" hover={false} className="h-11" />
+              <div className="mb-5 flex items-center gap-4 md:gap-5">
+                <p className="lw-label-lg">For contractors</p>
+                <IroncladBadge variant="partner" hover={false} className="h-16 md:h-20" />
               </div>
               <h2 className="text-3xl font-bold leading-[1.1] tracking-tight text-white md:text-5xl">
                 Real work. Real standards. No per-lead games.
