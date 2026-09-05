@@ -445,6 +445,15 @@ export function resolveBaseTierId(
 export const AI_TOOLKIT_TIERS: StandardTierId[] = ['preferred', 'elite'];
 
 /**
+ * Shown alongside every tier's feature list. The network's benefits are still
+ * expanding, and everything added lands in existing plans at no extra cost —
+ * this frames that as upside, not fine print. Same copy for Founding and
+ * Standard tiers. No specific partner/supplier names.
+ */
+export const TIER_GROWTH_NOTE =
+  "Your membership keeps growing. We're adding direct supplier connections, training, and business tools you'll reach right from your dashboard — each one included in your plan as it launches, at no extra cost. What you get today is the floor, not the ceiling.";
+
+/**
  * Whether this contractor gets the AI Marketing Toolkit as part of their plan.
  * Fails open when the tier is unknown/unset so we never lock out a legitimate
  * contractor while tier data is still being backfilled.

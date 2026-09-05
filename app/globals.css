@@ -397,6 +397,55 @@ html {
   }
 }
 
+/* Auto-scrolling logo marquee — homepage trust bars.
+   The track holds the item list twice; translating it -50% loops seamlessly. */
+.mkt-scope .lw-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.mkt-scope .lw-marquee__track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: lw-marquee-scroll var(--lw-marquee-duration, 45s) linear infinite;
+  will-change: transform;
+}
+.mkt-scope .lw-marquee__group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--lw-marquee-gap, 3.5rem);
+  padding-right: var(--lw-marquee-gap, 3.5rem);
+}
+.mkt-scope .lw-marquee:hover .lw-marquee__track {
+  animation-play-state: paused;
+}
+@keyframes lw-marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mkt-scope .lw-marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .mkt-scope .lw-marquee__track {
+    animation: none;
+    width: 100%;
+  }
+  .mkt-scope .lw-marquee__group {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem 3rem;
+    padding-right: 0;
+  }
+  .mkt-scope .lw-marquee__group[data-clone] {
+    display: none;
+  }
+}
+
 /* Nav link underline slide-in from left */
 .mkt-nav-link {
   position: relative;
