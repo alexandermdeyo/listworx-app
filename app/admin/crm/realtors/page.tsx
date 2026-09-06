@@ -19,6 +19,7 @@ interface Realtor {
   user_id: string;
   company_name: string;
   license_number: string;
+  user_type: string | null;
   created_at: string;
   last_contacted_at: string | null;
   notes: string | null;
@@ -75,34 +76,56 @@ export default function RealtorsPage() {
     try {
       setLoading(true);
 
-      const { data } = await supabase
-        .from('realtor_profiles')
-        .select(`
-          *,
-          users(email, full_name)
-        `)
+      const { data, error } = await supabase
+        .from('requestor_profiles')
+        .select('*')
         .eq('archived', false)
         .order('created_at', { ascending: false });
 
-      if (data) {
-        const realtorsWithCounts = await Promise.all(
-          data.map(async (realtor) => {
-            const { count } = await supabase
-              .from('job_requests')
-              .select('id', { count: 'exact', head: true })
-              .eq('realtor_id', realtor.id);
+      if (error) throw error;
 
-            return {
-              ...realtor,
-              job_requests_count: count || 0,
-            } as Realtor;
-          })
-        );
+      const rows = data || [];
 
-        setRealtors(realtorsWithCounts);
+      // Pull the linked user records in one query (the FK target / embed is not
+      // reliable across the realtor_profiles -> requestor_profiles rename).
+      const userIds = Array.from(new Set(rows.map((r) => r.user_id).filter(Boolean)));
+      const usersById: Record<string, { email: string; name: string | null; phone: string | null }> = {};
+      if (userIds.length > 0) {
+        const { data: users } = await supabase
+          .from('users')
+          .select('id, email, name, phone')
+          .in('id', userIds);
+        (users || []).forEach((u) => {
+          usersById[u.id] = { email: u.email, name: u.name, phone: u.phone };
+        });
       }
+
+      // Per-requester job-request counts, in one grouped pass.
+      const countsByRequestor: Record<string, number> = {};
+      const { data: jrRows } = await supabase
+        .from('job_requests')
+        .select('requestor_profile_id')
+        .in('requestor_profile_id', rows.map((r) => r.id));
+      (jrRows || []).forEach((jr: { requestor_profile_id: string | null }) => {
+        if (jr.requestor_profile_id) {
+          countsByRequestor[jr.requestor_profile_id] =
+            (countsByRequestor[jr.requestor_profile_id] || 0) + 1;
+        }
+      });
+
+      const mapped: Realtor[] = rows.map((r) => {
+        const u = usersById[r.user_id];
+        return {
+          ...r,
+          users: { email: u?.email || '', full_name: u?.name || u?.email || 'Unknown' },
+          job_requests_count:
+            countsByRequestor[r.id] ?? r.total_requests_submitted ?? 0,
+        } as Realtor;
+      });
+
+      setRealtors(mapped);
     } catch (error) {
-      console.error('Error loading realtors:', error);
+      console.error('Error loading requesters:', error);
     } finally {
       setLoading(false);
     }
@@ -113,7 +136,7 @@ export default function RealtorsPage() {
       setProcessing(realtorId);
 
       await supabase
-        .from('realtor_profiles')
+        .from('requestor_profiles')
         .update({ notes: notesText })
         .eq('id', realtorId);
 
@@ -131,7 +154,7 @@ export default function RealtorsPage() {
       setProcessing(realtorId);
 
       await supabase
-        .from('realtor_profiles')
+        .from('requestor_profiles')
         .update({ last_contacted_at: new Date().toISOString() })
         .eq('id', realtorId);
 
@@ -150,7 +173,7 @@ export default function RealtorsPage() {
       setProcessing(realtorId);
 
       await supabase
-        .from('realtor_profiles')
+        .from('requestor_profiles')
         .update({ archived: true })
         .eq('id', realtorId);
 
@@ -169,7 +192,7 @@ export default function RealtorsPage() {
       setProcessing(realtorId);
 
       await supabase
-        .from('realtor_profiles')
+        .from('requestor_profiles')
         .delete()
         .eq('id', realtorId);
 

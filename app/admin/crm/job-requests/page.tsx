@@ -123,35 +123,53 @@ export default function JobRequestsPage() {
   const loadJobRequests = async () => {
     try {
       setLoading(true);
-      const { data } = await supabase
-        .from('job_requests')
-        .select(`
-          *,
-          referrals (
+
+      const REFERRAL_EMBED = `
+        *,
+        referrals (
+          id,
+          slot_position,
+          tier_at_referral,
+          status,
+          email_sent,
+          email_sent_at,
+          requester_contacted,
+          created_at,
+          contractor_profiles (
             id,
-            slot_position,
-            tier_at_referral,
-            status,
-            email_sent,
-            email_sent_at,
-            requester_contacted,
-            created_at,
-            contractor_profiles (
-              id,
-              company_name,
-              owner_name,
-              email,
-              phone
-            )
+            company_name,
+            owner_name,
+            email,
+            phone
           )
-        `)
+        )
+      `;
+
+      // Try the full query with the referrals embed; if that errors (schema
+      // drift, PostgREST relationship cache), fall back to the plain rows so the
+      // list still renders instead of silently showing nothing.
+      let { data, error } = await supabase
+        .from('job_requests')
+        .select(REFERRAL_EMBED)
         .eq('archived', false)
         .order('created_at', { ascending: false });
 
-      if (!data) return;
+      if (error) {
+        console.error('[job-requests] embed query failed, retrying flat:', error.message);
+        const flat = await supabase
+          .from('job_requests')
+          .select('*')
+          .eq('archived', false)
+          .order('created_at', { ascending: false });
+        data = flat.data as any;
+        error = flat.error;
+        if (error) throw error;
+      }
+
+      const rows = data || [];
 
       const withCategories = await Promise.all(
-        data.map(async (req) => {
+        rows.map(async (req: any) => {
           const { data: cats } = await supabase
             .from('job_request_categories')
             .select('categories(name)')
@@ -159,14 +177,17 @@ export default function JobRequestsPage() {
           return {
             ...req,
             categories: cats?.map((c: any) => c.categories).filter(Boolean) || [],
-            referrals: (req.referrals || []).sort((a: any, b: any) => a.slot_position - b.slot_position),
+            referrals: (req.referrals || []).sort(
+              (a: any, b: any) => a.slot_position - b.slot_position,
+            ),
           } as JobRequest;
-        })
+        }),
       );
 
       setJobRequests(withCategories);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error loading job requests:', err);
+      showToast(`Could not load job requests: ${err?.message || 'unknown error'}`, 'error');
     } finally {
       setLoading(false);
     }
