@@ -1,423 +1,501 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { CircleCheck as CheckCircle, Users, Shield, Zap, Clock, Star, Chrome as Home, TrendingUp, Award, FileText, CircleAlert as AlertCircle, ArrowRight, ThumbsUp, Eye } from 'lucide-react';
+import {
+  CircleCheck as CheckCircle,
+  Shield,
+  Clock,
+  ShieldCheck,
+  ArrowRight,
+  Chrome as Home,
+  CircleAlert as AlertCircle,
+  Users,
+  Sparkles,
+} from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
+import { Button } from '@/components/ui/button';
+import IroncladBadge from '@/components/site/IroncladBadge';
+import TristarMark from '@/components/site/TristarMark';
+import CountUp from '@/components/site/CountUp';
+import FaqSection from '@/components/site/FaqSection';
+
+const differentiators = [
+  {
+    icon: Clock,
+    title: 'Stop cold-calling contractors',
+    body: 'One request, up to three vetted matches. No calling around, no waiting on callbacks from someone who may not show.',
+  },
+  {
+    icon: Shield,
+    title: 'Every contractor is verified',
+    body: 'Licensed, insured, and actively held to IronClad Standards — checked before approval, monitored after. Refer them knowing your name is covered.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'You stay in control',
+    body: 'You get the matches. You decide who to contact. No contractor sees your client’s information until you choose to share it.',
+  },
+  {
+    icon: Clock,
+    title: 'Keep the deal on schedule',
+    body: 'Pre-sale prep, post-inspection repairs, move-in work — matched pros commit to a 24-hour response so timelines don’t slip.',
+  },
+];
+
+const steps = [
+  {
+    n: '01',
+    title: 'Submit the request',
+    body: 'Property location, the work needed, your timeline. Under two minutes from your phone between showings. Free.',
+  },
+  {
+    n: '02',
+    title: 'Get up to three matches',
+    body: 'In about 30 seconds you see matched contractors on screen — plus an email and a copy saved to your dashboard. No bidding war, no junk list.',
+  },
+  {
+    n: '03',
+    title: 'Choose who to contact',
+    body: 'Review the matches, reach out to whoever fits, and get it scheduled. Contractors must respond within 24 hours.',
+  },
+];
+
+const ironcladPoints = [
+  ['License verified', 'State trade license confirmed and tracked.'],
+  ['Insurance current', 'Active general liability and workers-comp required.'],
+  ['24-hour response', 'Every referral acknowledged within a day.'],
+  ['Standards enforced', 'Fall below the standard and they’re out of the network.'],
+];
+
+const useCases = [
+  {
+    icon: Home,
+    title: 'Pre-sale preparation',
+    items: ['Flooring repair & refinishing', 'Interior / exterior painting', 'Kitchen & bath cosmetic updates', 'Landscaping & curb appeal'],
+  },
+  {
+    icon: AlertCircle,
+    title: 'Post-inspection repairs',
+    items: ['HVAC repair & replacement', 'Plumbing fixes & code corrections', 'Electrical work & panel upgrades', 'Roof, flashing & gutter work'],
+  },
+  {
+    icon: Users,
+    title: 'Buyer move-in services',
+    items: ['Deep & carpet cleaning', 'Lock rekeying & security', 'Appliance install & hookup', 'Touch-ups & minor repairs'],
+  },
+  {
+    icon: Shield,
+    title: 'Emergencies',
+    items: ['Water damage & mold', 'Emergency plumbing & leaks', 'Electrical outages', 'Storm & structural damage'],
+  },
+];
+
+const realtorFaqs = [
+  {
+    q: 'Does it cost realtors anything?',
+    a: 'No. ListWorx is free for realtors and homeowners — no fees, no per-request charges. Contractors pay a monthly subscription to be in the network.',
+  },
+  {
+    q: 'Will my client get spammed?',
+    a: 'No. Contractors never receive your client’s name, phone, or email. They see the service type, county, and a summary. You get the matches and decide who to contact.',
+  },
+  {
+    q: 'What areas do you cover?',
+    a: 'We’re building coverage market by market across Tennessee, starting in Middle Tennessee. If a trade isn’t covered in your county yet, submit anyway — we follow up as coverage fills in.',
+  },
+  {
+    q: 'Can I build a list of contractors I trust?',
+    a: 'Your dashboard keeps every contractor you’ve worked through ListWorx, so you can go back to the ones who delivered. A preferred-contractor feature for realtors is on the way.',
+  },
+  {
+    q: 'How is this different from a referral marketplace?',
+    a: 'Marketplaces sell your contact info to everyone. Directories just hand you names. ListWorx gives you a short, vetted list that’s already been approved and is ready to respond.',
+  },
+];
 
 export default function RealtorsPage() {
   return (
     <PageShell surface="marketing">
       <Navigation variant="light" />
 
-      {/* HERO */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1920&q=80"
-            alt=""
-            className="w-full h-full object-cover"
-            aria-hidden="true"
-          />
-          <div className="lw-photo-scrim" />
-        </div>
-        <div className="relative z-10 container mx-auto px-4">
-        <div className="max-w-5xl mx-auto text-center">
-          <Reveal immediate delay={0}>
-            <Badge className="mb-6 bg-lw-rust/15 text-lw-rust border-lw-rust/30 hover:bg-lw-rust/25">
-              <Star className="h-3 w-3 mr-1" />
-              Built for Real Estate Professionals
-            </Badge>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
-              Refer Contractors<br className="hidden md:block" />
-              <span className="text-lw-rust"> With Confidence.</span>
-            </h1>
-          </Reveal>
-          <Reveal immediate delay={100}>
-            <p className="text-lg md:text-xl lg:text-2xl text-white/80 mb-10 max-w-3xl mx-auto">
-              ListWorx gives you instant access to vetted, IronClad-certified contractors — for free. Submit one request, receive up to 3 qualified matches, and choose who to contact. No spam. No pressure. Your reputation stays protected.
-            </p>
-          </Reveal>
-
-          <Reveal immediate delay={200}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/request">
-                <Button size="lg" className="text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all bg-lw-rust hover:bg-lw-rust-hover text-white">
-                  <Users className="mr-2 h-5 w-5" />
-                  Request a Contractor — Free
-                </Button>
-              </Link>
-            </div>
-          </Reveal>
-
-          <Reveal immediate delay={300}>
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-lw-rust mb-2">Free</div>
-                <div className="text-sm text-white/70">Always — No Fees, Ever</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-lw-rust mb-2">3 Matches</div>
-                <div className="text-sm text-white/70">Max Per Request</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-lw-rust mb-2">{'<'}24h</div>
-                <div className="text-sm text-white/70">Contractor Response Time</div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-        </div>
-      </section>
-
-      {/* HOW IT'S DIFFERENT */}
-      <section className="py-20 bg-white border-y border-zinc-200">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <Reveal as="div" className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-6">
-                Not a Directory. Not a Referral Marketplace.
-              </h2>
-              <p className="text-lg md:text-xl text-mkt-ink/70 max-w-3xl mx-auto">
-                Random contractor directories give you names. Spammy referral platforms give everyone your contact info. ListWorx gives you a curated shortlist of vetted professionals who have already been approved and are ready to respond.
+      {/* ================= HERO ================= */}
+      <section className="relative overflow-hidden border-b border-zinc-200 bg-white">
+        <TristarMark className="pointer-events-none absolute right-4 top-6 h-28 w-28 text-mkt-ink/[0.05] md:right-8 md:h-44 md:w-44" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-lw-rust/[0.07] blur-3xl"
+        />
+        <div className="container relative mx-auto grid items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="max-w-2xl">
+            <Reveal immediate delay={0}>
+              <p className="lw-label-lg mb-3 !text-lw-rust">For real estate pros</p>
+              <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-mkt-ink md:text-6xl">
+                Refer contractors without
+                <span className="block text-lw-rust">putting your name on the line.</span>
+              </h1>
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-mkt-ink/70 md:text-xl">
+                One request, up to three IronClad-verified contractors, and you choose who to
+                contact. Free for agents. Your client&apos;s information stays private until you
+                share it.
               </p>
             </Reveal>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              <Reveal delay={0}>
-                <Card className="lw-hover-lift p-8 bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
-                      <Clock className="h-6 w-6 text-lw-rust" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-mkt-ink mb-2">Stop Cold-Calling Contractors</h3>
-                      <p className="text-mkt-ink/70">
-                        One request. Up to 3 vetted matches. No calling around. No waiting for callbacks from contractors who may or may not show up. You get qualified professionals — or you hear back from us.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </Reveal>
-
-              <Reveal delay={70}>
-                <Card className="lw-hover-lift p-8 bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
-                      <Shield className="h-6 w-6 text-lw-rust" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-mkt-ink mb-2">Every Contractor Is Verified</h3>
-                      <p className="text-mkt-ink/70">
-                        Every ListWorx contractor is licensed, insured, and actively meets IronClad Standards. We check credentials before approval and monitor compliance throughout their membership. Refer them knowing your name is protected.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </Reveal>
-
-              <Reveal delay={140}>
-                <Card className="lw-hover-lift p-8 bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
-                      <Eye className="h-6 w-6 text-lw-rust" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-mkt-ink mb-2">You're Always in Control</h3>
-                      <p className="text-mkt-ink/70">
-                        You receive the matches. You decide who to contact. No contractor receives your client's information until you choose to share it. No unsolicited outreach. No spam.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </Reveal>
-
-              <Reveal delay={210}>
-                <Card className="lw-hover-lift p-8 bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-lw-rust/10 flex items-center justify-center flex-shrink-0">
-                      <TrendingUp className="h-6 w-6 text-lw-rust" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-mkt-ink mb-2">Keep Deals on Track</h3>
-                      <p className="text-mkt-ink/70">
-                        Pre-sale prep, post-inspection repairs, or move-in updates — get qualified contractors on the job fast. Contractors commit to 24-hour response times. No more delays killing your timeline.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="py-20 bg-white border-y border-zinc-200">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <Reveal as="div" className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-4">
-                How It Works
-              </h2>
-              <p className="text-lg md:text-xl text-mkt-ink/70">
-                Simple enough to do from your phone between appointments.
-              </p>
-            </Reveal>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <Reveal delay={0}>
-                <Card className="lw-hover-lift p-8 rounded-lg shadow-sm hover:shadow-lg transition-all border-2 border-lw-rust bg-white">
-                  <div className="h-16 w-16 rounded-full bg-lw-rust/20 flex items-center justify-center mb-6 mx-auto">
-                    <FileText className="h-8 w-8 text-lw-rust" />
-                  </div>
-                  <div className="text-6xl font-bold text-lw-rust/20 mb-4 text-center">01</div>
-                  <h3 className="text-xl font-bold text-mkt-ink mb-3 text-center">Submit Your Request</h3>
-                  <p className="text-mkt-ink/70 text-center">
-                    Tell us the property location, the service needed, and your timeline. Takes under 2 minutes. Completely free.
-                  </p>
-                </Card>
-              </Reveal>
-
-              <Reveal delay={70}>
-                <Card className="lw-hover-lift p-8 bg-white border-zinc-200 text-mkt-ink shadow-sm shadow-sm hover:shadow-lg transition-all">
-                  <div className="h-16 w-16 rounded-full bg-lw-rust/10 flex items-center justify-center mb-6 mx-auto">
-                    <Zap className="h-8 w-8 text-lw-rust" />
-                  </div>
-                  <div className="text-6xl font-bold text-lw-rust/20 mb-4 text-center">02</div>
-                  <h3 className="text-xl font-bold text-mkt-ink mb-3 text-center">Receive Up to 3 Matches</h3>
-                  <p className="text-mkt-ink/70 text-center">
-                    Instantly — in under 30 seconds you&apos;ll see your matched contractors on screen, plus an email and a copy saved in your dashboard. No bidding wars, no junk lists.
-                  </p>
-                </Card>
-              </Reveal>
-
-              <Reveal delay={140}>
-                <Card className="lw-hover-lift p-8 bg-white border-zinc-200 text-mkt-ink shadow-sm shadow-sm hover:shadow-lg transition-all">
-                  <div className="h-16 w-16 rounded-full bg-lw-rust/10 flex items-center justify-center mb-6 mx-auto">
-                    <ThumbsUp className="h-8 w-8 text-lw-rust" />
-                  </div>
-                  <div className="text-6xl font-bold text-lw-rust/20 mb-4 text-center">03</div>
-                  <h3 className="text-xl font-bold text-mkt-ink mb-3 text-center">Choose Who to Contact</h3>
-                  <p className="text-mkt-ink/70 text-center">
-                    Review your matches, reach out to whoever fits best, and get the job scheduled. Contractors must respond within 24 hours.
-                  </p>
-                </Card>
-              </Reveal>
-            </div>
-
-            <div className="text-center mt-12">
-              <Link href="/request">
-                <Button size="lg" className="text-lg px-10 py-6 rounded-lg shadow-lg hover:shadow-xl bg-lw-rust hover:bg-lw-rust-hover text-white">
-                  Submit a Request Now — Free
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* USE CASES */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <Reveal as="div" className="text-center mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold text-mkt-ink mb-4">
-                When Realtors Use ListWorx
-              </h2>
-              <p className="text-xl text-mkt-ink/70">
-                From listing prep to closing day — reliable contractors for every stage of the transaction.
-              </p>
-            </Reveal>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <Reveal delay={0}>
-                <Card className="lw-hover-lift p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust transition-all">
-                  <h3 className="text-lg font-bold text-mkt-ink mb-3 flex items-center">
-                    <Home className="h-5 w-5 text-lw-rust mr-2" />
-                    Pre-Sale Preparation
-                  </h3>
-                  <ul className="text-mkt-ink/70 space-y-2 text-sm">
-                    <li>• Flooring repairs, refinishing, and replacement</li>
-                    <li>• Interior and exterior painting</li>
-                    <li>• Kitchen and bath cosmetic updates</li>
-                    <li>• Landscaping and curb appeal improvements</li>
-                  </ul>
-                </Card>
-              </Reveal>
-
-              <Reveal delay={70}>
-                <Card className="lw-hover-lift p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust transition-all">
-                  <h3 className="text-lg font-bold text-mkt-ink mb-3 flex items-center">
-                    <AlertCircle className="h-5 w-5 text-lw-rust mr-2" />
-                    Post-Inspection Repairs
-                  </h3>
-                  <ul className="text-mkt-ink/70 space-y-2 text-sm">
-                    <li>• HVAC repairs and system replacement</li>
-                    <li>• Plumbing fixes and code corrections</li>
-                    <li>• Electrical work and panel upgrades</li>
-                    <li>• Roof repairs, flashing, and gutter work</li>
-                  </ul>
-                </Card>
-              </Reveal>
-
-              <Reveal delay={140}>
-                <Card className="lw-hover-lift p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust transition-all">
-                  <h3 className="text-lg font-bold text-mkt-ink mb-3 flex items-center">
-                    <Users className="h-5 w-5 text-lw-rust mr-2" />
-                    Buyer Move-In Services
-                  </h3>
-                  <ul className="text-mkt-ink/70 space-y-2 text-sm">
-                    <li>• Deep cleaning and carpet cleaning</li>
-                    <li>• Lock rekeying and security updates</li>
-                    <li>• Appliance installation and hookup</li>
-                    <li>• Touch-up work and minor repairs</li>
-                  </ul>
-                </Card>
-              </Reveal>
-
-              <Reveal delay={210}>
-                <Card className="lw-hover-lift p-6 bg-white border-zinc-200 text-mkt-ink shadow-sm hover:border-lw-rust transition-all">
-                  <h3 className="text-lg font-bold text-mkt-ink mb-3 flex items-center">
-                    <Shield className="h-5 w-5 text-lw-rust mr-2" />
-                    Emergency Situations
-                  </h3>
-                  <ul className="text-mkt-ink/70 space-y-2 text-sm">
-                    <li>• Water damage and mold remediation</li>
-                    <li>• Emergency plumbing and leak repair</li>
-                    <li>• Electrical emergencies and outages</li>
-                    <li>• Storm damage and structural issues</li>
-                  </ul>
-                </Card>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* WHY IRONCLAD */}
-      <section className="py-16 bg-mkt-ink">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <Reveal as="div" className="text-center mb-12">
-              <div className="inline-block rounded-lg bg-white p-3 mb-4">
-                <Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad Certified" width={80} height={80} className="w-16 h-auto" />
+            <Reveal immediate delay={120}>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link href="/request">
+                  <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+                    Request a contractor — free
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/ironclad">
+                  <Button size="lg" variant="outlineOrange">
+                    See the standard
+                  </Button>
+                </Link>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                What IronClad Certification Means for You
-              </h2>
-              <p className="text-lg text-white/70 max-w-2xl mx-auto">
-                When you refer an IronClad Partner, you're not guessing. You know exactly what standards they've agreed to and are held accountable for.
-              </p>
             </Reveal>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { icon: Shield, title: 'License Verified', desc: 'State contractor license confirmed and tracked' },
-                { icon: Award, title: 'Insurance Current', desc: 'Active general liability and workers comp required' },
-                { icon: Clock, title: '24-Hour Response', desc: 'Every referral must be acknowledged within a day' },
-                { icon: CheckCircle, title: 'Standards Enforced', desc: 'Non-compliance means removal from the network' },
-              ].map((item, index) => (
-                <Reveal key={item.title} delay={index * 70}>
-                  <Card className="lw-hover-lift p-5 text-center border-white/20 bg-white/[0.07] shadow-xl backdrop-blur-sm hover:shadow-lg transition-all">
-                    <item.icon className="h-8 w-8 text-lw-rust mx-auto mb-3" />
-                    <h4 className="font-semibold text-white text-sm mb-1">{item.title}</h4>
-                    <p className="text-xs text-white/70">{item.desc}</p>
-                  </Card>
-                </Reveal>
-              ))}
-            </div>
-
-            <div className="mt-8 text-center">
-              <Link href="/ironclad">
-                <Button variant="outlineOrange">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Read the Full IronClad Standards
-                </Button>
-              </Link>
-            </div>
+            <Reveal immediate delay={200}>
+              <div className="mt-12 flex flex-wrap gap-x-10 gap-y-6 border-t border-zinc-200 pt-8">
+                <div>
+                  <div className="text-3xl font-bold text-lw-rust md:text-4xl">Free</div>
+                  <div className="text-xs uppercase tracking-widest text-mkt-ink/50">
+                    For agents — always
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-lw-rust md:text-4xl">
+                    <CountUp value={3} />
+                  </div>
+                  <div className="text-xs uppercase tracking-widest text-mkt-ink/50">
+                    Matches, max
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-lw-rust md:text-4xl">
+                    <CountUp value={24} suffix="hr" />
+                  </div>
+                  <div className="text-xs uppercase tracking-widest text-mkt-ink/50">
+                    Response commitment
+                  </div>
+                </div>
+              </div>
+            </Reveal>
           </div>
+
+          <Reveal immediate delay={200} className="relative hidden lg:block">
+            <div className="lw-figure-zoom relative ml-auto w-full max-w-[560px] overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_40px_80px_-40px_rgba(31,31,31,0.5)]">
+              <img
+                src="/images/redesign/realtor_couple-consultation-laptop.webp"
+                alt="A real estate agent reviewing contractor options with clients at a kitchen table"
+                className="block h-full w-full object-cover"
+                loading="eager"
+              />
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* LISTING STUDIO */}
-      <section className="py-20 bg-white border-y border-zinc-200">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <Reveal as="div">
-              <div className="mb-4">
-                <span className="inline-flex items-center gap-2 rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-1.5 text-sm font-semibold text-lw-rust">
-                  <Zap className="h-4 w-4" />
-                  Listing Studio
-                </span>
-              </div>
-              <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink mb-6">
-                Now we built you something else.
-              </h2>
-              <div className="space-y-4 text-lg text-mkt-ink/70 mb-10 max-w-3xl">
-                <p>You&apos;ve been generating your own marketing content forever. Writing captions at 10pm. Tweaking Canva templates between showings. Sending the same open house email you&apos;ve sent forty times. That&apos;s done.</p>
-                <p>Listing Studio is built into your ListWorx account. Put in your property details and walk away with Instagram captions, Facebook posts, a LinkedIn update, your email campaign, an open house announcement, and a rewritten property description — all in about 30 seconds.</p>
-                <p>It also builds you a shareable listing page for every property. Clean, fast, branded to you. Text the link to a client. Drop it in your bio. Done.</p>
-              </div>
-
-              <h3 className="text-xl font-bold text-mkt-ink mb-4">What you actually get</h3>
-            </Reveal>
-            <ul className="space-y-3 mb-10">
-              {[
-                'Content packages — every caption, post, and email you need for a listing, generated together in one shot',
-                'Branded landing pages — a real URL for every listing, ready to share the same day it goes live',
-                'PDF flyers — listing flyers and open house flyers, built from your data and branded to you',
-                'Your brand on everything — your name, photo, colors, and contact info baked into every asset',
-              ].map((item, index) => (
-                <Reveal key={item} as="li" delay={index * 70} className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
-                  <span className="text-mkt-ink/70">{item}</span>
-                </Reveal>
-              ))}
-            </ul>
-
-            <Reveal as="div">
-              <h3 className="text-xl font-bold text-mkt-ink mb-2">And there&apos;s more coming.</h3>
-              <p className="text-mkt-ink/60 mb-8">Neighborhood guides. Slideshow videos. AI voiceovers. Automated social campaigns. We&apos;re building it fast and Listing Studio subscribers get it first.</p>
-
-              <Link href="/listing-studio">
-                <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white">
-                  See what&apos;s included
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* BOTTOM CTA */}
-      <section className="py-20 bg-lw-rust">
-        <div className="container mx-auto px-4">
-          <Reveal as="div" className="max-w-4xl mx-auto text-center">
-            <Award className="h-16 w-16 text-white mx-auto mb-6" />
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              It's Free. Start Using It Today.
+      {/* ================= NOT A DIRECTORY — copy left, points right ================= */}
+      <section className="container mx-auto px-4 py-20 md:py-28">
+        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <Reveal>
+            <p className="lw-label-lg mb-3 !text-lw-rust">The difference</p>
+            <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
+              Not a directory. Not a referral marketplace.
             </h2>
-            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              No membership fees. No per-request charges. No hidden costs. Contractors pay to be in the network — you get vetted matches at zero cost. Every request, every time.
+            <p className="mt-4 max-w-md text-lg text-mkt-ink/70">
+              Directories hand you names. Referral platforms hand everyone your contact info.
+              ListWorx hands you a short list of vetted pros who&apos;ve already been approved and
+              are ready to respond.
             </p>
+            <div className="mt-8">
+              <Link href="/request">
+                <Button variant="outlineOrange">
+                  Send a request
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            {differentiators.map((d, i) => {
+              const Icon = d.icon;
+              return (
+                <Reveal
+                  key={d.title}
+                  delay={i * 70}
+                  className="lw-hover-lift rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+                >
+                  <Icon className="h-6 w-6 text-lw-rust" />
+                  <h3 className="mt-3 font-bold text-mkt-ink">{d.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-mkt-ink/70">{d.body}</p>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= HOW IT WORKS — numbered rows ================= */}
+      <section className="border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
+        <div className="container mx-auto px-4">
+          <Reveal className="mb-12 max-w-2xl">
+            <p className="lw-label-lg mb-3 !text-lw-rust">How it works</p>
+            <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
+              Simple enough to do between appointments.
+            </h2>
+          </Reveal>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {steps.map((s, i) => (
+              <Reveal
+                key={s.n}
+                delay={i * 80}
+                className="rounded-2xl border border-zinc-200 bg-white p-7 shadow-sm"
+              >
+                <span className="text-5xl font-bold text-lw-rust/25">{s.n}</span>
+                <h3 className="mt-3 text-xl font-bold text-mkt-ink">{s.title}</h3>
+                <p className="mt-2 text-mkt-ink/70">{s.body}</p>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal className="mt-12">
             <Link href="/request">
-              <Button size="lg" className="text-lg px-10 py-6 rounded-lg shadow-lg hover:shadow-xl bg-white text-lw-rust hover:bg-white/90">
-                Submit Your First Request — Free
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+                Submit a request now — free
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </Reveal>
         </div>
       </section>
 
+      {/* ================= WHY IRONCLAD — one dark band ================= */}
+      <section className="overflow-hidden bg-mailer-black py-20 text-white md:py-28">
+        <div className="h-1 w-full bg-lw-rust" />
+        <div className="container mx-auto grid items-center gap-12 px-4 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <Reveal className="flex justify-center lg:justify-start">
+            <IroncladBadge variant="standards" reveal className="h-52 md:h-64" href="/ironclad" />
+          </Reveal>
+          <div>
+            <Reveal>
+              <p className="lw-label-lg mb-3">What the badge means for you</p>
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                Refer an IronClad Partner and you&apos;re not guessing.
+              </h2>
+              <p className="mt-4 max-w-xl text-white/65 md:text-lg">
+                You know exactly what standard they&apos;ve agreed to — and what gets them removed
+                for breaking it.
+              </p>
+            </Reveal>
+            <div className="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+              {ironcladPoints.map(([title, body], i) => (
+                <Reveal key={title} delay={i * 70} className="flex gap-3">
+                  <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+                  <div>
+                    <h3 className="font-bold text-white">{title}</h3>
+                    <p className="mt-1 text-sm text-white/60">{body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+            <Reveal delay={200} className="mt-8">
+              <Link href="/ironclad">
+                <Button
+                  variant="outline"
+                  className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                >
+                  Read the full standard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= LISTING MEDIA — magazine spread, two photos ================= */}
+      <section className="container mx-auto px-4 py-20 md:py-28">
+        <Reveal className="mb-12 max-w-2xl">
+          <p className="lw-label-lg mb-3 !text-lw-rust">Listing media</p>
+          <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
+            The same network — for the people who make your listings look good.
+          </h2>
+          <p className="mt-4 text-lg text-mkt-ink/70">
+            Photographers and drone operators are their own kind of contractor. ListWorx connects
+            you with vetted listing-media pros the same way it connects you with the trades — one
+            request, verified matches, your call on who to book.
+          </p>
+        </Reveal>
+
+        {/* Row 1 — photo left, copy right */}
+        <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
+          <div className="lw-figure-zoom aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm">
+            <img
+              src="/images/redesign/realtor_photographer-listing-shoot.webp"
+              alt="A real estate photographer shooting a living room for a listing"
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold tracking-tight text-mkt-ink">Listing photography</h3>
+            <p className="mt-3 text-mkt-ink/70">
+              Interior and exterior photographers who shoot for real estate — staged rooms, natural
+              light, fast turnaround so the listing goes live on schedule. Booked through the same
+              request flow, matched to your area and timeline.
+            </p>
+          </div>
+        </Reveal>
+
+        {/* Row 2 — copy left, photo right */}
+        <Reveal className="mt-16 grid items-center gap-10 md:grid-cols-2 lg:gap-16">
+          <div className="order-2 md:order-1">
+            <h3 className="text-2xl font-bold tracking-tight text-mkt-ink">Aerial & drone</h3>
+            <p className="mt-3 text-mkt-ink/70">
+              Licensed drone operators for aerial stills and video — lot lines, acreage, roof
+              condition, the view from the deck. The pros who make a bigger property actually read
+              as bigger.
+            </p>
+          </div>
+          <div className="lw-figure-zoom order-1 aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm md:order-2">
+            <img
+              src="/images/redesign/realtor_drone-operator-listing-shoot.webp"
+              alt="A drone operator capturing aerial footage of a property for a listing"
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ================= LISTING STUDIO — copy left, art right ================= */}
+      <section className="border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
+        <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-2 lg:gap-16">
+          <Reveal>
+            <p className="lw-label-lg mb-3 !text-lw-rust">
+              <span className="inline-flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Listing Studio
+              </span>
+            </p>
+            <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
+              We built you something else.
+            </h2>
+            <div className="mt-4 space-y-4 text-mkt-ink/70">
+              <p>
+                You&apos;ve been writing captions at 10pm and tweaking templates between showings
+                forever. That&apos;s done. Listing Studio is built into your ListWorx account.
+              </p>
+              <p>
+                Put in a property and walk away with Instagram captions, Facebook posts, a LinkedIn
+                update, your email campaign, an open-house announcement, and a rewritten property
+                description — in about 30 seconds. It also builds a clean, branded listing page for
+                every property.
+              </p>
+            </div>
+            <ul className="mt-6 space-y-3">
+              {[
+                'Full content packages — every caption, post, and email for a listing in one shot',
+                'Branded landing pages — a real URL for every listing, same day it goes live',
+                'PDF listing and open-house flyers, built from your data',
+                'Your name, photo, colors, and contact info on everything',
+              ].map((line, i) => (
+                <Reveal as="li" key={line} delay={i * 60} className="flex items-start gap-3">
+                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+                  <span className="text-mkt-ink/70">{line}</span>
+                </Reveal>
+              ))}
+            </ul>
+            <div className="mt-8">
+              <Link href="/listing-studio">
+                <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+                  See what&apos;s included
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </Reveal>
+
+          <Reveal delay={120} className="lw-figure-zoom overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_30px_60px_-40px_rgba(31,31,31,0.5)]">
+            <img
+              src="/images/redesign/jobrequest_laptop-screenshot-woman-kitchen.webp"
+              alt="An agent working on listing marketing from a laptop"
+              className="block w-full object-cover"
+              loading="lazy"
+            />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ================= USE CASES ================= */}
+      <section className="container mx-auto px-4 py-20 md:py-28">
+        <Reveal className="mb-12 max-w-2xl">
+          <p className="lw-label-lg mb-3 !text-lw-rust">Every stage of the deal</p>
+          <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
+            When realtors reach for ListWorx.
+          </h2>
+        </Reveal>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {useCases.map((u, i) => {
+            const Icon = u.icon;
+            return (
+              <Reveal
+                key={u.title}
+                delay={i * 60}
+                className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+              >
+                <h3 className="flex items-center gap-2 font-bold text-mkt-ink">
+                  <Icon className="h-5 w-5 text-lw-rust" />
+                  {u.title}
+                </h3>
+                <ul className="mt-3 space-y-1.5 text-sm text-mkt-ink/70">
+                  {u.items.map((it) => (
+                    <li key={it}>• {it}</li>
+                  ))}
+                </ul>
+              </Reveal>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ================= FAQ ================= */}
+      <FaqSection
+        items={realtorFaqs}
+        tone="light"
+        title="What agents ask us."
+        intro="The questions that come up most from real estate pros."
+        className="border-t border-zinc-200"
+      />
+
+      {/* ================= BOTTOM CTA ================= */}
+      <section className="bg-lw-rust py-20">
+        <div className="container mx-auto px-4">
+          <Reveal className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
+              It&apos;s free. Start using it today.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-white/90">
+              No membership fees. No per-request charges. Contractors pay to be in the network — you
+              get vetted matches at zero cost, every request, every time.
+            </p>
+            <Link href="/request" className="mt-8 inline-block">
+              <Button size="lg" className="bg-white text-lw-rust hover:bg-white/90">
+                Submit your first request — free
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </Reveal>
+        </div>
+      </section>
     </PageShell>
   );
 }
