@@ -197,13 +197,22 @@ export async function POST(request: NextRequest) {
       urgencyLevel,
       description,
       categoryIds,
+      company_website: honeypot,
     } = body;
 
+    // Honeypot: a real user never fills the hidden "company website" field.
+    // Pretend it worked so the bot moves on, but create nothing.
+    if (typeof honeypot === 'string' && honeypot.trim() !== '') {
+      console.warn('[job-request] honeypot tripped — dropping submission');
+      return NextResponse.json({ id: null, dropped: true }, { status: 200 });
+    }
+
+    // Street address is optional now; county + city + state still required
+    // because that's what drives contractor matching.
     if (
       !clientName ||
       !clientEmail ||
       !clientType ||
-      !propertyAddressLine1 ||
       !propertyCity ||
       !propertyStateCode ||
       !propertyCountyId ||
@@ -216,6 +225,27 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // ── lightweight origin + spam signal capture ──────────────────
+    const hdr = request.headers;
+    const sourceIp =
+      hdr.get('x-forwarded-for')?.split(',')[0].trim() ||
+      hdr.get('x-real-ip') ||
+      null;
+    const userAgent = hdr.get('user-agent') || null;
+    const sourceReferer = hdr.get('referer') || null;
+
+    const addr = String(propertyAddressLine1 || '').trim();
+    const desc = String(description || '').trim();
+    const phoneDigits = String(clientPhone || '').replace(/\D/g, '');
+    let spamScore = 0;
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(String(clientEmail || ''))) spamScore += 2;
+    if (/(^|@)(example|test|mailinator|guerrillamail|10minutemail)\./i.test(String(clientEmail || ''))) spamScore += 2;
+    if (phoneDigits.length < 10 || /^(\d)\1+$/.test(phoneDigits) || phoneDigits === '1234567890') spamScore += 2;
+    if (desc.length < 8 || !/[a-z]{3,}/i.test(desc)) spamScore += 1;
+    if (!/\b(name|llc|inc|realty|properties|smith|jones|home|owner)\b/i.test(String(clientName || '')) && String(clientName || '').split(/\s+/).length < 2) spamScore += 1;
+    if (!hdr.get('user-agent')) spamScore += 2;
+    const flaggedSpam = spamScore >= 4;
 
     const supabaseAuth = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -305,7 +335,7 @@ export async function POST(request: NextRequest) {
         requester_email: clientEmail.trim().toLowerCase(),
         requester_phone: clientPhone?.trim() || '',
         requester_type: clientType,
-        property_address: propertyAddressLine1.trim(),
+        property_address: addr || null,
         property_city: propertyCity.trim(),
         property_state: stateCode,
         property_county: propertyCounty,
@@ -315,6 +345,11 @@ export async function POST(request: NextRequest) {
         job_description: description.trim(),
         urgency: normalizedUrgency,
         status: 'PENDING',
+        source_ip: sourceIp,
+        user_agent: userAgent,
+        source_referer: sourceReferer,
+        spam_score: spamScore,
+        flagged_spam: flaggedSpam,
       })
       .select()
       .single();
@@ -407,7 +442,7 @@ export async function POST(request: NextRequest) {
       sendRequestorMatchEmail(supabase, matchedContractors, {
         requesterName: clientName.trim(),
         requesterEmail: clientEmail.trim().toLowerCase(),
-        propertyAddress: `${propertyAddressLine1.trim()}, ${propertyCity.trim()}, ${stateCode}`,
+        propertyAddress: [addr, propertyCity.trim(), stateCode].filter(Boolean).join(', '),
         categoryNames,
         jobRequestId: jobRequest.id,
       }).catch((err) => console.error('[job-request] requestor email error:', err));

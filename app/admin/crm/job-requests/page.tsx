@@ -56,6 +56,11 @@ interface JobRequest {
   feedback_token: string | null;
   feedback_requested_at: string | null;
   archived: boolean;
+  source_ip: string | null;
+  user_agent: string | null;
+  source_referer: string | null;
+  spam_score: number | null;
+  flagged_spam: boolean | null;
   referrals: ReferralRow[];
   categories: Array<{ name: string }>;
 }
@@ -430,6 +435,11 @@ export default function JobRequestsPage() {
                           <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${jobStatusColor[req.status] || jobStatusColor.PENDING}`}>
                             {req.status}
                           </span>
+                          {req.flagged_spam && (
+                            <span className="text-xs font-medium px-2 py-0.5 rounded-full border border-red-800/40 bg-red-950/30 text-red-400">
+                              ⚠ Possible spam{typeof req.spam_score === 'number' ? ` (${req.spam_score})` : ''}
+                            </span>
+                          )}
                         </div>
 
                         <div className="flex flex-wrap gap-x-5 gap-y-1 mt-1.5">
@@ -489,6 +499,36 @@ export default function JobRequestsPage() {
                         <div>
                           <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Project Description</h4>
                           <p className="text-sm text-zinc-300 leading-relaxed">{req.job_description}</p>
+                        </div>
+                      )}
+
+                      {(req.source_ip || req.user_agent || req.source_referer || typeof req.spam_score === 'number') && (
+                        <div>
+                          <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Submission Origin</h4>
+                          <div className="grid gap-1 text-xs text-zinc-400 sm:grid-cols-2">
+                            {req.source_ip && (
+                              <div>
+                                IP:{' '}
+                                <a
+                                  href={`https://ipinfo.io/${req.source_ip}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-zinc-300 underline hover:text-lw-rust"
+                                >
+                                  {req.source_ip}
+                                </a>
+                              </div>
+                            )}
+                            {typeof req.spam_score === 'number' && (
+                              <div>Spam score: <span className="text-zinc-300">{req.spam_score}</span>{req.flagged_spam ? ' (flagged)' : ''}</div>
+                            )}
+                            {req.source_referer && (
+                              <div className="sm:col-span-2 truncate">Came from: <span className="text-zinc-300">{req.source_referer}</span></div>
+                            )}
+                            {req.user_agent && (
+                              <div className="sm:col-span-2 truncate">Device: <span className="text-zinc-300">{req.user_agent}</span></div>
+                            )}
+                          </div>
                         </div>
                       )}
 

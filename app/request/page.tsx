@@ -99,6 +99,8 @@ function RequestPageContent() {
   const [tradeCoverage, setTradeCoverage] = useState<{ covered: boolean } | null>(null);
   const [contractors, setContractors] = useState<Contractor[]>([]);
   const [requestId, setRequestId] = useState<string | null>(null);
+  // spam honeypot — hidden from real users, bots tend to fill every field
+  const [honeypot, setHoneypot] = useState('');
 
   const [formData, setFormData] = useState({
     clientType: 'Homeowner',
@@ -311,7 +313,12 @@ function RequestPageContent() {
       const createResponse = await fetch('/api/job-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, categoryIds: selectedCategories }),
+        body: JSON.stringify({
+          ...formData,
+          categoryIds: selectedCategories,
+          // spam honeypot — real users never see or fill this
+          company_website: honeypot,
+        }),
       });
 
       const createData = await createResponse.json();
@@ -560,6 +567,20 @@ function RequestPageContent() {
         <div className="container mx-auto px-4 max-w-4xl">
         <Card className="bg-white border-zinc-200 text-mkt-ink shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* honeypot: off-screen, not a real field */}
+            <div aria-hidden="true" className="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden">
+              <label>
+                Company website
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                />
+              </label>
+            </div>
+
             <div>
               <h2 className="text-2xl font-bold mb-4 text-mkt-ink">Your Information</h2>
               <div className="grid md:grid-cols-2 gap-6">
@@ -627,14 +648,18 @@ function RequestPageContent() {
               <h2 className="text-2xl font-bold mb-4 text-mkt-ink">Property Location</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
-                  <Label className="text-mkt-ink">Property Address *</Label>
+                  <Label className="text-mkt-ink">Property Address</Label>
                   <Input
                     value={formData.propertyAddressLine1}
                     onChange={(e) =>
                       setFormData({ ...formData, propertyAddressLine1: e.target.value })
                     }
-                    required
+                    placeholder="Street address (optional)"
                   />
+                  <p className="mt-1 text-xs text-mkt-ink/55">
+                    Optional — county and city are enough to get you matched. Add the address if
+                    you want the contractor to have it up front.
+                  </p>
                 </div>
 
                 <div>
