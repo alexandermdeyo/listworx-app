@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Phone, Loader as Loader2, CircleAlert as AlertCircle, LogOut, Archive, Trash2, ShoppingCart, Plus, DollarSign, ChartBar as BarChart3, Pause, Play, UserX, Bell, BellOff, Send, CircleCheck as CheckCircle2, ChevronDown, ChevronUp, Shield, Briefcase, RefreshCw, Image as ImageIcon, Upload, Trash, Star, StarOff, Eye, MonitorCog, LayoutDashboard, Clock, FileText, Home, Settings, Users } from 'lucide-react';
+import { Mail, Phone, Loader as Loader2, CircleAlert as AlertCircle, LogOut, Archive, Trash2, ShoppingCart, Plus, DollarSign, ChartBar as BarChart3, Pause, Play, UserX, Bell, BellOff, Send, CircleCheck as CheckCircle2, ChevronDown, ChevronUp, Shield, Briefcase, RefreshCw, Image as ImageIcon, Upload, Trash, Star, StarOff, Eye, MonitorCog, LayoutDashboard, Clock, FileText, Home, Settings, Users, Video } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
@@ -41,6 +41,8 @@ interface Contractor {
   archived: boolean;
   logo_url: string | null;
   featured_on_homepage: boolean;
+  is_media_partner?: boolean;
+  media_quarterly_rate?: number | null;
   ironclad_certified?: boolean;
   ironclad_accepted?: boolean;
   users: { email: string; phone: string } | null;
@@ -465,6 +467,43 @@ export default function ContractorsPage() {
     }
   };
 
+  const handleToggleMediaPartner = async (contractor: Contractor) => {
+    const next = !contractor.is_media_partner;
+    try {
+      setProcessing(contractor.id + '-media');
+      const { error } = await supabase
+        .from('contractor_profiles')
+        .update({ is_media_partner: next })
+        .eq('id', contractor.id);
+      if (error) throw error;
+      showToast(next ? 'Marked as a Media Partner' : 'Removed as a Media Partner');
+      await loadContractors();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to update media partner status', 'error');
+    } finally {
+      setProcessing(null);
+    }
+  };
+
+  const handleQuarterlyRate = async (contractor: Contractor, value: string) => {
+    const rate = value.trim() === '' ? null : Number(value);
+    if (rate !== null && (!Number.isFinite(rate) || rate < 0)) return;
+    try {
+      setProcessing(contractor.id + '-qrate');
+      const { error } = await supabase
+        .from('contractor_profiles')
+        .update({ media_quarterly_rate: rate })
+        .eq('id', contractor.id);
+      if (error) throw error;
+      showToast('Quarterly session rate saved');
+      await loadContractors();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to save rate', 'error');
+    } finally {
+      setProcessing(null);
+    }
+  };
+
   const filtered = contractors.filter(c => {
     const q = searchQuery.toLowerCase();
     const matchesSearch = !q || c.company_name?.toLowerCase().includes(q) ||
@@ -881,6 +920,41 @@ export default function ContractorsPage() {
                                 <span className="text-xs text-amber-500 flex items-center gap-1">
                                   <AlertCircle className="h-3 w-3" /> Status not active — won't appear on homepage
                                 </span>
+                              )}
+                            </div>
+
+                            <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-gray-200 pt-3">
+                              <button
+                                onClick={() => handleToggleMediaPartner(contractor)}
+                                disabled={processing === contractor.id + '-media'}
+                                className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-lg border transition-all ${
+                                  contractor.is_media_partner
+                                    ? 'bg-lw-rust/10 border-lw-rust/30 text-lw-rust hover:bg-lw-rust/15'
+                                    : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                                }`}
+                              >
+                                {processing === contractor.id + '-media' ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <Video className="h-3.5 w-3.5" />
+                                )}
+                                {contractor.is_media_partner ? 'Media Partner' : 'Make Media Partner'}
+                              </button>
+
+                              {contractor.is_media_partner && (
+                                <label className="flex items-center gap-2 text-xs text-gray-500">
+                                  Elite quarterly session rate $
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    step="1"
+                                    defaultValue={contractor.media_quarterly_rate ?? ''}
+                                    onBlur={(e) => handleQuarterlyRate(contractor, e.target.value)}
+                                    placeholder="75–100"
+                                    className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-800"
+                                  />
+                                  <span className="text-gray-400">/ session (what ListWorx pays them)</span>
+                                </label>
                               )}
                             </div>
                           </div>

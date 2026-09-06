@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
+import MediaPartnerRequestButton from '@/components/site/MediaPartnerRequestButton';
 import {
   Award,
   Briefcase,
@@ -58,6 +59,7 @@ type ContractorProfile = {
   linkedin_url: string | null;
   youtube_url: string | null;
   profile_slug: string | null;
+  is_media_partner: boolean | null;
   created_at: string | null;
 };
 
@@ -166,6 +168,7 @@ async function getPublicProfile(idOrSlug: string): Promise<PublicProfileData | n
       linkedin_url,
       youtube_url,
       profile_slug,
+      is_media_partner,
       created_at,
       archived
     `)
@@ -272,7 +275,18 @@ export default async function ContractorProfilePage({ params }: { params: { id: 
 
         <section className="mt-8 grid gap-8 lg:grid-cols-[1fr,340px]">
           <div className="space-y-8">
-            {hasPublicContact ? (
+            {profile.is_media_partner ? (
+              <Reveal delay={0}>
+                <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
+                  <h2 className="mb-2 text-2xl font-bold text-mkt-ink">Book {businessName}</h2>
+                  <p className="mb-4 text-mkt-ink/70">
+                    Media partners are booked through ListWorx. Send a request and they&apos;ll
+                    confirm or decline — contact details are shared once they accept.
+                  </p>
+                  <MediaPartnerRequestButton mediaPartnerId={profile.id} companyName={businessName} />
+                </Card>
+              </Reveal>
+            ) : hasPublicContact ? (
               <Reveal delay={0}>
                 <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
                   <h2 className="mb-4 text-2xl font-bold text-mkt-ink">Contact / Action</h2>
