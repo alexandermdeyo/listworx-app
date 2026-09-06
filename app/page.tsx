@@ -14,7 +14,7 @@ import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
 import HomeownerHero from '@/components/site/HomeownerHero';
 import IroncladBadge from '@/components/site/IroncladBadge';
-import TristarMark from '@/components/site/TristarMark';
+import WavingFlag from '@/components/site/WavingFlag';
 import PhotoDark from '@/components/site/PhotoDark';
 import CountUp from '@/components/site/CountUp';
 import HomepageTrustBars from '@/components/site/HomepageTrustBars';
@@ -196,7 +196,7 @@ export default function LandingPage() {
       {/* ============================================================= */}
       <section className="relative overflow-hidden bg-mailer-black text-white">
         <div className="h-1 w-full bg-lw-rust" />
-        <TristarMark className="pointer-events-none absolute bottom-6 right-6 h-48 w-48 text-white/[0.04]" />
+        <WavingFlag className="pointer-events-none absolute bottom-6 right-6 h-48 w-48 text-white/[0.07]" />
 
         <div className="container mx-auto grid gap-12 px-4 py-20 md:py-28 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <Reveal className="flex justify-center lg:justify-start">
@@ -487,7 +487,7 @@ export default function LandingPage() {
           bri={0.98}
           objectPosition="center 60%"
         >
-          <TristarMark className="pointer-events-none absolute right-6 top-6 h-24 w-24 text-white/10 md:right-10 md:top-10 md:h-32 md:w-32" />
+          <WavingFlag className="pointer-events-none absolute right-6 top-6 h-24 w-24 text-white/10 md:right-10 md:top-10 md:h-32 md:w-32" />
           <div className="lw-photo-dark__content container mx-auto flex min-h-[560px] flex-col justify-end px-4 py-16 md:min-h-[620px] md:py-20">
             <Reveal className="max-w-2xl">
               <div className="mb-5 flex items-center gap-4 md:gap-5">
