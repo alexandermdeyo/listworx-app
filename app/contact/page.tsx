@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, Send } from 'lucide-react';
 import { Reveal } from '@/components/motion';
-import TristarMark from '@/components/site/TristarMark';
+import WavingFlag from '@/components/site/WavingFlag';
 
 const fieldClass =
   'w-full !border-mailer-border !bg-mailer-surface !text-white placeholder:!text-white/35 focus-visible:!bg-mailer-surface focus-visible:!text-white';
@@ -55,7 +55,7 @@ export default function ContactPage() {
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-mailer-black">
         <div className="h-1 w-full bg-lw-rust" />
-        <TristarMark className="pointer-events-none absolute right-6 top-10 h-32 w-32 text-white/[0.04] md:right-12 md:h-48 md:w-48" />
+        <WavingFlag className="pointer-events-none absolute right-6 top-10 h-32 w-32 text-white/[0.07] md:right-12 md:h-48 md:w-48" />
         <div className="container relative mx-auto max-w-3xl px-4 py-16 text-center md:py-24">
           <Reveal>
             <p className="lw-label-lg mb-3">Contact</p>
