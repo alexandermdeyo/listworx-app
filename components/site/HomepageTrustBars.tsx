@@ -64,7 +64,7 @@ export default function HomepageTrustBars() {
         {partners.length > 0 && (
           <Reveal className={pros.length > 0 ? 'mb-12' : ''}>
             <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-mkt-ink/50">
-              Companies we partner with
+              Trusted by local businesses across Tennessee
             </p>
             <LogoMarquee items={partners} durationSeconds={Math.max(24, partners.length * 6)} />
           </Reveal>
