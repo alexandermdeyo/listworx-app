@@ -33,6 +33,38 @@ import TristarMark from '@/components/site/TristarMark';
 import IroncladBadge from '@/components/site/IroncladBadge';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
 import { TIER_GROWTH_NOTE } from '@/lib/tiers-config';
+import FaqSection from '@/components/site/FaqSection';
+
+const CONTRACTOR_FAQS = [
+  {
+    q: 'How is this different from a lead-gen service?',
+    a: "You're not buying leads or bidding against ten other contractors. You pay a flat monthly subscription to be in the network, and referrals are routed to you by trade, county, and availability — not by who pays the most that day.",
+  },
+  {
+    q: 'What does it cost?',
+    a: 'Founding Partner rates are $199 (Member), $349 (Partner), and $599 (Elite) per month, locked for as long as you stay active. Standard rates after the founding period are $249 / $429 / $729.',
+  },
+  {
+    q: 'What is a Founding Partner?',
+    a: 'You lock your monthly rate the day you join — permanently — plus a permanent IronClad Founding Partner badge and first position in your trade and county. Spots are capped per trade, per county.',
+  },
+  {
+    q: 'Are the Founding Partner spots really limited?',
+    a: 'Yes. 10 Network Member, 5 Network Partner, and 2 Network Elite contractors per trade in each county. Once a trade fills in your county, no one else joins it at Founding Partner pricing.',
+  },
+  {
+    q: 'How does verification work?',
+    a: "We confirm your business is legitimate — entity, license, and insurance — before you take a referral. It's business-level verification, not a review of every job or employee. Lose your license or coverage and your referrals pause until it's current.",
+  },
+  {
+    q: 'Can I pause when I’m slammed?',
+    a: 'Anytime. Turn your availability on or off, and control your service counties and trade categories yourself. No penalty for pausing.',
+  },
+  {
+    q: 'How long until I’m approved?',
+    a: "Applications are reviewed within 72 hours. Founding Partner pricing applies once you're approved.",
+  },
+];
 
 const FOUNDER_PERKS = [
   'Your rate locked from day one — forever',
@@ -953,6 +985,14 @@ export default function ContractorsPage() {
           </div>
         </div>
       </section>
+
+      {/* ================= FAQ ================= */}
+      <FaqSection
+        items={CONTRACTOR_FAQS}
+        tone="dark"
+        title="Straight answers before you apply."
+        intro="What contractors ask us most about the network."
+      />
 
       {/* ================= BOTTOM CTA ================= */}
       <section className="relative overflow-hidden bg-mailer-ink py-20">
