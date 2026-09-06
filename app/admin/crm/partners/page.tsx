@@ -28,6 +28,14 @@ import { Input } from '@/components/ui/input';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
 
+type PartnerType = 'supplier' | 'brokerage' | 'other';
+
+const PARTNER_TYPE_OPTIONS: { value: PartnerType; label: string }[] = [
+  { value: 'supplier', label: 'Supplier' },
+  { value: 'brokerage', label: 'Brokerage' },
+  { value: 'other', label: 'Other' },
+];
+
 interface PromoPartner {
   id: string;
   name: string;
@@ -36,6 +44,7 @@ interface PromoPartner {
   is_visible: boolean;
   is_featured: boolean;
   display_order: number;
+  partner_type: PartnerType;
   created_at: string;
   updated_at: string;
 }
@@ -47,6 +56,7 @@ const EMPTY_FORM = {
   is_visible: false,
   is_featured: false,
   display_order: 0,
+  partner_type: 'other' as PartnerType,
 };
 
 export default function AdminPartnersPage() {
@@ -144,6 +154,7 @@ export default function AdminPartnersPage() {
       is_visible: p.is_visible,
       is_featured: p.is_featured,
       display_order: p.display_order,
+      partner_type: p.partner_type || 'other',
     });
     setEditingId(p.id);
     setShowForm(true);
@@ -173,6 +184,7 @@ export default function AdminPartnersPage() {
         is_visible: form.is_visible,
         is_featured: form.is_featured,
         display_order: Number(form.display_order) || 0,
+        partner_type: form.partner_type,
       };
       const res = await fetch('/api/promo-partners', {
         method: editingId ? 'PATCH' : 'POST',
@@ -384,15 +396,35 @@ export default function AdminPartnersPage() {
                 />
               </div>
 
-              {/* Order */}
-              <div className="w-40">
-                <label className="text-xs font-medium text-zinc-400 mb-1.5 block">Display order</label>
-                <Input
-                  type="number"
-                  value={form.display_order}
-                  onChange={(e) => setForm((f) => ({ ...f, display_order: Number(e.target.value) }))}
-                  className="bg-lw-dark-surface border-lw-dark-border text-white"
-                />
+              <div className="flex flex-wrap gap-4">
+                {/* Partner type */}
+                <div className="w-44">
+                  <label className="text-xs font-medium text-zinc-400 mb-1.5 block">Partner type</label>
+                  <select
+                    value={form.partner_type}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, partner_type: e.target.value as PartnerType }))
+                    }
+                    className="w-full rounded-xl border border-lw-dark-border bg-lw-dark-surface px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-lw-rust"
+                  >
+                    {PARTNER_TYPE_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Order */}
+                <div className="w-40">
+                  <label className="text-xs font-medium text-zinc-400 mb-1.5 block">Display order</label>
+                  <Input
+                    type="number"
+                    value={form.display_order}
+                    onChange={(e) => setForm((f) => ({ ...f, display_order: Number(e.target.value) }))}
+                    className="bg-lw-dark-surface border-lw-dark-border text-white"
+                  />
+                </div>
               </div>
 
               {/* Toggles */}
@@ -486,6 +518,11 @@ export default function AdminPartnersPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-sm font-semibold text-white">{p.name}</h3>
+                    {p.partner_type && p.partner_type !== 'other' && (
+                      <span className="text-xs px-2 py-0.5 rounded-full border border-zinc-700 bg-zinc-800/60 text-zinc-300 capitalize">
+                        {p.partner_type}
+                      </span>
+                    )}
                     {p.is_featured && (
                       <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border border-lw-rust/40 bg-lw-rust/10 text-lw-rust">
                         <Star className="h-3 w-3" /> Featured

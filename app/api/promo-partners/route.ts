@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
-const PUBLIC_COLUMNS = 'id, name, logo_url, link_url, is_featured, display_order';
+const PUBLIC_COLUMNS =
+  'id, name, logo_url, link_url, is_featured, display_order, partner_type';
 const ADMIN_COLUMNS =
-  'id, name, logo_url, link_url, is_visible, is_featured, display_order, created_at, updated_at';
+  'id, name, logo_url, link_url, is_visible, is_featured, display_order, partner_type, created_at, updated_at';
+
+const PARTNER_TYPES = ['supplier', 'brokerage', 'other'] as const;
+const normalizeType = (v: unknown) =>
+  PARTNER_TYPES.includes(String(v) as (typeof PARTNER_TYPES)[number])
+    ? (String(v) as (typeof PARTNER_TYPES)[number])
+    : 'other';
 
 /**
  * Confirms the caller is an admin via the `Authorization: Bearer <access_token>`
@@ -89,6 +96,7 @@ export async function POST(request: NextRequest) {
       is_visible: Boolean(body.is_visible),
       is_featured: Boolean(body.is_featured),
       display_order: Number.isFinite(body.display_order) ? Math.trunc(body.display_order) : 0,
+      partner_type: normalizeType(body.partner_type),
     })
     .select(ADMIN_COLUMNS)
     .single();
@@ -111,6 +119,7 @@ export async function PATCH(request: NextRequest) {
   if ('link_url' in raw) updates.link_url = (raw.link_url || '').trim() || null;
   if ('is_visible' in raw) updates.is_visible = Boolean(raw.is_visible);
   if ('is_featured' in raw) updates.is_featured = Boolean(raw.is_featured);
+  if ('partner_type' in raw) updates.partner_type = normalizeType(raw.partner_type);
   if ('display_order' in raw && Number.isFinite(raw.display_order)) {
     updates.display_order = Math.trunc(raw.display_order);
   }
