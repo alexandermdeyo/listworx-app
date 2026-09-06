@@ -18,6 +18,34 @@ import TristarMark from '@/components/site/TristarMark';
 import PhotoDark from '@/components/site/PhotoDark';
 import CountUp from '@/components/site/CountUp';
 import HomepageTrustBars from '@/components/site/HomepageTrustBars';
+import FaqSection from '@/components/site/FaqSection';
+
+const homeownerFaqs = [
+  {
+    q: 'Does ListWorx cost anything for homeowners?',
+    a: "No. ListWorx is free for homeowners and realtors. Contractors pay a flat monthly subscription to be in the network — you're never charged, and no contractor pays for your individual request.",
+  },
+  {
+    q: 'How fast will I be matched?',
+    a: 'In under 30 seconds. As soon as you submit a request, up to three matched contractor profiles show right on your screen. The same details go to your email and stay in your dashboard.',
+  },
+  {
+    q: 'How are the contractors vetted?',
+    a: 'Every pro is checked against IronClad Standards before they can take a referral: active license and insurance, professional communication, no history of ghosting customers, and a 24-hour response commitment.',
+  },
+  {
+    q: 'What information do the contractors get about me?',
+    a: 'None of your contact details. Each matched contractor sees the service type, the county, and a short summary of the job — no name, phone, or email. You get their info and decide who to call.',
+  },
+  {
+    q: 'Why only three contractors per request?',
+    a: 'Most lead services blast your number to a dozen companies. We send you the three best matches for your trade and area, and you choose who to contact. No phone blowing up.',
+  },
+  {
+    q: 'What if a job goes wrong?',
+    a: 'Tell us. Every job is followed by a quick survey on response time, quality, and professionalism. Pros who fall below IronClad Standards lose their place in the network.',
+  },
+];
 
 const standards = [
   {
@@ -402,6 +430,17 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ============================================================= */}
+      {/* FAQ — homeowner-facing                                       */}
+      {/* ============================================================= */}
+      <FaqSection
+        items={homeownerFaqs}
+        tone="light"
+        title="Before you send your first request."
+        intro="The questions homeowners ask us most."
+        className="border-y border-zinc-200"
+      />
 
       {/* ============================================================= */}
       {/* REALTORS BRIDGE — light, image right                         */}

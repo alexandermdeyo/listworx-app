@@ -4,7 +4,7 @@ import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { MapPin, Phone, Mail, Send } from 'lucide-react';
+import { Phone, Mail, Send } from 'lucide-react';
 import { useState } from 'react';
 import { Reveal } from '@/components/motion';
 
@@ -182,19 +182,6 @@ export default function ContactPage() {
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="p-3 bg-white/10 rounded-lg">
-                      <MapPin className="h-6 w-6 text-lw-rust" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white mb-1">Address</h3>
-                      <p className="text-white/70">
-                        2147 Springdale Ln F104<br />
-                        Gallatin, TN 37066
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-white/10 rounded-lg">
                       <Phone className="h-6 w-6 text-lw-rust" />
                     </div>
                     <div>
@@ -239,18 +226,6 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="rounded-lg overflow-hidden border border-zinc-200">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3209.1234567890!2d-86.4526!3d36.3526!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDIxJzA5LjQiTiA4NsKwMjcnMDkuNCJX!5e0!3m2!1sen!2sus!4v1234567890"
-                  width="100%"
-                  height="300"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="ListWorx Office Location"
-                ></iframe>
-              </div>
             </Reveal>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Youtube, Music2, Lock } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Mail, Phone, Youtube, Music2, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Public marketing routes get the light theme; everything else (dashboards, admin,
@@ -101,11 +101,6 @@ export default function Footer() {
                   {supportEmail}
                 </a>
               )}
-
-              <div className={cn('flex items-start gap-2.5 text-sm', light ? 'text-mkt-ink/70' : 'text-zinc-500')}>
-                <MapPin className="h-4 w-4 text-lw-rust flex-shrink-0 mt-0.5" />
-                <span>2147 Springdale Ln F104<br />Gallatin, TN 37066</span>
-              </div>
             </div>
 
             {visibleSocials.length > 0 && (
