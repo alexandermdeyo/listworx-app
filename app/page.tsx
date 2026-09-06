@@ -18,6 +18,7 @@ import PhotoDark from '@/components/site/PhotoDark';
 import CountUp from '@/components/site/CountUp';
 import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 import FaqSection from '@/components/site/FaqSection';
+import NewsletterSignupForm from '@/components/NewsletterSignupForm';
 import RemembranceBar from '@/components/site/RemembranceBar';
 
 const homeownerFaqs = [
@@ -442,6 +443,26 @@ export default function LandingPage() {
         intro="The questions homeowners ask us most."
         className="border-y border-zinc-200"
       />
+
+      {/* ============================================================= */}
+      {/* NEWSLETTER — slim signup band                                */}
+      {/* ============================================================= */}
+      <section className="border-b border-zinc-200 bg-lw-light-bg py-16 md:py-20">
+        <div className="container mx-auto max-w-3xl px-4 text-center">
+          <Reveal>
+            <p className="lw-label-lg mb-3 !text-lw-rust">Stay in the loop</p>
+            <h2 className="text-2xl font-bold tracking-tight text-mkt-ink md:text-3xl">
+              Local contractor tips, network news, and founding-partner openings.
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-mkt-ink/65">
+              A short email now and then. No spam, unsubscribe anytime.
+            </p>
+          </Reveal>
+          <Reveal delay={80} className="mt-6">
+            <NewsletterSignupForm />
+          </Reveal>
+        </div>
+      </section>
 
       {/* ============================================================= */}
       {/* REALTORS BRIDGE — light, image right                         */}

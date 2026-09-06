@@ -37,21 +37,26 @@ export default function NewsletterSignupForm() {
 
   if (success) {
     return (
-      <div className="rounded-xl bg-zinc-900 border border-zinc-800 px-8 py-10 text-center">
-        <p className="text-lg font-semibold text-white">You&apos;re in.</p>
-        <p className="mt-2 text-zinc-400 text-sm">Thanks for subscribing. We&apos;ll be in touch.</p>
+      <div className="rounded-2xl border border-zinc-200 bg-white px-8 py-10 text-center shadow-sm">
+        <p className="text-lg font-bold text-mkt-ink">You&apos;re in.</p>
+        <p className="mt-2 text-sm text-mkt-ink/60">
+          Thanks for subscribing — we&apos;ll be in touch.
+        </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl bg-zinc-900 border border-zinc-800 px-8 py-8 flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center"
+    >
       <input
         type="text"
-        placeholder="Your name (optional)"
+        placeholder="Name (optional)"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="rounded-lg bg-zinc-800 border border-zinc-700 px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#E8621A]"
+        className="min-w-0 flex-1 rounded-lg border border-zinc-300 px-4 py-2.5 text-sm text-mkt-ink placeholder-mkt-ink/40 focus:outline-none focus:ring-2 focus:ring-lw-rust"
       />
       <input
         type="email"
@@ -59,16 +64,16 @@ export default function NewsletterSignupForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-        className="rounded-lg bg-zinc-800 border border-zinc-700 px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#E8621A]"
+        className="min-w-0 flex-1 rounded-lg border border-zinc-300 px-4 py-2.5 text-sm text-mkt-ink placeholder-mkt-ink/40 focus:outline-none focus:ring-2 focus:ring-lw-rust"
       />
       <button
         type="submit"
         disabled={loading}
-        className="rounded-lg bg-[#E8621A] hover:bg-[#d45516] disabled:opacity-60 px-6 py-2.5 text-sm font-semibold text-white transition-colors"
+        className="shrink-0 rounded-lg bg-lw-rust px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-lw-rust-hover disabled:opacity-60"
       >
         {loading ? 'Subscribing…' : 'Subscribe'}
       </button>
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-600 sm:w-full">{error}</p>}
     </form>
   );
 }
