@@ -7,7 +7,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { Reveal, RevealBadge } from '@/components/motion';
-import WavingFlag from '@/components/site/WavingFlag';
 
 const APPLY_HREF = '/contractor-portal?intent=apply';
 
@@ -76,7 +75,6 @@ export default function IronCladStandardsPage() {
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-mailer-black">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
-        <WavingFlag className="pointer-events-none absolute right-5 top-5 h-40 w-40 text-white/[0.07] md:h-56 md:w-56" />
         <div className="relative container mx-auto px-4 py-20 md:py-28">
           <div className="mx-auto max-w-3xl text-center">
             <RevealBadge className="mb-8 flex justify-center">
@@ -587,7 +585,6 @@ export default function IronCladStandardsPage() {
       {/* ================= BOTTOM CTA ================= */}
       <section className="relative overflow-hidden bg-mailer-black py-20 md:py-28">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
-        <WavingFlag className="pointer-events-none absolute bottom-4 left-1/2 h-48 w-48 -translate-x-1/2 text-white/[0.07]" />
         <div className="relative container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <Image

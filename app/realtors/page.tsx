@@ -17,7 +17,6 @@ import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
 import { Button } from '@/components/ui/button';
 import IroncladBadge from '@/components/site/IroncladBadge';
-import WavingFlag from '@/components/site/WavingFlag';
 import CountUp from '@/components/site/CountUp';
 import FaqSection from '@/components/site/FaqSection';
 
@@ -122,7 +121,6 @@ export default function RealtorsPage() {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden border-b border-zinc-200 bg-white">
-        <WavingFlag className="pointer-events-none absolute right-4 top-6 h-28 w-28 text-mkt-ink/[0.08] md:right-8 md:h-44 md:w-44" />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-lw-rust/[0.07] blur-3xl"
