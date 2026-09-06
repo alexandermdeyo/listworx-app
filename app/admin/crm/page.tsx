@@ -10,7 +10,7 @@ import {
   Loader as Loader2, CircleAlert as AlertCircle, ChartBar as BarChart3,
   LogOut, Mail, Send, Briefcase, TrendingUp, Activity,
   Shield, Bell, RefreshCw, Video, BookOpen, DatabaseZap,
-  MonitorCog, LayoutDashboard, Settings, Home, Handshake,
+  MonitorCog, LayoutDashboard, Settings, Home, Handshake, Inbox,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
@@ -185,6 +185,7 @@ export default function AdminCRMPage() {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/crm' },
     { id: 'site-editor', label: 'Site Editor', icon: MonitorCog, href: '/admin/crm/site-editor' },
     { id: 'partners', label: 'Promo Partners', icon: Handshake, href: '/admin/crm/partners' },
+    { id: 'partner-inquiries', label: 'Partner Inquiries', icon: Inbox, href: '/admin/crm/partner-inquiries' },
     { id: 'contractors', label: 'Contractors', icon: Users, href: '/admin/crm/contractors' },
     { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications', badge: stats.pendingApplications || undefined },
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
@@ -365,6 +366,7 @@ export default function AdminCRMPage() {
               { href: '/admin/crm/reviews', icon: Star, title: 'Reviews', desc: 'See client feedback and contractor ratings', badge: null },
               { href: '/admin/crm/media', icon: Video, title: 'Media Library', desc: 'Manage YouTube videos, social content, and featured media', badge: null },
               { href: '/admin/crm/partners', icon: Handshake, title: 'Promo Partners', desc: 'Logos for the homepage "trusted by local businesses" strip', badge: null },
+              { href: '/admin/crm/partner-inquiries', icon: Inbox, title: 'Partner Inquiries', desc: 'Supplier and brokerage partnership form submissions', badge: null },
             ].map(item => (
               <Link key={item.title} href={item.href}>
                 <div className="rounded-lg border border-gray-200 bg-white p-5 hover:border-lw-rust/30 hover:shadow-md transition-all cursor-pointer group h-full shadow-sm">
