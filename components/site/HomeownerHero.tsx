@@ -41,7 +41,7 @@ export default function HomeownerHero() {
               </div>
               <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-mkt-ink md:text-6xl">
                 Find the right contractor.
-                <span className="block text-lw-rust">Every time.</span>
+                <span className="block text-lw-rust">Every time. For free.</span>
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-mkt-ink/70 md:text-xl">
                 Every pro on ListWorx is IronClad Verified — licensed, insured, and
