@@ -29,7 +29,6 @@ import Navigation from '@/components/Navigation';
 import { PageShell } from '@/components/design-system';
 import { Reveal, RevealBadge } from '@/components/motion';
 import PhotoDark from '@/components/site/PhotoDark';
-import WavingFlag from '@/components/site/WavingFlag';
 import IroncladBadge from '@/components/site/IroncladBadge';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
 import { TIER_GROWTH_NOTE } from '@/lib/tiers-config';
@@ -250,20 +249,6 @@ export default function ContractorsPage() {
           priority
         />
         <div className="absolute inset-0 z-[1] bg-black/[0.12]" aria-hidden="true" />
-        {/* Distressed flag, large in the upper-left — screen-blended and
-           radially masked so every edge dissolves into the photo behind it */}
-        <img
-          src="/images/redesign/flag-distressed.jpg"
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute -left-[7%] -top-[12%] z-[2] w-[78%] max-w-[780px] select-none opacity-[0.6] mix-blend-screen sm:w-[66%] md:w-[58%]"
-          style={{
-            WebkitMaskImage:
-              'radial-gradient(ellipse 60% 60% at 40% 42%, #000 26%, rgba(0,0,0,0.35) 60%, transparent 82%)',
-            maskImage:
-              'radial-gradient(ellipse 60% 60% at 40% 42%, #000 26%, rgba(0,0,0,0.35) 60%, transparent 82%)',
-          }}
-        />
 
         <div className="relative z-10 container mx-auto px-4">
           <div className="mx-auto max-w-5xl text-center">
@@ -586,7 +571,6 @@ export default function ContractorsPage() {
           bri={0.94}
           objectPosition="center 40%"
         >
-          <WavingFlag className="pointer-events-none absolute right-4 top-6 z-[2] h-28 w-28 text-white/[0.08] md:h-40 md:w-40" />
           <div className="lw-photo-dark__content container mx-auto flex min-h-[620px] flex-col justify-end px-4 py-16 md:min-h-[640px] md:py-20">
             <Reveal className="max-w-2xl">
               <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
@@ -1005,7 +989,6 @@ export default function ContractorsPage() {
       {/* ================= BOTTOM CTA ================= */}
       <section className="relative overflow-hidden bg-mailer-ink py-20">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
-        <WavingFlag className="pointer-events-none absolute bottom-4 left-1/2 h-52 w-52 -translate-x-1/2 text-white/[0.05]" />
         <div className="container relative mx-auto px-4">
           <Reveal className="mx-auto max-w-3xl text-center">
             <div className="mb-6 flex justify-center">

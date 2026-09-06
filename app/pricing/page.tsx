@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/design-system';
 import { CircleCheck as CheckCircle, Crown, TrendingUp, ArrowRight } from 'lucide-react';
 import { Reveal } from '@/components/motion';
-import WavingFlag from '@/components/site/WavingFlag';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
 import { TIER_GROWTH_NOTE } from '@/lib/tiers-config';
 
@@ -87,7 +86,6 @@ export default function PricingPage() {
       {/* ================= FOUNDING INTRO ================= */}
       <section className="relative overflow-hidden bg-mailer-black py-16 md:py-24">
         <div className="h-1 w-full bg-lw-rust" />
-        <WavingFlag className="pointer-events-none absolute bottom-6 right-6 h-40 w-40 text-white/[0.07] md:h-56 md:w-56" />
         <div className="container relative mx-auto max-w-3xl px-4 pt-10 text-center">
           <Reveal>
             <p className="lw-label-lg mb-3 inline-flex items-center gap-2">
