@@ -80,6 +80,7 @@ export default function SiteEditorPage() {
   const supabase = supabaseRef.current;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
   const [token, setToken] = useState('');
@@ -117,13 +118,21 @@ export default function SiteEditorPage() {
     const accessToken = session.data.session?.access_token || '';
     setToken(accessToken);
     setIsAuthenticated(true);
-    await loadContent(accessToken);
-    setLoading(false);
+    try {
+      await loadContent(accessToken);
+    } catch (e: any) {
+      setLoadError(e?.message || 'Could not load site content.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loadContent = async (accessToken = token) => {
     const res = await fetch('/api/admin/site-content', { headers: authHeader(accessToken) });
-    if (!res.ok) throw new Error('Could not load site content');
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `Could not load site content (${res.status})`);
+    }
     const data = await res.json();
     setContent(data);
     const nextDrafts: Record<string, string> = {};
@@ -237,6 +246,7 @@ export default function SiteEditorPage() {
 
   if (accessDenied) return <AccessState title="Access Denied" text="Admin privileges required." />;
   if (loading || !isAuthenticated) return <AccessState title="Loading Site Editor..." text="Checking admin permissions." loading />;
+  if (loadError) return <AccessState title="Site Editor unavailable" text={loadError} />;
 
   return (
     <DashboardLayout userName="Admin" pageTitle="SITE EDITOR" navItems={adminNavItems} activeNavId="site-editor" onLogout={handleSignOut}>
