@@ -14,6 +14,8 @@ const MARKETING_EXACT_PATHS = new Set([
   '/about',
   '/academy',
   '/apply',
+  '/become-a-supplier-partner',
+  '/become-a-brokerage-partner',
   '/blog',
   '/contact',
   '/contractors',
@@ -117,7 +119,7 @@ export default function Footer() {
             )}
           </div>
 
-          <div className="md:col-span-2 md:col-start-6">
+          <div className="md:col-span-2 md:col-start-5">
             <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4', light ? 'text-mkt-ink' : 'text-zinc-300')}>For Homeowners</h4>
             <ul className="space-y-2.5 text-sm"><li><Link href="/request" className="hover:text-lw-rust transition-colors">Request a Contractor</Link></li><li><Link href="/#how-it-works" className="hover:text-lw-rust transition-colors">How It Works</Link></li><li><Link href="/realtors" className="hover:text-lw-rust transition-colors">For Realtors</Link></li><li><Link href="/requestor-dashboard" className="hover:text-lw-rust transition-colors">Your Dashboard</Link></li></ul>
           </div>
@@ -130,6 +132,11 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4', light ? 'text-mkt-ink' : 'text-zinc-300')}>Company</h4>
             <ul className="space-y-2.5 text-sm"><li><Link href="/about" className="hover:text-lw-rust transition-colors">About Us</Link></li><li><Link href="/contact" className="hover:text-lw-rust transition-colors">Contact</Link></li><li><Link href="/faq" className="hover:text-lw-rust transition-colors">FAQ</Link></li><li><Link href="/privacy" className="hover:text-lw-rust transition-colors">Privacy Policy</Link></li><li><Link href="/terms" className="hover:text-lw-rust transition-colors">Terms of Service</Link></li><li><Link href="/login" className="hover:text-lw-rust transition-colors">Login</Link></li></ul>
+          </div>
+
+          <div className="md:col-span-2">
+            <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4', light ? 'text-mkt-ink' : 'text-zinc-300')}>Partner With Us</h4>
+            <ul className="space-y-2.5 text-sm"><li><Link href="/become-a-supplier-partner" className="hover:text-lw-rust transition-colors">Supplier Partners</Link></li><li><Link href="/become-a-brokerage-partner" className="hover:text-lw-rust transition-colors">Brokerage Partners</Link></li></ul>
           </div>
         </div>
 
