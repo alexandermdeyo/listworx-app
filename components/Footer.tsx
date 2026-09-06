@@ -22,6 +22,7 @@ const MARKETING_EXACT_PATHS = new Set([
   '/faq',
   '/founding-partner',
   '/ironclad',
+  '/media-partners',
   '/pricing',
   '/privacy',
   '/realtors',
@@ -121,7 +122,7 @@ export default function Footer() {
 
           <div className="md:col-span-2 md:col-start-5">
             <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4', light ? 'text-mkt-ink' : 'text-zinc-300')}>For Homeowners</h4>
-            <ul className="space-y-2.5 text-sm"><li><Link href="/request" className="hover:text-lw-rust transition-colors">Request a Contractor</Link></li><li><Link href="/#how-it-works" className="hover:text-lw-rust transition-colors">How It Works</Link></li><li><Link href="/realtors" className="hover:text-lw-rust transition-colors">For Realtors</Link></li><li><Link href="/requestor-dashboard" className="hover:text-lw-rust transition-colors">Your Dashboard</Link></li></ul>
+            <ul className="space-y-2.5 text-sm"><li><Link href="/request" className="hover:text-lw-rust transition-colors">Request a Contractor</Link></li><li><Link href="/#how-it-works" className="hover:text-lw-rust transition-colors">How It Works</Link></li><li><Link href="/realtors" className="hover:text-lw-rust transition-colors">For Realtors</Link></li><li><Link href="/media-partners" className="hover:text-lw-rust transition-colors">Media Partners</Link></li><li><Link href="/requestor-dashboard" className="hover:text-lw-rust transition-colors">Your Dashboard</Link></li></ul>
           </div>
 
           <div className="md:col-span-2">

@@ -330,6 +330,14 @@ export default function RealtorsPage() {
             you with vetted listing-media pros the same way it connects you with the trades — one
             request, verified matches, your call on who to book.
           </p>
+          <div className="mt-6">
+            <Link href="/media-partners">
+              <Button variant="outlineOrange">
+                Browse media partners
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </Reveal>
 
         {/* Row 1 — photo left, copy right */}
