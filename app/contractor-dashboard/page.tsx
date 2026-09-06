@@ -630,6 +630,12 @@ export default function ContractorDashboard() {
       onClick: () => router.push('/contractor-dashboard/flyers'),
     },
     {
+      id: 'media',
+      label: 'Listing Media',
+      icon: Video,
+      onClick: () => router.push('/contractor-dashboard/media'),
+    },
+    {
       id: 'subscription',
       label: 'Subscription',
       icon: CreditCard,
