@@ -250,11 +250,19 @@ export default function ContractorsPage() {
           priority
         />
         <div className="absolute inset-0 z-[1] bg-black/[0.12]" aria-hidden="true" />
-        {/* Waving flag mark, tucked in the upper-right — blurred and edge-faded
-           so it dissolves into the photo behind it */}
-        <WavingFlag
-          variant="flag"
-          className="pointer-events-none absolute -right-3 top-2 z-[2] h-52 w-52 opacity-60 sm:h-64 sm:w-64 md:top-4 md:h-80 md:w-80 md:opacity-50"
+        {/* Distressed flag, large in the upper-left — screen-blended and
+           radially masked so every edge dissolves into the photo behind it */}
+        <img
+          src="/images/redesign/flag-distressed.jpg"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-[7%] -top-[12%] z-[2] w-[78%] max-w-[780px] select-none opacity-[0.6] mix-blend-screen sm:w-[66%] md:w-[58%]"
+          style={{
+            WebkitMaskImage:
+              'radial-gradient(ellipse 60% 60% at 40% 42%, #000 26%, rgba(0,0,0,0.35) 60%, transparent 82%)',
+            maskImage:
+              'radial-gradient(ellipse 60% 60% at 40% 42%, #000 26%, rgba(0,0,0,0.35) 60%, transparent 82%)',
+          }}
         />
 
         <div className="relative z-10 container mx-auto px-4">
