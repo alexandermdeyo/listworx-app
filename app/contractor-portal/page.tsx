@@ -351,11 +351,11 @@ export default function ContractorPortalPage() {
         <CardHeader className="text-center pb-6">
           <Link href="/">
             <Image
-              src="/Listworx_wordmark_logo.png"
+              src="/brand/listworx-wordmark-light.png"
               alt="ListWorx"
-              width={200}
-              height={40}
-              className="h-12 w-auto mx-auto mb-6"
+              width={306}
+              height={36}
+              className="h-9 w-auto mx-auto mb-6"
             />
           </Link>
           <CardTitle className="text-3xl font-bold">

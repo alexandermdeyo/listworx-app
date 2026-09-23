@@ -11,7 +11,9 @@ export const metadata: Metadata = {
   openGraph: {
     images: [
       {
-        url: 'https://listworx.co/Listworx_wordmark_Tag_logo.png',
+        url: 'https://listworx.co/brand/listworx-og.png',
+        width: 1200,
+        height: 630,
       },
     ],
   },
@@ -19,7 +21,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: [
       {
-        url: 'https://listworx.co/Listworx_wordmark_Tag_logo.png',
+        url: 'https://listworx.co/brand/listworx-og.png',
+        width: 1200,
+        height: 630,
       },
     ],
   },

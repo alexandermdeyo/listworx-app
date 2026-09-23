@@ -159,9 +159,9 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
         <div className="flex items-center gap-2 md:gap-3">
           <Link href="/" className="flex items-center" aria-label="ListWorx home">
             <img
-              src="/Listworx_wordmark_logo.png"
+              src={light ? '/brand/listworx-wordmark-light.png' : '/brand/listworx-wordmark-dark.png'}
               alt="ListWorx"
-              className="h-8 md:h-10 w-auto"
+              className="h-5 md:h-7 w-auto"
             />
           </Link>
           <Link href="/ironclad" className="flex items-center shrink-0" aria-label="IronClad Certified Standards">

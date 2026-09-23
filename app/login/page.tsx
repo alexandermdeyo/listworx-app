@@ -224,11 +224,11 @@ export default function LoginPage() {
         <div className="mb-8 text-center">
           <Link href="/">
             <Image
-              src="/Listworx_wordmark_logo.png"
+              src="/brand/listworx-wordmark-light.png"
               alt="ListWorx"
-              width={220}
-              height={44}
-              className="h-12 w-auto mx-auto mb-6"
+              width={306}
+              height={36}
+              className="h-9 w-auto mx-auto mb-6"
             />
           </Link>
           <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>

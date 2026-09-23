@@ -159,9 +159,9 @@ export default function DashboardLayout({
         <div className="flex h-16 items-center justify-between px-5 border-b border-white/10">
           <Link href="/" className="flex items-center">
             <img
-              src="/Listworx_wordmark_logo.png"
+              src="/brand/listworx-wordmark-dark.png"
               alt="ListWorx"
-              className="h-8 w-auto"
+              className="h-5 w-auto"
             />
           </Link>
           <button

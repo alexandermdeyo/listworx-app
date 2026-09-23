@@ -52,7 +52,7 @@ export default function DemoDashboardShell({
       >
         <div className="flex h-16 items-center justify-between px-5 border-b border-white/10">
           <Link href="/aces-demo" className="flex items-center">
-            <img src="/Listworx_wordmark_logo.png" alt="ListWorx" className="h-8 w-auto" />
+            <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="h-5 w-auto" />
           </Link>
         </div>
 

@@ -10,7 +10,7 @@ export default function DemoTopNav() {
       <div className="border-b border-lw-dark-border bg-zinc-900/95 backdrop-blur">
         <div className="container mx-auto flex h-20 items-center justify-between px-4">
           <Link href="/aces-demo" className="flex items-center" aria-label="ListWorx demo home">
-            <img src="/Listworx_wordmark_logo.png" alt="ListWorx" className="h-8 md:h-10 w-auto" />
+            <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="h-5 md:h-7 w-auto" />
           </Link>
 
           <div className="flex items-center gap-3">

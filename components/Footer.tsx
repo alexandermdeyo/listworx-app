@@ -83,9 +83,9 @@ export default function Footer() {
           <div className="md:col-span-4">
             <Link href="/" className="mb-4 flex items-center" aria-label="ListWorx home">
               <img
-                src="/Listworx_wordmark_logo.png"
+                src={light ? '/brand/listworx-wordmark-light.png' : '/brand/listworx-wordmark-dark.png'}
                 alt="ListWorx"
-                className="h-8 w-auto"
+                className="h-6 w-auto"
               />
             </Link>
             <p className={cn('text-sm leading-relaxed max-w-xs', light ? 'text-mkt-ink/70' : 'text-zinc-500')}>{tagline}</p>

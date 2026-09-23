@@ -864,11 +864,11 @@ export default function BillingPage() {
             <div>
               <div className="mb-6">
                 <Image
-                  src="/Listworx_wordmark_Tag_logo.png"
+                  src="/brand/listworx-logo-tagline-dark.png"
                   alt="ListWorx"
-                  width={200}
-                  height={60}
-                  className="h-16 w-auto mb-4"
+                  width={320}
+                  height={48}
+                  className="h-12 w-auto mb-4"
                 />
               </div>
             </div>

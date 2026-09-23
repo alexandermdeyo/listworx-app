@@ -204,7 +204,7 @@ function layout(
           <!-- LOGO BAR -->
           <tr>
             <td style="padding:0 0 20px;">
-              <img src="${BASE_URL}/Listworx_wordmark_logo.png" alt="ListWorx" width="140" height="auto" style="display:block;border:0;height:auto;max-width:140px;" />
+              <img src="${BASE_URL}/brand/listworx-wordmark-light.png" alt="ListWorx" width="140" height="auto" style="display:block;border:0;height:auto;max-width:140px;" />
             </td>
           </tr>
 
