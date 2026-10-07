@@ -26,6 +26,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 
 interface Trade {
   id: string;
@@ -572,6 +573,11 @@ export default function ApplicationForm({
       }).catch((applicationError) => console.error('contractor_applications insert error:', applicationError));
 
       try { localStorage.removeItem('lw_founder_selection'); } catch { /* ignore */ }
+
+      trackEvent('sign_up', {
+        method: 'contractor_application',
+        founder_tier: founderSelection?.tierId || 'none',
+      });
 
       fetch(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,

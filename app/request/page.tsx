@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { trackEvent } from '@/lib/analytics';
 
 interface StateItem {
   id: string;
@@ -331,6 +332,10 @@ function RequestPageContent() {
       if (!jobRequestId) throw new Error('No request ID returned.');
 
       setRequestId(jobRequestId);
+      trackEvent('generate_lead', {
+        lead_type: 'job_request',
+        service_count: selectedCategories.length,
+      });
 
       const matchedContractors = Array.isArray(createData?.contractors)
         ? createData.contractors

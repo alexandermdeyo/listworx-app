@@ -1,12 +1,17 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Footer from '@/components/Footer';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 export const metadata: Metadata = {
   title: 'ListWorx - IronClad Contractors. Trusted by Realtors. Chosen by Homeowners.',
   description: 'Connect with vetted, licensed, and insured contractors who meet our IronClad Standards. Quality network for Realtors and Homeowners.',
   icons: {
-    icon: '/LW_Logo.png',
+    icon: [
+      { url: '/brand/lw-badge-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/brand/lw-badge-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: '/brand/lw-badge-apple-180.png',
   },
   openGraph: {
     images: [
@@ -44,6 +49,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
+        <GoogleAnalytics />
       </body>
     </html>
   );

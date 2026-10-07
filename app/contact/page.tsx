@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, Send } from 'lucide-react';
 import { Reveal } from '@/components/motion';
+import { trackEvent } from '@/lib/analytics';
 
 const fieldClass =
   'w-full !border-mailer-border !bg-mailer-surface !text-white placeholder:!text-white/35 focus-visible:!bg-mailer-surface focus-visible:!text-white';
@@ -31,6 +32,7 @@ export default function ContactPage() {
 
       if (response.ok) {
         setSubmitStatus('success');
+        trackEvent('contact', { form: 'contact_page' });
         setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
         setSubmitStatus('error');

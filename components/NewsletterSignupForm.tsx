@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 
 export default function NewsletterSignupForm() {
   const [email, setEmail] = useState('');
@@ -28,6 +29,7 @@ export default function NewsletterSignupForm() {
       }
 
       setSuccess(true);
+      trackEvent('newsletter_signup', { source: 'website' });
     } catch {
       setError('Network error. Please try again.');
     } finally {
