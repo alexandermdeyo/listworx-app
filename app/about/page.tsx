@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/motion';
+import AnimatedListWorxLogo from '@/components/site/AnimatedListWorxLogo';
 
 export default function AboutPage() {
   return (
@@ -23,6 +24,13 @@ export default function AboutPage() {
         <div className="relative z-10 mx-auto px-6" style={{ maxWidth: '1200px' }}>
           <div className="mx-auto text-center" style={{ maxWidth: '820px' }}>
             <Reveal immediate delay={0}>
+              <div className="mb-8 flex justify-center">
+                <AnimatedListWorxLogo
+                  variant="full"
+                  priority
+                  className="h-auto w-full max-w-[560px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+                />
+              </div>
               <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-5">
                 About ListWorx
               </p>

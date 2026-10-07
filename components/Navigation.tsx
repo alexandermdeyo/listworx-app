@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import America250Strip from '@/components/site/America250Strip';
 import { cn } from '@/lib/utils';
+import AnimatedListWorxLogo from '@/components/site/AnimatedListWorxLogo';
 
 type Role =
   | 'ADMIN'
@@ -158,11 +159,7 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
         <div className="flex items-center gap-2 md:gap-3">
           <Link href="/" className="flex items-center" aria-label="ListWorx home">
-            <img
-              src={light ? '/brand/listworx-wordmark-light.png' : '/brand/listworx-wordmark-dark.png'}
-              alt="ListWorx"
-              className="h-5 md:h-7 w-auto"
-            />
+            <AnimatedListWorxLogo variant="wordmark" priority className="h-6 md:h-9" />
           </Link>
           <Link href="/ironclad" className="flex items-center shrink-0" aria-label="IronClad Certified Standards">
             <img
