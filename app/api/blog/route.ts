@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { requireAdminRequest } from '@/lib/server/require-admin';
+
+const unauthorized = () => NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
 
 export async function GET(request: NextRequest) {
@@ -27,7 +30,10 @@ export async function GET(request: NextRequest) {
     .order('published_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false });
 
-  if (!all) {
+  if (all) {
+    // Drafts are admin-only.
+    if (!(await requireAdminRequest(request))) return unauthorized();
+  } else {
     query = query.eq('is_draft', false);
   }
 
@@ -40,6 +46,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!(await requireAdminRequest(request))) return unauthorized();
   const supabaseAdmin = createSupabaseAdminClient();
   const body = await request.json();
   const { title, slug, excerpt, body: postBody, featured_image_url, author_name, is_published } = body;
@@ -70,6 +77,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  if (!(await requireAdminRequest(request))) return unauthorized();
   const supabaseAdmin = createSupabaseAdminClient();
   const body = await request.json();
   const { id, ...updates } = body;
@@ -109,6 +117,7 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  if (!(await requireAdminRequest(request))) return unauthorized();
   const supabaseAdmin = createSupabaseAdminClient();
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');

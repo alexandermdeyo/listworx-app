@@ -29,6 +29,7 @@ const MARKETING_EXACT_PATHS = new Set([
   '/terms',
   '/media',
   '/request',
+  '/newsletter/unsubscribed',
 ]);
 const MARKETING_PREFIXES = [
   '/blog/',
@@ -132,7 +133,7 @@ export default function Footer() {
 
           <div className="md:col-span-2">
             <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4', light ? 'text-mkt-ink' : 'text-zinc-300')}>Company</h4>
-            <ul className="space-y-2.5 text-sm"><li><Link href="/about" className="hover:text-lw-rust transition-colors">About Us</Link></li><li><Link href="/contact" className="hover:text-lw-rust transition-colors">Contact</Link></li><li><Link href="/faq" className="hover:text-lw-rust transition-colors">FAQ</Link></li><li><Link href="/privacy" className="hover:text-lw-rust transition-colors">Privacy Policy</Link></li><li><Link href="/terms" className="hover:text-lw-rust transition-colors">Terms of Service</Link></li><li><Link href="/login" className="hover:text-lw-rust transition-colors">Login</Link></li></ul>
+            <ul className="space-y-2.5 text-sm"><li><Link href="/about" className="hover:text-lw-rust transition-colors">About Us</Link></li><li><Link href="/blog" className="hover:text-lw-rust transition-colors">Blog</Link></li><li><Link href="/contact" className="hover:text-lw-rust transition-colors">Contact</Link></li><li><Link href="/faq" className="hover:text-lw-rust transition-colors">FAQ</Link></li><li><Link href="/privacy" className="hover:text-lw-rust transition-colors">Privacy Policy</Link></li><li><Link href="/terms" className="hover:text-lw-rust transition-colors">Terms of Service</Link></li><li><Link href="/login" className="hover:text-lw-rust transition-colors">Login</Link></li></ul>
           </div>
 
           <div className="md:col-span-2">

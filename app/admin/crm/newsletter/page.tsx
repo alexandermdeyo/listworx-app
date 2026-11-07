@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader as Loader2, CircleAlert as AlertCircle, LogOut, LayoutDashboard, MonitorCog, Users, Clock, FileText, Home, Settings, Mail } from 'lucide-react';
+import { Loader as Loader2, CircleAlert as AlertCircle, LogOut, LayoutDashboard, MonitorCog, Users, Clock, FileText, Home, Settings, Mail, PenLine } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import Navigation from '@/components/Navigation';
 import DashboardLayout from '@/components/DashboardLayout';
 import type { NavItem } from '@/components/DashboardLayout';
+import NewsletterCampaigns from '@/components/admin/NewsletterCampaigns';
 
 interface Subscriber {
   id: string;
@@ -97,6 +98,7 @@ export default function NewsletterAdminPage() {
     { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications' },
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
     { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
+    { id: 'blog', label: 'Blog', icon: PenLine, href: '/admin/crm/blog' },
     { id: 'newsletter', label: 'Newsletter', icon: Mail, href: '/admin/crm/newsletter' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/crm/settings' },
   ];
@@ -131,9 +133,11 @@ export default function NewsletterAdminPage() {
       hasNotifications={false}
     >
       <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between flex-wrap gap-4">
+        <NewsletterCampaigns activeCount={subscribers.filter((s) => s.active).length} />
+
+        <div className="flex items-center justify-between flex-wrap gap-4 pt-4 border-t border-gray-200">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Newsletter Subscribers</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Subscribers</h1>
             <p className="text-sm text-gray-500 mt-1">{subscribers.length} total subscriber{subscribers.length !== 1 ? 's' : ''}</p>
           </div>
           <Button onClick={exportCSV} className="text-white" style={{ backgroundColor: '#E8621A' }}>

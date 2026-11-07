@@ -10,8 +10,7 @@ import {
   Loader as Loader2, CircleAlert as AlertCircle, ChartBar as BarChart3,
   LogOut, Mail, Send, Briefcase, TrendingUp, Activity,
   Shield, Bell, RefreshCw, Video, BookOpen, DatabaseZap,
-  MonitorCog, LayoutDashboard, Settings, Home, Handshake, Inbox,
-} from 'lucide-react';
+  MonitorCog, LayoutDashboard, Settings, Home, Handshake, Inbox, PenLine } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
@@ -191,6 +190,7 @@ export default function AdminCRMPage() {
     { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications', badge: stats.pendingApplications || undefined },
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
     { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
+    { id: 'blog', label: 'Blog', icon: PenLine, href: '/admin/crm/blog' },
     { id: 'newsletter', label: 'Newsletter', icon: Mail, href: '/admin/crm/newsletter' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/crm/settings' },
   ];

@@ -14,13 +14,19 @@ export async function POST(req: NextRequest) {
 
     const supabase = createSupabaseAdminClient();
 
+    const normalized = email.trim().toLowerCase();
     const { error } = await supabase
       .from('newsletter_subscribers')
-      .insert({ email, name: name || null, source: source || 'website' });
+      .insert({ email: normalized, name: name || null, source: source || 'website' });
 
     if (error) {
-      // Postgres unique violation code
+      // Postgres unique violation code: already on the list. Re-activate if they had unsubscribed.
       if (error.code === '23505') {
+        await supabase
+          .from('newsletter_subscribers')
+          .update({ active: true, unsubscribed_at: null })
+          .eq('email', normalized)
+          .eq('active', false);
         return NextResponse.json({ ok: true, alreadySubscribed: true });
       }
       return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
