@@ -40,8 +40,8 @@ const TIERS: Tier[] = [
   {
     id: 'basic',
     name: 'Network Member',
-    monthlyPrice: 249,
-    annualPrice: 2490,
+    monthlyPrice: 125,
+    annualPrice: 1250,
     icon: Shield,
     description: 'Essential membership features to get started',
     features: [
@@ -56,8 +56,8 @@ const TIERS: Tier[] = [
   {
     id: 'preferred',
     name: 'Network Partner',
-    monthlyPrice: 429,
-    annualPrice: 4290,
+    monthlyPrice: 215,
+    annualPrice: 2150,
     icon: Zap,
     description: 'Enhanced visibility and priority placement',
     features: [
@@ -73,8 +73,8 @@ const TIERS: Tier[] = [
   {
     id: 'elite',
     name: 'Network Elite',
-    monthlyPrice: 729,
-    annualPrice: 7290,
+    monthlyPrice: 365,
+    annualPrice: 3650,
     icon: Crown,
     highlight: true,
     description: 'Maximum exposure and premium benefits',

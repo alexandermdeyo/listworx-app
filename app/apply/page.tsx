@@ -274,9 +274,9 @@ export default function ApplyPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="grid gap-6 sm:grid-cols-3 mb-10">
             {[
-              { name: 'Network Member', price: '$199/mo' },
-              { name: 'Network Partner', price: '$349/mo' },
-              { name: 'Network Elite', price: '$599/mo' },
+              { name: 'Network Member', price: '$100/mo' },
+              { name: 'Network Partner', price: '$175/mo' },
+              { name: 'Network Elite', price: '$300/mo' },
             ].map((tier) => (
               <div key={tier.name} className="lw-card-light p-5 text-center">
                 <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-1">{tier.name}</p>

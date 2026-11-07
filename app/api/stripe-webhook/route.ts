@@ -289,7 +289,7 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
   }
 
   if (contractor?.email) {
-    const renewalAmount = founderTier === 'elite' ? '$599' : founderTier === 'preferred' ? '$349' : '$199';
+    const renewalAmount = founderTier === 'elite' ? '$300' : founderTier === 'preferred' ? '$175' : '$100';
     const territory = [contractor.service_area_counties?.[0], contractor.service_area_state].filter(Boolean).join(', ') || 'your approved service area';
     await sendEmail({
       to: contractor.email,
