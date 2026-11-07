@@ -19,7 +19,10 @@ import CountUp from '@/components/site/CountUp';
 import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 import FaqSection from '@/components/site/FaqSection';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
-import RemembranceBar from '@/components/site/RemembranceBar';
+import HolidayBar from '@/components/site/HolidayBar';
+
+// Rebuild hourly so seasonal banners switch on and off by date without a redeploy.
+export const revalidate = 3600;
 
 const homeownerFaqs = [
   {
@@ -97,7 +100,7 @@ export default function LandingPage() {
     <PageShell surface="marketing">
       <Navigation variant="light" />
 
-      <RemembranceBar />
+      <HolidayBar />
 
       <HomeownerHero />
 
