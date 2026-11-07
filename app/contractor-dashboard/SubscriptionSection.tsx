@@ -41,8 +41,8 @@ const TIERS: Tier[] = [
   {
     id: 'basic',
     name: 'Network Member — Standard',
-    monthlyPrice: 249,
-    annualPrice: 2490,
+    monthlyPrice: 125,
+    annualPrice: 1250,
     icon: Shield,
     badgeText: 'Entry Level',
     description: 'Get listed and start receiving referrals',
@@ -64,8 +64,8 @@ const TIERS: Tier[] = [
   {
     id: 'preferred',
     name: 'Network Partner — Standard',
-    monthlyPrice: 429,
-    annualPrice: 4290,
+    monthlyPrice: 215,
+    annualPrice: 2150,
     icon: Zap,
     badgeText: 'Most Popular',
     highlight: true,
@@ -88,8 +88,8 @@ const TIERS: Tier[] = [
   {
     id: 'elite',
     name: 'Network Elite — Standard',
-    monthlyPrice: 729,
-    annualPrice: 7290,
+    monthlyPrice: 365,
+    annualPrice: 3650,
     icon: Crown,
     badgeText: 'Top Tier',
     description: 'Maximum referral priority and premium benefits',
@@ -130,9 +130,9 @@ const FOUNDER_TIERS = [
   {
     id: 'basic',
     name: 'Network Member — Founding',
-    renewalRate: 199,
-    standardRate: 249,
-    savings: 50,
+    renewalRate: 100,
+    standardRate: 125,
+    savings: 25,
     spots: 10,
     features: [
       'IronClad Verified status',
@@ -145,9 +145,9 @@ const FOUNDER_TIERS = [
   {
     id: 'preferred',
     name: 'Network Partner — Founding',
-    renewalRate: 349,
-    standardRate: 429,
-    savings: 80,
+    renewalRate: 175,
+    standardRate: 215,
+    savings: 40,
     spots: 5,
     features: [
       'Everything in Network Member',
@@ -161,9 +161,9 @@ const FOUNDER_TIERS = [
   {
     id: 'elite',
     name: 'Network Elite — Founding',
-    renewalRate: 599,
-    standardRate: 729,
-    savings: 130,
+    renewalRate: 300,
+    standardRate: 365,
+    savings: 65,
     spots: 2,
     features: [
       'Everything in Network Partner',

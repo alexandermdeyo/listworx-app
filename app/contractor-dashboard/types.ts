@@ -110,8 +110,8 @@ export const TIERS: TierDisplay[] = [
   {
     id: 'basic',
     name: 'Network Member',
-    monthlyPrice: 249,
-    annualPrice: 2490,
+    monthlyPrice: 125,
+    annualPrice: 1250,
     badge: 'Entry Level',
     features: [
       'IronClad Verified status',
@@ -130,8 +130,8 @@ export const TIERS: TierDisplay[] = [
   {
     id: 'preferred',
     name: 'Network Partner',
-    monthlyPrice: 429,
-    annualPrice: 4290,
+    monthlyPrice: 215,
+    annualPrice: 2150,
     badge: 'Most Popular',
     popular: true,
     features: [
@@ -151,8 +151,8 @@ export const TIERS: TierDisplay[] = [
   {
     id: 'elite',
     name: 'Network Elite',
-    monthlyPrice: 729,
-    annualPrice: 7290,
+    monthlyPrice: 365,
+    annualPrice: 3650,
     badge: 'Top Tier',
     features: [
       'Everything in Network Partner',

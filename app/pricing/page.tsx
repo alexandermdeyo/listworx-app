@@ -10,63 +10,58 @@ import { Reveal } from '@/components/motion';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
 import { TIER_GROWTH_NOTE } from '@/lib/tiers-config';
 
-const BASE_FEATURES = [
-  'IronClad Verified status',
-  'Profile on the ListWorx platform',
-  'Listed in referral rotation',
-  'Contractor dashboard access',
-  'Email notifications when you’re matched',
-  'Verified reviews system',
-  'Availability and service-area controls',
-];
-
-const foundingPlans = [
+/**
+ * One plan list drives both the Founding and Standard cards. Keep bullets to
+ * what a contractor actually gets, in plain words, five max.
+ */
+const PLANS = [
   {
     name: 'Network Member',
-    monthly: 199,
-    annual: 1990,
+    tagline: 'Get in the network',
+    founding: { monthly: 100, annual: 1000 },
+    standard: { monthly: 125, annual: 1250 },
     highlight: false,
-    extra: null as string[] | null,
+    bullets: [
+      'IronClad Verified badge and profile',
+      'Matched with homeowners in your trade and county',
+      'Verified reviews from real jobs',
+      'No per-lead fees. Cancel anytime.',
+    ],
     cta: 'Join the Network',
   },
   {
     name: 'Network Partner',
-    monthly: 349,
-    annual: 3490,
+    tagline: 'Get picked first',
+    founding: { monthly: 175, annual: 1750 },
+    standard: { monthly: 215, annual: 2150 },
     highlight: true,
-    extra: [
-      'Priority placement — above all Network Members',
-      'Enhanced profile with additional photos and expanded bio',
-      'IronClad Digital Badge Kit included (vehicle, digital, print)',
-      'AI Marketing Toolkit — social posts, follow-up emails, job templates',
-      'SMS + email notifications for every match',
-      'Monthly performance report',
-      'Quarterly profile boost',
+    bullets: [
+      'Everything in Member',
+      "You're shown before Members in every match",
+      "Text alert the moment you're matched",
+      'IronClad badge kit for your truck, social, and print',
+      'Ready-made posts and follow-up emails',
     ],
     cta: 'Join the Network',
   },
   {
     name: 'Network Elite',
-    monthly: 599,
-    annual: 5990,
+    tagline: 'Own your county',
+    founding: { monthly: 300, annual: 3000 },
+    standard: { monthly: 365, annual: 3650 },
     highlight: false,
-    extra: [
-      'Everything in Network Partner, plus:',
-      'Top of rotation — always above Partner and Member',
-      'Territory lock — maximum 2 Elite per trade per county',
-      'Monthly profile boost (not quarterly)',
-      '2 social media posts per month featuring your work',
-      'Annual featured contractor spotlight',
+    bullets: [
+      'Everything in Partner',
+      'Top spot in every match',
+      'Only 2 Elite per trade, per county',
+      'Quarterly video shoot featuring your work',
+      '2 social posts a month promoting your business',
     ],
     cta: 'Join the Network — Limited Spots',
   },
 ];
 
-const standardPlans = [
-  { name: 'Network Member', monthly: 249, annual: 2490, cta: 'Apply Now' },
-  { name: 'Network Partner', monthly: 429, annual: 4290, cta: 'Apply Now' },
-  { name: 'Network Elite', monthly: 729, annual: 7290, cta: 'Apply Now — Limited Spots' },
-];
+const FOUNDING_EXTRAS = ['Founding Partner badge', 'Price locked for life'];
 
 export default function PricingPage() {
   const [isAnnual, setIsAnnual] = useState(false);
@@ -131,7 +126,7 @@ export default function PricingPage() {
       <section className="bg-mailer-black pb-16 md:pb-24">
         <div className="container mx-auto px-4">
           <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
-            {foundingPlans.map((plan, index) => (
+            {PLANS.map((plan, index) => (
               <Reveal key={plan.name} delay={index * 70} pulse={plan.highlight}>
                 <div
                   className={`lw-hover-lift-dark relative flex h-full flex-col rounded-2xl border bg-mailer-card p-7 ${
@@ -149,8 +144,9 @@ export default function PricingPage() {
                     Founding Partner
                   </p>
                   <h2 className="mt-3 text-2xl font-bold text-white">{plan.name}</h2>
+                  <p className="mt-1 text-sm font-semibold text-lw-rust">{plan.tagline}</p>
                   <p className="mt-3 text-4xl font-bold text-lw-rust">
-                    {isAnnual ? `$${plan.annual.toLocaleString()}` : `$${plan.monthly}`}
+                    {isAnnual ? `$${plan.founding.annual.toLocaleString()}` : `$${plan.founding.monthly}`}
                     <span className="text-base font-normal text-white/40">
                       {isAnnual ? '/yr' : '/mo'}
                     </span>
@@ -160,30 +156,27 @@ export default function PricingPage() {
                     {isAnnual ? ' · save 2 months' : ''}
                   </p>
 
-                  <div className="mt-5 flex-1 space-y-2.5 border-t border-mailer-border pt-5 text-sm text-white/70">
-                    {BASE_FEATURES.map((feature) => (
+                  <div className="mt-5 flex-1 space-y-2.5 border-t border-mailer-border pt-5 text-sm text-white/80">
+                    {plan.bullets.map((feature) => (
                       <div key={feature} className="flex gap-2.5">
                         <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
                         {feature}
                       </div>
                     ))}
-                    {academyEnabled && (
+                    {academyEnabled && plan.name === 'Network Member' && (
                       <div className="flex gap-2.5">
                         <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
-                        ListWorx Academy access — powered by ACES
+                        ListWorx Academy access
                       </div>
                     )}
-                    {plan.extra?.map((feature, i) => (
-                      <div
-                        key={feature}
-                        className={`flex gap-2.5 font-semibold text-white ${
-                          i === 0 ? 'mt-3 border-t border-mailer-border pt-3' : ''
-                        }`}
-                      >
-                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
-                        {feature}
-                      </div>
-                    ))}
+                    <div className="mt-3 space-y-2.5 border-t border-mailer-border pt-3">
+                      {FOUNDING_EXTRAS.map((feature) => (
+                        <div key={feature} className="flex gap-2.5 font-semibold text-white">
+                          <Crown className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
+                          {feature}
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   <Link href="/founding-partner" className="mt-6 block">
@@ -228,12 +221,13 @@ export default function PricingPage() {
           </Reveal>
 
           <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
-            {standardPlans.map((plan, index) => (
+            {PLANS.map((plan, index) => (
               <Reveal key={plan.name} delay={index * 70}>
                 <div className="flex h-full flex-col rounded-2xl border border-mailer-border bg-mailer-card p-7">
                   <h3 className="text-xl font-bold text-white">{plan.name}</h3>
+                  <p className="mt-1 text-sm font-semibold text-white/55">{plan.tagline}</p>
                   <p className="mt-2 text-3xl font-bold text-white/85">
-                    {isAnnual ? `$${plan.annual.toLocaleString()}` : `$${plan.monthly}`}
+                    {isAnnual ? `$${plan.standard.annual.toLocaleString()}` : `$${plan.standard.monthly}`}
                     <span className="text-sm font-normal text-white/40">
                       {isAnnual ? '/yr' : '/mo'}
                     </span>
@@ -241,23 +235,23 @@ export default function PricingPage() {
                   <p className="mt-1 text-xs text-white/45">
                     {isAnnual ? 'Billed annually · save 2 months' : 'Billed monthly'}
                   </p>
-                  <div className="mt-5 flex-1 space-y-2.5 border-t border-mailer-border pt-5 text-sm text-white/65">
-                    {BASE_FEATURES.map((feature) => (
+                  <div className="mt-5 flex-1 space-y-2.5 border-t border-mailer-border pt-5 text-sm text-white/70">
+                    {plan.bullets.map((feature) => (
                       <div key={feature} className="flex gap-2.5">
                         <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-white/35" />
                         {feature}
                       </div>
                     ))}
-                    {academyEnabled && (
+                    {academyEnabled && plan.name === 'Network Member' && (
                       <div className="flex gap-2.5">
                         <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-white/35" />
-                        ListWorx Academy access — powered by ACES
+                        ListWorx Academy access
                       </div>
                     )}
                   </div>
                   <Link href="/apply" className="mt-6 block">
                     <Button className="w-full bg-lw-rust text-white hover:bg-lw-rust-hover">
-                      {plan.cta}
+                      {plan.cta === 'Join the Network — Limited Spots' ? 'Apply Now — Limited Spots' : 'Apply Now'}
                     </Button>
                   </Link>
                 </div>

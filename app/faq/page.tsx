@@ -14,8 +14,8 @@ const generalFaqs = [
 ];
 
 const founderFaqs = [
-  ['What is a Founding Partner?', 'Simple. Pick your tier, and your monthly billing starts right away at your locked founder rate. Network Member is $199/month. Network Partner is $349. Network Elite is $599. That rate is yours permanently — no increases, no renegotiating, no surprises. Standard pricing for contractors who join after the founding period is $249, $429, or $729 a month. Founding Partners never pay that.'],
-  ['Why should I become a Founding Partner instead of joining standard monthly?', 'Three reasons: locked renewal pricing as low as $199/month forever (versus standard $249-$729/month), Founding Partner badge on every referral we send, and territory reservation for your trade and county.'],
+  ['What is a Founding Partner?', 'Simple. Pick your tier, and your monthly billing starts right away at your locked founder rate. Network Member is $100/month. Network Partner is $175. Network Elite is $300. That rate is yours permanently — no increases, no renegotiating, no surprises. Standard pricing for contractors who join after the founding period is $125, $215, or $365 a month. Founding Partners never pay that.'],
+  ['Why should I become a Founding Partner instead of joining standard monthly?', 'Three reasons: locked pricing as low as $100/month forever (versus standard $125–$365/month), Founding Partner badge on every referral we send, and territory reservation for your trade and county.'],
   ['How long does Founding Partner pricing last?', 'For life — as long as you maintain active status and IronClad compliance. If you cancel or get removed for IronClad violations, Founding Partner pricing is forfeited.'],
   ['Are spots really limited?', 'Yes. We are accepting 10 Network Member, 5 Network Partner, and 2 Network Elite contractors per trade in each county. Once a trade fills in your county, no other contractor of that trade joins at Founding Partner pricing.'],
   ['What if I apply but you have not approved me yet?', 'You can apply at any time. Founding Partner pricing is only available after admin approval. We review applications within 72 hours.'],

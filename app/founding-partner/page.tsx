@@ -17,9 +17,9 @@ const features = [
 ];
 
 const pricingRows = [
-  ['Locked Monthly Rate', '$199/mo', '$349/mo', '$599/mo'],
-  ['Standard Rate', '$249/month', '$429/month', '$729/month'],
-  ['You Save', '$50/mo forever', '$80/mo forever', '$130/mo forever'],
+  ['Locked Monthly Rate', '$100/mo', '$175/mo', '$300/mo'],
+  ['Standard Rate', '$125/month', '$215/month', '$365/month'],
+  ['You Save', '$25/mo forever', '$40/mo forever', '$65/mo forever'],
   ['Spots Per County', '10 per trade', '5 per trade', '2 per trade'],
 ];
 
