@@ -191,6 +191,9 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
               <Link href="/ironclad" className="transition-colors text-mkt-ink/80 hover:text-lw-rust mkt-nav-link">
                 IronClad Standards
               </Link>
+              <Link href="/blog" className="transition-colors text-mkt-ink/80 hover:text-lw-rust mkt-nav-link">
+                Blog
+              </Link>
               {academyEnabled && (
                 <Link href="/academy" className="transition-colors text-mkt-ink/80 hover:text-lw-rust mkt-nav-link">
                   Academy
@@ -326,6 +329,13 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
                   className="block rounded-md px-3 py-3 text-base font-medium transition-colors text-mkt-ink/80 hover:bg-zinc-100 hover:text-mkt-ink"
                 >
                   IronClad Standards
+                </Link>
+                <Link
+                  href="/blog"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block rounded-md px-3 py-3 text-base font-medium transition-colors text-mkt-ink/80 hover:bg-zinc-100 hover:text-mkt-ink"
+                >
+                  Blog
                 </Link>
                 {academyEnabled && (
                   <Link

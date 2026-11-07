@@ -62,6 +62,11 @@ function formatDate(iso: string) {
 export default function AdminBlogPage() {
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
+
+  const authHeaders = async (extra: Record<string, string> = {}) => {
+    const { data } = await supabase.auth.getSession();
+    return { ...extra, Authorization: `Bearer ${data.session?.access_token || ''}` };
+  };
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -90,7 +95,7 @@ export default function AdminBlogPage() {
   const loadPosts = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/blog?all=true');
+      const res = await fetch('/api/blog?all=true', { headers: await authHeaders() });
       const data = await res.json();
       setPosts(Array.isArray(data) ? data : []);
     } catch (err: any) {
@@ -133,7 +138,7 @@ export default function AdminBlogPage() {
 
       const res = await fetch('/api/blog', {
         method: editingId ? 'PATCH' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(editingId ? { id: editingId, ...payload } : payload),
       });
 
@@ -158,7 +163,7 @@ export default function AdminBlogPage() {
     try {
       const res = await fetch('/api/blog', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ id: post.id, is_published: !post.is_published }),
       });
       if (!res.ok) throw new Error((await res.json()).error);
@@ -171,7 +176,7 @@ export default function AdminBlogPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this post permanently? This cannot be undone.')) return;
     try {
-      const res = await fetch(`/api/blog?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/blog?id=${id}`, { method: 'DELETE', headers: await authHeaders() });
       if (!res.ok) throw new Error((await res.json()).error);
       setPosts(prev => prev.filter(p => p.id !== id));
     } catch (err: any) {
