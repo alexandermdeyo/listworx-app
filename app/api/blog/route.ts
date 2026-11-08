@@ -24,9 +24,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
   }
 
+  // The admin editor (?all=true) needs the post text; the public list doesn't.
+  const listColumns = 'id, title, slug, excerpt, featured_image_url, author_name, is_draft, published_at, created_at, updated_at';
   let query = supabaseAdmin
     .from('blog_posts')
-    .select('id, title, slug, excerpt, featured_image_url, author_name, is_draft, published_at, created_at, updated_at')
+    .select(all ? `${listColumns}, body` : listColumns)
     .order('published_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false });
 
