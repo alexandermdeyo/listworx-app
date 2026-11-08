@@ -520,3 +520,26 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .lw-snow { animation: none; }
 }
+
+
+/* Contractor recruiting banner (ContractorRecruitBar) */
+.lw-recruit-badge { animation: lw-recruit-glow 2.4s ease-in-out infinite; }
+.lw-recruit-dot { animation: lw-recruit-blink 1.2s ease-in-out infinite; }
+@keyframes lw-recruit-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 98, 26, 0.55); }
+  50% { box-shadow: 0 0 0 8px rgba(232, 98, 26, 0); }
+}
+@keyframes lw-recruit-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.lw-county-ticker { animation: lw-county-scroll 90s linear infinite; }
+.lw-county-ticker:hover { animation-play-state: paused; }
+@keyframes lw-county-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lw-recruit-badge, .lw-recruit-dot { animation: none; }
+  .lw-county-ticker { animation: none; flex-wrap: wrap; width: auto; white-space: normal; justify-content: center; }
+}

@@ -20,6 +20,7 @@ import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 import FaqSection from '@/components/site/FaqSection';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
 import HolidayBar from '@/components/site/HolidayBar';
+import ContractorRecruitBar from '@/components/site/ContractorRecruitBar';
 
 // Rebuild hourly so seasonal banners switch on and off by date without a redeploy.
 export const revalidate = 3600;
@@ -101,6 +102,7 @@ export default function LandingPage() {
       <Navigation variant="light" />
 
       <HolidayBar />
+      <ContractorRecruitBar />
 
       <HomeownerHero />
 
