@@ -533,7 +533,7 @@ html {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.25; }
 }
-.lw-county-ticker { animation: lw-county-scroll 90s linear infinite; }
+.lw-county-ticker { animation: lw-county-scroll 200s linear infinite; }
 .lw-county-ticker:hover { animation-play-state: paused; }
 @keyframes lw-county-scroll {
   from { transform: translateX(0); }
