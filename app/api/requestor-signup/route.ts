@@ -115,7 +115,7 @@ async function POST_DEPRECATED(request: NextRequest) {
       : requestorRole === 'PROPERTY_MANAGER' ? 'Property Manager'
       : 'Member';
 
-    fetch(`${supabaseUrl}/functions/v1/send-realtor-email`, {
+    await fetch(`${supabaseUrl}/functions/v1/send-realtor-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

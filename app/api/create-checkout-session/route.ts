@@ -9,6 +9,7 @@ import {
   type TierId,
   type BillingPeriod,
 } from '@/lib/stripe-prices';
+import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
 export async function POST(request: NextRequest) {
   const stripe = createStripeServerClient();
@@ -29,6 +30,21 @@ export async function POST(request: NextRequest) {
 
     if (!contractorId) {
       return NextResponse.json({ error: 'Missing contractorId' }, { status: 400 });
+    }
+
+    // Only approved (or already-active/paused) contractors can pay. This keeps
+    // anyone from skipping review by opening checkout directly.
+    const { data: statusRow } = await createSupabaseAdminClient()
+      .from('contractor_profiles')
+      .select('partner_status')
+      .eq('id', contractorId)
+      .maybeSingle();
+    const status = String(statusRow?.partner_status || '');
+    if (!['approved', 'active', 'paused'].includes(status)) {
+      return NextResponse.json(
+        { error: status ? 'Your application must be approved before checkout.' : 'Contractor profile not found.' },
+        { status: status ? 403 : 404 }
+      );
     }
 
     if (!isAddOn && !isFounderActivation && !tierId) {

@@ -7,6 +7,8 @@ import {
   buildJobAssignmentRows,
   incrementReferralCounts,
 } from '@/lib/contractor-matching';
+import { sendEmail } from '@/lib/send-email';
+import { notifyAdmin, brandedEmail, detailRows, esc, BASE_URL as SITE_BASE } from '@/lib/server/notify';
 
 export const dynamic = 'force-dynamic';
 
@@ -420,33 +422,100 @@ export async function POST(request: NextRequest) {
     // ── END MATCHING LOGIC ──────────────────────────────────
 
     // ── EMAIL NOTIFICATIONS — fired after all DB writes ────
-    // Fetch category names for email display
+    // Awaited on purpose: on Netlify the function is frozen as soon as the
+    // response is returned, so un-awaited emails can silently never send.
     const { data: categoryNameRows } = await supabase
       .from('categories')
       .select('name')
       .in('id', categoryIds);
 
     const categoryNames = (categoryNameRows || []).map((r: any) => r.name).filter(Boolean);
+    const locationText = [propertyCity.trim(), propertyCounty ? `${propertyCounty} County` : '', stateCode].filter(Boolean).join(', ');
+    const urgencyLabel: Record<string, string> = {
+      IMMEDIATE: 'ASAP',
+      WITHIN_WEEK: 'Within a week',
+      WITHIN_MONTH: 'Within a month',
+      FLEXIBLE: 'Flexible',
+    };
 
-    if (matchedContractors.length > 0) {
+    const emailJobs: Promise<unknown>[] = [];
+
+    if (!flaggedSpam && matchedContractors.length > 0) {
       // 1. Notify each contractor they've been referred (no requestor info)
-      sendContractorReferralEmails(supabase, matchedContractors, {
-        jobCategory: categoryNames[0] || 'General Services',
-        jobCounty: propertyCounty,
-        jobState: stateCode,
-        jobDescription: description.trim(),
-        requesterType: clientType,
-      }).catch((err) => console.error('[job-request] contractor email batch error:', err));
+      emailJobs.push(
+        sendContractorReferralEmails(supabase, matchedContractors, {
+          jobCategory: categoryNames[0] || 'General Services',
+          jobCounty: propertyCounty,
+          jobState: stateCode,
+          jobDescription: esc(description.trim()),
+          requesterType: clientType,
+        }).catch((err) => console.error('[job-request] contractor email batch error:', err)),
+      );
 
       // 2. Send requestor their matched contractor cards
-      sendRequestorMatchEmail(supabase, matchedContractors, {
-        requesterName: clientName.trim(),
-        requesterEmail: clientEmail.trim().toLowerCase(),
-        propertyAddress: [addr, propertyCity.trim(), stateCode].filter(Boolean).join(', '),
-        categoryNames,
-        jobRequestId: jobRequest.id,
-      }).catch((err) => console.error('[job-request] requestor email error:', err));
+      emailJobs.push(
+        sendRequestorMatchEmail(supabase, matchedContractors, {
+          requesterName: clientName.trim(),
+          requesterEmail: clientEmail.trim().toLowerCase(),
+          propertyAddress: [addr, propertyCity.trim(), stateCode].filter(Boolean).join(', '),
+          categoryNames,
+          jobRequestId: jobRequest.id,
+        }).catch((err) => console.error('[job-request] requestor email error:', err)),
+      );
     }
+
+    if (!flaggedSpam && matchedContractors.length === 0) {
+      // 2b. No pros matched yet: still confirm to the requestor so they aren't left hanging.
+      const first = clientName.trim().split(/\s+/)[0] || 'there';
+      emailJobs.push(
+        sendEmail({
+          to: clientEmail.trim().toLowerCase(),
+          subject: 'We got your request. A ListWorx pro is on the way.',
+          replyTo: 'adeyo@listworx.co',
+          html: brandedEmail({
+            kicker: 'Request received',
+            title: `Thanks, ${first}. We’re on it.`,
+            body: `<p>We received your request for <strong>${esc(categoryNames.join(', ') || 'home services')}</strong> in ${esc(locationText)}.</p>
+              <p>We’re hand-matching you with IronClad-verified pros for this one. You’ll hear from us within <strong>one business day</strong> with your options. You choose who to talk to. No spam and no bidding wars.</p>
+              <p>Need it sooner? Just reply to this email or call <a href="tel:6153624996" style="color:#E85000;">615-362-4996</a>.</p>
+              <p>— Alex Deyo, Founder, ListWorx</p>`,
+          }),
+        }).catch((err) => console.error('[job-request] no-match confirmation email error:', err)),
+      );
+    }
+
+    // 3. Always tell the admin.
+    const alertTitle = flaggedSpam
+      ? '⚠️ Possible spam job request (no emails sent)'
+      : matchedContractors.length === 0
+        ? '🔴 New job request: NO pros matched (follow up)'
+        : `🟢 New job request: ${matchedContractors.length} pro${matchedContractors.length === 1 ? '' : 's'} matched`;
+    emailJobs.push(
+      notifyAdmin(
+        `${alertTitle} · ${categoryNames[0] || 'Request'} · ${propertyCounty || propertyCity}`,
+        brandedEmail({
+          kicker: 'Admin alert',
+          title: alertTitle,
+          body: detailRows([
+            ['Name', clientName.trim()],
+            ['Email', clientEmail.trim().toLowerCase()],
+            ['Phone', clientPhone?.trim() || ''],
+            ['Type', clientType],
+            ['Services', categoryNames.join(', ')],
+            ['Location', [addr, locationText, propertyZip?.trim()].filter(Boolean).join(', ')],
+            ['Timing', urgencyLabel[normalizedUrgency] || normalizedUrgency],
+            ['Details', description.trim()],
+            ['Matched pros', matchedContractors.length ? matchedContractors.map((c) => `${c.company_name} (${c.tier || 'basic'})`).join('\n') : 'None. Requestor was told you will follow up within one business day.'],
+            ['Spam score', `${spamScore}${flaggedSpam ? ' (flagged)' : ''}`],
+          ]),
+          ctaLabel: 'Open in Admin',
+          ctaHref: `${SITE_BASE}/admin/crm/job-requests`,
+        }),
+        clientEmail.trim().toLowerCase(),
+      ),
+    );
+
+    await Promise.allSettled(emailJobs);
     // ── END EMAIL NOTIFICATIONS ─────────────────────────────
 
     return NextResponse.json({

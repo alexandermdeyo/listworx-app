@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { PARTNER_STATUS } from '@/lib/partner-status';
+import { requireAdminRequest } from '@/lib/server/require-admin';
 
 export async function POST(request: NextRequest) {
+  if (!(await requireAdminRequest(request))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { contractorProfileId } = await request.json();
 

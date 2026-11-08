@@ -387,8 +387,8 @@ function RequestPageContent() {
             </h1>
             <p className="text-mkt-ink/70">
               {contractors.length > 0
-                ? `Here are your three vetted contractor matches. We've also sent this information to ${formData.clientEmail}, and you can find it anytime in your dashboard. Questions? Contact us at support@listworx.co.`
-                : 'Your request was saved successfully, but no active contractors matched yet.'}
+                ? `Here ${contractors.length === 1 ? 'is your vetted contractor match' : `are your ${contractors.length} vetted contractor matches`}. We've also emailed this to ${formData.clientEmail}. Questions? Call 615-362-4996 or email adeyo@listworx.co.`
+                : `Thanks! We're hand-matching you with IronClad-verified pros and will email ${formData.clientEmail} within one business day. Need it sooner? Call 615-362-4996.`}
             </p>
           </div>
 
@@ -470,12 +470,12 @@ function RequestPageContent() {
                 </Card>
               ))}
               </div>
-              <p className="mb-10 text-center text-sm text-mkt-ink/60">Didn&apos;t hear back within 24 hours? Let us know at support@listworx.co and we&apos;ll follow up with the contractor on your behalf.</p>
+              <p className="mb-10 text-center text-sm text-mkt-ink/60">Didn&apos;t hear back within 24 hours? Let us know at adeyo@listworx.co and we&apos;ll follow up with the contractor on your behalf.</p>
             </>
           ) : (
             <Card className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-8 text-center mb-10">
               <p className="text-mkt-ink/60">
-                No contractors matched yet. Your request is still saved in your dashboard.
+                Your request is in. We review every request personally and line up the right pros for the job. Watch your inbox (and spam folder) for an email from ListWorx.
               </p>
             </Card>
           )}

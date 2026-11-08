@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ADMIN can never be self-assigned through this public endpoint.
     const allowedRoles: AllowedRole[] = [
-      'ADMIN',
       'CONTRACTOR',
       'REALTOR',
       'HOMEOWNER',
@@ -52,15 +52,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error } = await supabase.from('users').upsert(
-      {
-        id,
-        email: normalizedEmail,
-        name: safeName,
-        role,
-      },
-      { onConflict: 'id' }
-    );
+    // The id must be a real account whose email matches what was sent.
+    const { data: authUser, error: authLookupError } = await supabase.auth.admin.getUserById(id);
+    if (authLookupError || !authUser?.user || (authUser.user.email || '').toLowerCase() !== normalizedEmail) {
+      return NextResponse.json({ error: 'Account not found.' }, { status: 403 });
+    }
+
+    // Never change the role of an existing user from here.
+    const { data: existingRow } = await supabase.from('users').select('id, role').eq('id', id).maybeSingle();
+    const { error } = existingRow
+      ? await supabase.from('users').update({ email: normalizedEmail, name: safeName }).eq('id', id)
+      : await supabase.from('users').insert({ id, email: normalizedEmail, name: safeName, role });
 
     if (error) {
       console.error('UPSERT APP USER FAILED:', error);
@@ -70,17 +72,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const effectiveRole = (existingRow?.role as AllowedRole | undefined) || role;
+
     // Create role-specific profile row.
     // Non-blocking — log the error but let signup succeed.
     // A missing profile can be repaired; a failed signup loses the user.
-    if (role === 'REALTOR') {
+    if (effectiveRole === 'REALTOR') {
       const { error: profileError } = await supabase
         .from('realtor_profiles')
         .upsert({ user_id: id }, { onConflict: 'user_id', ignoreDuplicates: true });
       if (profileError) {
         console.error('UPSERT REALTOR PROFILE FAILED:', profileError);
       }
-    } else if (role === 'HOMEOWNER') {
+    } else if (effectiveRole === 'HOMEOWNER') {
       const { error: profileError } = await supabase
         .from('requestor_profiles')
         .upsert(
@@ -90,7 +94,7 @@ export async function POST(request: NextRequest) {
       if (profileError) {
         console.error('UPSERT REQUESTOR PROFILE (HOMEOWNER) FAILED:', profileError);
       }
-    } else if (role === 'PROPERTY_MANAGER') {
+    } else if (effectiveRole === 'PROPERTY_MANAGER') {
       const { error: profileError } = await supabase
         .from('requestor_profiles')
         .upsert(

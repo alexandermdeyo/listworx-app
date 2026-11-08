@@ -232,6 +232,17 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
+  // Server-only: deploy with verify_jwt = true (the gateway checks the
+  // signature) and only accept the service-role key, so nobody can use this
+  // function to send email from our domain.
+  try {
+    const token = (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    if (payload?.role !== 'service_role') throw new Error('forbidden');
+  } catch {
+    return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+  }
+
   try {
     const request: EmailRequest = await req.json();
     const { type, to, realtorName } = request;

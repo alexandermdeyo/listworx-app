@@ -5,6 +5,7 @@ import { createStripeServerClient } from '@/lib/stripe-server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { normalizeFounderTier } from '@/lib/stripe-prices';
 import { sendEmail } from '@/lib/send-email';
+import { notifyAdmin, brandedEmail, detailRows, BASE_URL as SITE_BASE } from '@/lib/server/notify';
 
 function getStripe() {
   return createStripeServerClient();
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed':
         await handleCheckoutCompleted(event.data.object);
+        await alertAdminOfCheckout(event.data.object as any);
         break;
 
       case 'customer.subscription.created':
@@ -62,6 +64,7 @@ export async function POST(request: NextRequest) {
         } else {
           await handleSubscriptionDeleted(sub);
         }
+        await alertAdminSimple('❌ Subscription cancelled', sub);
         break;
       }
 
@@ -71,6 +74,7 @@ export async function POST(request: NextRequest) {
 
       case 'invoice.payment_failed':
         await handlePaymentFailed(event.data.object);
+        await alertAdminSimple('⚠️ Payment failed', event.data.object as any);
         break;
 
       default:
@@ -1074,5 +1078,81 @@ async function sendInvoiceEmail(contractorId: string, invoice: any) {
     }
   } catch (error) {
     console.error('[stripe-webhook] Error sending invoice email:', error);
+  }
+}
+
+
+/* ── Admin alerts (never block or fail the webhook) ───────────────── */
+
+async function contractorLabel(contractorId?: string | null) {
+  if (!contractorId) return null;
+  const { data } = await getSupabase()
+    .from('contractor_profiles')
+    .select('company_name, owner_name, email')
+    .eq('id', contractorId)
+    .maybeSingle();
+  return data;
+}
+
+function dollars(cents?: number | null) {
+  return typeof cents === 'number' ? `$${(cents / 100).toFixed(2)}` : '';
+}
+
+async function alertAdminOfCheckout(session: any) {
+  try {
+    const md = session.metadata || {};
+    const contractorId = session.client_reference_id || md.contractorId;
+    const who = await contractorLabel(contractorId);
+    const what = md.isAddOn === 'true'
+      ? `Add-on: ${md.addOnId || md.tierName || ''}`
+      : md.isFounderActivation === 'true'
+        ? `Founding Partner: ${md.tierName || md.tierId || ''} (${md.billingPeriod || 'monthly'})`
+        : md.user_type === 'realtor'
+          ? `Realtor: ${md.product || md.tierName || ''}`
+          : `Plan: ${md.tierName || md.tierId || ''} (${md.billingPeriod || 'monthly'})`;
+    const title = `💵 New payment: ${dollars(session.amount_total)} · ${who?.company_name || session.customer_details?.email || 'customer'}`;
+    await notifyAdmin(
+      title,
+      brandedEmail({
+        kicker: 'Admin alert',
+        title: 'New payment received',
+        body: detailRows([
+          ['Amount', dollars(session.amount_total)],
+          ['What', what],
+          ['Business', who?.company_name],
+          ['Contact', who?.owner_name || session.customer_details?.name],
+          ['Email', who?.email || session.customer_details?.email],
+          ['Stripe session', session.id],
+        ]),
+        ctaLabel: 'Open contractors',
+        ctaHref: `${SITE_BASE}/admin/crm/contractors`,
+      }),
+    );
+  } catch (err) {
+    console.error('[stripe-webhook] admin checkout alert failed', err);
+  }
+}
+
+async function alertAdminSimple(title: string, obj: any) {
+  try {
+    const contractorId = obj?.metadata?.contractorId || obj?.subscription_details?.metadata?.contractorId;
+    const who = await contractorLabel(contractorId);
+    await notifyAdmin(
+      `${title}${who?.company_name ? ` · ${who.company_name}` : obj?.customer_email ? ` · ${obj.customer_email}` : ''}`,
+      brandedEmail({
+        kicker: 'Admin alert',
+        title,
+        body: detailRows([
+          ['Business', who?.company_name],
+          ['Email', who?.email || obj?.customer_email],
+          ['Amount', dollars(obj?.amount_due ?? obj?.amount_total ?? null)],
+          ['Stripe id', obj?.id],
+        ]),
+        ctaLabel: 'Open Stripe',
+        ctaHref: 'https://dashboard.stripe.com',
+      }),
+    );
+  } catch (err) {
+    console.error('[stripe-webhook] admin alert failed', err);
   }
 }

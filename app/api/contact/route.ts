@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (serviceKey) {
-      fetch(`${supabaseUrl}/functions/v1/send-realtor-email`, {
+      await fetch(`${supabaseUrl}/functions/v1/send-realtor-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
