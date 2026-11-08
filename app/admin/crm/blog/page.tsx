@@ -20,6 +20,8 @@ import {
   FileText,
   Globe,
   PenLine,
+  ImagePlus,
+  Upload,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
@@ -68,6 +70,47 @@ export default function AdminBlogPage() {
     return { ...extra, Authorization: `Bearer ${data.session?.access_token || ''}` };
   };
   const router = useRouter();
+  const [uploading, setUploading] = useState<'featured' | 'inline' | null>(null);
+  const [uploadError, setUploadError] = useState('');
+  const featuredInputRef = useRef<HTMLInputElement>(null);
+  const inlineInputRef = useRef<HTMLInputElement>(null);
+
+  /** Uploads a photo to the site-media bucket and returns its public URL. */
+  const uploadPhoto = async (file: File): Promise<string | null> => {
+    setUploadError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/admin/site-content/upload', { method: 'POST', headers: await authHeaders(), body: fd });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.url) {
+      setUploadError(json.error || 'Upload failed.');
+      return null;
+    }
+    return json.url as string;
+  };
+
+  const onFeaturedFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploading('featured');
+    const url = await uploadPhoto(file);
+    setUploading(null);
+    if (url) setForm(f => ({ ...f, featured_image_url: url }));
+  };
+
+  const onInlineFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploading('inline');
+    const url = await uploadPhoto(file);
+    setUploading(null);
+    if (!url) return;
+    const alt = (form.title || 'ListWorx').replace(/"/g, '');
+    const tag = `<img src="${url}" alt="${alt}" style="width:100%;border-radius:10px;margin:8px 0" />`;
+    setForm(f => ({ ...f, body: `${f.body.trimEnd()}\n\n${tag}\n\n` }));
+  };
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
@@ -340,9 +383,23 @@ export default function AdminBlogPage() {
 
               {/* Body */}
               <div>
-                <label className="text-xs font-medium text-zinc-400 mb-1.5 block">
-                  Body <span className="text-zinc-600 font-normal">(plain text or markdown — rendered as-is)</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5 gap-3">
+                  <label className="text-xs font-medium text-zinc-400 block">
+                    Body <span className="text-zinc-600 font-normal">(blank line between paragraphs · # heading · - list · **bold**)</span>
+                  </label>
+                  <input ref={inlineInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onInlineFile} />
+                  <button
+                    type="button"
+                    onClick={() => inlineInputRef.current?.click()}
+                    disabled={uploading === 'inline'}
+                    className="flex shrink-0 items-center gap-1.5 rounded-md border border-lw-dark-border px-2.5 py-1 text-xs text-zinc-300 hover:border-lw-rust hover:text-white disabled:opacity-60"
+                    title="Uploads a photo and adds it to the end of the post. Move the line to where you want it."
+                  >
+                    {uploading === 'inline' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
+                    Add photo to post
+                  </button>
+                </div>
+                {uploadError && <p className="text-xs text-red-400 mb-1.5">{uploadError}</p>}
                 <textarea
                   value={form.body}
                   onChange={e => setForm(f => ({ ...f, body: e.target.value }))}
@@ -355,13 +412,27 @@ export default function AdminBlogPage() {
               {/* Row: image + author */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-zinc-400 mb-1.5 block">Featured Image URL <span className="text-zinc-600 font-normal">(optional)</span></label>
-                  <Input
-                    value={form.featured_image_url}
-                    onChange={e => setForm(f => ({ ...f, featured_image_url: e.target.value }))}
-                    placeholder="https://..."
-                    className="bg-lw-dark-surface border-lw-dark-border text-white placeholder:text-zinc-500"
-                  />
+                  <label className="text-xs font-medium text-zinc-400 mb-1.5 block">Featured Image <span className="text-zinc-600 font-normal">(top of the post and the share preview)</span></label>
+                  <input ref={featuredInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onFeaturedFile} />
+                  {form.featured_image_url ? (
+                    <div className="relative rounded-md overflow-hidden border border-lw-dark-border">
+                      <img src={form.featured_image_url} alt="" className="w-full h-32 object-cover" />
+                      <div className="absolute bottom-2 right-2 flex gap-1.5">
+                        <button type="button" onClick={() => featuredInputRef.current?.click()} className="rounded bg-black/70 px-2 py-1 text-xs text-white hover:bg-black">Replace</button>
+                        <button type="button" onClick={() => setForm(f => ({ ...f, featured_image_url: '' }))} className="rounded bg-black/70 px-2 py-1 text-xs text-white hover:bg-red-700">Remove</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => featuredInputRef.current?.click()}
+                      disabled={uploading === 'featured'}
+                      className="flex h-32 w-full flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-lw-dark-border text-sm text-zinc-400 hover:border-lw-rust hover:text-white disabled:opacity-60"
+                    >
+                      {uploading === 'featured' ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
+                      {uploading === 'featured' ? 'Uploading…' : 'Upload a photo'}
+                    </button>
+                  )}
                 </div>
                 <div>
                   <label className="text-xs font-medium text-zinc-400 mb-1.5 block">Author Name</label>
