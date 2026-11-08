@@ -541,5 +541,6 @@ html {
 }
 @media (prefers-reduced-motion: reduce) {
   .lw-recruit-badge, .lw-recruit-dot { animation: none; }
-  .lw-county-ticker { animation: none; flex-wrap: wrap; width: auto; white-space: normal; justify-content: center; }
+  /* trades stay on one line and keep scrolling, just slower */
+  .lw-county-ticker { animation-duration: 320s; }
 }
