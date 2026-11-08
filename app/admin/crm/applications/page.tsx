@@ -212,22 +212,11 @@ export default function ApplicationsPage() {
       if (updateError) throw updateError;
 
       try {
-        await fetch(
-          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-            },
-            body: JSON.stringify({
-              type: 'application_declined',
-              to: profile.email,
-              contractorName: profile.owner_name,
-              reason,
-            }),
-          }
-        );
+        await fetch('/api/admin/contractor-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contractorProfileId: profile.id, type: 'application_declined', reason }),
+        });
       } catch (emailErr) {
         console.warn('Rejection email failed:', emailErr);
       }
@@ -246,22 +235,11 @@ export default function ApplicationsPage() {
     try {
       setProcessing(profile.id);
 
-      const emailResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            type: 'application_approved',
-            to: profile.email,
-            contractorName: profile.owner_name,
-            companyName: profile.company_name,
-          }),
-        }
-      );
+      const emailResponse = await fetch('/api/admin/contractor-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contractorProfileId: profile.id, type: 'application_approved' }),
+      });
 
       if (!emailResponse.ok) {
         const errorData = await emailResponse.json();

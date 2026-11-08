@@ -573,22 +573,7 @@ export default function ApplicationForm({
 
       try { localStorage.removeItem('lw_founder_selection'); } catch { /* ignore */ }
 
-      fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contractor-email`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            type: 'application_received',
-            to: userEmail,
-            contractorName: form.owner_name.trim(),
-            companyName: form.company_name.trim(),
-          }),
-        }
-      ).catch(err => console.error('application_received email error:', err));
+      // The confirmation email to the contractor is sent by /api/contractor-applications.
 
       setSuccess(true);
     } catch (err: any) {

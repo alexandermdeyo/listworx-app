@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
-import { sendEmail } from '@/lib/send-email';
+import { notifyAdmin, brandedEmail, detailRows, sendContractorTemplate, BASE_URL } from '@/lib/server/notify';
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,15 +45,43 @@ export async function POST(request: NextRequest) {
     const { error } = await supabase.from('contractor_applications').insert(payload);
     if (error) throw error;
 
-    const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.RESEND_FROM_EMAIL;
-    if (adminEmail) {
-      await sendEmail({
-        to: adminEmail,
-        subject: 'New ListWorx contractor application',
-        html: `<p>A contractor application was submitted.</p><p><strong>${payload.business_name || 'Business name pending'}</strong></p><p>${payload.first_name || ''} ${payload.last_name || ''}</p><p>${payload.email || ''}</p><p>${payload.trade || ''} — ${payload.primary_county || ''}</p>`,
-        text: `A contractor application was submitted. ${payload.business_name || 'Business name pending'} ${payload.email || ''}`,
-      }).catch((emailError) => console.error('[contractor-applications] admin email failed', emailError));
-    }
+    const contactName = [payload.first_name, payload.last_name].filter(Boolean).join(' ') || payload.business_name || 'there';
+
+    // Both emails are awaited so the serverless function doesn't stop before they send.
+    await Promise.allSettled([
+      payload.email
+        ? sendContractorTemplate({
+            type: 'application_received',
+            to: payload.email,
+            contractorName: contactName,
+            companyName: payload.business_name || 'your business',
+          })
+        : Promise.resolve(),
+      notifyAdmin(
+        `🧰 New contractor application: ${payload.business_name || contactName} · ${payload.trade || 'trade not set'}`,
+        brandedEmail({
+          kicker: 'Admin alert',
+          title: 'New contractor application',
+          body: detailRows([
+            ['Business', payload.business_name],
+            ['Contact', contactName],
+            ['Email', payload.email],
+            ['Phone', payload.phone],
+            ['Main trade', payload.trade],
+            ['Primary county', [payload.primary_county, payload.primary_state].filter(Boolean).join(', ')],
+            ['Years in business', payload.years_in_business],
+            ['License #', payload.license_number],
+            ['License expires', payload.license_expiration_date],
+            ['Insurance expires', payload.insurance_expiration_date],
+            ['Founding plan picked', payload.founder_tier],
+            ['Website', payload.website],
+          ]) + `<p style="margin-top:14px;">Review their documents, then approve or decline. Approval emails them a link to pick a plan and pay.</p>`,
+          ctaLabel: 'Review application',
+          ctaHref: `${BASE_URL}/admin/crm/applications`,
+        }),
+        payload.email || undefined,
+      ),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {

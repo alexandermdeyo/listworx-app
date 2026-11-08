@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { getRequestUser } from '@/lib/server/require-admin';
 
 
 export async function POST(request: NextRequest) {
@@ -7,7 +8,6 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
-    console.log('[SET PASSWORD] Request received for email:', email);
 
     if (!email || !password) {
       return NextResponse.json(
@@ -41,38 +41,31 @@ export async function POST(request: NextRequest) {
     );
 
     if (existingUser) {
-      console.log('[SET PASSWORD] Existing user found, updating password');
-      const { error: updateError } = await supabase.auth.admin.updateUserById(
-        existingUser.id,
-        { password }
-      );
-
-      if (updateError) {
-        console.error('[SET PASSWORD] Error updating password:', updateError);
+      // Changing the password of an existing account is only allowed for that
+      // account's own signed-in session (e.g. after a reset or invite link).
+      // Otherwise anyone could take over any account just by knowing its email.
+      const caller = await getRequestUser(request);
+      if (!caller || caller.id !== existingUser.id) {
         return NextResponse.json(
-          { error: updateError.message },
-          { status: 500 }
+          {
+            error:
+              'An account with this email already exists. Please sign in, or use "Forgot password" on the login page to reset it.',
+            code: 'account_exists',
+          },
+          { status: 409 }
         );
       }
 
-      console.log('[SET PASSWORD] Password updated successfully');
+      const { error: updateError } = await supabase.auth.admin.updateUserById(existingUser.id, { password });
+      if (updateError) {
+        console.error('[SET PASSWORD] Error updating password:', updateError);
+        return NextResponse.json({ error: updateError.message }, { status: 500 });
+      }
 
-      const { error: existingUserUpsertError } = await supabase.from('users').upsert(
-        {
-          id: existingUser.id,
-          email: normalizedEmail,
-          name: fallbackName,
-          role: 'CONTRACTOR',
-        },
-        { onConflict: 'id' }
-      );
-
-      if (existingUserUpsertError) {
-        console.error('[SET PASSWORD] Error upserting users row for existing auth user:', existingUserUpsertError);
-        return NextResponse.json(
-          { error: 'Failed to persist contractor user profile' },
-          { status: 500 }
-        );
+      // Only create the app user row if it's missing; never change an existing role.
+      const { data: existingRow } = await supabase.from('users').select('id').eq('id', existingUser.id).maybeSingle();
+      if (!existingRow) {
+        await supabase.from('users').insert({ id: existingUser.id, email: normalizedEmail, name: fallbackName, role: 'CONTRACTOR' });
       }
 
       return NextResponse.json({ success: true });
