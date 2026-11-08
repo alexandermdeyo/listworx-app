@@ -78,7 +78,7 @@ export default async function ContractorRecruitBar() {
           href="/contractors"
           className="shrink-0 rounded-md bg-white px-4 py-2 text-sm font-bold text-[#1a1a1a] transition-colors hover:bg-lw-rust hover:text-white"
         >
-          Sign up under For Contractors →
+          Join as a Home Service Pro: Click Here →
         </Link>
       </div>
 
