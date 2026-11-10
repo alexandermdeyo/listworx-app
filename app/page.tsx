@@ -53,7 +53,7 @@ const homeownerFaqs = [
   },
   {
     q: 'Why only three contractors per request?',
-    a: 'Most lead services blast your number to a dozen companies. We send you the three best matches for your trade and area, and you choose who to contact. No phone blowing up.',
+    a: 'Most lead services blast your number to a dozen companies. We send you up to three matches for your trade and area, and you choose who to contact. No phone blowing up.',
   },
   {
     q: 'What if a job goes wrong?',
@@ -95,7 +95,7 @@ const steps = [
     n: '02',
     icon: MessageSquareText,
     title: 'Get matched',
-    body: "Up to three verified contractors for your trade, area, and timeline — you'll only see trades a verified pro actually covers in your county. Your details stay private until you reach out.",
+    body: "Up to three verified contractors for your trade and area — you'll only see trades a verified pro actually covers in your county. Your details stay private until you reach out.",
   },
   {
     n: '03',
