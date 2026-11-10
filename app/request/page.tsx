@@ -515,7 +515,7 @@ function RequestPageContent() {
       )}
       <section className="relative overflow-hidden flex items-center min-h-[85vh] md:min-h-[720px] py-20">
         <img
-          src="/painter-fireplace.jpg"
+          src="/optimized/painter-fireplace.webp"
           alt=""
           className="absolute inset-0 h-full w-full object-cover object-[35%_center]"
           aria-hidden="true"
@@ -528,7 +528,7 @@ function RequestPageContent() {
         />
         <div className="relative z-10 container mx-auto px-4 max-w-4xl text-center">
           <img
-            src="/Ironclad_Standards_Logo.png"
+            src="/optimized/Ironclad_Standards_Logo.webp"
             alt=""
             className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
             aria-hidden="true"

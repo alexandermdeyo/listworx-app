@@ -50,7 +50,7 @@ export default function FoundingPartnerPage() {
       <section className="container mx-auto px-4 py-20 text-center">
         <RevealBadge className="mx-auto mb-5">
           <img
-            src="/ironclad_founder_shield_logo.png"
+            src="/optimized/ironclad_founder_shield_logo.webp"
             alt="ListWorx Founding Partner"
             className="mx-auto h-24 md:h-32 w-auto drop-shadow-lg"
           />
@@ -147,7 +147,7 @@ export default function FoundingPartnerPage() {
 
       <Reveal as="section" className="container mx-auto px-4 py-20 text-center">
         <img
-          src="/ironclad_founder_shield_logo.png"
+          src="/optimized/ironclad_founder_shield_logo.webp"
           alt=""
           className="mx-auto mb-4 h-20 w-auto drop-shadow-md"
           aria-hidden="true"

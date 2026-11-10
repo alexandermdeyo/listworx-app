@@ -108,7 +108,7 @@ export default function America250Banner() {
           {/* Right: medallion */}
           <div className="flex-shrink-0 flex items-center justify-center" style={{ background: 'transparent' }}>
             <Image
-              src="/america250-medallion-transparent.png"
+              src="/optimized/america250-medallion-transparent.webp"
               alt="America 250 — Still Building"
               width={260}
               height={260}

@@ -166,7 +166,7 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
           </Link>
           <Link href="/ironclad" className="flex items-center shrink-0" aria-label="IronClad Certified Standards">
             <img
-              src="/Ironclad_Standards_Logo.png"
+              src="/optimized/Ironclad_Standards_Logo.webp"
               alt="IronClad Standards"
               className="h-9 md:h-11 w-auto"
             />
