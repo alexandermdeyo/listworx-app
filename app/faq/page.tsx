@@ -4,6 +4,14 @@ import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'FAQ: How ListWorx Referrals Work | ListWorx',
+  description:
+    'Answers about ListWorx: how contractor referrals work, IronClad certification, Founding Partner status, and what homeowners, realtors, and contractors can expect.',
+  path: '/faq',
+});
 
 const generalFaqs = [
   ['What is ListWorx?', 'ListWorx is a contractor referral network for realtors and homeowners. We match each request with up to three vetted, IronClad-certified contractors in your area. No referral fees. No bidding wars.'],

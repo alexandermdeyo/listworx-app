@@ -21,6 +21,14 @@ import FaqSection from '@/components/site/FaqSection';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
 import HolidayBar from '@/components/site/HolidayBar';
 import ContractorRecruitBar from '@/components/site/ContractorRecruitBar';
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'ListWorx | Vetted Home Service Contractor Referral Network',
+  description:
+    'ListWorx matches homeowners and realtors with up to three vetted, licensed, and insured home service contractors. Free for homeowners and realtors. Built in Gallatin, TN for Sumner County, Nashville, and Middle Tennessee.',
+  path: '',
+});
 
 // Rebuild hourly so seasonal banners switch on and off by date without a redeploy.
 export const revalidate = 3600;

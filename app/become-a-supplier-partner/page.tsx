@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 import Link from 'next/link';
 import { CircleCheck as CheckCircle, ArrowRight, Store } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -8,11 +9,12 @@ import { Button } from '@/components/ui/button';
 import PartnerInquiryForm from '@/components/site/PartnerInquiryForm';
 import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Become a Supplier Partner | ListWorx',
   description:
     'Put your business in front of every ListWorx contractor — featured placement in their dashboard, a logo on the homepage, and newsletter mentions.',
-};
+  path: '/become-a-supplier-partner',
+});
 
 const WHAT_YOU_GET = [
   'Featured placement in every contractor’s dashboard — the exact audience buying what you sell',

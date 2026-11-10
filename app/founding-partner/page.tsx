@@ -6,6 +6,14 @@ import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
 import FoundingPartnerCard from '@/components/founding-partner/FoundingPartnerCard';
 import { Reveal, RevealBadge } from '@/components/motion';
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'Become a Founding Partner Contractor | ListWorx',
+  description:
+    'Founding Partner contractors lock in their ListWorx membership rate for life. Applications are reviewed against IronClad Standards, and Founding Partner pricing is available only after approval.',
+  path: '/founding-partner',
+});
 
 const features = [
   ['Rate Locked From Day One', 'The rate you activate at is the rate you pay forever. Not until next year. Not after a trial. From the moment you activate, that number is yours for life.'],

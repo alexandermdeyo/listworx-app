@@ -201,20 +201,26 @@ async function getPublicProfile(idOrSlug: string): Promise<PublicProfileData | n
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const data = await getPublicProfile(params.id);
   if (!data) {
-    return { title: 'Contractor Profile | ListWorx' };
+    return { title: 'Contractor Profile | ListWorx', robots: { index: false, follow: true } };
   }
 
   const trade = data.trades[0]?.name || 'Contractor';
   const county = data.counties[0]?.name || 'your area';
   const businessName = data.profile.company_name || 'Contractor';
-  const description = `${businessName} is a vetted ${trade} contractor serving ${county}. IronClad certified through ListWorx.`;
+  // No certification claim here: "IronClad certified" is a separate admin-set status,
+  // and this description is shown in search results for every public profile.
+  const description = `${businessName} is a ${trade} contractor in the ListWorx network serving ${county}.`;
+  // Self-referencing so the profile doesn't inherit the /contractors page's canonical.
+  const url = `https://listworx.co/contractors/${params.id}`;
 
   return {
     title: `${businessName} — ${trade} in ${county} | ListWorx`,
     description,
+    alternates: { canonical: url },
     openGraph: {
       title: `${businessName} | ListWorx`,
       description,
+      url,
       images: data.profile.logo_url ? [{ url: data.profile.logo_url }] : undefined,
     },
   };
