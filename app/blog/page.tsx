@@ -1,21 +1,12 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
+import { getPublishedPosts, type BlogPostSummary as BlogPost } from '@/lib/blog';
 
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  featured_image_url: string | null;
-  author_name: string;
-  published_at: string | null;
-  created_at: string;
-}
+// Rendered on the server for every request so post titles and links are in the
+// HTML crawlers receive, with the same freshness as the previous browser fetch.
+export const dynamic = 'force-dynamic';
 
 function formatDate(iso: string | null) {
   if (!iso) return '';
@@ -80,17 +71,14 @@ function PostCard({ post, featured }: { post: BlogPost; featured?: boolean }) {
   );
 }
 
-export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/blog')
-      .then(r => r.json())
-      .then(data => setPosts(Array.isArray(data) ? data : []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+export default async function BlogPage() {
+  let posts: BlogPost[] = [];
+  try {
+    posts = await getPublishedPosts();
+  } catch (err) {
+    // Same fallback as before: an unreachable database shows the empty state.
+    console.error('[blog] failed to load posts:', err);
+  }
 
   const [hero, ...rest] = posts;
 
@@ -116,21 +104,7 @@ export default function BlogPage() {
       {/* Content */}
       <section className="py-14 md:py-20">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="rounded-2xl border border-zinc-200 bg-white overflow-hidden animate-pulse">
-                  <div className="aspect-video bg-zinc-100" />
-                  <div className="p-5 space-y-2">
-                    <div className="h-3 bg-zinc-200 rounded w-1/4" />
-                    <div className="h-4 bg-zinc-200 rounded w-3/4" />
-                    <div className="h-3 bg-zinc-200 rounded w-full" />
-                    <div className="h-3 bg-zinc-200 rounded w-2/3" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : posts.length === 0 ? (
+          {posts.length === 0 ? (
             <div className="text-center py-28">
               <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center mx-auto mb-4">
                 <ArrowRight className="h-6 w-6 text-mkt-ink/60" />
