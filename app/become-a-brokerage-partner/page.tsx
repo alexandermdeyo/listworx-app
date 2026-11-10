@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 import Link from 'next/link';
 import { CircleCheck as CheckCircle, ArrowRight, Building2 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -8,11 +9,12 @@ import { Button } from '@/components/ui/button';
 import PartnerInquiryForm from '@/components/site/PartnerInquiryForm';
 import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Become a Brokerage Partner | ListWorx',
   description:
     'Get your brokerage in front of homeowners before they’ve chosen an agent — a credited interview or video on the ListWorx site and newsletter, plus a logo on the homepage.',
-};
+  path: '/become-a-brokerage-partner',
+});
 
 const WHAT_YOU_GET = [
   'One of your realtors featured in a short interview or video on a topic that matters to sellers (staging, pricing, timing to list)',

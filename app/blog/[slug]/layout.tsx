@@ -1,26 +1,19 @@
 import type { Metadata } from 'next';
-import { createSupabaseAdminClient } from '@/lib/supabase-admin';
-
-const SITE_URL = 'https://listworx.co';
+import { getPublishedPost } from '@/lib/blog';
+import { SITE_URL, DEFAULT_OG_IMAGE } from '@/lib/seo';
 
 /**
- * The article page renders in the browser, so this server layout supplies the
- * title, description, and share image Facebook, Google, and texts show for the link.
+ * Supplies the title, description, canonical, and share image that Google,
+ * Facebook, and texts show for a post. Shares one cached query with the page.
  */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   try {
-    const supabase = createSupabaseAdminClient();
-    const { data: post } = await supabase
-      .from('blog_posts')
-      .select('title, excerpt, featured_image_url, slug, published_at')
-      .eq('slug', params.slug)
-      .eq('is_draft', false)
-      .maybeSingle();
-    if (!post) return { title: 'Blog | ListWorx' };
+    const post = await getPublishedPost(params.slug);
+    if (!post) return { title: 'Post Not Found | ListWorx', robots: { index: false, follow: true } };
 
     const url = `${SITE_URL}/blog/${post.slug}`;
     const description = post.excerpt || 'Homeowner advice and contractor know-how from ListWorx.';
-    const images = post.featured_image_url ? [{ url: post.featured_image_url }] : [{ url: `${SITE_URL}/brand/listworx-og.png`, width: 1200, height: 630 }];
+    const images = post.featured_image_url ? [{ url: post.featured_image_url }] : [DEFAULT_OG_IMAGE];
     return {
       title: `${post.title} | ListWorx`,
       description,

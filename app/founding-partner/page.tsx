@@ -6,6 +6,14 @@ import { Card } from '@/components/ui/card';
 import { PageShell } from '@/components/design-system';
 import FoundingPartnerCard from '@/components/founding-partner/FoundingPartnerCard';
 import { Reveal, RevealBadge } from '@/components/motion';
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'Become a Founding Partner Contractor | ListWorx',
+  description:
+    'Founding Partner contractors lock in their ListWorx membership rate for life. Applications are reviewed against IronClad Standards, and Founding Partner pricing is available only after approval.',
+  path: '/founding-partner',
+});
 
 const features = [
   ['Rate Locked From Day One', 'The rate you activate at is the rate you pay forever. Not until next year. Not after a trial. From the moment you activate, that number is yours for life.'],
@@ -42,7 +50,7 @@ export default function FoundingPartnerPage() {
       <section className="container mx-auto px-4 py-20 text-center">
         <RevealBadge className="mx-auto mb-5">
           <img
-            src="/ironclad_founder_shield_logo.png"
+            src="/optimized/ironclad_founder_shield_logo.webp"
             alt="ListWorx Founding Partner"
             className="mx-auto h-24 md:h-32 w-auto drop-shadow-lg"
           />
@@ -139,7 +147,7 @@ export default function FoundingPartnerPage() {
 
       <Reveal as="section" className="container mx-auto px-4 py-20 text-center">
         <img
-          src="/ironclad_founder_shield_logo.png"
+          src="/optimized/ironclad_founder_shield_logo.webp"
           alt=""
           className="mx-auto mb-4 h-20 w-auto drop-shadow-md"
           aria-hidden="true"

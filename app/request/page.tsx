@@ -515,7 +515,7 @@ function RequestPageContent() {
       )}
       <section className="relative overflow-hidden flex items-center min-h-[85vh] md:min-h-[720px] py-20">
         <img
-          src="/painter-fireplace.jpg"
+          src="/optimized/painter-fireplace.webp"
           alt=""
           className="absolute inset-0 h-full w-full object-cover object-[35%_center]"
           aria-hidden="true"
@@ -528,14 +528,14 @@ function RequestPageContent() {
         />
         <div className="relative z-10 container mx-auto px-4 max-w-4xl text-center">
           <img
-            src="/Ironclad_Standards_Logo.png"
+            src="/optimized/Ironclad_Standards_Logo.webp"
             alt=""
             className="mx-auto mb-6 h-20 md:h-24 w-auto drop-shadow-md"
             aria-hidden="true"
           />
           <h1 className="text-3xl sm:text-5xl font-bold mb-5 break-words text-white">Request a Contractor Referral</h1>
           <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Tell us about your project and we&apos;ll match you with three IronClad-verified contractors — licensed, insured, and background-checked — usually in under 30 seconds. No bidding wars, no spam calls, no guessing who&apos;s legit. Review their profiles and reach out to the ones you like. It&apos;s free, with no obligation to hire anyone.
+            Tell us about your project and we&apos;ll match you with up to three approved network contractors — licensed, insured, and background-checked — usually in under 30 seconds. No bidding wars, no spam calls, no guessing who&apos;s legit. Review their profiles and reach out to the ones you like. It&apos;s free, with no obligation to hire anyone.
           </p>
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto text-left">
             <div className="flex items-start gap-3 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">

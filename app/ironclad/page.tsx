@@ -79,7 +79,7 @@ export default function IronCladStandardsPage() {
           <div className="mx-auto max-w-3xl text-center">
             <RevealBadge className="mb-8 flex justify-center">
               <Image
-                src="/Ironclad_Standards_Logo.png"
+                src="/optimized/Ironclad_Standards_Logo.webp"
                 alt="IronClad Standards"
                 width={280}
                 height={280}
@@ -534,7 +534,7 @@ export default function IronCladStandardsPage() {
             <div className="flex flex-col items-center gap-8 md:flex-row md:gap-12">
               <div className="flex-shrink-0">
                 <Image
-                  src="/ironclad_founder_shield_logo.png"
+                  src="/optimized/ironclad_founder_shield_logo.webp"
                   alt="IronClad Founding Partner"
                   width={160}
                   height={160}
@@ -588,7 +588,7 @@ export default function IronCladStandardsPage() {
         <div className="relative container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <Image
-              src="/Ironclad_Cert_Partner_Final_Logo.png"
+              src="/optimized/Ironclad_Cert_Partner_Final_Logo.webp"
               alt="IronClad Certified Partner"
               width={100}
               height={100}

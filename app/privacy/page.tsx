@@ -1,5 +1,12 @@
 import Navigation from '@/components/Navigation';
 import { Reveal } from '@/components/motion';
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'Privacy Policy | ListWorx',
+  description: 'How ListWorx collects, uses, and protects information from homeowners, realtors, and contractors.',
+  path: '/privacy',
+});
 
 export default function PrivacyPage() {
   return (

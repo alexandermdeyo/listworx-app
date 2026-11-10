@@ -11,7 +11,7 @@ export default function RemembranceBar() {
     >
       {/* the flag, mostly visible, edge-masked so it never fights the text */}
       <img
-        src="/images/redesign/flag-distressed.jpg"
+        src="/optimized/flag-distressed.webp"
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover object-[center_35%] opacity-[0.7] saturate-[0.9]"
