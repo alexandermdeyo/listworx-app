@@ -21,7 +21,8 @@ import FaqSection from '@/components/site/FaqSection';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
 import HolidayBar from '@/components/site/HolidayBar';
 import ContractorRecruitBar from '@/components/site/ContractorRecruitBar';
-import { pageMetadata } from '@/lib/seo';
+import { pageMetadata, homepageStructuredData } from '@/lib/seo';
+import JsonLd from '@/components/seo/JsonLd';
 
 export const metadata = pageMetadata({
   title: 'ListWorx | Vetted Home Service Contractor Referral Network',
@@ -107,6 +108,7 @@ const steps = [
 export default function LandingPage() {
   return (
     <PageShell surface="marketing">
+      <JsonLd data={homepageStructuredData} />
       <Navigation variant="light" />
 
       <HolidayBar />

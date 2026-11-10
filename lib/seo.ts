@@ -46,6 +46,53 @@ export function pageMetadata({
   };
 }
 
+/**
+ * Organization + WebSite structured data for the homepage.
+ * Only verified, already-public facts. Location is city/state only — never a
+ * street address (the business operates from a private residence).
+ * No LocalBusiness type, reviews, or ratings.
+ */
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+
+export const homepageStructuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': ORGANIZATION_ID,
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: `${SITE_URL}/LW_Logo.png`,
+      description:
+        'ListWorx is a standards-based referral network that matches homeowners and realtors with vetted home service contractors. ListWorx does not perform home services itself.',
+      slogan: 'Elevate the standard. Protect the brand. Deliver with integrity.',
+      email: 'adeyo@listworx.co',
+      telephone: '+1-615-362-4996',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Gallatin',
+        addressRegion: 'TN',
+        addressCountry: 'US',
+      },
+      areaServed: [
+        { '@type': 'City', name: 'Gallatin, Tennessee' },
+        { '@type': 'City', name: 'Hendersonville, Tennessee' },
+        { '@type': 'AdministrativeArea', name: 'Sumner County, Tennessee' },
+        { '@type': 'City', name: 'Nashville, Tennessee' },
+        { '@type': 'AdministrativeArea', name: 'Middle Tennessee' },
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      publisher: { '@id': ORGANIZATION_ID },
+      inLanguage: 'en-US',
+    },
+  ],
+};
+
 /** Metadata for pages that should work normally but stay out of search results. */
 export function noindexMetadata(title: string): Metadata {
   return {
