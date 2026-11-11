@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { buildReviewUpdate } from '@/lib/compliance/rules';
 
 function createAdminClient() {
   return createClient(
@@ -9,9 +10,10 @@ function createAdminClient() {
   );
 }
 
-async function verifyAdmin(request: NextRequest): Promise<boolean> {
+/** Returns the signed-in admin's user id, or null. */
+async function verifyAdmin(request: NextRequest): Promise<string | null> {
   const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) return false;
+  if (!authHeader?.startsWith('Bearer ')) return null;
 
   const token = authHeader.slice(7);
   const supabaseAdmin = createAdminClient();
@@ -21,7 +23,7 @@ async function verifyAdmin(request: NextRequest): Promise<boolean> {
     error,
   } = await supabaseAdmin.auth.getUser(token);
 
-  if (error || !user) return false;
+  if (error || !user) return null;
 
   const { data: userData } = await supabaseAdmin
     .from('users')
@@ -29,7 +31,7 @@ async function verifyAdmin(request: NextRequest): Promise<boolean> {
     .eq('id', user.id)
     .maybeSingle();
 
-  return userData?.role === 'ADMIN';
+  return userData?.role === 'ADMIN' ? user.id : null;
 }
 
 function extractStoragePathFromDocumentUrl(documentUrl: string): string | null {
@@ -84,7 +86,8 @@ export async function GET(request: NextRequest) {
       .from('contractor_documents')
       .select('*')
       .eq('contractor_id', contractorId)
-      .order('document_type');
+      .order('document_type')
+      .order('created_at', { ascending: false }); // newest upload first; older ones are history
 
     if (error) throw error;
 
@@ -99,13 +102,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const isAdmin = await verifyAdmin(request);
-    if (!isAdmin) {
+    const adminId = await verifyAdmin(request);
+    if (!adminId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     const body = await request.json();
-    const { action, documentUrl, documentId, reviewStatus, reviewNotes } = body;
+    const { action, documentUrl, documentId, reviewStatus, reviewNotes, expirationDate, licensingAuthority, verificationNote } = body;
 
     const supabaseAdmin = createAdminClient();
 
@@ -155,13 +158,25 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      const { data: doc, error: docError } = await supabaseAdmin
+        .from('contractor_documents')
+        .select('document_type, expiration_date')
+        .eq('id', documentId)
+        .maybeSingle();
+      if (docError) throw docError;
+      if (!doc) return NextResponse.json({ error: 'Document not found.' }, { status: 404 });
+
+      // Reviewer and time come from the server, never the request body.
+      const review = buildReviewUpdate(
+        doc,
+        { status: reviewStatus, notes: reviewNotes, expirationDate, licensingAuthority, verificationNote },
+        adminId
+      );
+      if (!review.ok) return NextResponse.json({ error: review.error }, { status: 400 });
+
       const { error } = await supabaseAdmin
         .from('contractor_documents')
-        .update({
-          status: reviewStatus,
-          notes: reviewNotes ?? null,
-          updated_at: new Date().toISOString(),
-        })
+        .update(review.update)
         .eq('id', documentId);
 
       if (error) throw error;

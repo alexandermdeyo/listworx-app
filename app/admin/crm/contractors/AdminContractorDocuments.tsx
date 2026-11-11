@@ -31,7 +31,7 @@ import {
 interface ContractorDocument {
   id: string;
   contractor_id: string;
-  document_type: 'LICENSE' | 'INSURANCE' | 'CERTIFICATION' | 'OTHER';
+  document_type: 'LICENSE' | 'INSURANCE' | 'CERTIFICATION' | 'OTHER' | 'AWARD';
   document_url: string;
   expiration_date: string | null;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED' | null;
@@ -39,6 +39,11 @@ interface ContractorDocument {
   created_at: string | null;
   updated_at: string | null;
   file_name: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  licensing_authority?: string | null;
+  verification_note?: string | null;
+  replaces_document_id?: string | null;
 }
 
 interface AdminContractorDocumentsProps {
@@ -119,6 +124,9 @@ export default function AdminContractorDocuments({
   const [editingReview, setEditingReview] = useState<string | null>(null);
   const [reviewStatus, setReviewStatus] = useState<string>('');
   const [reviewNotes, setReviewNotes] = useState<string>('');
+  const [reviewExpiration, setReviewExpiration] = useState<string>('');
+  const [reviewAuthority, setReviewAuthority] = useState<string>('');
+  const [reviewVerificationNote, setReviewVerificationNote] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -212,6 +220,9 @@ export default function AdminContractorDocuments({
     setEditingReview(doc.id);
     setReviewStatus(doc.status || 'PENDING');
     setReviewNotes(doc.notes ?? '');
+    setReviewExpiration(doc.expiration_date ?? '');
+    setReviewAuthority(doc.licensing_authority ?? '');
+    setReviewVerificationNote(doc.verification_note ?? '');
   }
 
   async function submitReview(documentId: string) {
@@ -232,6 +243,9 @@ export default function AdminContractorDocuments({
           documentId,
           reviewStatus,
           reviewNotes,
+          expirationDate: reviewExpiration || null,
+          licensingAuthority: reviewAuthority,
+          verificationNote: reviewVerificationNote,
         }),
       });
 
@@ -364,6 +378,18 @@ export default function AdminContractorDocuments({
                   </div>
                 )}
 
+                {doc.reviewed_at && !isEditing && (
+                  <p className="text-xs text-muted-foreground">
+                    Reviewed {new Date(doc.reviewed_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+                    {doc.licensing_authority ? ` · Checked with ${doc.licensing_authority}` : ''}
+                    {doc.verification_note ? ` · ${doc.verification_note}` : ''}
+                  </p>
+                )}
+
+                {doc.replaces_document_id && !isEditing && (
+                  <p className="text-xs text-muted-foreground">Renewal of an earlier upload (kept below).</p>
+                )}
+
                 {doc.notes && !isEditing && (
                   <p className="text-xs bg-muted px-3 py-2 rounded border">
                     <span className="font-semibold">Review note: </span>
@@ -384,6 +410,37 @@ export default function AdminContractorDocuments({
                         <SelectItem value="EXPIRED">Expired</SelectItem>
                       </SelectContent>
                     </Select>
+
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <label className="text-xs">
+                        <span className="text-muted-foreground">Expiration date (required to approve license/insurance)</span>
+                        <input
+                          type="date"
+                          value={reviewExpiration}
+                          onChange={(e) => setReviewExpiration(e.target.value)}
+                          className="mt-1 h-8 w-full rounded border px-2 text-xs"
+                        />
+                      </label>
+                      {doc.document_type === 'LICENSE' && (
+                        <label className="text-xs">
+                          <span className="text-muted-foreground">Licensing authority checked</span>
+                          <input
+                            value={reviewAuthority}
+                            onChange={(e) => setReviewAuthority(e.target.value)}
+                            placeholder="e.g. Tennessee Board for Licensing Contractors"
+                            className="mt-1 h-8 w-full rounded border px-2 text-xs"
+                          />
+                        </label>
+                      )}
+                    </div>
+                    <input
+                      value={reviewVerificationNote}
+                      onChange={(e) => setReviewVerificationNote(e.target.value)}
+                      placeholder={doc.document_type === 'INSURANCE'
+                        ? 'What you reviewed on the certificate (insurer is not contacted)'
+                        : 'What you checked (e.g. license number, lookup date)'}
+                      className="h-8 w-full rounded border px-2 text-xs"
+                    />
 
                     <Textarea
                       value={reviewNotes}
