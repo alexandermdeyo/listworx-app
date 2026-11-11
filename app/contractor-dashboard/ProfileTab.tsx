@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import ComplianceDocuments from './ComplianceDocuments';
 import type { ContractorProfile } from './types';
+import { ownedMediaPath } from '@/lib/media-paths';
 import {
   Loader as Loader2,
   CircleAlert as AlertCircle,
@@ -72,8 +73,8 @@ export default function ProfileTab({ profile, onProfileUpdated, onUserEmailUpdat
         throw new Error('File must be under 5MB');
       }
 
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${profile.user_id}-${Date.now()}.${fileExt}`;
+      // Stored under the uploader's own folder; storage only allows writes there.
+      const filePath = ownedMediaPath(profile.user_id, 'logo', file.name);
 
       const { error: storageError } = await supabase.storage
         .from('logos')
