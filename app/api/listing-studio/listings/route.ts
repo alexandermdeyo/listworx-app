@@ -6,9 +6,11 @@ import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 
 async function getAuthedRealtor(request: NextRequest) {
   const supabase = createClient();
+  // getUser() verifies the token with Supabase Auth; getSession() trusts the cookie as-is.
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user: verifiedUser },
+  } = await supabase.auth.getUser();
+  const session = verifiedUser ? { user: verifiedUser } : null;
 
   if (!session?.user) {
     return { user: null, error: 'Unauthorized', status: 401 } as const;
