@@ -3,11 +3,13 @@
  * public.license_requirement_for() (supabase/proposed/20261111000100_document_compliance.sql),
  * used by the application form before a contractor record and any admin decision exist.
  *
- * Order: county rule, else state rule, else unknown. "case_by_case" and unknown
- * both mean an administrator decides; neither is treated as "license required".
+ * Order (same as the database): the contractor's county decision, the county
+ * rule, the contractor's statewide decision, the state rule. "case_by_case",
+ * "awaiting_determination" and nothing recorded all mean an administrator
+ * decides; none is treated as "license required".
  */
 
-export type LicenseRequirementValue = 'required' | 'not_required' | 'case_by_case';
+export type LicenseRequirementValue = 'required' | 'not_required' | 'case_by_case' | 'awaiting_determination';
 export type LicenseResolution = 'required' | 'not_required' | 'needs_review';
 
 export type LicenseRule = {
@@ -20,12 +22,37 @@ export type LicenseRule = {
 
 export type CountyRef = { id: string; state_code: string | null };
 
-export function resolveLicenseRequirement(rules: LicenseRule[], categoryId: string, county: CountyRef): LicenseResolution {
+/** An administrator's decision for one contractor, trade and jurisdiction. */
+export type LicenseDecision = {
+  contractor_id: string;
+  category_id: string;
+  state_code: string;
+  county_id: string | null;
+  requirement: Exclude<LicenseRequirementValue, 'case_by_case'>;
+};
+
+function toResolution(value: LicenseRequirementValue | undefined): LicenseResolution {
+  return value === 'required' || value === 'not_required' ? value : 'needs_review';
+}
+
+export function resolveLicenseRequirement(
+  rules: LicenseRule[],
+  categoryId: string,
+  county: CountyRef,
+  decisions: LicenseDecision[] = [],
+  contractorId?: string
+): LicenseResolution {
   const state = (county.state_code || '').toUpperCase();
-  const forTrade = rules.filter((r) => r.category_id === categoryId && r.state_code.toUpperCase() === state);
-  const rule = forTrade.find((r) => r.county_id === county.id) || forTrade.find((r) => r.county_id === null);
-  if (!rule) return 'needs_review';
-  return rule.requirement === 'case_by_case' ? 'needs_review' : rule.requirement;
+  const rulesHere = rules.filter((r) => r.category_id === categoryId && r.state_code.toUpperCase() === state);
+  const decisionsHere = contractorId
+    ? decisions.filter((d) => d.contractor_id === contractorId && d.category_id === categoryId && d.state_code.toUpperCase() === state)
+    : [];
+  const pick =
+    decisionsHere.find((d) => d.county_id === county.id) ||
+    rulesHere.find((r) => r.county_id === county.id) ||
+    decisionsHere.find((d) => d.county_id === null) ||
+    rulesHere.find((r) => r.county_id === null);
+  return toResolution(pick?.requirement);
 }
 
 export type LicensePair = { categoryId: string; countyId: string };

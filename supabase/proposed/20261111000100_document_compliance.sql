@@ -42,15 +42,21 @@ create index if not exists contractor_documents_contractor_type_idx
 --      optional county-level override. 'case_by_case' = depends on the job
 --      (e.g. a project-value threshold) and needs an admin decision.
 --    * contractor_license_determinations: the admin's decision for one
---      contractor + trade when no rule exists or the rule is case by case.
---    Resolution for a contractor, trade and county: the admin decision, else the
---    county rule, else the state rule, else 'needs_review'. A trade is never
---    treated as license-required unless an admin says so.
+--      contractor + trade in one jurisdiction (a whole state, or one county):
+--      required / not_required / awaiting_determination, with a note, a source
+--      link and optionally the supporting document.
+--    Resolution for a contractor, trade and county: the contractor's county
+--    decision, else the county rule, else their statewide decision, else the
+--    state rule, else 'needs_review' (a statewide decision never overrides a
+--    stricter county rule). 'case_by_case' and 'awaiting_determination'
+--    also mean 'needs_review'. A trade is never treated as license-required
+--    unless an admin says so; a pending case blocks only that trade in that
+--    jurisdiction (owner decision 2026-11-12).
 -- ---------------------------------------------------------------------------
 do $$ begin
   if not exists (select 1 from pg_type t join pg_namespace n on n.oid = t.typnamespace
                   where t.typname = 'license_requirement' and n.nspname = 'public') then
-    create type public.license_requirement as enum ('required', 'not_required', 'case_by_case');
+    create type public.license_requirement as enum ('required', 'not_required', 'case_by_case', 'awaiting_determination');
   end if;
 end $$;
 
@@ -72,16 +78,23 @@ comment on table public.license_requirements is
   'Admin-maintained licensing rule per trade and state (county_id null) or county (override). Source and conditions record why.';
 
 create table if not exists public.contractor_license_determinations (
-  contractor_id uuid not null references public.contractor_profiles(id) on delete cascade,
-  category_id   uuid not null references public.categories(id) on delete cascade,
-  requirement   public.license_requirement not null check (requirement <> 'case_by_case'),
-  note          text,
-  decided_by    uuid references public.users(id) on delete set null default auth.uid(),
-  decided_at    timestamptz not null default now(),
-  primary key (contractor_id, category_id)
+  id                  uuid primary key default gen_random_uuid(),
+  contractor_id       uuid not null references public.contractor_profiles(id) on delete cascade,
+  category_id         uuid not null references public.categories(id) on delete cascade,
+  state_code          text not null check (state_code ~ '^[A-Z]{2}$'),
+  county_id           uuid references public.counties(id) on delete cascade,
+  requirement         public.license_requirement not null check (requirement <> 'case_by_case'),
+  note                text,
+  source_url          text,
+  supporting_document_id uuid references public.contractor_documents(id) on delete set null,
+  decided_by          uuid references public.users(id) on delete set null default auth.uid(),
+  decided_at          timestamptz not null default now()
 );
+create unique index if not exists contractor_license_determinations_scope_uidx
+  on public.contractor_license_determinations
+  (contractor_id, category_id, state_code, coalesce(county_id, '00000000-0000-0000-0000-000000000000'::uuid));
 comment on table public.contractor_license_determinations is
-  'Admin decision for one contractor and trade when no rule applies or the rule is case by case.';
+  'Admin decision for one contractor, trade and jurisdiction (state, or one county): required, not_required or awaiting_determination, with supporting information.';
 
 alter table public.license_requirements enable row level security;
 alter table public.contractor_license_determinations enable row level security;
@@ -108,19 +121,31 @@ grant insert, update, delete on public.license_requirements, public.contractor_l
 -- 'required' | 'not_required' | 'needs_review' for one contractor, trade and county.
 create or replace function public.license_requirement_for(p_contractor_id uuid, p_category_id uuid, p_county_id uuid)
 returns text language sql stable security invoker set search_path = public as $$
-  select coalesce(
-    (select d.requirement::text
-       from public.contractor_license_determinations d
-      where d.contractor_id = p_contractor_id and d.category_id = p_category_id),
-    (select case r.requirement when 'case_by_case' then 'needs_review' else r.requirement::text end
-       from public.license_requirements r
-       join public.counties c on c.id = p_county_id
-      where r.category_id = p_category_id
-        and r.state_code = c.state_code
-        and (r.county_id = p_county_id or r.county_id is null)
-      order by r.county_id nulls last
-      limit 1),
-    'needs_review')
+  with place as (select c.id as county_id, c.state_code from public.counties c where c.id = p_county_id),
+  candidates as (
+    -- 1. admin decision for this contractor in this county
+    select d.requirement::text as req, 1 as prio from public.contractor_license_determinations d, place
+     where d.contractor_id = p_contractor_id and d.category_id = p_category_id
+       and d.state_code = place.state_code and d.county_id = place.county_id
+    union all
+    -- 2. county rule
+    select r.requirement::text, 2 from public.license_requirements r, place
+     where r.category_id = p_category_id and r.state_code = place.state_code and r.county_id = place.county_id
+    union all
+    -- 3. admin decision for this contractor statewide
+    select d.requirement::text, 3 from public.contractor_license_determinations d, place
+     where d.contractor_id = p_contractor_id and d.category_id = p_category_id
+       and d.state_code = place.state_code and d.county_id is null
+    union all
+    -- 4. state rule
+    select r.requirement::text, 4 from public.license_requirements r, place
+     where r.category_id = p_category_id and r.state_code = place.state_code and r.county_id is null
+  )
+  select case (select req from candidates order by prio limit 1)
+    when 'required' then 'required'
+    when 'not_required' then 'not_required'
+    else 'needs_review'   -- case_by_case, awaiting_determination, or nothing recorded
+  end
 $$;
 
 -- ---------------------------------------------------------------------------

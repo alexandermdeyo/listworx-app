@@ -58,3 +58,18 @@ test('existing application uploads are found by their storage path', () => {
   assert.equal(documentPathFromUrl('https://x.supabase.co/storage/v1/object/public/logos/a.png'), null);
   assert.equal(documentPathFromUrl(''), null);
 });
+
+// ---------- admin decisions per jurisdiction (mirrors DB tests C24-C26) ----------
+test('decision precedence: county decision > county rule > statewide decision > state rule', () => {
+  const d = (county_id, requirement) => ({ contractor_id: 'E', category_id: 'roof', state_code: 'TN', county_id, requirement });
+  assert.equal(resolveLicenseRequirement(rules, 'roof', davidson, [d(null, 'not_required')], 'E'), 'required', 'statewide decision must not beat a county rule');
+  assert.equal(resolveLicenseRequirement(rules, 'roof', davidson, [d(null, 'not_required'), d('davidson', 'not_required')], 'E'), 'not_required');
+  assert.equal(resolveLicenseRequirement(rules, 'handyman', sumner, [{ ...d(null, 'not_required'), category_id: 'handyman' }], 'E'), 'not_required');
+});
+
+test('decisions apply only to their contractor and state; awaiting means review', () => {
+  const dec = [{ contractor_id: 'E', category_id: 'handyman', state_code: 'TN', county_id: null, requirement: 'not_required' }];
+  assert.equal(resolveLicenseRequirement(rules, 'handyman', warren, dec, 'E'), 'needs_review');
+  assert.equal(resolveLicenseRequirement(rules, 'handyman', sumner, dec, 'someone-else'), 'needs_review');
+  assert.equal(resolveLicenseRequirement(rules, 'handyman', sumner, [{ ...dec[0], requirement: 'awaiting_determination' }], 'E'), 'needs_review');
+});

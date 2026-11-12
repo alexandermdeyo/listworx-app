@@ -298,8 +298,8 @@ end $$;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', json_build_object('sub', :admin, 'role', 'authenticated')::text, true);
-insert into public.contractor_license_determinations (contractor_id, category_id, requirement, note)
-values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000004', 'not_required', 'Small repairs only');
+insert into public.contractor_license_determinations (contractor_id, category_id, state_code, requirement, note)
+values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000004', 'TN', 'not_required', 'Small repairs only');
 commit;
 do $$ declare ok boolean; d record; begin
   select e.referral_eligible into ok from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000004'::uuid]) e;
@@ -315,8 +315,8 @@ do $$ declare reasons text[]; begin
   select e.hold_reasons into reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000005'::uuid]) e;
   if reasons <> array['license_requirement_under_review'] then raise exception 'C21 FAIL: case-by-case should await review, got %', reasons; end if;
 end $$;
-insert into public.contractor_license_determinations (contractor_id, category_id, requirement)
-values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000005', 'required');
+insert into public.contractor_license_determinations (contractor_id, category_id, state_code, requirement, note, source_url)
+values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000005', 'TN', 'required', 'Bids projects over $25,000', 'https://example.gov/board');
 do $$ declare reasons text[]; begin
   select e.hold_reasons into reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000005'::uuid]) e;
   if reasons <> array['license_missing_or_expired'] then raise exception 'C21 FAIL: after "required" decision expected missing license, got %', reasons; end if;
@@ -340,8 +340,8 @@ do $$ begin
   begin
     set local role authenticated;
     perform set_config('request.jwt.claims', json_build_object('sub', 'a0000000-0000-4000-8000-000000000005', 'role', 'authenticated')::text, true);
-    insert into public.contractor_license_determinations (contractor_id, category_id, requirement)
-    values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000002', 'not_required');
+    insert into public.contractor_license_determinations (contractor_id, category_id, state_code, requirement)
+    values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000002', 'TN', 'not_required');
     raise exception 'C22 FAIL: contractor decided own license requirement';
   exception when insufficient_privilege then null; end;
   reset role;
@@ -368,4 +368,68 @@ do $$ begin
   if has_function_privilege('anon', 'public.referral_eligibility(uuid[], uuid, uuid[])', 'execute') then
     raise exception 'C23 FAIL: anon can run eligibility check'; end if;
   raise notice 'C23 pass: no conflicting duplicate rules; eligibility check closed to logged-out visitors';
+end $$;
+
+-- ---------------------------------------------------------------------------
+-- Decisions per jurisdiction, precedence, and "awaiting determination" (owner decision 2026-11-12)
+-- ---------------------------------------------------------------------------
+insert into public.states (id, code, name) values ('d0000000-0000-4000-8000-000000000002', 'KY', 'Kentucky');
+insert into public.counties (id, state_id, name, state_code) values
+  ('d1000000-0000-4000-8000-000000000003', 'd0000000-0000-4000-8000-000000000002', 'Warren', 'KY');
+insert into public.contractor_counties (contractor_id, county_id) values ('b0000000-0000-4000-8000-00000000000e', 'd1000000-0000-4000-8000-000000000003');
+
+-- C24: a Tennessee decision does not carry into Kentucky
+do $$ declare ok boolean; reasons text[]; begin
+  select e.referral_eligible, e.hold_reasons into ok, reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000003', array['f0000000-0000-4000-8000-000000000004'::uuid]) e;
+  if ok or reasons <> array['license_requirement_under_review'] then raise exception 'C24 FAIL: TN decision applied in KY: %', reasons; end if;
+  if public.license_requirement_for('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000004', 'd1000000-0000-4000-8000-000000000001') <> 'not_required' then
+    raise exception 'C24 FAIL: TN decision lost in TN'; end if;
+  raise notice 'C24 pass: decisions are scoped to their state';
+end $$;
+
+-- C25: a statewide decision never overrides a stricter county rule; a county decision does
+insert into public.contractor_license_determinations (contractor_id, category_id, state_code, requirement, note)
+values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000003', 'TN', 'not_required', 'Statewide: repairs only');
+do $$ begin
+  if public.license_requirement_for('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000003', 'd1000000-0000-4000-8000-000000000002') <> 'required' then
+    raise exception 'C25 FAIL: statewide decision overrode the Davidson county rule'; end if;
+end $$;
+insert into public.contractor_license_determinations (contractor_id, category_id, state_code, county_id, requirement, note)
+values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000003', 'TN', 'd1000000-0000-4000-8000-000000000002', 'not_required', 'Davidson board confirmed exemption for this scope');
+do $$ begin
+  if public.license_requirement_for('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000003', 'd1000000-0000-4000-8000-000000000002') <> 'not_required' then
+    raise exception 'C25 FAIL: county-specific decision ignored'; end if;
+  raise notice 'C25 pass: county decision > county rule > statewide decision > state rule';
+end $$;
+
+-- C26: "awaiting determination" is recorded with supporting info; it holds only that trade, not unrelated ones
+insert into public.contractor_documents (id, contractor_id, document_type, expiration_date, status, notes)
+values ('e2000000-0000-4000-8000-000000000001', 'b0000000-0000-4000-8000-00000000000e', 'OTHER', null, 'PENDING', 'Scope letter');
+update public.contractor_license_determinations
+   set requirement = 'awaiting_determination', note = 'Asked contractor for typical project sizes',
+       source_url = 'https://example.gov/handyman', supporting_document_id = 'e2000000-0000-4000-8000-000000000001'
+ where contractor_id = 'b0000000-0000-4000-8000-00000000000e' and category_id = 'f0000000-0000-4000-8000-000000000004' and state_code = 'TN';
+do $$ declare ok boolean; reasons text[]; d record; begin
+  select e.referral_eligible, e.hold_reasons into ok, reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000004'::uuid]) e;
+  if ok or reasons <> array['license_requirement_under_review'] then raise exception 'C26 FAIL: awaiting decision should hold handyman, got %', reasons; end if;
+  select e.referral_eligible into ok from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000003'::uuid]) e;
+  if not ok then raise exception 'C26 FAIL: unrelated roofing job blocked by pending handyman case'; end if;
+  select * into d from public.contractor_license_determinations where contractor_id = 'b0000000-0000-4000-8000-00000000000e' and category_id = 'f0000000-0000-4000-8000-000000000004';
+  if d.note is null or d.source_url is null or d.supporting_document_id is null then raise exception 'C26 FAIL: supporting info not stored'; end if;
+  raise notice 'C26 pass: awaiting determination holds only that trade and place, with note, source and document kept';
+end $$;
+
+-- C27: "case by case" is never valid as a contractor decision; duplicates per jurisdiction rejected
+do $$ begin
+  begin
+    insert into public.contractor_license_determinations (contractor_id, category_id, state_code, requirement)
+    values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000002', 'KY', 'case_by_case');
+    raise exception 'C27 FAIL: case_by_case accepted as a decision';
+  exception when check_violation then null; end;
+  begin
+    insert into public.contractor_license_determinations (contractor_id, category_id, state_code, requirement)
+    values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000004', 'TN', 'required');
+    raise exception 'C27 FAIL: second statewide decision accepted';
+  exception when unique_violation then null; end;
+  raise notice 'C27 pass: one decision per contractor, trade and jurisdiction; decisions are definite or awaiting';
 end $$;
