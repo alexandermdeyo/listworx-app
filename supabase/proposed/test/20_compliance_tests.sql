@@ -10,10 +10,32 @@
 insert into public.categories (id, name) values
   ('f0000000-0000-4000-8000-000000000001', 'Interior Painting'),
   ('f0000000-0000-4000-8000-000000000002', 'Electrical');
-update public.categories set requires_license = true where name = 'Electrical';
 insert into public.contractor_categories (contractor_id, category_id) values
   (:coA, 'f0000000-0000-4000-8000-000000000001'),
   (:coB, 'f0000000-0000-4000-8000-000000000002');
+-- Places: Sumner and Davidson counties, Tennessee; both contractors serve Sumner.
+insert into public.states (id, code, name) values ('d0000000-0000-4000-8000-000000000001', 'TN', 'Tennessee');
+insert into public.counties (id, state_id, name, state_code) values
+  ('d1000000-0000-4000-8000-000000000001', 'd0000000-0000-4000-8000-000000000001', 'Sumner', 'TN'),
+  ('d1000000-0000-4000-8000-000000000002', 'd0000000-0000-4000-8000-000000000001', 'Davidson', 'TN');
+insert into public.contractor_counties (contractor_id, county_id) values
+  (:coA, 'd1000000-0000-4000-8000-000000000001'),
+  (:coB, 'd1000000-0000-4000-8000-000000000001');
+-- Statewide rules entered by the admin (direct session = privileged)
+insert into public.license_requirements (category_id, state_code, requirement, conditions) values
+  ('f0000000-0000-4000-8000-000000000001', 'TN', 'not_required', null),
+  ('f0000000-0000-4000-8000-000000000002', 'TN', 'required', 'State electrical license');
+
+-- C0: application upload stored only on the profile became a PENDING document (backfill)
+do $$ declare r record; n int; begin
+  select count(*) into n from public.contractor_documents where contractor_id = 'b0000000-0000-4000-8000-00000000000b' and notes = 'Submitted with application';
+  select * into r from public.contractor_documents where contractor_id = 'b0000000-0000-4000-8000-00000000000b' and notes = 'Submitted with application';
+  if n <> 1 or r.status <> 'PENDING' or r.document_type <> 'INSURANCE'
+     or r.storage_path <> 'a0000000-0000-4000-8000-000000000003/applications/insurance-1.pdf'
+     or r.expiration_date <> current_date + 120 then
+    raise exception 'C0 FAIL: application backfill (% rows) %', n, row_to_json(r); end if;
+  raise notice 'C0 pass: existing application upload kept in place and queued for review';
+end $$;
 
 -- C1: contractor upload claiming APPROVED is stored as PENDING with no review data
 begin;
@@ -218,4 +240,132 @@ commit;
 do $$ begin
   if (select value from public.admin_settings where key = 'compliance_holds_enforced') <> 'false' then raise exception 'C17 FAIL: contractor flipped enforcement'; end if;
   raise notice 'C17 pass: holds start OFF; contractors can read only that setting and cannot change it';
+end $$;
+
+-- ---------------------------------------------------------------------------
+-- Jurisdiction-specific licensing (owner decisions 4 and 5, 2026-11-10)
+-- Contractor E: roofing in Sumner + Davidson, approved insurance, no license.
+-- ---------------------------------------------------------------------------
+insert into public.users (id, role, name, email) values ('a0000000-0000-4000-8000-000000000005', 'CONTRACTOR', 'Pro E', 'e@example.com');
+insert into public.contractor_profiles (id, user_id, company_name, owner_name, partner_status)
+values ('b0000000-0000-4000-8000-00000000000e', 'a0000000-0000-4000-8000-000000000005', 'E Co', 'Eve', 'active');
+insert into public.categories (id, name) values
+  ('f0000000-0000-4000-8000-000000000003', 'Roofing'),
+  ('f0000000-0000-4000-8000-000000000004', 'Handyman'),
+  ('f0000000-0000-4000-8000-000000000005', 'General Contracting');
+insert into public.contractor_categories (contractor_id, category_id) values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000003');
+insert into public.contractor_counties (contractor_id, county_id) values
+  ('b0000000-0000-4000-8000-00000000000e', 'd1000000-0000-4000-8000-000000000001'),
+  ('b0000000-0000-4000-8000-00000000000e', 'd1000000-0000-4000-8000-000000000002');
+insert into public.contractor_documents (contractor_id, document_type, expiration_date, status) values
+  ('b0000000-0000-4000-8000-00000000000e', 'INSURANCE', current_date + 200, 'APPROVED');
+insert into public.license_requirements (category_id, state_code, county_id, requirement, conditions) values
+  ('f0000000-0000-4000-8000-000000000003', 'TN', null, 'not_required', null),
+  ('f0000000-0000-4000-8000-000000000003', 'TN', 'd1000000-0000-4000-8000-000000000002', 'required', 'County roofing license'),
+  ('f0000000-0000-4000-8000-000000000005', 'TN', null, 'case_by_case', 'License needed for projects of $25,000 or more');
+
+create function pg_temp.elig(county text, cats text[]) returns record language sql as $$
+  select (e.referral_eligible, e.hold_reasons)::record from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], county::uuid, cats::uuid[]) e
+$$;
+
+-- C18: a county rule overrides the state rule; eligibility is judged for the job's county
+do $$ declare ok boolean; reasons text[]; begin
+  select e.referral_eligible, e.hold_reasons into ok, reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000003'::uuid]) e;
+  if not ok then raise exception 'C18 FAIL: Sumner roofing (no license needed) held: %', reasons; end if;
+  select e.referral_eligible, e.hold_reasons into ok, reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000002', array['f0000000-0000-4000-8000-000000000003'::uuid]) e;
+  if ok or not ('license_missing_or_expired' = any(reasons)) then raise exception 'C18 FAIL: Davidson roofing (county requires license) not held: %', reasons; end if;
+  if not (select license_required from public.contractor_compliance where contractor_id = 'b0000000-0000-4000-8000-00000000000e') then
+    raise exception 'C18 FAIL: dashboard view should show a license is needed somewhere they work'; end if;
+  raise notice 'C18 pass: county override applies only in that county';
+end $$;
+
+-- C19: only the job's trades count — a licensed trade they also list does not block unlicensed work
+insert into public.contractor_categories (contractor_id, category_id) values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000002');
+do $$ declare ok boolean; reasons text[]; begin
+  select e.referral_eligible into ok from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000003'::uuid]) e;
+  if not ok then raise exception 'C19 FAIL: roofing job blocked by unrelated electrical trade'; end if;
+  select e.referral_eligible, e.hold_reasons into ok, reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000002'::uuid]) e;
+  if ok then raise exception 'C19 FAIL: electrical job allowed without a license'; end if;
+  raise notice 'C19 pass: eligibility judged per requested trade';
+end $$;
+
+-- C20: no rule for a trade/state => admin review, never an assumed license requirement
+insert into public.contractor_categories (contractor_id, category_id) values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000004');
+do $$ declare ok boolean; reasons text[]; begin
+  select e.referral_eligible, e.hold_reasons into ok, reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000004'::uuid]) e;
+  if ok or reasons <> array['license_requirement_under_review'] then raise exception 'C20 FAIL: unknown rule should await admin review only, got %', reasons; end if;
+end $$;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', json_build_object('sub', :admin, 'role', 'authenticated')::text, true);
+insert into public.contractor_license_determinations (contractor_id, category_id, requirement, note)
+values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000004', 'not_required', 'Small repairs only');
+commit;
+do $$ declare ok boolean; d record; begin
+  select e.referral_eligible into ok from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000004'::uuid]) e;
+  select * into d from public.contractor_license_determinations where contractor_id = 'b0000000-0000-4000-8000-00000000000e';
+  if not ok then raise exception 'C20 FAIL: admin decision "not required" did not clear the review'; end if;
+  if d.decided_by <> 'a0000000-0000-4000-8000-000000000001' or d.decided_at is null then raise exception 'C20 FAIL: decision not attributed: %', row_to_json(d); end if;
+  raise notice 'C20 pass: unknown rule -> admin review; admin decision recorded with who and when';
+end $$;
+
+-- C21: "case by case" rule needs an admin decision; "required" then needs an approved license
+insert into public.contractor_categories (contractor_id, category_id) values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000005');
+do $$ declare reasons text[]; begin
+  select e.hold_reasons into reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000005'::uuid]) e;
+  if reasons <> array['license_requirement_under_review'] then raise exception 'C21 FAIL: case-by-case should await review, got %', reasons; end if;
+end $$;
+insert into public.contractor_license_determinations (contractor_id, category_id, requirement)
+values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000005', 'required');
+do $$ declare reasons text[]; begin
+  select e.hold_reasons into reasons from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000005'::uuid]) e;
+  if reasons <> array['license_missing_or_expired'] then raise exception 'C21 FAIL: after "required" decision expected missing license, got %', reasons; end if;
+end $$;
+insert into public.contractor_documents (contractor_id, document_type, expiration_date, status) values ('b0000000-0000-4000-8000-00000000000e', 'LICENSE', current_date + 365, 'APPROVED');
+do $$ declare ok boolean; begin
+  select e.referral_eligible into ok from public.referral_eligibility(array['b0000000-0000-4000-8000-00000000000e'::uuid], 'd1000000-0000-4000-8000-000000000001', array['f0000000-0000-4000-8000-000000000005'::uuid]) e;
+  if not ok then raise exception 'C21 FAIL: approved license did not restore eligibility'; end if;
+  raise notice 'C21 pass: case-by-case -> admin decides -> license reviewed -> eligible';
+end $$;
+
+-- C22: contractors cannot write licensing rules or decisions, or read other contractors' decisions
+do $$ begin
+  begin
+    set local role authenticated;
+    perform set_config('request.jwt.claims', json_build_object('sub', 'a0000000-0000-4000-8000-000000000005', 'role', 'authenticated')::text, true);
+    insert into public.license_requirements (category_id, state_code, requirement) values ('f0000000-0000-4000-8000-000000000002', 'KY', 'not_required');
+    raise exception 'C22 FAIL: contractor wrote a licensing rule';
+  exception when insufficient_privilege then null; end;
+  reset role;
+  begin
+    set local role authenticated;
+    perform set_config('request.jwt.claims', json_build_object('sub', 'a0000000-0000-4000-8000-000000000005', 'role', 'authenticated')::text, true);
+    insert into public.contractor_license_determinations (contractor_id, category_id, requirement)
+    values ('b0000000-0000-4000-8000-00000000000e', 'f0000000-0000-4000-8000-000000000002', 'not_required');
+    raise exception 'C22 FAIL: contractor decided own license requirement';
+  exception when insufficient_privilege then null; end;
+  reset role;
+end $$;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', json_build_object('sub', :proA, 'role', 'authenticated')::text, true);
+update public.license_requirements set requirement = 'not_required' where category_id = 'f0000000-0000-4000-8000-000000000002';
+create temp table c22 as select (select count(*) from public.contractor_license_determinations) as seen;
+commit;
+do $$ begin
+  if (select requirement from public.license_requirements where category_id = 'f0000000-0000-4000-8000-000000000002' and state_code = 'TN') <> 'required' then
+    raise exception 'C22 FAIL: contractor changed a rule'; end if;
+  if (select seen from c22) <> 0 then raise exception 'C22 FAIL: contractor A read E''s decisions'; end if;
+  raise notice 'C22 pass: rules and decisions are admin-only; contractors see only their own decisions';
+end $$;
+
+-- C23: one rule per trade + place; logged-out visitors cannot call the eligibility check
+do $$ begin
+  begin
+    insert into public.license_requirements (category_id, state_code, requirement) values ('f0000000-0000-4000-8000-000000000002', 'TN', 'not_required');
+    raise exception 'C23 FAIL: duplicate statewide rule accepted';
+  exception when unique_violation then null; end;
+  if has_function_privilege('anon', 'public.referral_eligibility(uuid[], uuid, uuid[])', 'execute') then
+    raise exception 'C23 FAIL: anon can run eligibility check'; end if;
+  raise notice 'C23 pass: no conflicting duplicate rules; eligibility check closed to logged-out visitors';
 end $$;

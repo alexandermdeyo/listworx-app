@@ -2,19 +2,26 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { applyComplianceGate, type ComplianceRow } from './compliance/rules.ts';
 
 /**
- * Insurance/license compliance gate, evaluated at matching time from the live
- * contractor_compliance view. Only removes candidates; never changes ranking.
+ * Insurance/license compliance gate, evaluated at matching time for THIS job:
+ * referral_eligibility() checks insurance plus any license required for the
+ * job's county and requested trades (rules are per trade and place, with admin
+ * review of unclear cases). Only removes candidates; never changes ranking.
  * Enforced only when admin_settings.compliance_holds_enforced = 'true';
  * otherwise would-be holds are logged (shadow mode).
  */
-async function filterByCompliance<T extends { id: string }>(supabase: SupabaseClient, profiles: T[]): Promise<T[]> {
+async function filterByCompliance<T extends { id: string }>(
+  supabase: SupabaseClient,
+  profiles: T[],
+  job: { countyId: string; categoryIds: string[] }
+): Promise<T[]> {
   if (!profiles.length) return profiles;
   const [{ data: setting }, { data: rows, error }] = await Promise.all([
     supabase.from('admin_settings').select('value').eq('key', 'compliance_holds_enforced').maybeSingle(),
-    supabase
-      .from('contractor_compliance')
-      .select('contractor_id, referral_eligible, hold_reasons')
-      .in('contractor_id', profiles.map((p) => p.id)),
+    supabase.rpc('referral_eligibility', {
+      p_contractor_ids: profiles.map((p) => p.id),
+      p_county_id: job.countyId,
+      p_category_ids: job.categoryIds,
+    }),
   ]);
   const enforced = String(setting?.value || '').toLowerCase() === 'true';
   if (error) console.error('[matching] compliance lookup failed:', error);
@@ -180,7 +187,7 @@ export async function findMatchedContractors(
   }
 
   // Compliance holds remove candidates before scoring; ranking below is unchanged.
-  const compliantProfiles = await filterByCompliance(supabase, activeProfiles as any[]);
+  const compliantProfiles = await filterByCompliance(supabase, activeProfiles as any[], { countyId, categoryIds });
   if (!compliantProfiles.length) {
     console.log('[matching] all active candidates are on compliance hold', { countyId, categoryIds });
     return [];

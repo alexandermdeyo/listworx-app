@@ -36,12 +36,92 @@ create index if not exists contractor_documents_contractor_type_idx
   on public.contractor_documents (contractor_id, document_type, created_at desc);
 
 -- ---------------------------------------------------------------------------
--- 2. Which trades require a professional license (set by the admin).
+-- 2. Licensing rules by trade AND place (owner decision 2026-11-10: rules are
+--    not uniform across states or counties; uncertain cases go to an admin).
+--    * license_requirements: admin-maintained rule per trade + state, with an
+--      optional county-level override. 'case_by_case' = depends on the job
+--      (e.g. a project-value threshold) and needs an admin decision.
+--    * contractor_license_determinations: the admin's decision for one
+--      contractor + trade when no rule exists or the rule is case by case.
+--    Resolution for a contractor, trade and county: the admin decision, else the
+--    county rule, else the state rule, else 'needs_review'. A trade is never
+--    treated as license-required unless an admin says so.
 -- ---------------------------------------------------------------------------
-alter table public.categories
-  add column if not exists requires_license boolean not null default false;
-comment on column public.categories.requires_license is
-  'Admin-set. When true, contractors in this trade need a current approved LICENSE document to receive referrals.';
+do $$ begin
+  if not exists (select 1 from pg_type t join pg_namespace n on n.oid = t.typnamespace
+                  where t.typname = 'license_requirement' and n.nspname = 'public') then
+    create type public.license_requirement as enum ('required', 'not_required', 'case_by_case');
+  end if;
+end $$;
+
+create table if not exists public.license_requirements (
+  id           uuid primary key default gen_random_uuid(),
+  category_id  uuid not null references public.categories(id) on delete cascade,
+  state_code   text not null check (state_code ~ '^[A-Z]{2}$'),
+  county_id    uuid references public.counties(id) on delete cascade,
+  requirement  public.license_requirement not null,
+  conditions   text,
+  source_url   text,
+  reviewed_by  uuid references public.users(id) on delete set null default auth.uid(),
+  reviewed_at  timestamptz not null default now(),
+  created_at   timestamptz not null default now()
+);
+create unique index if not exists license_requirements_scope_uidx
+  on public.license_requirements (category_id, state_code, coalesce(county_id, '00000000-0000-0000-0000-000000000000'::uuid));
+comment on table public.license_requirements is
+  'Admin-maintained licensing rule per trade and state (county_id null) or county (override). Source and conditions record why.';
+
+create table if not exists public.contractor_license_determinations (
+  contractor_id uuid not null references public.contractor_profiles(id) on delete cascade,
+  category_id   uuid not null references public.categories(id) on delete cascade,
+  requirement   public.license_requirement not null check (requirement <> 'case_by_case'),
+  note          text,
+  decided_by    uuid references public.users(id) on delete set null default auth.uid(),
+  decided_at    timestamptz not null default now(),
+  primary key (contractor_id, category_id)
+);
+comment on table public.contractor_license_determinations is
+  'Admin decision for one contractor and trade when no rule applies or the rule is case by case.';
+
+alter table public.license_requirements enable row level security;
+alter table public.contractor_license_determinations enable row level security;
+
+drop policy if exists "Logged-in users read license rules" on public.license_requirements;
+create policy "Logged-in users read license rules" on public.license_requirements
+  for select to authenticated using (true);
+drop policy if exists "Admins manage license rules" on public.license_requirements;
+create policy "Admins manage license rules" on public.license_requirements
+  for all to authenticated using ((select is_admin())) with check ((select is_admin()));
+
+drop policy if exists "Contractors read own license decisions" on public.contractor_license_determinations;
+create policy "Contractors read own license decisions" on public.contractor_license_determinations
+  for select to authenticated
+  using ((select is_admin()) or contractor_id in (select id from public.contractor_profiles where user_id = (select auth.uid())));
+drop policy if exists "Admins manage license decisions" on public.contractor_license_determinations;
+create policy "Admins manage license decisions" on public.contractor_license_determinations
+  for all to authenticated using ((select is_admin())) with check ((select is_admin()));
+
+revoke all on public.license_requirements, public.contractor_license_determinations from anon;
+grant select on public.license_requirements, public.contractor_license_determinations to authenticated;
+grant insert, update, delete on public.license_requirements, public.contractor_license_determinations to authenticated;
+
+-- 'required' | 'not_required' | 'needs_review' for one contractor, trade and county.
+create or replace function public.license_requirement_for(p_contractor_id uuid, p_category_id uuid, p_county_id uuid)
+returns text language sql stable security invoker set search_path = public as $$
+  select coalesce(
+    (select d.requirement::text
+       from public.contractor_license_determinations d
+      where d.contractor_id = p_contractor_id and d.category_id = p_category_id),
+    (select case r.requirement when 'case_by_case' then 'needs_review' else r.requirement::text end
+       from public.license_requirements r
+       join public.counties c on c.id = p_county_id
+      where r.category_id = p_category_id
+        and r.state_code = c.state_code
+        and (r.county_id = p_county_id or r.county_id is null)
+      order by r.county_id nulls last
+      limit 1),
+    'needs_review')
+$$;
 
 -- ---------------------------------------------------------------------------
 -- 3. Guard: contractors can upload and edit their own PENDING documents only.
@@ -150,9 +230,13 @@ pending_docs as (
    group by d.contractor_id, d.document_type
 ),
 license_rule as (
-  select cc.contractor_id, bool_or(c.requires_license) as required
+  -- Across every trade the contractor offers in every county they serve.
+  select cc.contractor_id,
+         bool_or(x.req = 'required')     as required,
+         bool_or(x.req = 'needs_review') as review_needed
     from public.contractor_categories cc
-    join public.categories c on c.id = cc.category_id
+    join public.contractor_counties ct on ct.contractor_id = cc.contractor_id
+    cross join lateral (select public.license_requirement_for(cc.contractor_id, cc.category_id, ct.county_id) as req) x
    group by cc.contractor_id
 )
 select p.id as contractor_id,
@@ -161,7 +245,8 @@ select p.id as contractor_id,
        coalesce(lr.required, false)               as license_required,
        lic.id is not null                         as license_current,
        lic.expiration_date                        as license_expires,
-       (ins.id is not null and (not coalesce(lr.required, false) or lic.id is not null))
+       (ins.id is not null and (not coalesce(lr.required, false) or lic.id is not null)
+        and not coalesce(lr.review_needed, false))
                                                   as referral_eligible,
        array_remove(array[
          case when ins.id is null then
@@ -169,8 +254,10 @@ select p.id as contractor_id,
          end,
          case when coalesce(lr.required, false) and lic.id is null then
            case when pl.contractor_id is not null then 'license_awaiting_review' else 'license_missing_or_expired' end
-         end
-       ], null)                                   as hold_reasons
+         end,
+         case when coalesce(lr.review_needed, false) then 'license_requirement_under_review' end
+       ], null)                                   as hold_reasons,
+       coalesce(lr.review_needed, false)          as license_review_needed
   from public.contractor_profiles p
   left join current_docs ins on ins.contractor_id = p.id and ins.document_type = 'INSURANCE'
   left join current_docs lic on lic.contractor_id = p.id and lic.document_type = 'LICENSE'
@@ -179,9 +266,46 @@ select p.id as contractor_id,
   left join license_rule lr  on lr.contractor_id = p.id;
 
 comment on view public.contractor_compliance is
-  'Live insurance/license compliance per contractor. security_invoker: contractors see only their own row through existing RLS.';
+  'Live insurance/license compliance per contractor across all trades and counties served (dashboard view). Matching uses referral_eligibility() for the job''s own county and trades. security_invoker: contractors see only their own row through existing RLS.';
 revoke all on public.contractor_compliance from anon;
 grant select on public.contractor_compliance to authenticated, service_role;
+
+-- Eligibility for ONE job: only the job's county and the requested trades count,
+-- so a painter who also lists a licensed trade is not held from painting jobs.
+create or replace function public.referral_eligibility(p_contractor_ids uuid[], p_county_id uuid, p_category_ids uuid[])
+returns table (contractor_id uuid, referral_eligible boolean, hold_reasons text[])
+language sql stable security invoker set search_path = public as $$
+  with req as (
+    select cc.contractor_id,
+           bool_or(x.req = 'required')     as required,
+           bool_or(x.req = 'needs_review') as review_needed
+      from public.contractor_categories cc
+      cross join lateral (select public.license_requirement_for(cc.contractor_id, cc.category_id, p_county_id) as req) x
+     where cc.contractor_id = any(p_contractor_ids)
+       and cc.category_id = any(p_category_ids)
+     group by cc.contractor_id
+  )
+  select c.contractor_id,
+         c.insurance_current
+           and (not coalesce(r.required, false) or c.license_current)
+           and not coalesce(r.review_needed, false),
+         array_remove(array[
+           case when not c.insurance_current then
+             case when 'insurance_awaiting_review' = any(c.hold_reasons) then 'insurance_awaiting_review' else 'insurance_missing_or_expired' end
+           end,
+           case when coalesce(r.required, false) and not c.license_current then
+             case when exists (select 1 from public.contractor_documents d
+                                where d.contractor_id = c.contractor_id and d.document_type = 'LICENSE' and d.status = 'PENDING')
+                  then 'license_awaiting_review' else 'license_missing_or_expired' end
+           end,
+           case when coalesce(r.review_needed, false) then 'license_requirement_under_review' end
+         ], null)
+    from public.contractor_compliance c
+    left join req r on r.contractor_id = c.contractor_id
+   where c.contractor_id = any(p_contractor_ids)
+$$;
+revoke all on function public.referral_eligibility(uuid[], uuid, uuid[]) from public, anon;
+grant execute on function public.referral_eligibility(uuid[], uuid, uuid[]) to authenticated, service_role;
 
 -- ---------------------------------------------------------------------------
 -- 5. Notification log — one row per (document, notice). The unique key is
@@ -214,6 +338,28 @@ create policy "Logged-in users read compliance enforcement setting" on public.ad
   for select to authenticated using (key = 'compliance_holds_enforced');
 
 commit;
+
+-- ---------------------------------------------------------------------------
+-- 6b. Application uploads become reviewable documents (owner decision
+--     2026-11-10: the application uses the same review system as renewals).
+--     Existing application files are kept where they are; this only adds a
+--     PENDING document record pointing at each one that has no record yet.
+--     Production had 0 such profiles on 2026-11-10; safe to re-run.
+-- ---------------------------------------------------------------------------
+insert into public.contractor_documents
+  (contractor_id, document_type, document_url, storage_path, expiration_date, status, file_name, notes)
+select p.id, v.doc_type::public.document_type, v.url, v.path, v.exp, 'PENDING',
+       regexp_replace(v.path, '^.*/', ''), 'Submitted with application'
+  from public.contractor_profiles p
+  cross join lateral (values
+      ('LICENSE',   nullif(p.license_document_url, ''),   p.license_expiration_date),
+      ('INSURANCE', nullif(p.insurance_document_url, ''), p.insurance_expiration_date)
+    ) v0(doc_type, url, exp)
+  cross join lateral (select v0.doc_type, v0.url, v0.exp,
+      substring(v0.url from '/object/(?:sign|public|authenticated)/contractor-documents/([^?]+)') as path) v
+ where v.path is not null
+   and not exists (select 1 from public.contractor_documents d
+                    where d.contractor_id = p.id and d.storage_path = v.path);
 
 -- ---------------------------------------------------------------------------
 -- 7. Storage (bucket contractor-documents). Run separately: policies on
