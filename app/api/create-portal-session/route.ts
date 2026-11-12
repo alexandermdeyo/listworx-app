@@ -8,7 +8,11 @@ export async function POST(request: Request) {
   try {
     const supabase = createClient();
 
-    const { data: { session } } = await supabase.auth.getSession();
+    // getUser() verifies the token with Supabase Auth; getSession() trusts the cookie as-is.
+    const {
+      data: { user: verifiedUser },
+    } = await supabase.auth.getUser();
+    const session = verifiedUser ? { user: verifiedUser } : null;
 
     if (!session) {
       return NextResponse.json(
