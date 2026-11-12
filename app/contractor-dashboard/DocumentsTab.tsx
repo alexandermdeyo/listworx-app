@@ -319,12 +319,13 @@ export default function DocumentsTab({ profile, onNavigateToProfile }: Documents
         label: label.trim(),
         is_public: isPublic,
         storage_path: storagePath,
-        status: 'APPROVED',
+        // ListWorx reviews every upload; the database also enforces this.
+        status: 'PENDING',
       });
 
       if (insertErr) throw insertErr;
 
-      setSuccessMessage('Document uploaded successfully.');
+      setSuccessMessage('Document uploaded. ListWorx will review it before it shows as verified.');
       setTimeout(() => setSuccessMessage(null), 4000);
       setLabel('');
       setIsPublic(false);
