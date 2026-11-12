@@ -6,6 +6,7 @@ import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { normalizeFounderTier } from '@/lib/stripe-prices';
 import { sendEmail } from '@/lib/send-email';
 import { notifyAdmin, brandedEmail, detailRows, BASE_URL as SITE_BASE } from '@/lib/server/notify';
+import { activationAfterPayment, buildSubscriptionRow, mapStripeStatus } from '@/lib/billing/subscription-record';
 
 function getStripe() {
   return createStripeServerClient();
@@ -123,6 +124,22 @@ async function resolveTierId(tierSlugOrId: string): Promise<string | null> {
   return tier.id;
 }
 
+/** A payment arrived from a contractor an administrator has not approved (or has paused). */
+async function notifyAdminOfUnapprovedPayment(contractorId: string, partnerStatus: string | null | undefined, source: string) {
+  await notifyAdmin(
+    `ListWorx: payment received from a contractor who is "${partnerStatus || 'unknown'}"`,
+    brandedEmail({
+      kicker: 'Admin — billing',
+      title: 'Payment received, account not activated',
+      body: `<p>A Stripe payment (${source}) was recorded for a contractor whose status is <strong>${partnerStatus || 'unknown'}</strong>.
+             Payment does not activate a contractor without administrator approval, so their status was left unchanged.
+             Review them in the CRM and approve, refund or follow up as needed.</p>${detailRows([['Contractor ID', contractorId]])}`,
+      ctaLabel: 'Open admin CRM',
+      ctaHref: `${SITE_BASE}/admin/crm/contractors`,
+    })
+  );
+}
+
 async function handleCheckoutCompleted(session: any) {
   const contractorId = session.client_reference_id || session.metadata?.contractorId;
   const tierName = session.metadata?.tierName;
@@ -176,7 +193,9 @@ async function handleCheckoutCompleted(session: any) {
     .eq('id', contractorId)
     .maybeSingle();
 
-  if (profileData && profileData.partner_status === PARTNER_STATUS.APPROVED) {
+  // Payment never bypasses administrator approval: only approved → active.
+  const activation = activationAfterPayment(profileData?.partner_status);
+  if (activation.activate) {
     const { error: statusError } = await getSupabase().from('contractor_profiles')
       .update({ partner_status: PARTNER_STATUS.ACTIVE })
       .eq('id', contractorId);
@@ -187,6 +206,8 @@ async function handleCheckoutCompleted(session: any) {
       console.log(`[stripe-webhook] contractor ${contractorId} partner_status → active`);
       await sendSubscriptionActivatedWelcomeEmail(contractorId, tierName);
     }
+  } else if (activation.notifyAdmin) {
+    await notifyAdminOfUnapprovedPayment(contractorId, profileData?.partner_status, 'subscription checkout');
   }
 
   if (!tierSlug) {
@@ -200,16 +221,14 @@ async function handleCheckoutCompleted(session: any) {
     return;
   }
 
-  const subscriptionPayload: Record<string, any> = {
-    contractor_id: contractorId,
-    tier_id: resolvedTierId,
-    stripe_customer_id: session.customer,
-    stripe_subscription_id: session.subscription,
-    status: 'active',
-    billing_period: billingPeriod || 'monthly',
-    current_period_start: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
+  const subscriptionPayload = buildSubscriptionRow({
+    contractorId,
+    tierId: resolvedTierId,
+    stripeSubscriptionId: session.subscription,
+    stripeCustomerId: session.customer,
+    stripeStatus: 'active',
+    billingPeriod,
+  });
 
   console.log('[stripe-webhook] Upserting subscription row:', subscriptionPayload);
 
@@ -250,9 +269,13 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
   const now = new Date().toISOString();
   const { data: contractor } = await supabase
     .from('contractor_profiles')
-    .select('email, owner_name, company_name, service_area_counties, service_area_state')
+    .select('email, owner_name, company_name, service_area_counties, service_area_state, partner_status')
     .eq('id', contractorId)
     .maybeSingle();
+
+  // Payment never bypasses administrator approval: only approved → active.
+  const activation = activationAfterPayment(contractor?.partner_status);
+  const accountActive = activation.activate || contractor?.partner_status === PARTNER_STATUS.ACTIVE;
 
   const { error } = await supabase
     .from('contractor_profiles')
@@ -266,7 +289,7 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
       founder_tier: founderTier,
       founder_activation_paid_at: now,
       trial_ends_at: null,
-      partner_status: PARTNER_STATUS.ACTIVE,
+      ...(activation.activate ? { partner_status: PARTNER_STATUS.ACTIVE } : {}),
       updated_at: now,
     })
     .eq('id', contractorId);
@@ -292,7 +315,12 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
     }
   }
 
-  if (contractor?.email) {
+  if (activation.notifyAdmin) {
+    await notifyAdminOfUnapprovedPayment(contractorId, contractor?.partner_status, 'founder activation');
+  }
+
+  // The welcome email says the account is live, so only send it when it is.
+  if (contractor?.email && accountActive) {
     const renewalAmount = founderTier === 'elite' ? '$300' : founderTier === 'preferred' ? '$175' : '$100';
     const territory = [contractor.service_area_counties?.[0], contractor.service_area_state].filter(Boolean).join(', ') || 'your approved service area';
     await sendEmail({
@@ -597,28 +625,7 @@ async function handleSubscriptionUpdated(subscription: any) {
     return;
   }
 
-  let subscriptionStatus: 'active' | 'past_due' | 'cancelled' | 'incomplete' | 'trialing';
-
-  switch (subscription.status) {
-    case 'active':
-      subscriptionStatus = 'active';
-      break;
-    case 'past_due':
-      subscriptionStatus = 'past_due';
-      break;
-    case 'canceled':
-    case 'cancelled':
-      subscriptionStatus = 'cancelled';
-      break;
-    case 'incomplete':
-      subscriptionStatus = 'incomplete';
-      break;
-    case 'trialing':
-      subscriptionStatus = 'trialing';
-      break;
-    default:
-      subscriptionStatus = 'incomplete';
-  }
+  const subscriptionStatus = mapStripeStatus(subscription.status);
 
   const periodStart = subscription.current_period_start
     ? new Date(subscription.current_period_start * 1000).toISOString()
@@ -656,18 +663,17 @@ async function handleSubscriptionUpdated(subscription: any) {
     if (!resolvedTierId) {
       console.error('[stripe-webhook] No existing subscription row and no tier metadata — cannot upsert');
     } else {
-      const subscriptionPayload: Record<string, any> = {
-        contractor_id: contractorId,
-        tier_id: resolvedTierId,
-        stripe_subscription_id: subscription.id,
-        stripe_customer_id: subscription.customer,
-        status: subscriptionStatus,
-        billing_period: subscription.metadata?.billingPeriod || 'monthly',
-        current_period_start: periodStart,
-        current_period_end: periodEnd,
-        cancel_at_period_end: subscription.cancel_at_period_end || false,
-        updated_at: new Date().toISOString(),
-      };
+      const subscriptionPayload = buildSubscriptionRow({
+        contractorId,
+        tierId: resolvedTierId,
+        stripeSubscriptionId: subscription.id,
+        stripeCustomerId: subscription.customer,
+        stripeStatus: subscription.status,
+        billingPeriod: subscription.metadata?.billingPeriod,
+        periodStart,
+        periodEnd,
+        cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      });
 
       console.log('[stripe-webhook] No existing row — inserting subscription via upsert:', subscriptionPayload);
 
@@ -699,7 +705,8 @@ async function handleSubscriptionUpdated(subscription: any) {
       .eq('id', contractorId)
       .maybeSingle();
 
-    if (profileData && profileData.partner_status === PARTNER_STATUS.APPROVED) {
+    const activation = activationAfterPayment(profileData?.partner_status);
+    if (activation.activate) {
       const { error: statusError } = await getSupabase().from('contractor_profiles')
         .update({ partner_status: PARTNER_STATUS.ACTIVE })
         .eq('id', contractorId);
@@ -709,6 +716,9 @@ async function handleSubscriptionUpdated(subscription: any) {
         const tierName = subscription.metadata?.tierName;
         await sendSubscriptionActivatedWelcomeEmail(contractorId, tierName);
       }
+    } else if (activation.notifyAdmin && subscription.metadata?.isFounderActivation !== 'true') {
+      // Founder checkouts already notified the admin from checkout.session.completed.
+      await notifyAdminOfUnapprovedPayment(contractorId, profileData?.partner_status, 'subscription active');
     }
   } else if (subscription.status === 'past_due' || subscription.status === 'canceled') {
     const { data: profileData } = await getSupabase().from('contractor_profiles')
