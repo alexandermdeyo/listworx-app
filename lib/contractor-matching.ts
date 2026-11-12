@@ -23,6 +23,8 @@ interface MatchedContractor {
   bio: string | null;
   tier: string | null;
   total_referrals_received: number;
+  /** Contractor's "Email Notifications" setting; false = no optional referral emails. */
+  notification_email: boolean;
   score: number;
   matchReason: string;
 }
@@ -179,6 +181,7 @@ export async function findMatchedContractors(
       bio: pickNullableString(row, ['bio', 'company_bio', 'description']),
       tier,
       total_referrals_received: totalReferralsReceived,
+      notification_email: row.notification_email !== false,
       score,
       matchReason: `tier:${tier},weight:${tierWeight},refs:${totalReferralsReceived}`,
     };

@@ -8,6 +8,7 @@ import {
   incrementReferralCounts,
 } from '@/lib/contractor-matching';
 import { sendEmail } from '@/lib/send-email';
+import { canSendContractorEmail } from '@/lib/notifications/policy';
 import { notifyAdmin, brandedEmail, detailRows, esc, BASE_URL as SITE_BASE } from '@/lib/server/notify';
 
 export const dynamic = 'force-dynamic';
@@ -40,6 +41,7 @@ async function sendContractorReferralEmails(
     company_name: string;
     owner_name: string;
     email: string;
+    notification_email: boolean;
   }>,
   jobData: {
     jobCategory: string;
@@ -52,8 +54,16 @@ async function sendContractorReferralEmails(
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
+  // New-referral emails are optional: skip contractors who turned off email
+  // notifications. The referral is still created and shown on their dashboard.
+  const recipients = matchedContractors.filter((c) => {
+    const decision = canSendContractorEmail('optional', { email: c.email, optionalEmailsEnabled: c.notification_email });
+    if (!decision.send) console.log(`[job-request] referral email not sent to ${c.id}: ${decision.reason}`);
+    return decision.send;
+  });
+
   const results = await Promise.allSettled(
-    matchedContractors.map((contractor) =>
+    recipients.map((contractor) =>
       fetch(`${supabaseUrl}/functions/v1/send-contractor-email`, {
         method: 'POST',
         headers: {
@@ -77,7 +87,7 @@ async function sendContractorReferralEmails(
 
   results.forEach((result, i) => {
     if (result.status === 'rejected') {
-      console.error(`[job-request] contractor referral email failed for ${matchedContractors[i]?.id}:`, result.reason);
+      console.error(`[job-request] contractor referral email failed for ${recipients[i]?.id}:`, result.reason);
     }
   });
 }

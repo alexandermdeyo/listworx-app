@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     const { data: contractor } = await supabase
       .from('contractor_profiles')
-      .select('id, owner_name, company_name, email, user_id, partner_status')
+      .select('id, owner_name, company_name, email, user_id, partner_status, notification_email')
       .eq('id', contractorId)
       .single();
 
@@ -42,6 +42,14 @@ export async function POST(request: NextRequest) {
     const toEmail = authUser?.email || contractor.email;
     if (!toEmail) {
       return NextResponse.json({ error: 'No email address for contractor' }, { status: 400 });
+    }
+
+    if (type === 'referral' && referralId && contractor.notification_email === false) {
+      // New-referral emails are optional; the referral stays on the contractor's dashboard.
+      return NextResponse.json(
+        { error: 'This contractor has turned off referral emails. The referral is still on their dashboard.' },
+        { status: 409 }
+      );
     }
 
     if (type === 'referral' && referralId) {

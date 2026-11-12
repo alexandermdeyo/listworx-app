@@ -159,10 +159,14 @@ export default function SettingsTab({ profile, userEmail, onNotificationPreferen
             id="notification-email-toggle"
           />
           <Label htmlFor="notification-email-toggle" className="cursor-pointer">
-            Receive email notifications for new referrals and account updates
+            Email me when I receive a new referral
           </Label>
           {notificationSaving && <Loader2 className="h-4 w-4 animate-spin text-gray-400" />}
         </div>
+        <p className="mt-3 text-xs text-gray-500">
+          New referrals always appear in your dashboard, whichever you choose. Required notices about your account,
+          billing, security and compliance documents are always emailed.
+        </p>
       </section>
     </div>
   );
