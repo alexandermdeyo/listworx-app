@@ -363,6 +363,7 @@ export default function AdminCRMPage() {
               { href: '/admin/crm/applications', icon: Clock, title: 'Applications', desc: 'Review pending contractor applications', badge: stats.pendingApplications > 0 ? `${stats.pendingApplications} pending` : null },
               { href: '/admin/crm/job-requests', icon: FileText, title: 'Job Requests', desc: 'View requests, referrals, and update referral status', badge: stats.recentJobRequests > 0 ? `${stats.recentJobRequests} this week` : null },
               { href: '/admin/crm/contractors', icon: Users, title: 'Contractors', desc: 'Manage status, performance, and email controls', badge: stats.pausedContractors > 0 ? `${stats.pausedContractors} paused` : null },
+              { href: '/admin/crm/license-rules', icon: FileText, title: 'License Rules', desc: 'Which trades need a license, by state and county; decide unclear cases', badge: null },
               { href: '/admin/crm/realtors', icon: Briefcase, title: 'Requesters', desc: 'Manage homeowners, realtors, and property managers', badge: null },
               { href: '/admin/crm/reviews', icon: Star, title: 'Reviews', desc: 'See client feedback and contractor ratings', badge: null },
               { href: '/admin/crm/media', icon: Video, title: 'Media Library', desc: 'Manage YouTube videos, social content, and featured media', badge: null },

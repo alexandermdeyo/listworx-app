@@ -20,6 +20,7 @@ import {
   FileCheck,
   CalendarDays,
 } from 'lucide-react';
+import { centralToday, daysUntil, warningTone } from '@/lib/compliance/rules';
 
 const DOCUMENT_TYPES = {
   LICENSE: 'LICENSE',
@@ -42,6 +43,8 @@ interface ContractorDocument {
   created_at: string | null;
   updated_at: string | null;
   file_name: string | null;
+  storage_path?: string | null;
+  replaces_document_id?: string | null;
 }
 
 interface ComplianceDocumentsProps {
@@ -107,17 +110,15 @@ function statusConfig(status: DocumentStatus) {
   }
 }
 
-function isExpiringSoon(dateStr: string | null | undefined): boolean {
-  if (!dateStr) return false;
-  const exp = new Date(dateStr);
-  const now = new Date();
-  const diff = (exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-  return diff >= 0 && diff <= 60;
+/** Days left on a document's own expiration date (Central time), or null. */
+function daysLeftFor(dateStr: string | null | undefined): number | null {
+  return dateStr ? daysUntil(dateStr, centralToday()) : null;
 }
 
-function isExpired(dateStr: string | null | undefined): boolean {
-  if (!dateStr) return false;
-  return new Date(dateStr) < new Date();
+/** Formats a YYYY-MM-DD calendar date without time-zone shifts. */
+function formatCalendarDate(dateStr: string) {
+  const [y, m, d] = dateStr.slice(0, 10).split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function getDisplayFileName(doc: ContractorDocument, docType: DocumentType) {
@@ -155,11 +156,8 @@ export default function ComplianceDocuments({
   const [uploadingType, setUploadingType] = useState<DocumentType | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  const expirationValues = {
-    licenseExpirationDate,
-    insuranceExpirationDate,
-  };
+  // Expiration date for the next upload, entered by the contractor per document type.
+  const [newExpiration, setNewExpiration] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetchDocuments();
@@ -183,7 +181,7 @@ export default function ComplianceDocuments({
         .from('contractor_documents')
         .select('*')
         .eq('contractor_id', contractorId)
-        .order('document_type');
+        .order('created_at', { ascending: false });
 
       if (fetchErr) throw fetchErr;
 
@@ -208,6 +206,13 @@ export default function ComplianceDocuments({
       return;
     }
 
+    const expDate = newExpiration[docType] || '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(expDate)) {
+      setError('Enter the expiration date shown on the document before uploading.');
+      e.target.value = '';
+      return;
+    }
+
     setUploadingType(docType);
     setError(null);
 
@@ -215,9 +220,10 @@ export default function ComplianceDocuments({
       const ext = file.name.split('.').pop() || 'bin';
       const storagePath = `${userId}/${docType}-${Date.now()}.${ext}`;
 
+      // New file path every time and no overwrite: a reviewed file can never be replaced in place.
       const { error: uploadErr } = await supabase.storage
         .from('contractor-documents')
-        .upload(storagePath, file, { upsert: true });
+        .upload(storagePath, file, { contentType: file.type });
 
       if (uploadErr) throw uploadErr;
 
@@ -229,45 +235,26 @@ export default function ComplianceDocuments({
         throw new Error('Could not generate document link after upload.');
       }
 
-      const expDate =
-        docType === DOCUMENT_TYPES.LICENSE
-          ? licenseExpirationDate ?? null
-          : insuranceExpirationDate ?? null;
+      // Every upload is a new record; earlier ones stay as history. The database
+      // stores it as PENDING until a ListWorx administrator reviews it.
+      const previous = documents.find((d) => d.document_type === docType);
+      const { error: insertErr } = await supabase
+        .from('contractor_documents')
+        .insert({
+          contractor_id: contractorId,
+          document_type: docType,
+          document_url: signedUrlData.signedUrl,
+          storage_path: storagePath,
+          expiration_date: expDate,
+          file_name: file.name,
+          replaces_document_id: previous?.id ?? null,
+        });
 
-      const existing = documents.find((d) => d.document_type === docType);
-
-      if (existing) {
-        const { error: updateErr } = await supabase
-          .from('contractor_documents')
-          .update({
-            document_url: signedUrlData.signedUrl,
-            expiration_date: expDate,
-            status: 'PENDING',
-            notes: null,
-            file_name: file.name,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', existing.id);
-
-        if (updateErr) throw updateErr;
-      } else {
-        const { error: insertErr } = await supabase
-          .from('contractor_documents')
-          .insert({
-            contractor_id: contractorId,
-            document_type: docType,
-            document_url: signedUrlData.signedUrl,
-            expiration_date: expDate,
-            status: 'PENDING',
-            notes: null,
-            file_name: file.name,
-          });
-
-        if (insertErr) throw insertErr;
-      }
+      if (insertErr) throw insertErr;
+      setNewExpiration((prev) => ({ ...prev, [docType]: '' }));
 
       setSuccessMessage(
-        `${docType === DOCUMENT_TYPES.LICENSE ? 'License' : 'Insurance'} document uploaded successfully.`
+        `${docType === DOCUMENT_TYPES.LICENSE ? 'License' : 'Insurance'} document uploaded. ListWorx will review it before it counts toward your compliance.`
       );
       setTimeout(() => setSuccessMessage(null), 4000);
 
@@ -285,11 +272,17 @@ export default function ComplianceDocuments({
     setActionLoadingId(key);
 
     try {
-      if (!doc.document_url) throw new Error('No document URL found.');
+      let url = doc.document_url;
+      if (doc.storage_path) {
+        // Stored links expire after 7 days; make a fresh one from the file path.
+        const { data } = await supabase.storage.from('contractor-documents').createSignedUrl(doc.storage_path, 60 * 10);
+        if (data?.signedUrl) url = data.signedUrl;
+      }
+      if (!url) throw new Error('No document URL found.');
 
       if (download) {
         const link = document.createElement('a');
-        link.href = doc.document_url;
+        link.href = url;
         link.download = getDisplayFileName(doc, doc.document_type);
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
@@ -297,7 +290,7 @@ export default function ComplianceDocuments({
         link.click();
         document.body.removeChild(link);
       } else {
-        window.open(doc.document_url, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
       }
     } catch (err: any) {
       setError('Could not open document: ' + (err.message || 'Unknown error'));
@@ -341,12 +334,16 @@ export default function ComplianceDocuments({
       )}
 
       <div className="grid sm:grid-cols-2 gap-5">
-        {DOC_TYPES.map(({ type, label, description, icon: Icon, expirationKey }) => {
-          const doc = documents.find((d) => d.document_type === type);
-          const expDate = expirationValues[expirationKey];
-          const expired = isExpired(expDate);
-          const expiringSoon = isExpiringSoon(expDate);
-          const status = doc ? statusConfig(doc.status) : null;
+        {DOC_TYPES.map(({ type, label, description, icon: Icon }) => {
+          // Newest upload first; older uploads are kept as history.
+          const history = documents.filter((d) => d.document_type === type);
+          const doc = history[0];
+          const expDate = doc?.expiration_date ?? null;
+          const daysLeft = daysLeftFor(expDate);
+          const tone = warningTone(daysLeft);
+          const expired = tone === 'expired';
+          const expiringSoon = tone === 'notice' || tone === 'warning' || tone === 'urgent';
+          const status = doc ? statusConfig(expired && doc.status === 'APPROVED' ? 'EXPIRED' : doc.status) : null;
           const isUploading = uploadingType === type;
           const isViewLoading = actionLoadingId === doc?.id + '-view';
           const isDlLoading = actionLoadingId === doc?.id + '-dl';
@@ -418,15 +415,18 @@ export default function ComplianceDocuments({
                             : expiringSoon
                             ? 'Expires soon: '
                             : 'Expires: '}
-                          <span className="font-semibold">
-                            {new Date(expDate).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
-                          </span>
+                          <span className="font-semibold">{formatCalendarDate(expDate)}</span>
+                          {daysLeft !== null && daysLeft >= 0 && daysLeft <= 60 && (
+                            <span> ({daysLeft === 0 ? 'today' : `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`})</span>
+                          )}
                         </span>
                       </div>
+                    )}
+
+                    {history.length > 1 && (
+                      <p className="text-lw-text/40 text-xs">
+                        {history.length - 1} earlier upload{history.length - 1 === 1 ? '' : 's'} kept on file.
+                      </p>
                     )}
 
                     {doc.notes && doc.status === 'REJECTED' && (
@@ -447,6 +447,19 @@ export default function ComplianceDocuments({
                     </div>
                   </div>
                 )}
+              </div>
+
+              <div className="px-5 pb-2">
+                <label className="block text-xs font-medium text-lw-text/60 mb-1" htmlFor={`exp-${type}`}>
+                  Expiration date on the {doc ? 'new' : ''} document
+                </label>
+                <input
+                  id={`exp-${type}`}
+                  type="date"
+                  value={newExpiration[type] || ''}
+                  onChange={(ev) => setNewExpiration((prev) => ({ ...prev, [type]: ev.target.value }))}
+                  className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm text-gray-900"
+                />
               </div>
 
               <div className="px-5 pb-5 flex items-center gap-2 flex-wrap">
@@ -496,7 +509,7 @@ export default function ComplianceDocuments({
                   onClick={() =>
                     (type === DOCUMENT_TYPES.LICENSE ? licenseInputRef : insuranceInputRef).current?.click()
                   }
-                  disabled={isUploading}
+                  disabled={isUploading || !newExpiration[type]}
                   className={`text-xs ${
                     doc
                       ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300 flex-1'
@@ -511,7 +524,7 @@ export default function ComplianceDocuments({
                   ) : (
                     <>
                       <Upload className="h-3.5 w-3.5 mr-1.5" />
-                      {doc ? 'Replace' : 'Upload Document'}
+                      {doc ? 'Upload Renewal' : 'Upload Document'}
                     </>
                   )}
                 </Button>
@@ -522,7 +535,8 @@ export default function ComplianceDocuments({
       </div>
 
       <p className="mt-3 text-xs text-lw-text/30 text-center">
-        Documents are stored securely and only visible to you and the ListWorx review team.
+        Documents are stored securely and only visible to you and the ListWorx review team. ListWorx reviews
+        each insurance certificate and license you submit; we do not contact your insurer.
         Accepted formats: PDF, JPG, PNG — max 10MB.
       </p>
     </section>

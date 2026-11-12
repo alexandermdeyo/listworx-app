@@ -1,4 +1,41 @@
-import { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { applyComplianceGate, type ComplianceRow } from './compliance/rules.ts';
+
+/**
+ * Insurance/license compliance gate, evaluated at matching time for THIS job:
+ * referral_eligibility() checks insurance plus any license required for the
+ * job's county and requested trades (rules are per trade and place, with admin
+ * review of unclear cases). Only removes candidates; never changes ranking.
+ * Enforced only when admin_settings.compliance_holds_enforced = 'true';
+ * otherwise would-be holds are logged (shadow mode).
+ */
+async function filterByCompliance<T extends { id: string }>(
+  supabase: SupabaseClient,
+  profiles: T[],
+  job: { countyId: string; categoryIds: string[] }
+): Promise<T[]> {
+  if (!profiles.length) return profiles;
+  const [{ data: setting }, { data: rows, error }] = await Promise.all([
+    supabase.from('admin_settings').select('value').eq('key', 'compliance_holds_enforced').maybeSingle(),
+    supabase.rpc('referral_eligibility', {
+      p_contractor_ids: profiles.map((p) => p.id),
+      p_county_id: job.countyId,
+      p_category_ids: job.categoryIds,
+    }),
+  ]);
+  const enforced = String(setting?.value || '').toLowerCase() === 'true';
+  if (error) console.error('[matching] compliance lookup failed:', error);
+  const { allowedIds, held } = applyComplianceGate(
+    profiles.map((p) => p.id),
+    error ? null : ((rows || []) as ComplianceRow[]),
+    enforced
+  );
+  if (held.length) {
+    console.log(enforced ? '[matching] compliance hold applied' : '[matching] compliance hold (shadow, not enforced)', held);
+  }
+  const allowed = new Set(allowedIds);
+  return profiles.filter((p) => allowed.has(p.id));
+}
 
 const TIER_WEIGHTS: Record<string, number> = {
   'Elite Partner': 300,
@@ -151,10 +188,17 @@ export async function findMatchedContractors(
     return [];
   }
 
+  // Compliance holds remove candidates before scoring; ranking below is unchanged.
+  const compliantProfiles = await filterByCompliance(supabase, activeProfiles as any[], { countyId, categoryIds });
+  if (!compliantProfiles.length) {
+    console.log('[matching] all active candidates are on compliance hold', { countyId, categoryIds });
+    return [];
+  }
+
   const today = new Date().toISOString().slice(0, 10);
   const rotationSeed = jobRequestId || today;
 
-  const scored: MatchedContractor[] = activeProfiles.map((row: any) => {
+  const scored: MatchedContractor[] = compliantProfiles.map((row: any) => {
     // subscription_tier is the only tier column that exists on contractor_profiles.
     // A contractor with no subscription_tier set (null) is treated as Basic, not excluded.
     const tier = pickNullableString(row, ['subscription_tier']) || 'basic';

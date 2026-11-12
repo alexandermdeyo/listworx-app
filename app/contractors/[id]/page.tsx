@@ -128,9 +128,9 @@ function getDocumentLabel(type: string) {
   return type.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+/** Only documents a ListWorx administrator approved, and not past their date, count as reviewed. */
 function isCredentialVerified(credential: Credential) {
-  const status = String(credential.status || '').toLowerCase();
-  if (status && !['approved', 'verified'].includes(status)) return false;
+  if (String(credential.status || '').toUpperCase() !== 'APPROVED') return false;
   if (credential.expiration_date && new Date(credential.expiration_date) < new Date()) return false;
   return true;
 }

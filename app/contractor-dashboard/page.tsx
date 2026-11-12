@@ -21,6 +21,7 @@ import ProfileTab from './ProfileTab';
 import DocumentsTab from './DocumentsTab';
 import SettingsTab from './SettingsTab';
 import AcademyTab from './AcademyTab';
+import { centralToday, daysUntil, warningTone, type DashboardTone } from '@/lib/compliance/rules';
 import { Toaster } from '@/components/ui/toaster';
 import {
   Loader as Loader2,
@@ -93,6 +94,8 @@ export default function ContractorDashboard() {
     license: string | null;
     insurance: string | null;
   }>({ license: null, insurance: null });
+  // Live compliance status (contractor_compliance view, own row only) and whether holds are enforced.
+  const [complianceHold, setComplianceHold] = useState<{ reasons: string[]; enforced: boolean } | null>(null);
 
   const [academyEnabled, setAcademyEnabled] = useState(false);
 
@@ -117,16 +120,25 @@ export default function ContractorDashboard() {
     if (!profile?.id) return;
 
     (async () => {
-      const { data } = await supabase
-        .from('contractor_documents')
-        .select('document_type, expiration_date, created_at')
-        .eq('contractor_id', profile.id)
-        .in('document_type', ['LICENSE', 'INSURANCE'])
-        .order('created_at', { ascending: false });
+      const [{ data }, { data: compliance }, { data: enforcedSetting }] = await Promise.all([
+        supabase
+          .from('contractor_documents')
+          .select('document_type, expiration_date, status')
+          .eq('contractor_id', profile.id)
+          .in('document_type', ['LICENSE', 'INSURANCE'])
+          .in('status', ['APPROVED', 'EXPIRED'])
+          .not('expiration_date', 'is', null)
+          .order('expiration_date', { ascending: false }),
+        supabase.from('contractor_compliance').select('hold_reasons').eq('contractor_id', profile.id).maybeSingle(),
+        supabase.from('admin_settings').select('value').eq('key', 'compliance_holds_enforced').maybeSingle(),
+      ]);
 
+      // The reviewed document with the latest expiration date is the one that counts.
       const license = (data || []).find((d: any) => d.document_type === 'LICENSE')?.expiration_date ?? null;
       const insurance = (data || []).find((d: any) => d.document_type === 'INSURANCE')?.expiration_date ?? null;
       setComplianceExpirations({ license, insurance });
+      const reasons: string[] = (compliance as any)?.hold_reasons || [];
+      setComplianceHold(reasons.length ? { reasons, enforced: enforcedSetting?.value === 'true' } : null);
     })();
   }, [profile?.id]);
 
@@ -531,41 +543,31 @@ export default function ContractorDashboard() {
     );
   }
 
-  const isExpiringSoonOrExpired = (dateStr: string | null | undefined) => {
-    if (!dateStr) return false;
-    const d = new Date(dateStr);
-    const thirtyDays = new Date();
-    thirtyDays.setDate(thirtyDays.getDate() + 30);
-    return d <= thirtyDays;
+  // Expiration warnings at 60/30/14/7 days, from reviewed documents only (no application-date fallback).
+  const effectiveLicenseExpiration = complianceExpirations.license;
+  const effectiveInsuranceExpiration = complianceExpirations.insurance;
+  const today = centralToday();
+  const getDaysUntil = (dateStr: string | null): number | null => (dateStr ? daysUntil(dateStr, today) : null);
+  const licenseDaysUntil = getDaysUntil(effectiveLicenseExpiration);
+  const insuranceDaysUntil = getDaysUntil(effectiveInsuranceExpiration);
+  const licenseTone = warningTone(licenseDaysUntil);
+  const insuranceTone = warningTone(insuranceDaysUntil);
+  const licenseExpiring = licenseTone !== 'ok';
+  const insuranceExpiring = insuranceTone !== 'ok';
+  const TONE_COLORS: Record<DashboardTone, string> = {
+    ok: '#4A4A4A', notice: '#b45309', warning: '#c2410c', urgent: '#b91c1c', expired: '#7f1d1d',
   };
-
-  const effectiveLicenseExpiration = complianceExpirations.license || profile.license_expiration_date || null;
-  const effectiveInsuranceExpiration = complianceExpirations.insurance || profile.insurance_expiration_date || null;
-
-  const licenseExpiring = isExpiringSoonOrExpired(effectiveLicenseExpiration);
-  const insuranceExpiring = isExpiringSoonOrExpired(effectiveInsuranceExpiration);
-
-  const formatExpiryDate = (dateStr: string | null) =>
-    dateStr ? new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
-
-  const getDaysUntil = (dateStr: string | null): number | null => {
-    if (!dateStr) return null;
-    const target = new Date(dateStr);
-    target.setHours(0, 0, 0, 0);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const formatExpiryDate = (dateStr: string | null) => {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.slice(0, 10).split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
-
   const formatDaysMessage = (days: number | null) => {
     if (days === null) return '';
     if (days < 0) return `expired ${Math.abs(days)} day${Math.abs(days) === 1 ? '' : 's'} ago`;
     if (days === 0) return 'expires today';
     return `expires in ${days} day${days === 1 ? '' : 's'}`;
   };
-
-  const licenseDaysUntil = getDaysUntil(effectiveLicenseExpiration);
-  const insuranceDaysUntil = getDaysUntil(effectiveInsuranceExpiration);
 
   const navItems: NavItem[] = [
     {
@@ -683,14 +685,40 @@ export default function ContractorDashboard() {
       hasNotifications={false}
     >
       <div className="p-6 space-y-6 text-gray-900">
-        {/* Expiry warning banners */}
+        {/* Compliance hold: required insurance/license missing, expired, or awaiting review */}
+        {complianceHold && (
+          <div className="w-full rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <p className="font-semibold">
+              {complianceHold.enforced
+                ? 'Compliance hold: you are not receiving new referrals right now.'
+                : 'Action needed on your compliance documents.'}
+            </p>
+            <p className="mt-1">
+              {complianceHold.reasons.map((r) => ({
+                insurance_missing_or_expired: 'Your insurance certificate is missing or expired.',
+                insurance_awaiting_review: 'Your insurance certificate is waiting for ListWorx review.',
+                license_missing_or_expired: 'A license required for one of your trades is missing or expired.',
+                license_awaiting_review: 'Your license is waiting for ListWorx review.',
+                license_requirement_under_review:
+                  'ListWorx is confirming the licensing rules for one of your trades in your service area. You do not need to do anything unless we contact you.',
+              } as Record<string, string>)[r] || 'A required document needs attention.').join(' ')}{' '}
+              Your account, subscription, profile and past referrals are not affected
+              {complianceHold.enforced ? ', and new referrals resume automatically once ListWorx approves your current documents.' : '.'}
+            </p>
+            <button onClick={() => setActiveTab('documents')} className="mt-2 rounded-md bg-red-700 px-3 py-1.5 text-xs font-semibold text-white">
+              Go to Documents →
+            </button>
+          </div>
+        )}
+
+        {/* Expiry warning banners (60 / 30 / 14 / 7 days, then expired) */}
         {licenseExpiring && (
           <div
             className="w-full rounded-lg px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-            style={{ backgroundColor: '#b91c1c' }}
+            style={{ backgroundColor: TONE_COLORS[licenseTone] }}
           >
             <p className="text-sm font-semibold text-white">
-              Your contractor license {formatDaysMessage(licenseDaysUntil)} ({formatExpiryDate(effectiveLicenseExpiration)}). Renew your license through ListWorx Academy — powered by ACES, the national standard for contractor licensing in all 50 states — and upload your updated license to your profile to stay active with ListWorx.
+              Your contractor license {formatDaysMessage(licenseDaysUntil)} ({formatExpiryDate(effectiveLicenseExpiration)}). Renew your license through ListWorx Academy — powered by ACES, the national standard for contractor licensing in all 50 states — and upload your renewed license in Documents for ListWorx review.
             </p>
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
@@ -719,10 +747,10 @@ export default function ContractorDashboard() {
         {insuranceExpiring && (
           <div
             className="w-full rounded-lg px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-            style={{ backgroundColor: '#b91c1c' }}
+            style={{ backgroundColor: TONE_COLORS[insuranceTone] }}
           >
             <p className="text-sm font-semibold text-white">
-              Your insurance {formatDaysMessage(insuranceDaysUntil)} ({formatExpiryDate(effectiveInsuranceExpiration)}). Renew your insurance and upload your updated Certificate of Insurance to your profile to stay active and eligible for referrals with ListWorx.
+              Your insurance {formatDaysMessage(insuranceDaysUntil)} ({formatExpiryDate(effectiveInsuranceExpiration)}). Renew your insurance and upload your updated Certificate of Insurance in Documents. ListWorx reviews it before it counts toward referral eligibility.
             </p>
             <button
               onClick={() => setActiveTab('documents')}

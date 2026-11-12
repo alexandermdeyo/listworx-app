@@ -319,7 +319,7 @@ export default function DocumentsTab({ profile, onNavigateToProfile }: Documents
         label: label.trim(),
         is_public: isPublic,
         storage_path: storagePath,
-        status: 'APPROVED',
+        // Stored as PENDING by the database; only a ListWorx administrator can approve.
       });
 
       if (insertErr) throw insertErr;
@@ -418,9 +418,15 @@ export default function DocumentsTab({ profile, onNavigateToProfile }: Documents
                         </div>
                       )}
 
-                      {doc && (
+                      {doc && doc.status !== 'PENDING' && (
+                        <p className="pt-1 text-xs text-gray-500">
+                          Reviewed documents can&apos;t be edited. Upload a renewal from the Compliance section instead.
+                        </p>
+                      )}
+
+                      {doc && doc.status === 'PENDING' && (
                         <div className="pt-1">
-                          <Label className="text-xs text-gray-500">Update Expiration Date</Label>
+                          <Label className="text-xs text-gray-500">Correct Expiration Date (before review)</Label>
                           <div className="flex items-center gap-2 mt-1">
                             <Input
                               type="date"
