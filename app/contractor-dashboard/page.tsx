@@ -699,6 +699,8 @@ export default function ContractorDashboard() {
                 insurance_awaiting_review: 'Your insurance certificate is waiting for ListWorx review.',
                 license_missing_or_expired: 'A license required for one of your trades is missing or expired.',
                 license_awaiting_review: 'Your license is waiting for ListWorx review.',
+                license_requirement_under_review:
+                  'ListWorx is confirming the licensing rules for one of your trades in your service area. You do not need to do anything unless we contact you.',
               } as Record<string, string>)[r] || 'A required document needs attention.').join(' ')}{' '}
               Your account, subscription, profile and past referrals are not affected
               {complianceHold.enforced ? ', and new referrals resume automatically once ListWorx approves your current documents.' : '.'}

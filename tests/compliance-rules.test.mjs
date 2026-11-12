@@ -179,3 +179,29 @@ test('job: certifications and other optional documents are ignored', async () =>
   await runComplianceJob(f.deps, at('2026-11-10'));
   assert.deepEqual([f.out.expired, f.out.contractorEmails, f.out.adminDigests], [[], [], []]);
 });
+
+// ---------- delivery safeguards ----------
+test('job: at most one compliance email per contractor per day, most urgent first', async () => {
+  const docs = [
+    { ...base, id: 'lic', document_type: 'LICENSE', status: 'APPROVED', expiration_date: '2026-11-24' },   // 14 days
+    { ...base, id: 'ins', document_type: 'INSURANCE', status: 'APPROVED', expiration_date: '2026-11-17' }, // 7 days
+  ];
+  const f = fakeJobDeps(docs);
+  const s1 = await runComplianceJob(f.deps, at('2026-11-10'));
+  assert.deepEqual(f.out.contractorEmails, [['ins', 'expiry_7']]);
+  assert.equal(s1.deferred, 1);
+  await runComplianceJob(f.deps, at('2026-11-11'));
+  assert.deepEqual(f.out.contractorEmails, [['ins', 'expiry_7'], ['lic', 'expiry_14']]);
+  await runComplianceJob(f.deps, at('2026-11-12'));
+  assert.equal(f.out.contractorEmails.length, 2, 'nothing repeated');
+});
+
+test('job: different contractors are not limited by each other', async () => {
+  const docs = [
+    { ...base, id: 'a', document_type: 'INSURANCE', status: 'APPROVED', expiration_date: '2026-11-17' },
+    { ...base, contractor_id: 'c2', id: 'b', document_type: 'INSURANCE', status: 'APPROVED', expiration_date: '2026-11-17' },
+  ];
+  const f = fakeJobDeps(docs);
+  await runComplianceJob(f.deps, at('2026-11-10'));
+  assert.equal(f.out.contractorEmails.length, 2);
+});

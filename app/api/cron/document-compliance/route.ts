@@ -5,6 +5,7 @@ import { sendEmail } from '@/lib/send-email';
 import { brandedEmail, detailRows, esc, notifyAdmin, BASE_URL } from '@/lib/server/notify';
 import { runComplianceJob, type JobDeps, type JobDoc } from '@/lib/compliance/job';
 import type { NoticeKind } from '@/lib/compliance/rules';
+import { canSendContractorEmail, ESSENTIAL_EMAIL_FOOTER } from '@/lib/notifications/policy';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,7 +77,9 @@ export async function POST(request: NextRequest) {
       if (error) throw error;
     },
     async emailContractor(doc: JobDoc, kind: NoticeKind, daysLeft: number) {
-      if (!doc.contact_email) throw new Error('contractor has no email on file');
+      // Essential notice: sent regardless of the optional-email setting, only to the account's address.
+      const decision = canSendContractorEmail('essential', { email: doc.contact_email });
+      if (!decision.send) throw new Error(`cannot email contractor: ${decision.reason}`);
       const what = TYPE_LABEL[doc.document_type] || 'document';
       const expired = kind === 'expired';
       const title = expired ? `Your ${what} on file has expired` : `Your ${what} expires in ${daysLeft} day${daysLeft === 1 ? '' : 's'}`;
@@ -86,9 +89,15 @@ export async function POST(request: NextRequest) {
         : `<p>The ${esc(what)} ListWorx has on file for ${esc(doc.company_name)} expires on ${esc(fmt(doc.expiration_date))}.</p>
            <p>Upload the renewed ${esc(what)} in your dashboard before then so ListWorx can review it without a gap in your referral eligibility.</p>`;
       await sendEmail({
-        to: doc.contact_email,
+        to: (doc.contact_email as string).trim(),
         subject: `ListWorx: ${title}`,
-        html: brandedEmail({ kicker: 'Compliance documents', title, body, ctaLabel: 'Upload in Documents', ctaHref: `${BASE_URL}/contractor-dashboard` }),
+        html: brandedEmail({
+          kicker: 'Compliance documents',
+          title,
+          body: `${body}<p style="margin-top:16px;font-size:12px;color:#777">${esc(ESSENTIAL_EMAIL_FOOTER)}</p>`,
+          ctaLabel: 'Upload in Documents',
+          ctaHref: `${BASE_URL}/contractor-dashboard`,
+        }),
       });
     },
     async emailAdmin({ expired, pending }) {

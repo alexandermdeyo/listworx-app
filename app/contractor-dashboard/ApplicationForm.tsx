@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createClient } from '@/lib/supabase-browser';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import { ApplicationFormState, County } from './types';
+import { checkApplicationLicense, documentPathFromUrl, type LicenseRule } from '@/lib/compliance/licensing';
 import {
   Building2,
   MapPin,
@@ -223,6 +224,10 @@ export default function ApplicationForm({
   const [loadingTrades, setLoadingTrades] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState<'license' | 'insurance' | null>(null);
+  // Storage paths of files uploaded in this session (the URLs above are signed links).
+  const [docPaths, setDocPaths] = useState<{ license?: string; insurance?: string }>({});
+  // Licensing rules for the selected state (null = not loaded; an admin reviews instead).
+  const [licenseRules, setLicenseRules] = useState<LicenseRule[] | null>(null);
   const [docUploadError, setDocUploadError] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -387,7 +392,7 @@ export default function ApplicationForm({
       const path = `${user.id}/applications/${docType}-${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from('contractor-documents')
-        .upload(path, file, { upsert: true, contentType: file.type });
+        .upload(path, file, { contentType: file.type });
       if (uploadError) throw uploadError;
       const { data: signedData, error: signedErr } = await supabase.storage
         .from('contractor-documents')
@@ -397,12 +402,45 @@ export default function ApplicationForm({
       }
       const fieldKey = docType === 'license' ? 'license_document_url' : 'insurance_document_url';
       setForm(prev => ({ ...prev, [fieldKey]: signedData.signedUrl }));
+      setDocPaths(prev => ({ ...prev, [docType]: path }));
     } catch (err: any) {
       setDocUploadError(err.message || 'Upload failed. Please try again.');
     } finally {
       setUploadingDoc(null);
       e.target.value = '';
     }
+  }
+
+  useEffect(() => {
+    if (!form.selectedState) { setLicenseRules(null); return; }
+    let cancelled = false;
+    supabase
+      .from('license_requirements')
+      .select('category_id, state_code, county_id, requirement, conditions')
+      .eq('state_code', form.selectedState)
+      .then(({ data, error: rulesErr }) => {
+        if (cancelled) return;
+        if (rulesErr) console.warn('[application] license rules unavailable; admin will review', rulesErr.message);
+        setLicenseRules(rulesErr ? null : ((data || []) as LicenseRule[]));
+      });
+    return () => { cancelled = true; };
+  }, [form.selectedState, supabase]);
+
+  const selectedCountyRefs = counties.filter(c => form.selectedCounties.includes(c.id));
+  const licenseCheck = checkApplicationLicense(
+    licenseRules,
+    form.selectedTrades,
+    selectedCountyRefs,
+    Boolean(form.license_document_url)
+  );
+
+  function licenseRequiredMessage(): string {
+    const names = Array.from(new Set(licenseCheck.required.map(p => {
+      const trade = trades.find(t => t.id === p.categoryId)?.name || 'one of your trades';
+      const county = counties.find(c => c.id === p.countyId)?.name;
+      return county ? `${trade} (${county} County)` : trade;
+    })));
+    return `A professional license is required for ${names.join(', ')}. Go back to Step 2 to upload your license, or remove that trade.`;
   }
 
   function validateStep(s: number): string {
@@ -415,8 +453,9 @@ export default function ApplicationForm({
     }
     if (s === 2) {
       if (!form.insurance_expiration_date) return 'Insurance expiration date is required.';
-      if (!form.license_document_url) return 'Please upload your contractor license document.';
       if (!form.insurance_document_url) return 'Please upload your insurance certificate.';
+      // A license is only required for licensed trades (checked at Step 4); if one is uploaded, its date is needed for review.
+      if (form.license_document_url && !form.license_expiration_date) return 'Please enter your license expiration date.';
     }
     if (s === 3) {
       if (!form.selectedState) return 'Please select a service state.';
@@ -424,6 +463,7 @@ export default function ApplicationForm({
     }
     if (s === 4) {
       if (form.selectedTrades.length === 0) return 'Please select at least one trade specialty.';
+      if (!licenseCheck.ok) return licenseRequiredMessage();
     }
     if (s === 5) {
       if (!form.google_review_url.trim()) return 'Please provide at least your Google Reviews link.';
@@ -451,7 +491,7 @@ export default function ApplicationForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const msg = validateStep(6);
+    const msg = validateStep(2) || validateStep(4) || validateStep(6);
     if (msg) { setError(msg); return; }
     setError('');
     setSubmitting(true);
@@ -537,6 +577,40 @@ export default function ApplicationForm({
           .from('contractor_categories')
           .insert(categoryRows);
         if (insertCategoriesErr) throw insertCategoriesErr;
+      }
+
+      // Application uploads go into the same review queue as later renewals:
+      // one PENDING document record per file (the database forces PENDING).
+      // Re-submitting never duplicates a record for the same file.
+      const appDocs = [
+        { type: 'INSURANCE', url: form.insurance_document_url, path: docPaths.insurance, exp: form.insurance_expiration_date },
+        { type: 'LICENSE', url: form.license_document_url, path: docPaths.license, exp: form.license_expiration_date },
+      ]
+        .map(d => ({ ...d, path: d.path || documentPathFromUrl(d.url) }))
+        .filter(d => d.url && d.path);
+      if (appDocs.length) {
+        const { data: existingDocs, error: existingErr } = await supabase
+          .from('contractor_documents')
+          .select('storage_path')
+          .eq('contractor_id', contractorProfileId)
+          .in('storage_path', appDocs.map(d => d.path as string));
+        if (existingErr) throw existingErr;
+        const known = new Set((existingDocs || []).map((d: any) => d.storage_path));
+        const newDocs = appDocs.filter(d => !known.has(d.path));
+        if (newDocs.length) {
+          const { error: docsErr } = await supabase.from('contractor_documents').insert(
+            newDocs.map(d => ({
+              contractor_id: contractorProfileId,
+              document_type: d.type,
+              document_url: d.url,
+              storage_path: d.path,
+              expiration_date: d.exp || null,
+              file_name: (d.path as string).split('/').pop(),
+              status: 'PENDING',
+            }))
+          );
+          if (docsErr) throw docsErr;
+        }
       }
 
       await fetch('/api/contractor-applications', {
@@ -779,7 +853,8 @@ export default function ApplicationForm({
               {/* License document upload */}
               <div className="rounded-lg border border-lw-border-light bg-lw-surface p-4">
                 <p className="text-sm font-medium text-lw-text mb-2">
-                  Contractor License Document <span className="text-red-500">*</span>
+                  Contractor License Document{' '}
+                  <span className="font-normal text-lw-gray">(required only if your trade needs a license where you work)</span>
                 </p>
                 {form.license_document_url ? (
                   <div className="flex items-center gap-2">
@@ -1126,6 +1201,16 @@ export default function ApplicationForm({
                   );
                 })}
               </div>
+            )}
+
+            {!licenseCheck.ok && (
+              <p className="mt-3 rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-800">{licenseRequiredMessage()}</p>
+            )}
+            {licenseCheck.ok && licenseCheck.review.length > 0 && (
+              <p className="mt-3 rounded-md border border-lw-border-light bg-lw-surface p-3 text-xs text-lw-gray">
+                Licensing rules differ by trade, state and county. ListWorx will confirm whether any of your selected trades
+                needs a license in your service area and contact you if we need anything more.
+              </p>
             )}
           </div>
         )}

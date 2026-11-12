@@ -8,6 +8,10 @@
  * (unique per document + kind) BEFORE it is sent. A failed send releases the
  * claim so the next run retries it. Two overlapping runs cannot both send.
  *
+ * Delivery safeguard: at most ONE contractor email per contractor per run
+ * (most urgent first). Any other notice due the same day is released and
+ * sent on a following run, so a contractor is never flooded.
+ *
  * Referral eligibility does NOT depend on this job — matching reads the live
  * contractor_compliance view.
  */
@@ -35,14 +39,14 @@ export type JobDeps = {
   log?(msg: string, data?: unknown): void;
 };
 
-export type JobSummary = { reminders: number; expiredMarked: number; adminExpired: number; adminPending: number; failures: number };
+export type JobSummary = { reminders: number; deferred: number; expiredMarked: number; adminExpired: number; adminPending: number; failures: number };
 
 const isCompliance = (t: string) => (COMPLIANCE_DOC_TYPES as readonly string[]).includes(t);
 
 export async function runComplianceJob(deps: JobDeps, now: Date = new Date()): Promise<JobSummary> {
   const today = centralToday(now);
   const docs = (await deps.loadDocs()).filter((d) => isCompliance(d.document_type));
-  const summary: JobSummary = { reminders: 0, expiredMarked: 0, adminExpired: 0, adminPending: 0, failures: 0 };
+  const summary: JobSummary = { reminders: 0, deferred: 0, expiredMarked: 0, adminExpired: 0, adminPending: 0, failures: 0 };
 
   // 1. Mark approved documents past their date as EXPIRED (status only; history kept).
   const toExpire = docs
@@ -68,7 +72,12 @@ export async function runComplianceJob(deps: JobDeps, now: Date = new Date()): P
   const adminExpired: JobDoc[] = [];
   const adminExpiredClaims: string[] = [];
 
-  for (const doc of latest.values()) {
+  const emailedThisRun = new Set<string>();
+  const byUrgency = [...latest.values()].sort((a, b) =>
+    (a.expiration_date as string).localeCompare(b.expiration_date as string)
+  );
+
+  for (const doc of byUrgency) {
     const daysLeft = daysUntil(doc.expiration_date as string, today);
     const plan = planReminder(daysLeft, sent.get(doc.id) || []);
     for (const kind of plan.record) {
@@ -79,8 +88,14 @@ export async function runComplianceJob(deps: JobDeps, now: Date = new Date()): P
         continue;
       }
       if (kind !== plan.email) continue; // passed thresholds are recorded, not emailed
+      if (emailedThisRun.has(doc.contractor_id)) {
+        await deps.release(doc.id, kind); // one email per contractor per day; this one goes next run
+        summary.deferred += 1;
+        continue;
+      }
       try {
         await deps.emailContractor(doc, kind, daysLeft);
+        emailedThisRun.add(doc.contractor_id);
         summary.reminders += 1;
       } catch (err) {
         summary.failures += 1;
