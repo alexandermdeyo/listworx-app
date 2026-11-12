@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader as Loader2, Printer, ArrowLeft } from 'lucide-react';
+import { ownedMediaPath } from '@/lib/media-paths';
 
 const TEMPLATES = [
   { id: 'service_announcement', name: 'Service Announcement', description: 'Promote a specific service to homeowners in your area.' },
@@ -73,11 +74,10 @@ export default function FlyerBuilderPage() {
   const setField = (key: string, val: string) => setFields(prev => ({ ...prev, [key]: val }));
 
   const handleUpload = async (file: File, type: 'before' | 'after' | 'logo') => {
-    if (!profile?.id) return;
+    if (!profile?.id || !profile?.user_id) return;
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop();
-      const path = `${profile.id}/${type}-${Date.now()}.${ext}`;
+      const path = ownedMediaPath(profile.user_id, 'flyers', `${type}-${file.name}`);
       const { error } = await supabase.storage.from('contractor-work-photos').upload(path, file, { upsert: true });
       if (error) throw error;
       const { data: urlData } = supabase.storage.from('contractor-work-photos').getPublicUrl(path);

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { requireAdminRequest } from '@/lib/server/require-admin';
+import { createMediaItem, updateMediaItem, deleteMediaItem, type MediaItemDeps } from '@/lib/server/media-items';
 
 
 export async function GET(request: NextRequest) {
@@ -32,77 +34,46 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(data);
 }
 
+/** Writes are admin-only; the server key is used only after the admin check passes. */
+function mediaDeps(request: NextRequest): MediaItemDeps {
+  return {
+    adminId: () => requireAdminRequest(request),
+    insert: async (row) => {
+      const { data, error } = await createSupabaseAdminClient().from('media_items').insert(row).select().single();
+      return { data, error };
+    },
+    update: async (id, patch) => {
+      const { data, error } = await createSupabaseAdminClient().from('media_items').update(patch).eq('id', id).select().single();
+      return { data, error };
+    },
+    remove: async (id) => {
+      const { error } = await createSupabaseAdminClient().from('media_items').delete().eq('id', id);
+      return { error };
+    },
+  };
+}
+
+async function readJson(request: NextRequest): Promise<Record<string, unknown>> {
+  try {
+    const body = await request.json();
+    return body && typeof body === 'object' ? body : {};
+  } catch {
+    return {};
+  }
+}
+
 export async function POST(request: NextRequest) {
-  const supabaseAdmin = createSupabaseAdminClient();
-  const body = await request.json();
-  const { title, platform, url, thumbnail_url, description, is_featured, display_order } = body;
-
-  if (!title || !url) {
-    return NextResponse.json({ error: 'title and url are required' }, { status: 400 });
-  }
-
-  const { data, error } = await supabaseAdmin
-    .from('media_items')
-    .insert({
-      title,
-      platform: platform === 'other' ? 'link' : (platform || 'link'),
-      url,
-      thumbnail_url: thumbnail_url || null,
-      description: description || null,
-      is_featured: is_featured ?? false,
-      display_order: display_order ?? 0,
-      is_active: true,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data, { status: 201 });
+  const result = await createMediaItem(await readJson(request), mediaDeps(request));
+  return NextResponse.json(result.body, { status: result.status });
 }
 
 export async function PATCH(request: NextRequest) {
-  const supabaseAdmin = createSupabaseAdminClient();
-  const body = await request.json();
-  const { id, ...updates } = body;
-
-  if (!id) {
-    return NextResponse.json({ error: 'id is required' }, { status: 400 });
-  }
-
-  const { data, error } = await supabaseAdmin
-    .from('media_items')
-    .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data);
+  const result = await updateMediaItem(await readJson(request), mediaDeps(request));
+  return NextResponse.json(result.body, { status: result.status });
 }
 
 export async function DELETE(request: NextRequest) {
-  const supabaseAdmin = createSupabaseAdminClient();
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get('id');
-
-  if (!id) {
-    return NextResponse.json({ error: 'id is required' }, { status: 400 });
-  }
-
-  const { error } = await supabaseAdmin
-    .from('media_items')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ success: true });
+  const id = new URL(request.url).searchParams.get('id');
+  const result = await deleteMediaItem(id, mediaDeps(request));
+  return NextResponse.json(result.body, { status: result.status });
 }

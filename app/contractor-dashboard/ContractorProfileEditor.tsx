@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import ComplianceDocuments from './ComplianceDocuments';
 import { ContractorProfile, County } from './types';
+import { isOwnedMediaPath, ownedMediaPath } from '@/lib/media-paths';
 import {
   AlertCircle,
   Briefcase,
@@ -367,8 +368,7 @@ export default function ContractorProfileEditor({
     setSectionError(null);
 
     try {
-      const ext = file.name.split('.').pop() || 'jpg';
-      const path = `profile-photos/${profile.id}-${Date.now()}.${ext}`;
+      const path = ownedMediaPath(profile.user_id, 'profile-photo', file.name);
       const { error: uploadError } = await supabase.storage.from(LOGO_BUCKET).upload(path, file, { upsert: true, contentType: file.type });
       if (uploadError) throw uploadError;
 
@@ -417,8 +417,7 @@ export default function ContractorProfileEditor({
         }
 
         setPhotoUploadProgress((prev) => ({ ...prev, [progressKey]: 25 }));
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
-        const storagePath = `work-photos/${profile.id}/${Date.now()}-${safeName}`;
+        const storagePath = ownedMediaPath(profile.user_id, 'work-photos', file.name);
         const { error: uploadError } = await supabase.storage.from(PHOTO_BUCKET).upload(storagePath, file, { contentType: file.type });
         if (uploadError) throw uploadError;
 
@@ -463,8 +462,11 @@ export default function ContractorProfileEditor({
   async function deleteWorkPhoto(photo: WorkPhoto) {
     if (!confirm('Remove this photo?')) return;
     setSectionError(null);
-    const { error: storageError } = await supabase.storage.from(PHOTO_BUCKET).remove([photo.storage_path]);
-    if (storageError) console.error('[profile-editor] work photo storage delete failed', storageError);
+    // Only files in this contractor's own folder can be removed (storage enforces the same rule).
+    if (isOwnedMediaPath(photo.storage_path, profile.user_id)) {
+      const { error: storageError } = await supabase.storage.from(PHOTO_BUCKET).remove([photo.storage_path]);
+      if (storageError) console.error('[profile-editor] work photo storage delete failed', storageError);
+    }
     const { error } = await supabase.from('contractor_work_photos').delete().eq('id', photo.id);
     if (error) {
       setSectionError(error.message);

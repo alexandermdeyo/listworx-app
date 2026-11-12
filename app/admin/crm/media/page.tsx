@@ -104,6 +104,12 @@ function matchesPlatformFilter(itemPlatform: string, activeFilter: string) {
 export default function AdminMediaPage() {
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
+
+  // /api/media writes are admin-only; send the admin's access token with each write.
+  const authHeaders = async (extra: Record<string, string> = {}) => {
+    const { data } = await supabase.auth.getSession();
+    return { ...extra, Authorization: `Bearer ${data.session?.access_token || ''}` };
+  };
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -167,14 +173,14 @@ export default function AdminMediaPage() {
       if (editingId) {
         const res = await fetch('/api/media', {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: await authHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({ id: editingId, ...payload }),
         });
         if (!res.ok) throw new Error((await res.json()).error);
       } else {
         const res = await fetch('/api/media', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: await authHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error((await res.json()).error);
@@ -194,7 +200,7 @@ export default function AdminMediaPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this media item? This cannot be undone.')) return;
     try {
-      const res = await fetch(`/api/media?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/media?id=${id}`, { method: 'DELETE', headers: await authHeaders() });
       if (!res.ok) throw new Error((await res.json()).error);
       setItems(prev => prev.filter(i => i.id !== id));
     } catch (err: any) {
@@ -206,7 +212,7 @@ export default function AdminMediaPage() {
     try {
       const res = await fetch('/api/media', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ id: item.id, is_featured: !item.is_featured }),
       });
       if (!res.ok) throw new Error((await res.json()).error);
@@ -220,7 +226,7 @@ export default function AdminMediaPage() {
     try {
       const res = await fetch('/api/media', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ id: item.id, is_active: !item.is_active }),
       });
       if (!res.ok) throw new Error((await res.json()).error);
