@@ -129,8 +129,9 @@ function getDocumentLabel(type: string) {
 }
 
 function isCredentialVerified(credential: Credential) {
+  // Only documents a ListWorx administrator approved count; blank or pending never do.
   const status = String(credential.status || '').toLowerCase();
-  if (status && !['approved', 'verified'].includes(status)) return false;
+  if (status !== 'approved') return false;
   if (credential.expiration_date && new Date(credential.expiration_date) < new Date()) return false;
   return true;
 }
