@@ -14,9 +14,11 @@ function currentQuarter(d = new Date()) {
 
 async function getAuth() {
   const supabase = createClient();
+  // getUser() verifies the token with Supabase Auth; getSession() trusts the cookie as-is.
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user: verifiedUser },
+  } = await supabase.auth.getUser();
+  const session = verifiedUser ? { user: verifiedUser } : null;
   if (!session?.user) return null;
 
   const admin = createSupabaseAdminClient();
