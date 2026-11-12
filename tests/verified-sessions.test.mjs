@@ -7,8 +7,6 @@ import { join } from 'node:path';
 
 // Still on getSession(), each pending a separate decision (see the approval report):
 const PENDING = new Set([
-  'app/api/create-portal-session/route.ts',        // Stripe billing — needs owner approval to touch
-  'app/api/listing-studio/create-checkout/route.ts', // Stripe checkout — needs owner approval to touch
   'app/api/requestor/select-contractor/route.ts',  // fixed in PR #35
 ]);
 
