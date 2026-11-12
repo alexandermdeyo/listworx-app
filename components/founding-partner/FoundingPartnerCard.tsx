@@ -76,7 +76,7 @@ export default function FoundingPartnerCard() {
     <div className="mx-auto max-w-3xl rounded-2xl border-2 border-lw-rust bg-gradient-to-br from-zinc-900 to-zinc-800 p-8 md:p-10 shadow-lg text-white">
       <div className="flex flex-col items-center mb-6 text-center">
         <img
-          src="/ironclad_founder_shield_logo.png"
+          src="/optimized/ironclad_founder_shield_logo.webp"
           alt=""
           className="mb-4 h-20 w-auto drop-shadow-md"
           aria-hidden="true"

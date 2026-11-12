@@ -427,7 +427,7 @@ export default function ContractorsPage() {
               <div className="absolute left-4 top-4 z-[3] md:left-5 md:top-5">
                 <RevealBadge className="w-24 md:w-28">
                   <Image
-                    src="/ironclad_founder_shield_logo.png"
+                    src="/optimized/ironclad_founder_shield_logo.webp"
                     alt="IronClad Founding Partner"
                     width={140}
                     height={140}

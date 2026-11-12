@@ -1,5 +1,12 @@
 import Navigation from '@/components/Navigation';
 import { Reveal } from '@/components/motion';
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'Terms of Service | ListWorx',
+  description: 'The terms that govern use of the ListWorx website and contractor referral network.',
+  path: '/terms',
+});
 
 export default function TermsPage() {
   return (

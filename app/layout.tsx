@@ -2,13 +2,20 @@ import './globals.css';
 import type { Metadata } from 'next';
 import Footer from '@/components/Footer';
 
+// Defaults only. Each public page sets its own title, description, and canonical.
+// No canonical here on purpose: a canonical in the root layout would be
+// inherited by every page that doesn't set its own.
 export const metadata: Metadata = {
+  metadataBase: new URL('https://listworx.co'),
   title: 'ListWorx - IronClad Contractors. Trusted by Realtors. Chosen by Homeowners.',
   description: 'Connect with vetted, licensed, and insured contractors who meet our IronClad Standards. Quality network for Realtors and Homeowners.',
   icons: {
     icon: '/LW_Logo.png',
   },
   openGraph: {
+    siteName: 'ListWorx',
+    type: 'website',
+    locale: 'en_US',
     images: [
       {
         url: 'https://listworx.co/brand/listworx-og.png',
