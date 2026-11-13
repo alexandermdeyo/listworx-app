@@ -7,7 +7,7 @@ import {
   buildJobAssignmentRows,
   incrementReferralCounts,
 } from '@/lib/contractor-matching';
-import { deliverableContractors, notifyReferredContractors, requestorCard } from '@/lib/server/referral-notify';
+import { deliverableContractors, notifyReferredContractors, requestorCard, REQUESTOR_CARD_FIELDS } from '@/lib/server/referral-notify';
 import { sendEmail } from '@/lib/send-email';
 import { notifyAdmin, brandedEmail, detailRows, esc, BASE_URL as SITE_BASE } from '@/lib/server/notify';
 
@@ -455,7 +455,20 @@ export async function POST(request: NextRequest) {
 
     // The requested trade(s) each referred contractor covers, for the requestor's card.
     const tradeByContractor: Record<string, string> = {};
+    // Public card fields straight from each profile (the matching result carries
+    // only what matching needs, including the subscription tier, which requestors
+    // must never see).
+    const cardProfileById: Record<string, Record<string, unknown>> = {};
     if (delivered.length > 0) {
+      const { data: cardRows, error: cardError } = await supabase
+        .from('contractor_profiles')
+        .select(REQUESTOR_CARD_FIELDS.join(', '))
+        .in('id', delivered.map((c) => c.id));
+      if (cardError) console.error('[job-request] card profile lookup failed:', cardError);
+      ((cardRows || []) as unknown as Record<string, unknown>[]).forEach((row) => {
+        cardProfileById[String(row.id)] = row;
+      });
+
       const { data: tradeRows } = await supabase
         .from('contractor_categories')
         .select('contractor_id, category_id, categories(name)')
@@ -558,7 +571,10 @@ export async function POST(request: NextRequest) {
       // Each contractor here has a recorded referral (delivered = counted).
       // Public card fields only — never private document links, billing IDs or subscription.
       contractors: delivered.map((c) =>
-        requestorCard(c as unknown as Record<string, unknown>, tradeByContractor[c.id] || categoryNames.join(', '))
+        requestorCard(
+          cardProfileById[c.id] || { id: c.id, company_name: c.company_name, owner_name: c.owner_name, email: c.email, phone: c.phone, website: c.website, bio: c.bio },
+          tradeByContractor[c.id] || categoryNames.join(', ')
+        )
       ),
       noMatches: delivered.length === 0,
       // True only when the provider accepted the requestor's email.

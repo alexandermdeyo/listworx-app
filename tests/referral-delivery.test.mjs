@@ -122,3 +122,9 @@ test('requestor card: contact, profile link, founder and IronClad flags — neve
     assert.ok(!(k in card), k);
   }
 });
+
+test('job-request builds requestor cards from profile rows, not the matching result (which carries the tier)', () => {
+  const src = readFileSync(new URL('../app/api/job-request/route.ts', import.meta.url), 'utf8');
+  assert.match(src, /select\(REQUESTOR_CARD_FIELDS\.join\(', '\)\)/);
+  assert.match(src, /cardProfileById\[c\.id\]/);
+});

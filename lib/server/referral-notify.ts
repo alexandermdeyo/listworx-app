@@ -95,7 +95,6 @@ export const REQUESTOR_CARD_FIELDS = [
   'profile_slug',
   'bio',
   'years_in_business',
-  'response_time',
   'ironclad_accepted',
   'ironclad_certified',
   'founder_status',
