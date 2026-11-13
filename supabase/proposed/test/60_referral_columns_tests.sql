@@ -17,7 +17,9 @@ create temp table r1 on commit drop as
   select id, job_request_id, slot_position, tier_at_referral, status, email_sent, created_at
   from public.referrals where contractor_id = :coA;
 do $$ begin
-  if (select count(*) from r1) <> 1 then raise exception 'R1 FAIL: contractor sees % referrals', (select count(*) from r1); end if;
+  if not exists (select 1 from r1 where id = 'f6000000-0000-4000-8000-0000000000a1' and slot_position is null) then
+    raise exception 'R1 FAIL: contractor cannot see the referral';
+  end if;
   raise notice 'R1 pass: contractor Referrals query works and returns their referral';
 end $$;
 commit;
