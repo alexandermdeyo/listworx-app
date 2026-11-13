@@ -410,7 +410,7 @@ function RequestPageContent() {
                     </div>
                     <h3 className="text-xl font-bold text-mkt-ink">{contractor.company_name}</h3>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {contractor.ironclad_accepted !== false && (
+                      {(contractor.ironclad_certified || contractor.ironclad_accepted !== false) && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs text-emerald-700">
                           <Shield className="h-3 w-3" /> IronClad
                         </span>
