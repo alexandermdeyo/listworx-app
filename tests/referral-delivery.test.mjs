@@ -76,9 +76,11 @@ test('no email address: skipped, nothing claimed', async () => {
   assert.equal(claims, 0);
 });
 
-test('job-request route delivers only recorded contractors and reports emailSent truthfully', () => {
+test('job-request route delivers only recorded contractors, holds suspected spam, reports emailSent truthfully', () => {
   const src = readFileSync(new URL('../app/api/job-request/route.ts', import.meta.url), 'utf8');
-  assert.match(src, /contractors: delivered\.map\(\(c\) =>\s*requestorCard\(/);
+  assert.match(src, /heldForReview\s*\?[\s\S]{0,160}delivered: \[\][\s\S]{0,120}: await recordReferrals\(/, 'held requests record nothing');
+  assert.match(src, /flaggedSpam \? \[\] : await findMatchedContractors/, 'held requests are not matched');
+  assert.match(src, /contractors: requestorCards/);
   assert.match(src, /emailSent: requestorEmailSent/);
   assert.doesNotMatch(src, /jobDescription: esc\(/, 'contractor email must not carry the job description');
 });
@@ -123,8 +125,15 @@ test('requestor card: contact, profile link, founder and IronClad flags — neve
   }
 });
 
-test('job-request builds requestor cards from profile rows, not the matching result (which carries the tier)', () => {
-  const src = readFileSync(new URL('../app/api/job-request/route.ts', import.meta.url), 'utf8');
+test('requestor cards are built from whitelisted profile rows, not the matching result (which carries the tier)', () => {
+  const src = readFileSync(new URL('../lib/server/referral-delivery.ts', import.meta.url), 'utf8');
   assert.match(src, /select\(REQUESTOR_CARD_FIELDS\.join\(', '\)\)/);
-  assert.match(src, /cardProfileById\[c\.id\]/);
+  assert.match(src, /byId\[c\.id\]/);
+});
+
+test('admin release: admin-only, releases a held request once, same referral rules', () => {
+  const src = readFileSync(new URL('../app/api/admin/job-requests/release/route.ts', import.meta.url), 'utf8');
+  assert.match(src, /requireAdminRequest\(request\)/);
+  assert.match(src, /\.eq\('flagged_spam', true\)/, 'only a held request can be released, once');
+  assert.match(src, /recordReferrals\(/);
 });

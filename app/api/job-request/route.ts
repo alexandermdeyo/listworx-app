@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
+import { findMatchedContractors } from '@/lib/contractor-matching';
 import {
-  findMatchedContractors,
-  buildReferralRows,
-  buildJobAssignmentRows,
-  incrementReferralCounts,
-} from '@/lib/contractor-matching';
-import { deliverableContractors, notifyReferredContractors, requestorCard, REQUESTOR_CARD_FIELDS } from '@/lib/server/referral-notify';
+  recordReferrals,
+  buildRequestorCards,
+  sendContractorReferralEmails,
+  sendRequestorMatchEmail,
+} from '@/lib/server/referral-delivery';
 import { sendEmail } from '@/lib/send-email';
 import { notifyAdmin, brandedEmail, detailRows, esc, BASE_URL as SITE_BASE } from '@/lib/server/notify';
 
@@ -27,162 +27,6 @@ function normalizeUrgency(value: string | null | undefined) {
   if (normalized === 'STANDARD' || normalized === 'WITHIN_MONTH') return 'WITHIN_MONTH';
   if (normalized === 'FLEXIBLE') return 'FLEXIBLE';
   return 'WITHIN_MONTH';
-}
-
-/* ─────────────────────────────────────────────────────────────
-   EMAIL HELPERS — called only AFTER all DB writes complete.
-   These do NOT modify any referral/matching logic.
-   ───────────────────────────────────────────────────────────── */
-
-/** Referral notification for each delivered contractor — once per referral, no job details. */
-async function sendContractorReferralEmails(
-  supabase: ReturnType<typeof createAdminClient>,
-  delivered: Array<{ id: string; referralId: string; company_name: string; owner_name: string; email: string }>
-) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-  const results = await notifyReferredContractors(
-    delivered.map((c) => ({
-      referralId: c.referralId,
-      email: c.email,
-      ownerName: c.owner_name,
-      companyName: c.company_name,
-    })),
-    {
-      async claim(referralId) {
-        const { data, error } = await supabase
-          .from('referrals')
-          .update({ email_sent: true, email_sent_at: new Date().toISOString() })
-          .eq('id', referralId)
-          .eq('email_sent', false)
-          .select('id');
-        if (error) {
-          console.error('[job-request] referral email claim failed:', error);
-          return false;
-        }
-        return (data || []).length === 1;
-      },
-      async release(referralId) {
-        await supabase.from('referrals').update({ email_sent: false, email_sent_at: null }).eq('id', referralId);
-      },
-      async send(payload) {
-        const response = await fetch(`${supabaseUrl}/functions/v1/send-contractor-email`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${serviceKey}` },
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) {
-          console.error('[job-request] contractor referral email failed:', await response.text());
-        }
-        return response.ok;
-      },
-    }
-  );
-
-  results
-    .filter((r) => r.outcome === 'failed')
-    .forEach((r) => console.error(`[job-request] referral email not sent for referral ${r.referralId}`));
-  return results;
-}
-
-async function sendRequestorMatchEmail(
-  supabase: ReturnType<typeof createAdminClient>,
-  matchedContractors: Array<{
-    id: string;
-    company_name: string;
-    owner_name: string;
-    email: string;
-    phone: string;
-    website: string | null;
-    bio: string | null;
-  }>,
-  jobData: {
-    requesterName: string;
-    requesterEmail: string;
-    propertyAddress: string;
-    categoryNames: string[];
-    jobRequestId: string;
-  }
-) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  const BASE_URL = process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://listworx.co';
-
-  // Fetch extra profile data (logo_url, profile_slug, specialties) for contractor cards
-  const contractorIds = matchedContractors.map((c) => c.id);
-
-  const [{ data: profileExtras }, { data: categoryRows }] = await Promise.all([
-    supabase
-      .from('contractor_profiles')
-      .select('id, logo_url, profile_slug')
-      .in('id', contractorIds),
-    supabase
-      .from('contractor_categories')
-      .select('contractor_id, categories(name)')
-      .in('contractor_id', contractorIds),
-  ]);
-
-  const logoMap: Record<string, string | null> = {};
-  const slugMap: Record<string, string | null> = {};
-  (profileExtras || []).forEach((p: any) => {
-    logoMap[p.id] = p.logo_url || null;
-    slugMap[p.id] = p.profile_slug || null;
-  });
-
-  const specialtyMap: Record<string, string[]> = {};
-  (categoryRows || []).forEach((row: any) => {
-    const cId = row.contractor_id;
-    const name = row.categories?.name;
-    if (cId && name) {
-      if (!specialtyMap[cId]) specialtyMap[cId] = [];
-      specialtyMap[cId].push(name);
-    }
-  });
-
-  const contractorCards = matchedContractors.map((c) => ({
-    name: c.owner_name,
-    company: c.company_name,
-    phone: c.phone,
-    email: c.email,
-    website: c.website || undefined,
-    bio: c.bio || undefined,
-    logoUrl: logoMap[c.id] || null,
-    profileUrl: slugMap[c.id]
-      ? `${BASE_URL}/contractors/${slugMap[c.id]}`
-      : `${BASE_URL}/contractors/${c.id}`,
-    specialties: specialtyMap[c.id] || [],
-  }));
-
-  try {
-    const response = await fetch(`${supabaseUrl}/functions/v1/send-realtor-email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${serviceKey}`,
-      },
-      body: JSON.stringify({
-        type: 'contractor_match',
-        to: jobData.requesterEmail,
-        realtorName: jobData.requesterName,
-        propertyAddress: jobData.propertyAddress,
-        services: jobData.categoryNames,
-        contractors: contractorCards,
-        jobRequestId: jobData.jobRequestId,
-        matchedContractors: contractorCards.length,
-      }),
-    });
-
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('[job-request] requestor match email failed:', text);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error('[job-request] requestor match email error:', err);
-    return false;
-  }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -385,53 +229,21 @@ export async function POST(request: NextRequest) {
     }
 
     // ── MATCHING LOGIC — untouched ──────────────────────────
-    const matchedContractors = await findMatchedContractors(supabase, {
+    const matchedContractors = flaggedSpam ? [] : await findMatchedContractors(supabase, {
       countyId: propertyCountyId,
       categoryIds,
       jobRequestId: jobRequest.id,
     });
 
     // ── REFERRAL RECORDING ──────────────────────────────────
-    // A referral counts when the contractor's information is delivered to the
-    // requestor (this response and the requestor email). Only contractors whose
-    // referral row was recorded are delivered, so every contractor shown is
-    // counted exactly once; the database allows one row per contractor/request.
-    let referralRecordingFailed = false;
-    let delivered: ReturnType<typeof deliverableContractors<(typeof matchedContractors)[number]>> = [];
-
-    if (matchedContractors.length > 0) {
-      const referralRows = buildReferralRows(jobRequest.id, matchedContractors);
-
-      const { data: referralData, error: referralError } = await supabase
-        .from('referrals')
-        .insert(referralRows)
-        .select('id, contractor_id');
-
-      if (referralError) {
-        referralRecordingFailed = true;
-        console.error('[job-request] referral insert failed — no contractors delivered:', referralError);
-      }
-
-      delivered = deliverableContractors(matchedContractors, referralError ? [] : referralData);
-
-      if (delivered.length > 0) {
-        const insertedReferrals = delivered.map((c) => ({ id: c.referralId, contractor_id: c.id }));
-        const assignmentRows = buildJobAssignmentRows(jobRequest.id, delivered, insertedReferrals);
-
-        const { error: assignmentError } = await supabase
-          .from('job_assignments')
-          .insert(assignmentRows);
-
-        if (assignmentError) {
-          console.error('[job-request] job assignment insert failed:', assignmentError);
-        }
-
-        await incrementReferralCounts(
-          supabase,
-          delivered.map((c) => c.id)
-        );
-      }
-    }
+    // Suspected spam is held for administrator review: no contractor is shown,
+    // emailed or counted until an admin releases it (owner rule 2026-11-12).
+    // Otherwise a referral counts when the contractor's information is
+    // delivered (this response and the requestor email).
+    const heldForReview = flaggedSpam;
+    const { delivered, failed: referralRecordingFailed } = heldForReview
+      ? { delivered: [] as Array<(typeof matchedContractors)[number] & { referralId: string }>, failed: false }
+      : await recordReferrals(supabase, jobRequest.id, matchedContractors);
     // ── END MATCHING LOGIC ──────────────────────────────────
 
     // ── EMAIL NOTIFICATIONS — fired after all DB writes ────
@@ -453,35 +265,7 @@ export async function POST(request: NextRequest) {
 
     const emailJobs: Promise<unknown>[] = [];
 
-    // The requested trade(s) each referred contractor covers, for the requestor's card.
-    const tradeByContractor: Record<string, string> = {};
-    // Public card fields straight from each profile (the matching result carries
-    // only what matching needs, including the subscription tier, which requestors
-    // must never see).
-    const cardProfileById: Record<string, Record<string, unknown>> = {};
-    if (delivered.length > 0) {
-      const { data: cardRows, error: cardError } = await supabase
-        .from('contractor_profiles')
-        .select(REQUESTOR_CARD_FIELDS.join(', '))
-        .in('id', delivered.map((c) => c.id));
-      if (cardError) console.error('[job-request] card profile lookup failed:', cardError);
-      ((cardRows || []) as unknown as Record<string, unknown>[]).forEach((row) => {
-        cardProfileById[String(row.id)] = row;
-      });
-
-      const { data: tradeRows } = await supabase
-        .from('contractor_categories')
-        .select('contractor_id, category_id, categories(name)')
-        .in('contractor_id', delivered.map((c) => c.id))
-        .in('category_id', categoryIds);
-      (tradeRows || []).forEach((row: any) => {
-        const name = row.categories?.name;
-        if (!name) return;
-        tradeByContractor[row.contractor_id] = tradeByContractor[row.contractor_id]
-          ? `${tradeByContractor[row.contractor_id]}, ${name}`
-          : name;
-      });
-    }
+    const requestorCards = await buildRequestorCards(supabase, delivered, categoryIds, categoryNames);
 
     let requestorEmailSent = false;
 
@@ -531,7 +315,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Always tell the admin.
     const alertTitle = flaggedSpam
-      ? '⚠️ Possible spam job request (no emails sent)'
+      ? '⚠️ Possible spam — held for your review (no contractors shown, emailed or counted)'
       : referralRecordingFailed
         ? '🔴 New job request: matched pros could NOT be recorded (follow up)'
         : delivered.length === 0
@@ -570,13 +354,10 @@ export async function POST(request: NextRequest) {
       jobRequestId: jobRequest.id,
       // Each contractor here has a recorded referral (delivered = counted).
       // Public card fields only — never private document links, billing IDs or subscription.
-      contractors: delivered.map((c) =>
-        requestorCard(
-          cardProfileById[c.id] || { id: c.id, company_name: c.company_name, owner_name: c.owner_name, email: c.email, phone: c.phone, website: c.website, bio: c.bio },
-          tradeByContractor[c.id] || categoryNames.join(', ')
-        )
-      ),
+      // Public card fields only — never subscription, billing or documents.
+      contractors: requestorCards,
       noMatches: delivered.length === 0,
+      heldForReview,
       // True only when the provider accepted the requestor's email.
       emailSent: requestorEmailSent,
     });

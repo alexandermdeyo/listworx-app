@@ -400,7 +400,7 @@ function RequestPageContent() {
 
           {contractors.length > 0 ? (
             <>
-              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-orange-50 p-4 text-sm text-mkt-ink/80">{contractors.length === 1 ? 'This contractor has' : `These ${contractors.length === 2 ? 'two' : 'three'} contractors have`} been vetted by ListWorx and {contractors.length === 1 ? 'holds' : 'hold'} active IronClad Standards certification. Contact them directly — ListWorx does not manage scheduling or payments.</div>
+              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-orange-50 p-4 text-sm text-mkt-ink/80">{contractors.length === 1 ? 'This contractor has' : `These ${contractors.length === 2 ? 'two' : 'three'} contractors have`} been vetted by ListWorx. Contact them directly — ListWorx does not manage scheduling or payments.</div>
               <div className="grid md:grid-cols-3 gap-6 mb-6">
               {contractors.map((contractor, index) => (
                 <Card key={contractor.id} className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
@@ -410,7 +410,7 @@ function RequestPageContent() {
                     </div>
                     <h3 className="text-xl font-bold text-mkt-ink">{contractor.company_name}</h3>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {(contractor.ironclad_certified || contractor.ironclad_accepted !== false) && (
+                      {contractor.ironclad_certified === true && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs text-emerald-700">
                           <Shield className="h-3 w-3" /> IronClad
                         </span>

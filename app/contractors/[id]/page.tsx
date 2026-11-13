@@ -96,7 +96,9 @@ function isUuid(value: string) {
 }
 
 function isActiveIronClad(profile: ContractorProfile) {
-  return profile.partner_status === 'active' && (profile.ironclad_certified || profile.ironclad_accepted !== false);
+  // Only an administrator can certify (database-enforced); a contractor's own
+  // acceptance of the standards is not certification.
+  return profile.partner_status === 'active' && profile.ironclad_certified === true;
 }
 
 function isFoundingPartner(profile: ContractorProfile) {

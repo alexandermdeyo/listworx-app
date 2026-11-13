@@ -278,6 +278,31 @@ export default function JobRequestsPage() {
     }
   };
 
+  // Held (suspected spam) requests: nothing is shown, emailed or counted until released.
+  const releaseRequest = async (requestId: string) => {
+    if (!confirm('Release this request? Matching contractors will be referred, counted and emailed.')) return;
+    try {
+      setProcessing(requestId);
+      const response = await fetch('/api/admin/job-requests/release', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobRequestId: requestId }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Release failed');
+      alert(
+        data.referred > 0
+          ? `Released: ${data.referred} contractor${data.referred === 1 ? '' : 's'} referred.${data.requestorEmailSent ? '' : ' The requestor email could not be sent — follow up directly.'}`
+          : 'Released, but no contractors match this request yet.'
+      );
+      await loadJobRequests();
+    } catch (err: any) {
+      alert(err.message || 'Release failed');
+    } finally {
+      setProcessing(null);
+    }
+  };
+
   const archiveRequest = async (requestId: string) => {
     if (!confirm('Archive this job request?')) return;
     try {
@@ -437,7 +462,7 @@ export default function JobRequestsPage() {
                           </span>
                           {req.flagged_spam && (
                             <span className="text-xs font-medium px-2 py-0.5 rounded-full border border-red-800/40 bg-red-950/30 text-red-400">
-                              ⚠ Possible spam{typeof req.spam_score === 'number' ? ` (${req.spam_score})` : ''}
+                              ⚠ Held for review — possible spam{typeof req.spam_score === 'number' ? ` (${req.spam_score})` : ''}
                             </span>
                           )}
                         </div>
@@ -673,6 +698,17 @@ export default function JobRequestsPage() {
                             className="border-zinc-700 text-zinc-300 hover:bg-lw-dark-surface"
                           >
                             <Archive className="h-3.5 w-3.5 mr-2" /> Close Request
+                          </Button>
+                        )}
+
+                        {req.flagged_spam && (
+                          <Button
+                            onClick={() => releaseRequest(req.id)}
+                            disabled={processing === req.id}
+                            size="sm"
+                            className="bg-lw-rust text-white hover:bg-lw-rust-hover"
+                          >
+                            Release &amp; refer
                           </Button>
                         )}
 

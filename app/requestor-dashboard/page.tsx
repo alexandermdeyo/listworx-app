@@ -70,6 +70,7 @@ type Contractor = {
   service_area_state?: string | null;
   service_area_counties?: string[] | null;
   ironclad_accepted?: boolean | null;
+  ironclad_certified?: boolean | null;
   founder_status?: boolean | null;
   founding_partner?: boolean | null;
   founding_partner_badge?: boolean | null;
@@ -457,12 +458,12 @@ export default function RequestorDashboardPage() {
                                 <MapPin className="h-4 w-4 shrink-0" />
                                 <span>{getServiceArea(contractor)}</span>
                               </div>
-                              <div className="inline-flex items-center gap-1">
-                                <ShieldCheck className="h-4 w-4 shrink-0" />
-                                <span>
-                                  {contractor?.ironclad_accepted ? 'IronClad Verified' : 'Trust status in review'}
-                                </span>
-                              </div>
+                              {contractor?.ironclad_certified === true && (
+                                <div className="inline-flex items-center gap-1">
+                                  <ShieldCheck className="h-4 w-4 shrink-0" />
+                                  <span>IronClad Certified</span>
+                                </div>
+                              )}
                               {(contractor?.founder_status || contractor?.founding_partner || contractor?.founding_partner_badge) && (
                                 <div className="inline-flex items-center gap-1 text-amber-700">
                                   <ShieldCheck className="h-4 w-4 shrink-0" />

@@ -16,11 +16,14 @@ Branch `release/launch` holds the code. Nothing here has been applied to product
 | 3 | `20261112000200_document_review_guard.sql` (contractors cannot approve their own documents) | Before or with the code deploy |
 | 4 | `20261112000300_referral_columns.sql` (referral columns the admin screens use; contractors see only referral counts, never job or requestor details) | **With** the code deploy — the old dashboard reads referral rows this step hides, the new one reads counts this step adds |
 | 5 | Deploy `release/launch` on Netlify and confirm it is live; deploy the `send-contractor-email` edge function from the same commit (new referral email wording) | — |
+| 7 | `20261112000400_application_status_cleanup.sql` (one-time: pending application records of contractors already approved/active become approved; changed rows are logged) | Any time after step 5 |
 | 6 | `20261111000200_media_storage_ownership.sql` (storage ownership) | **Only after step 5 is live** — the new upload paths work under the old rules, but the old paths would be refused under the new ones |
 
 Steps 1–3 are additive or compatible with the current site, so the live site keeps working between them and the deploy. Step 4 hides referral rows from contractors; on the old site that only empties a referral list that is already broken, so it is safe to run just before the deploy.
 
 ## Rollback (reverse order, only what was applied)
+
+0. `20261112000400_application_status_cleanup.rollback.sql` (restores exactly the logged rows to pending)
 
 1. `20261111000200_media_storage_ownership_rollback.sql` (re-opens the storage hole — only if uploads break)
 2. Revert the Netlify deploy to the previous one (Deploys → previous deploy → Publish deploy)
@@ -32,4 +35,4 @@ Steps 1–3 are additive or compatible with the current site, so the live site k
 ## Tested (local copy of production, 2026-11-12)
 
 `run_launch.sh`: steps 1–4 in order, 32 checks (alignment, document guard, billing, referral columns), rollback of all four with data present (structure restored, data kept), then re-apply. `run_media.sh`: storage rules, exploit confirmed before, blocked after, rollback and re-apply.
-Browser flow on the Netlify test site + Supabase test branch (2026-11-12): sign-up, application, admin approval, dashboard, documents, logo, cross-account checks and referral match tested. Step 4 was found by that test. Not yet tested: Stripe test-mode payment.
+Browser flow on the Netlify test site + Supabase test branch (2026-11-12): sign-up, application, admin approval, dashboard, documents, logo, cross-account checks and referral match tested. Step 4 was found by that test. Cleanup (step 7) dry-run on the test branch in a rolled-back transaction: the active contractor's pending application became approved, an unrelated pending application stayed pending, rollback restored it. Not yet tested: Stripe test-mode payment.
