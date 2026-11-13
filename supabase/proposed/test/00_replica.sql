@@ -109,6 +109,7 @@ create policy "Contractors update own profile or admin updates all" on public.co
 create policy "Contractors insert own profile or admin inserts all" on public.contractor_profiles for insert to authenticated with check ((user_id = (select auth.uid())) or is_admin());
 alter table public.referrals enable row level security;
 create policy "Referrals read access for involved parties" on public.referrals for select to authenticated using ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin());
+create policy "Contractors update own referrals or admin updates all" on public.referrals for update to authenticated using ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin()) with check ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin());
 
 grant usage on schema public to anon, authenticated, service_role;
 grant select, insert, update, delete on all tables in schema public to anon, authenticated, service_role;

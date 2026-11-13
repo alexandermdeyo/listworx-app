@@ -27,6 +27,7 @@ echo "== rollback 4, 3, 2, 1 (with test data present)"; run "$m4.rollback.sql"; 
 [ "$(q "select count(*) from information_schema.columns where table_name='subscriptions' and column_name in ('billing_period','stripe_customer_id','cancel_at_period_end')")" = "0" ] || { echo "ROLLBACK FAIL: columns remain"; exit 1; }
 [ "$(q "select count(*) from information_schema.columns where table_name='referrals' and column_name in ('slot_position','email_sent_at','requester_contacted','requester_contacted_at')")" = "0" ] || { echo "ROLLBACK FAIL: referral columns remain"; exit 1; }
 [ "$(q "select count(*) from public.referrals")" -ge "2" ] || { echo "ROLLBACK FAIL: referrals lost"; exit 1; }
+[ "$(q "select count(*) from pg_proc where proname='my_referral_tally'")" = "0" ] && [ "$(q "select count(*) from pg_policies where tablename='referrals' and policyname='Referrals read access for involved parties'")" = "1" ] || { echo "ROLLBACK FAIL: referral policies not restored"; exit 1; }
 [ "$(q "select count(*) from pg_trigger where tgname='guard_contractor_document'")" = "0" ] || { echo "ROLLBACK FAIL: guard remains"; exit 1; }
 [ "$(q "select count(*) from information_schema.columns where table_name='contractor_profiles' and column_name='ironclad_certified'")" = "0" ] || { echo "ROLLBACK FAIL: alignment columns remain"; exit 1; }
 [ "$(q "select count(*) from public.tiers where name like 'Network %'")" = "6" ] || { echo "ROLLBACK FAIL: original plans changed"; exit 1; }

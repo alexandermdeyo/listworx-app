@@ -14,17 +14,17 @@ Branch `release/launch` holds the code. Nothing here has been applied to product
 | 1 | `20261111000000_align_profiles_referrals.sql` (columns the dashboard, referrals list and profile editor already use; admin-only certification) | Immediately before or with the code deploy |
 | 2 | `20261112000100_billing_subscriptions.sql` (subscription records the webhook can save) | Before the code deploy (the new webhook expects it) |
 | 3 | `20261112000200_document_review_guard.sql` (contractors cannot approve their own documents) | Before or with the code deploy |
-| 4 | `20261112000300_referral_columns.sql` (referral columns the contractor Referrals list and admin screens already use) | Before or with the code deploy |
+| 4 | `20261112000300_referral_columns.sql` (referral columns the admin screens use; contractors see only referral counts, never job or requestor details) | **With** the code deploy — the old dashboard reads referral rows this step hides, the new one reads counts this step adds |
 | 5 | Deploy `release/launch` on Netlify and confirm it is live | — |
 | 6 | `20261111000200_media_storage_ownership.sql` (storage ownership) | **Only after step 5 is live** — the new upload paths work under the old rules, but the old paths would be refused under the new ones |
 
-Steps 1–4 are additive or compatible with the current site, so the live site keeps working between them and the deploy.
+Steps 1–3 are additive or compatible with the current site, so the live site keeps working between them and the deploy. Step 4 hides referral rows from contractors; on the old site that only empties a referral list that is already broken, so it is safe to run just before the deploy.
 
 ## Rollback (reverse order, only what was applied)
 
 1. `20261111000200_media_storage_ownership_rollback.sql` (re-opens the storage hole — only if uploads break)
 2. Revert the Netlify deploy to the previous one (Deploys → previous deploy → Publish deploy)
-3. `20261112000300_referral_columns.rollback.sql` (keeps referrals; the Referrals list breaks again)
+3. `20261112000300_referral_columns.rollback.sql` (keeps referrals; restores contractor read access to referral rows — redeploy the previous site with it)
 4. `20261112000200_document_review_guard.rollback.sql`
 5. `20261112000100_billing_subscriptions.rollback.sql` (keeps subscription rows; converts status back)
 6. `20261111000000_align_profiles_referrals.rollback.sql`

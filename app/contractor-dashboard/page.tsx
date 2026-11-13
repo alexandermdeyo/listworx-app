@@ -13,10 +13,9 @@ import { contractorHasAiToolkit } from '@/lib/tiers-config';
 import { ContractorProfile, TIERS } from './types';
 import StatusCard from './StatusCard';
 import SubscriptionSection from './SubscriptionSection';
-import PerformanceSection from './PerformanceSection';
 import MarketingSection from './MarketingSection';
 import ApplicationForm from './ApplicationForm';
-import ReferralsSection from './ReferralsSection';
+import ReferralTally from './ReferralTally';
 import ProfileTab from './ProfileTab';
 import DocumentsTab from './DocumentsTab';
 import SettingsTab from './SettingsTab';
@@ -80,10 +79,6 @@ export default function ContractorDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
-
-  const [referralCount, setReferralCount] = useState(0);
-  const [totalReferrals, setTotalReferrals] = useState(0);
-  const [referralsLast30, setReferralsLast30] = useState(0);
 
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -271,7 +266,6 @@ export default function ContractorDashboard() {
       };
 
       setProfile(enrichedProfile as any);
-      await loadReferralData(data.id);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -308,9 +302,6 @@ export default function ContractorDashboard() {
 
         setProfile({ ...data, _liveCounties: liveCounties, _liveTrades: liveTrades } as any);
 
-        if (data.id) {
-          await loadReferralData(data.id);
-        }
       } else if (!data) {
         setProfile(null);
       }
@@ -318,40 +309,6 @@ export default function ContractorDashboard() {
       console.error('Refresh error:', err);
     } finally {
       setRefreshing(false);
-    }
-  }
-
-  async function loadReferralData(profileId: string) {
-    try {
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-      const [thisMonthResult, totalResult, last30Result] = await Promise.all([
-        supabase
-          .from('referrals')
-          .select('*', { count: 'exact', head: true })
-          .eq('contractor_id', profileId)
-          .gte('created_at', startOfMonth.toISOString()),
-        supabase
-          .from('referrals')
-          .select('*', { count: 'exact', head: true })
-          .eq('contractor_id', profileId),
-        supabase
-          .from('referrals')
-          .select('*', { count: 'exact', head: true })
-          .eq('contractor_id', profileId)
-          .gte('created_at', thirtyDaysAgo.toISOString()),
-      ]);
-
-      setReferralCount(thisMonthResult.count || 0);
-      setTotalReferrals(totalResult.count || 0);
-      setReferralsLast30(last30Result.count || 0);
-    } catch (err) {
-      console.error('Referral data error:', err);
     }
   }
 
@@ -753,18 +710,7 @@ export default function ContractorDashboard() {
                 onCheckout={handleCheckout}
                 checkoutLoading={checkoutLoading}
               />
-              <PerformanceSection
-                profile={profile}
-                performanceData={{
-                  totalReferrals,
-                  referralsThisMonth: referralCount,
-                  referralsLast30Days: referralsLast30,
-                  acceptedReferrals: Math.round(totalReferrals * 0.75),
-                  declinedReferrals: Math.round(totalReferrals * 0.15),
-                  completedJobs: Math.round(totalReferrals * 0.5),
-                }}
-              />
-              <ReferralsSection contractorProfileId={profile.id} />
+              <ReferralTally />
             </>
           )}
 
