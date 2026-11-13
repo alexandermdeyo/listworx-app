@@ -411,26 +411,22 @@ Deno.serve(async (req: Request) => {
         break;
 
       case 'referral_notification': {
-        const category = request.jobCategory || 'General Services';
-        const county = request.jobCounty || 'Your Service Area';
-        const state = request.jobState || '';
-        const locationStr = state ? `${county} County, ${state}` : `${county} County`;
-        const requesterType = request.requesterType || 'Homeowner';
-        subject = `You've Been Referred — ${category} in ${county} County`;
+        // Owner rule (2026-11-12): no job, requestor, trade or location details.
+        subject = 'ListWorx Has Referred You!';
         html = layout(
-          "You've Been Referred",
-          `ListWorx has referred ${companyName} for a new service request in your area.`,
-          `${p(`Your contact information has been shared with a ${requesterType.toLowerCase()} in <strong style="color:${C.heading};">${locationStr}</strong>. They may reach out to you directly.`)}
-          ${dataTable([['Service Category', category],['Location', locationStr],['Requester Type', requesterType],...(request.jobDescription ? [['Project Summary', request.jobDescription] as [string, string]] : [])])}
-          ${infoCard(`${p(`<strong style="color:${C.heading};">What to expect:</strong> The ${requesterType.toLowerCase()} has received your business name, phone number, email, and website. They choose who to contact — you do not need to reach out to them. Simply be ready and responsive when they do.`, C.gray200)}`)}
-          ${sectionLabel('How to Be Ready')}
-          ${checkList(['Stay available — be responsive when the client reaches out to you','Be professional — your conduct directly reflects your IronClad standing','Keep your profile current — accurate contact info ensures you get the right referrals','Deliver quality work — satisfied clients lead to strong reviews and more referrals'])}
+          'ListWorx Has Referred You!',
+          `ListWorx has referred ${companyName} to a homeowner or property professional.`,
+          `${p(`Hi ${contractorName},`)}
+          ${p('ListWorx has referred your business to a homeowner or property professional.')}
+          ${p('They have received your contact information and may contact you directly.')}
+          ${p('Please be ready for a possible call, text, or email.')}
+          ${p('Thank you for being part of ListWorx.')}
           ${cta('View Your Dashboard &rarr;', `${BASE_URL}/contractor-dashboard`)}
           ${divider()}
           ${small(`Questions? Contact Alexander Deyo, Founder &mdash; <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a> &nbsp;|&nbsp; 615-362-4996`)}`,
-          `You've been referred for ${category} in ${county} County — be ready if the client reaches out.`
+          'Be ready for a possible call, text, or email.'
         );
-        text = `You've Been Referred — ${category} in ${county} County\n\nHi ${contractorName},\n\nListWorx has referred ${companyName} for a service request in ${locationStr}.\n\nService: ${category}\nRequester type: ${requesterType}\n\nThe client has your contact info and will reach out if interested. Be ready and responsive.\n\nDashboard: ${BASE_URL}/contractor-dashboard\n\n— The ListWorx Team`;
+        text = `ListWorx Has Referred You!\n\nHi ${contractorName},\n\nListWorx has referred your business to a homeowner or property professional.\n\nThey have received your contact information and may contact you directly.\n\nPlease be ready for a possible call, text, or email.\n\nThank you for being part of ListWorx.\n\nDashboard: ${BASE_URL}/contractor-dashboard\n\n— The ListWorx Team`;
         break;
       }
 

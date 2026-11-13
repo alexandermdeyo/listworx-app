@@ -110,6 +110,14 @@ create policy "Contractors insert own profile or admin inserts all" on public.co
 alter table public.referrals enable row level security;
 create policy "Referrals read access for involved parties" on public.referrals for select to authenticated using ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin());
 create policy "Contractors update own referrals or admin updates all" on public.referrals for update to authenticated using ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin()) with check ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin());
+create type public.assignment_status as enum ('ASSIGNED','ACCEPTED','DECLINED','IN_PROGRESS','COMPLETED','CANCELLED');
+create table public.job_assignments (id uuid default gen_random_uuid() not null primary key, job_request_id uuid not null references public.job_requests(id) on delete cascade, contractor_id uuid not null references public.contractor_profiles(id) on delete cascade, referral_id uuid references public.referrals(id) on delete set null, status assignment_status default 'ASSIGNED'::assignment_status, assigned_at timestamptz default now(), completed_at timestamptz, notes text default ''::text, created_at timestamptz default now(), updated_at timestamptz default now());
+alter table public.job_assignments enable row level security;
+create policy "Job assignments read access for involved parties" on public.job_assignments for select to authenticated using ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin());
+create policy "Contractors update own assignments or admin updates all" on public.job_assignments for update to authenticated using ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin()) with check ((contractor_id in (select id from contractor_profiles where user_id = (select auth.uid()))) or is_admin());
+create table public.job_request_categories (id uuid default gen_random_uuid() not null primary key, job_request_id uuid not null references public.job_requests(id) on delete cascade, category_id uuid not null, created_at timestamptz default now());
+alter table public.job_request_categories enable row level security;
+create policy "Anyone can read job_request_categories" on public.job_request_categories for select to anon, authenticated using (true);
 
 grant usage on schema public to anon, authenticated, service_role;
 grant select, insert, update, delete on all tables in schema public to anon, authenticated, service_role;

@@ -15,7 +15,14 @@
 --    job request and carry admin notes). Admins keep full access; the server
 --    (service role) is unaffected.
 -- 3. my_referral_tally(): counts only — this week, month, quarter, year and all
---    time — for the signed-in contractor. Periods follow Central time.
+--    time — for the signed-in contractor. Periods follow Central time
+--    (weeks start Monday).
+-- 4. One referral per contractor per request (owner rule: count each unique
+--    contractor/request combination once).
+-- 5. The same privacy for the two tables that link contractors to requests:
+--    job_assignments (contractors could read/update their own rows) and
+--    job_request_categories (anyone could read it). Admin and server only;
+--    the app reads both only from admin screens and server routes.
 -- Production had 0 referrals on 2026-11-10. Safe to re-run.
 -- ============================================================================
 begin;
@@ -64,5 +71,30 @@ $function$;
 
 revoke all on function public.my_referral_tally() from public, anon;
 grant execute on function public.my_referral_tally() to authenticated;
+
+-- 4. One referral per contractor per request
+do $$ begin
+  if exists (select 1 from public.referrals group by job_request_id, contractor_id having count(*) > 1) then
+    raise exception 'referrals has duplicate contractor/request rows; resolve before applying';
+  end if;
+end $$;
+create unique index if not exists referrals_one_per_contractor_request
+  on public.referrals (job_request_id, contractor_id);
+
+-- 5. Related tables: admin and server only
+drop policy if exists "Job assignments read access for involved parties" on public.job_assignments;
+drop policy if exists "Admins read job assignments" on public.job_assignments;
+create policy "Admins read job assignments" on public.job_assignments
+  for select to authenticated using (public.is_admin());
+
+drop policy if exists "Contractors update own assignments or admin updates all" on public.job_assignments;
+drop policy if exists "Admins update job assignments" on public.job_assignments;
+create policy "Admins update job assignments" on public.job_assignments
+  for update to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Anyone can read job_request_categories" on public.job_request_categories;
+drop policy if exists "Admins read job_request_categories" on public.job_request_categories;
+create policy "Admins read job_request_categories" on public.job_request_categories
+  for select to authenticated using (public.is_admin());
 
 commit;

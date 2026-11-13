@@ -7,6 +7,7 @@ import {
   buildJobAssignmentRows,
   incrementReferralCounts,
 } from '@/lib/contractor-matching';
+import { deliverableContractors, notifyReferredContractors } from '@/lib/server/referral-notify';
 import { sendEmail } from '@/lib/send-email';
 import { notifyAdmin, brandedEmail, detailRows, esc, BASE_URL as SITE_BASE } from '@/lib/server/notify';
 
@@ -33,53 +34,56 @@ function normalizeUrgency(value: string | null | undefined) {
    These do NOT modify any referral/matching logic.
    ───────────────────────────────────────────────────────────── */
 
+/** Referral notification for each delivered contractor — once per referral, no job details. */
 async function sendContractorReferralEmails(
   supabase: ReturnType<typeof createAdminClient>,
-  matchedContractors: Array<{
-    id: string;
-    company_name: string;
-    owner_name: string;
-    email: string;
-  }>,
-  jobData: {
-    jobCategory: string;
-    jobCounty: string;
-    jobState: string;
-    jobDescription: string;
-    requesterType: string;
-  }
+  delivered: Array<{ id: string; referralId: string; company_name: string; owner_name: string; email: string }>
 ) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-  const results = await Promise.allSettled(
-    matchedContractors.map((contractor) =>
-      fetch(`${supabaseUrl}/functions/v1/send-contractor-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${serviceKey}`,
-        },
-        body: JSON.stringify({
-          type: 'referral_notification',
-          to: contractor.email,
-          contractorName: contractor.owner_name,
-          companyName: contractor.company_name,
-          jobCategory: jobData.jobCategory,
-          jobCounty: jobData.jobCounty,
-          jobState: jobData.jobState,
-          jobDescription: jobData.jobDescription,
-          requesterType: jobData.requesterType,
-        }),
-      })
-    )
+  const results = await notifyReferredContractors(
+    delivered.map((c) => ({
+      referralId: c.referralId,
+      email: c.email,
+      ownerName: c.owner_name,
+      companyName: c.company_name,
+    })),
+    {
+      async claim(referralId) {
+        const { data, error } = await supabase
+          .from('referrals')
+          .update({ email_sent: true, email_sent_at: new Date().toISOString() })
+          .eq('id', referralId)
+          .eq('email_sent', false)
+          .select('id');
+        if (error) {
+          console.error('[job-request] referral email claim failed:', error);
+          return false;
+        }
+        return (data || []).length === 1;
+      },
+      async release(referralId) {
+        await supabase.from('referrals').update({ email_sent: false, email_sent_at: null }).eq('id', referralId);
+      },
+      async send(payload) {
+        const response = await fetch(`${supabaseUrl}/functions/v1/send-contractor-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${serviceKey}` },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          console.error('[job-request] contractor referral email failed:', await response.text());
+        }
+        return response.ok;
+      },
+    }
   );
 
-  results.forEach((result, i) => {
-    if (result.status === 'rejected') {
-      console.error(`[job-request] contractor referral email failed for ${matchedContractors[i]?.id}:`, result.reason);
-    }
-  });
+  results
+    .filter((r) => r.outcome === 'failed')
+    .forEach((r) => console.error(`[job-request] referral email not sent for referral ${r.referralId}`));
+  return results;
 }
 
 async function sendRequestorMatchEmail(
@@ -172,9 +176,12 @@ async function sendRequestorMatchEmail(
     if (!response.ok) {
       const text = await response.text();
       console.error('[job-request] requestor match email failed:', text);
+      return false;
     }
+    return true;
   } catch (err) {
     console.error('[job-request] requestor match email error:', err);
+    return false;
   }
 }
 
@@ -384,7 +391,13 @@ export async function POST(request: NextRequest) {
       jobRequestId: jobRequest.id,
     });
 
-    let insertedReferrals: { id: string; contractor_id: string }[] = [];
+    // ── REFERRAL RECORDING ──────────────────────────────────
+    // A referral counts when the contractor's information is delivered to the
+    // requestor (this response and the requestor email). Only contractors whose
+    // referral row was recorded are delivered, so every contractor shown is
+    // counted exactly once; the database allows one row per contractor/request.
+    let referralRecordingFailed = false;
+    let delivered: ReturnType<typeof deliverableContractors<(typeof matchedContractors)[number]>> = [];
 
     if (matchedContractors.length > 0) {
       const referralRows = buildReferralRows(jobRequest.id, matchedContractors);
@@ -395,29 +408,29 @@ export async function POST(request: NextRequest) {
         .select('id, contractor_id');
 
       if (referralError) {
-        console.error('[job-request] referral insert failed:', referralError);
-      } else {
-        insertedReferrals = referralData || [];
+        referralRecordingFailed = true;
+        console.error('[job-request] referral insert failed — no contractors delivered:', referralError);
       }
 
-      const assignmentRows = buildJobAssignmentRows(
-        jobRequest.id,
-        matchedContractors,
-        insertedReferrals
-      );
+      delivered = deliverableContractors(matchedContractors, referralError ? [] : referralData);
 
-      const { error: assignmentError } = await supabase
-        .from('job_assignments')
-        .insert(assignmentRows);
+      if (delivered.length > 0) {
+        const insertedReferrals = delivered.map((c) => ({ id: c.referralId, contractor_id: c.id }));
+        const assignmentRows = buildJobAssignmentRows(jobRequest.id, delivered, insertedReferrals);
 
-      if (assignmentError) {
-        console.error('[job-request] job assignment insert failed:', assignmentError);
+        const { error: assignmentError } = await supabase
+          .from('job_assignments')
+          .insert(assignmentRows);
+
+        if (assignmentError) {
+          console.error('[job-request] job assignment insert failed:', assignmentError);
+        }
+
+        await incrementReferralCounts(
+          supabase,
+          delivered.map((c) => c.id)
+        );
       }
-
-      await incrementReferralCounts(
-        supabase,
-        matchedContractors.map((c) => c.id)
-      );
     }
     // ── END MATCHING LOGIC ──────────────────────────────────
 
@@ -440,31 +453,33 @@ export async function POST(request: NextRequest) {
 
     const emailJobs: Promise<unknown>[] = [];
 
-    if (!flaggedSpam && matchedContractors.length > 0) {
-      // 1. Notify each contractor they've been referred (no requestor info)
+    let requestorEmailSent = false;
+
+    if (!flaggedSpam && delivered.length > 0) {
+      // 1. Notify each referred contractor — once per referral, no job or requestor details
       emailJobs.push(
-        sendContractorReferralEmails(supabase, matchedContractors, {
-          jobCategory: categoryNames[0] || 'General Services',
-          jobCounty: propertyCounty,
-          jobState: stateCode,
-          jobDescription: esc(description.trim()),
-          requesterType: clientType,
-        }).catch((err) => console.error('[job-request] contractor email batch error:', err)),
+        sendContractorReferralEmails(supabase, delivered).catch((err) =>
+          console.error('[job-request] contractor email batch error:', err)
+        ),
       );
 
       // 2. Send requestor their matched contractor cards
       emailJobs.push(
-        sendRequestorMatchEmail(supabase, matchedContractors, {
+        sendRequestorMatchEmail(supabase, delivered, {
           requesterName: clientName.trim(),
           requesterEmail: clientEmail.trim().toLowerCase(),
           propertyAddress: [addr, propertyCity.trim(), stateCode].filter(Boolean).join(', '),
           categoryNames,
           jobRequestId: jobRequest.id,
-        }).catch((err) => console.error('[job-request] requestor email error:', err)),
+        })
+          .then((sent) => {
+            requestorEmailSent = sent;
+          })
+          .catch((err) => console.error('[job-request] requestor email error:', err)),
       );
     }
 
-    if (!flaggedSpam && matchedContractors.length === 0) {
+    if (!flaggedSpam && delivered.length === 0) {
       // 2b. No pros matched yet: still confirm to the requestor so they aren't left hanging.
       const first = clientName.trim().split(/\s+/)[0] || 'there';
       emailJobs.push(
@@ -487,9 +502,11 @@ export async function POST(request: NextRequest) {
     // 3. Always tell the admin.
     const alertTitle = flaggedSpam
       ? '⚠️ Possible spam job request (no emails sent)'
-      : matchedContractors.length === 0
-        ? '🔴 New job request: NO pros matched (follow up)'
-        : `🟢 New job request: ${matchedContractors.length} pro${matchedContractors.length === 1 ? '' : 's'} matched`;
+      : referralRecordingFailed
+        ? '🔴 New job request: matched pros could NOT be recorded (follow up)'
+        : delivered.length === 0
+          ? '🔴 New job request: NO pros matched (follow up)'
+          : `🟢 New job request: ${delivered.length} pro${delivered.length === 1 ? '' : 's'} referred`;
     emailJobs.push(
       notifyAdmin(
         `${alertTitle} · ${categoryNames[0] || 'Request'} · ${propertyCounty || propertyCity}`,
@@ -505,7 +522,7 @@ export async function POST(request: NextRequest) {
             ['Location', [addr, locationText, propertyZip?.trim()].filter(Boolean).join(', ')],
             ['Timing', urgencyLabel[normalizedUrgency] || normalizedUrgency],
             ['Details', description.trim()],
-            ['Matched pros', matchedContractors.length ? matchedContractors.map((c) => `${c.company_name} (${c.tier || 'basic'})`).join('\n') : 'None. Requestor was told you will follow up within one business day.'],
+            ['Referred pros', delivered.length ? delivered.map((c) => `${c.company_name} (${c.tier || 'basic'})`).join('\n') : 'None. Requestor was told you will follow up within one business day.'],
             ['Spam score', `${spamScore}${flaggedSpam ? ' (flagged)' : ''}`],
           ]),
           ctaLabel: 'Open in Admin',
@@ -521,8 +538,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       jobRequestId: jobRequest.id,
-      contractors: matchedContractors,
-      noMatches: matchedContractors.length === 0,
+      // Each contractor here has a recorded referral (delivered = counted).
+      contractors: delivered.map(({ referralId: _referralId, ...c }) => c),
+      noMatches: delivered.length === 0,
+      // True only when the provider accepted the requestor's email.
+      emailSent: requestorEmailSent,
     });
   } catch (error: any) {
     console.error('[job-request] unexpected error:', error);

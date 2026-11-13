@@ -7,11 +7,12 @@
 \set coB   '''b0000000-0000-4000-8000-00000000000b'''
 
 insert into public.job_requests (id, requester_name, requester_email, job_description)
-values ('f6000000-0000-4000-8000-000000000001', 'Test Homeowner', 'h@example.com', 'leaking faucet');
+values ('f6000000-0000-4000-8000-000000000001', 'Test Homeowner', 'h@example.com', 'leaking faucet'),
+       ('f6000000-0000-4000-8000-000000000002', 'Old Homeowner', 'o@example.com', 'old job');
 -- A referral now, one two years ago (counts only toward all-time), one for another contractor
 insert into public.referrals (id, job_request_id, contractor_id, status, slot_number, notes, created_at) values
   ('f6000000-0000-4000-8000-0000000000a1', 'f6000000-0000-4000-8000-000000000001', :coA, 'PENDING', 2, 'admin-only note', now()),
-  ('f6000000-0000-4000-8000-0000000000a2', 'f6000000-0000-4000-8000-000000000001', :coA, 'PENDING', 3, null, now() - interval '2 years'),
+  ('f6000000-0000-4000-8000-0000000000a2', 'f6000000-0000-4000-8000-000000000002', :coA, 'PENDING', 3, null, now() - interval '2 years'),
   ('f6000000-0000-4000-8000-0000000000b1', 'f6000000-0000-4000-8000-000000000001', :coB, 'PENDING', 1, null, now());
 
 -- R1: a contractor cannot read any referral row (job link, notes, status), their own included
@@ -75,7 +76,7 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claims', json_build_object('sub', 'a0000000-0000-4000-8000-000000000001', 'role', 'authenticated')::text, true);
 do $$ begin
-  if (select count(*) from public.referrals where job_request_id = 'f6000000-0000-4000-8000-000000000001') <> 3 then
+  if (select count(*) from public.referrals where job_request_id = 'f6000000-0000-4000-8000-000000000001') <> 2 then
     raise exception 'R5 FAIL: admin cannot read referrals';
   end if;
 end $$;
@@ -91,4 +92,41 @@ do $$ declare r record; begin
     null; -- inserted after the migration; backfill applies only to rows that existed before
   end if;
   raise notice 'R5 pass: admins read/update referrals; resend-email and mark-contacted writes are stored';
+end $$;
+
+-- R6: the same contractor cannot be referred twice for the same request
+do $$ begin
+  begin
+    insert into public.referrals (job_request_id, contractor_id, status)
+    values ('f6000000-0000-4000-8000-000000000001', 'b0000000-0000-4000-8000-00000000000b', 'PENDING');
+    raise exception 'R6 FAIL: duplicate referral accepted';
+  exception when unique_violation then null; end;
+  raise notice 'R6 pass: one referral per contractor per request';
+end $$;
+
+-- R7: job assignments and request categories are hidden from contractors and visitors
+insert into public.job_assignments (job_request_id, contractor_id, referral_id, notes)
+values ('f6000000-0000-4000-8000-000000000001', 'b0000000-0000-4000-8000-00000000000a', 'f6000000-0000-4000-8000-0000000000a1', 'admin note');
+insert into public.job_request_categories (job_request_id, category_id)
+values ('f6000000-0000-4000-8000-000000000001', gen_random_uuid());
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', json_build_object('sub', 'a0000000-0000-4000-8000-000000000002', 'role', 'authenticated')::text, true);
+do $$ begin
+  if exists (select 1 from public.job_assignments) then raise exception 'R7 FAIL: contractor reads job assignments'; end if;
+  if exists (select 1 from public.job_request_categories) then raise exception 'R7 FAIL: contractor reads request categories'; end if;
+end $$;
+update public.job_assignments set notes = 'changed';
+commit;
+begin;
+set local role anon;
+do $$ begin
+  if exists (select 1 from public.job_request_categories) then raise exception 'R7 FAIL: visitor reads request categories'; end if;
+end $$;
+commit;
+do $$ begin
+  if (select notes from public.job_assignments where referral_id = 'f6000000-0000-4000-8000-0000000000a1') <> 'admin note' then
+    raise exception 'R7 FAIL: contractor changed a job assignment';
+  end if;
+  raise notice 'R7 pass: job assignments and request categories are admin/server only';
 end $$;
