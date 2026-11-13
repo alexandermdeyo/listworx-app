@@ -713,9 +713,10 @@ export default function ProfileTab({ profile, onProfileUpdated, onUserEmailUpdat
         insuranceExpirationDate={profile.insurance_expiration_date}
       />
 
-      {/* Work photos: the existing profile editor's section, same owner-only storage rules */}
+      {/* Public profile content the contractor controls: the existing profile editor's sections,
+          with the same owner-only storage and database rules */}
       <ContractorProfileEditor
-        section="work-photos"
+        sections={['work-photos', 'work-videos', 'social-links', 'contact-visibility']}
         profile={profile as any}
         onProfileUpdated={onProfileUpdated}
         onRefresh={() => undefined}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requestorCard } from '@/lib/server/referral-notify';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,9 +47,10 @@ export async function GET(
       );
     }
 
+    // Public endpoint: public card fields only (never documents, billing or subscription).
     return NextResponse.json({
       success: true,
-      contractor,
+      contractor: requestorCard(contractor as Record<string, unknown>),
     });
   } catch (error: any) {
     return NextResponse.json(

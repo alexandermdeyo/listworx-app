@@ -91,15 +91,27 @@ export const REQUESTOR_CARD_FIELDS = [
   'email',
   'phone',
   'website',
+  'business_website',
+  'profile_slug',
   'bio',
   'years_in_business',
   'response_time',
   'ironclad_accepted',
+  'ironclad_certified',
   'founder_status',
+  'founding_partner',
+  'founding_partner_badge',
+  'logo_url',
 ] as const;
+// Never: subscription tier/status, billing IDs, document links, license numbers,
+// partner status, admin notes. (Owner rule 2026-11-12: requestors never see a
+// contractor's subscription.)
 
-export function requestorCard(profile: Record<string, unknown>) {
+export function requestorCard(profile: Record<string, unknown>, trade?: string | null) {
   const card: Record<string, unknown> = {};
   for (const key of REQUESTOR_CARD_FIELDS) card[key] = profile[key] ?? null;
+  // The contractor's own website first, as on the public profile.
+  card.website = (profile.business_website as string) || (profile.website as string) || null;
+  card.trade = trade || null;
   return card;
 }

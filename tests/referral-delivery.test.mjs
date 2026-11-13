@@ -78,7 +78,7 @@ test('no email address: skipped, nothing claimed', async () => {
 
 test('job-request route delivers only recorded contractors and reports emailSent truthfully', () => {
   const src = readFileSync(new URL('../app/api/job-request/route.ts', import.meta.url), 'utf8');
-  assert.match(src, /contractors: delivered\.map\(\(c\) => requestorCard\(/);
+  assert.match(src, /contractors: delivered\.map\(\(c\) =>\s*requestorCard\(/);
   assert.match(src, /emailSent: requestorEmailSent/);
   assert.doesNotMatch(src, /jobDescription: esc\(/, 'contractor email must not carry the job description');
 });
@@ -106,4 +106,19 @@ test('requestors receive only public card fields', () => {
     assert.ok(!(k in card), k);
   }
   assert.equal(card.years_in_business, 8);
+});
+
+test('requestor card: contact, profile link, founder and IronClad flags — never subscription', () => {
+  const card = requestorCard({
+    id: 'c1', company_name: 'A Co', owner_name: 'A', email: 'a@x.com', phone: '615', website: 'old.com',
+    business_website: 'https://a.co', profile_slug: 'a-co', founder_status: false, founding_partner: true,
+    ironclad_certified: true, subscription_tier: 'elite', subscription_status: 'active', founder_tier: 'elite',
+    stripe_subscription_id: 'sub_1', purchased_addons: ['x'],
+  }, 'Plumbing');
+  for (const k of ['email', 'phone', 'website', 'profile_slug', 'founding_partner', 'ironclad_certified']) assert.ok(k in card, k);
+  assert.equal(card.website, 'https://a.co');
+  assert.equal(card.trade, 'Plumbing');
+  for (const k of ['subscription_tier', 'subscription_status', 'founder_tier', 'stripe_subscription_id', 'purchased_addons', 'tier']) {
+    assert.ok(!(k in card), k);
+  }
 });

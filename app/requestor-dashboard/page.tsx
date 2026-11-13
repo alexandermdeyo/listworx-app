@@ -71,7 +71,10 @@ type Contractor = {
   service_area_counties?: string[] | null;
   ironclad_accepted?: boolean | null;
   founder_status?: boolean | null;
+  founding_partner?: boolean | null;
   founding_partner_badge?: boolean | null;
+  business_website?: string | null;
+  profile_slug?: string | null;
   years_in_business?: number | null;
   response_time?: string | null;
   trade?: string | null;
@@ -417,8 +420,9 @@ export default function RequestorDashboardPage() {
                       {jobReferrals.map((referral, index) => {
                         const contractor = referral.contractor;
                         const profileHref = contractor?.id
-                          ? `/contractors/${contractor.id}`
+                          ? `/contractors/${contractor.profile_slug || contractor.id}`
                           : '#';
+                        const contractorWebsite = contractor?.business_website || contractor?.website || null;
 
                         return (
                           <div
@@ -459,6 +463,12 @@ export default function RequestorDashboardPage() {
                                   {contractor?.ironclad_accepted ? 'IronClad Verified' : 'Trust status in review'}
                                 </span>
                               </div>
+                              {(contractor?.founder_status || contractor?.founding_partner || contractor?.founding_partner_badge) && (
+                                <div className="inline-flex items-center gap-1 text-amber-700">
+                                  <ShieldCheck className="h-4 w-4 shrink-0" />
+                                  <span>Founding Partner</span>
+                                </div>
+                              )}
                               {contractor?.owner_name && (
                                 <div className="inline-flex items-center gap-1">
                                   <Building2 className="h-4 w-4 shrink-0" />
@@ -486,15 +496,15 @@ export default function RequestorDashboardPage() {
                                 </a>
                               )}
 
-                              {contractor?.website && (
+                              {contractorWebsite && (
                                 <a
-                                  href={normalizeWebsiteUrl(contractor.website)}
+                                  href={normalizeWebsiteUrl(contractorWebsite)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="flex items-start gap-2 break-all hover:text-foreground"
                                 >
                                   <Globe className="h-4 w-4 mt-0.5 shrink-0" />
-                                  <span>{contractor.website}</span>
+                                  <span>{contractorWebsite}</span>
                                 </a>
                               )}
 

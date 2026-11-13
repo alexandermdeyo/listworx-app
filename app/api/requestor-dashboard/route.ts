@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
       const { data: contractorProfiles, error: contractorProfilesError } = await supabase
         .from('contractor_profiles')
         .select(
-          'id, company_name, owner_name, email, phone, website, bio, service_area_state, service_area_counties, ironclad_accepted'
+          'id, company_name, owner_name, email, phone, website, business_website, bio, service_area_state, service_area_counties, ironclad_accepted, founder_status, founding_partner, founding_partner_badge, profile_slug, years_in_business'
         )
         .in('id', contractorIds);
 

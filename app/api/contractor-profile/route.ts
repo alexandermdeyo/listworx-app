@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
         partner_status,
         profile_published,
         profile_slug,
-        tier,
         created_at
       `)
       .eq('profile_slug', slug)

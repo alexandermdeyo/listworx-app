@@ -66,6 +66,8 @@ type WorkVideo = {
   created_at: string | null;
 };
 
+export type EditorSection = 'work-photos' | 'work-videos' | 'social-links' | 'contact-visibility';
+
 type ContractorProfileEditorProps = {
   profile: ContractorProfile & {
     tagline?: string | null;
@@ -94,8 +96,8 @@ type ContractorProfileEditorProps = {
   onLogoUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   logoUploading: boolean;
   logoUploadError: string | null;
-  /** Render only one section of the editor (the dashboard uses 'work-photos'). */
-  section?: 'work-photos';
+  /** Render only these sections of the editor (the dashboard's My Profile page uses this). */
+  sections?: EditorSection[];
 };
 
 const PHOTO_BUCKET = 'contractor-work-photos';
@@ -189,7 +191,7 @@ export default function ContractorProfileEditor({
   onLogoUpload,
   logoUploading,
   logoUploadError,
-  section,
+  sections,
 }: ContractorProfileEditorProps) {
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
@@ -645,16 +647,128 @@ export default function ContractorProfileEditor({
       </div>
   );
 
-  if (section === 'work-photos') {
-    return (
+  const workVideosCard = (
+    <Card id="work-videos" className="border-gray-200 bg-white p-6 shadow-sm">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-xl font-bold text-gray-900">Work Videos</h3>
+          <p className="mt-1 text-sm text-gray-500">Upload your videos to YouTube or Vimeo first, then paste the link here. Videos appear on your public profile.</p>
+        </div>
+        <Button
+          variant="outline"
+          disabled={workVideos.length >= 5}
+          onClick={() => setWorkVideos((prev) => [...prev, { id: `new-${Date.now()}`, contractor_id: profile.id, video_url: '', platform: null, caption: '', display_order: prev.length, created_at: null }])}
+        >
+          <Plus className="mr-2 h-4 w-4" /> Add Video Link
+        </Button>
+      </div>
+      {savedSection === 'videos' && <SavedNotice />}
       <div className="space-y-4">
+        {workVideos.map((video, index) => {
+          const embedUrl = getEmbedUrl(video.video_url || '');
+          return (
+            <div key={video.id} className="grid gap-4 rounded-xl border border-gray-200 p-4 md:grid-cols-[220px,1fr]">
+              <div className="flex h-32 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
+                {embedUrl ? <iframe src={embedUrl} title={`Video ${index + 1}`} className="h-full w-full" allowFullScreen /> : <Video className="h-8 w-8 text-gray-300" />}
+              </div>
+              <div className="space-y-3">
+                <Input value={video.video_url} onChange={(event) => setWorkVideos((prev) => prev.map((item) => item.id === video.id ? { ...item, video_url: event.target.value, platform: detectVideoPlatform(event.target.value) } : item))} placeholder="YouTube or Vimeo URL" />
+                <Input maxLength={100} value={video.caption || ''} onChange={(event) => setWorkVideos((prev) => prev.map((item) => item.id === video.id ? { ...item, caption: event.target.value.slice(0, 100) } : item))} placeholder="Caption (100 char max)" />
+                <Button variant="outline" size="sm" onClick={() => removeVideo(video)} className="border-red-200 text-red-600 hover:bg-red-50"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+              </div>
+            </div>
+          );
+        })}
+        {workVideos.length === 0 && <p className="rounded-xl border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">No videos added yet.</p>}
+      </div>
+      <Button onClick={() => saveVideos()} disabled={savingSection === 'videos'} className="mt-5 bg-lw-rust text-white hover:bg-lw-rust-hover">
+        {savingSection === 'videos' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+        Save Work Videos
+      </Button>
+    </Card>
+  );
+
+  const socialLinksCard = (
+    <Card id="social-links" className="border-gray-200 bg-white p-6 shadow-sm">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-xl font-bold text-gray-900">Social Media Links</h3>
+          <p className="mt-1 text-sm text-gray-500">Only links you provide will appear on your public profile.</p>
+        </div>
+        <Button onClick={saveSocialLinks} disabled={savingSection === 'social'} className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+          {savingSection === 'social' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+          Save Social Links
+        </Button>
+      </div>
+      {savedSection === 'social' && <SavedNotice />}
+      <div className="grid gap-4 md:grid-cols-2">
+        {socialFields.map((field) => {
+          const Icon = field.icon;
+          const valid = validateSocialUrl(socialForm[field.key] || '', field.host);
+          return (
+            <div key={field.key}>
+              <Label>{field.label}</Label>
+              <div className="relative">
+                <Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Input
+                  className="pl-9 pr-9"
+                  value={socialForm[field.key] || ''}
+                  onChange={(event) => setSocialForm({ ...socialForm, [field.key]: event.target.value })}
+                  onBlur={() => setSocialTouched({ ...socialTouched, [field.key]: true })}
+                  placeholder={field.placeholder}
+                />
+                {socialForm[field.key]?.trim() && valid && <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-500" />}
+              </div>
+              {socialTouched[field.key] && !valid && <p className="mt-1 text-xs text-red-600">Enter a valid {field.host} URL.</p>}
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+  );
+
+  const contactVisibilityCard = (
+    <Card id="contact-visibility" className="border-gray-200 bg-white p-6 shadow-sm">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-xl font-bold text-gray-900">Public Contact Display</h3>
+          <p className="mt-1 text-sm text-gray-500">Contact details stay hidden unless you opt in.</p>
+        </div>
+        <Button onClick={saveContactVisibility} disabled={savingSection === 'visibility'} className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+          {savingSection === 'visibility' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+          Save Contact Settings
+        </Button>
+      </div>
+      {savedSection === 'visibility' && <SavedNotice />}
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="flex items-center justify-between rounded-xl border border-gray-200 p-4">
+          <div><p className="font-medium text-gray-900">Show phone on public profile</p><p className="text-sm text-gray-500">Referral cards still include contact info.</p></div>
+          <Switch checked={visibilityForm.show_phone_public} onCheckedChange={(checked) => setVisibilityForm({ ...visibilityForm, show_phone_public: checked })} />
+        </div>
+        <div className="flex items-center justify-between rounded-xl border border-gray-200 p-4">
+          <div><p className="font-medium text-gray-900">Show email on public profile</p><p className="text-sm text-gray-500">Referral cards still include contact info.</p></div>
+          <Switch checked={visibilityForm.show_email_public} onCheckedChange={(checked) => setVisibilityForm({ ...visibilityForm, show_email_public: checked })} />
+        </div>
+      </div>
+    </Card>
+  );
+
+  if (sections && sections.length > 0) {
+    const cards: Record<EditorSection, JSX.Element> = {
+      'work-photos': workPhotosCard,
+      'work-videos': workVideosCard,
+      'social-links': socialLinksCard,
+      'contact-visibility': contactVisibilityCard,
+    };
+    return (
+      <div className="space-y-6">
         {sectionError && (
           <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             {sectionError}
           </div>
         )}
-        {workPhotosCard}
+        {sections.map((key) => <div key={key}>{cards[key]}</div>)}
         {lightbox}
       </div>
     );
@@ -811,105 +925,11 @@ export default function ContractorProfileEditor({
 
       {workPhotosCard}
 
-      <Card id="work-videos" className="border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">Work Videos</h3>
-            <p className="mt-1 text-sm text-gray-500">Upload your videos to YouTube or Vimeo first, then paste the link here. Videos appear on your public profile.</p>
-          </div>
-          <Button
-            variant="outline"
-            disabled={workVideos.length >= 5}
-            onClick={() => setWorkVideos((prev) => [...prev, { id: `new-${Date.now()}`, contractor_id: profile.id, video_url: '', platform: null, caption: '', display_order: prev.length, created_at: null }])}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add Video Link
-          </Button>
-        </div>
-        {savedSection === 'videos' && <SavedNotice />}
-        <div className="space-y-4">
-          {workVideos.map((video, index) => {
-            const embedUrl = getEmbedUrl(video.video_url || '');
-            return (
-              <div key={video.id} className="grid gap-4 rounded-xl border border-gray-200 p-4 md:grid-cols-[220px,1fr]">
-                <div className="flex h-32 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
-                  {embedUrl ? <iframe src={embedUrl} title={`Video ${index + 1}`} className="h-full w-full" allowFullScreen /> : <Video className="h-8 w-8 text-gray-300" />}
-                </div>
-                <div className="space-y-3">
-                  <Input value={video.video_url} onChange={(event) => setWorkVideos((prev) => prev.map((item) => item.id === video.id ? { ...item, video_url: event.target.value, platform: detectVideoPlatform(event.target.value) } : item))} placeholder="YouTube or Vimeo URL" />
-                  <Input maxLength={100} value={video.caption || ''} onChange={(event) => setWorkVideos((prev) => prev.map((item) => item.id === video.id ? { ...item, caption: event.target.value.slice(0, 100) } : item))} placeholder="Caption (100 char max)" />
-                  <Button variant="outline" size="sm" onClick={() => removeVideo(video)} className="border-red-200 text-red-600 hover:bg-red-50"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
-                </div>
-              </div>
-            );
-          })}
-          {workVideos.length === 0 && <p className="rounded-xl border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">No videos added yet.</p>}
-        </div>
-        <Button onClick={() => saveVideos()} disabled={savingSection === 'videos'} className="mt-5 bg-lw-rust text-white hover:bg-lw-rust-hover">
-          {savingSection === 'videos' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-          Save Work Videos
-        </Button>
-      </Card>
+      {workVideosCard}
 
-      <Card id="social-links" className="border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">Social Media Links</h3>
-            <p className="mt-1 text-sm text-gray-500">Only links you provide will appear on your public profile.</p>
-          </div>
-          <Button onClick={saveSocialLinks} disabled={savingSection === 'social'} className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-            {savingSection === 'social' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Save Social Links
-          </Button>
-        </div>
-        {savedSection === 'social' && <SavedNotice />}
-        <div className="grid gap-4 md:grid-cols-2">
-          {socialFields.map((field) => {
-            const Icon = field.icon;
-            const valid = validateSocialUrl(socialForm[field.key] || '', field.host);
-            return (
-              <div key={field.key}>
-                <Label>{field.label}</Label>
-                <div className="relative">
-                  <Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                  <Input
-                    className="pl-9 pr-9"
-                    value={socialForm[field.key] || ''}
-                    onChange={(event) => setSocialForm({ ...socialForm, [field.key]: event.target.value })}
-                    onBlur={() => setSocialTouched({ ...socialTouched, [field.key]: true })}
-                    placeholder={field.placeholder}
-                  />
-                  {socialForm[field.key]?.trim() && valid && <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-500" />}
-                </div>
-                {socialTouched[field.key] && !valid && <p className="mt-1 text-xs text-red-600">Enter a valid {field.host} URL.</p>}
-              </div>
-            );
-          })}
-        </div>
-      </Card>
+      {socialLinksCard}
 
-      <Card id="contact-visibility" className="border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">Public Contact Display</h3>
-            <p className="mt-1 text-sm text-gray-500">Contact details stay hidden unless you opt in.</p>
-          </div>
-          <Button onClick={saveContactVisibility} disabled={savingSection === 'visibility'} className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-            {savingSection === 'visibility' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Save Contact Settings
-          </Button>
-        </div>
-        {savedSection === 'visibility' && <SavedNotice />}
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="flex items-center justify-between rounded-xl border border-gray-200 p-4">
-            <div><p className="font-medium text-gray-900">Show phone on public profile</p><p className="text-sm text-gray-500">Referral cards still include contact info.</p></div>
-            <Switch checked={visibilityForm.show_phone_public} onCheckedChange={(checked) => setVisibilityForm({ ...visibilityForm, show_phone_public: checked })} />
-          </div>
-          <div className="flex items-center justify-between rounded-xl border border-gray-200 p-4">
-            <div><p className="font-medium text-gray-900">Show email on public profile</p><p className="text-sm text-gray-500">Referral cards still include contact info.</p></div>
-            <Switch checked={visibilityForm.show_email_public} onCheckedChange={(checked) => setVisibilityForm({ ...visibilityForm, show_email_public: checked })} />
-          </div>
-        </div>
-      </Card>
+      {contactVisibilityCard}
 
       <div id="credentials">
         <ComplianceDocuments contractorId={profile.id} userId={profile.user_id} licenseExpirationDate={profile.license_expiration_date} insuranceExpirationDate={profile.insurance_expiration_date} />

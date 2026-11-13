@@ -21,7 +21,6 @@ import {
   Clock,
   ExternalLink,
   Building2,
-  Star,
 } from 'lucide-react';
 import { Reveal } from '@/components/motion';
 
@@ -42,20 +41,11 @@ interface ContractorPublicProfile {
   ironclad_certified: boolean;
   ironclad_accepted: boolean;
   partner_status: string;
-  tier: string | null;
   created_at: string;
   counties: Array<{ id: string; name: string; state_code: string }>;
   trades: Array<{ id: string; name: string }>;
 }
 
-function getTierLabel(tier: string | null): string | null {
-  if (!tier || tier === 'none') return null;
-  const t = tier.toLowerCase();
-  if (t.includes('elite')) return 'Network Elite';
-  if (t.includes('preferred')) return 'Network Partner';
-  if (t.includes('basic')) return 'Network Member';
-  return null;
-}
 
 export default function ContractorPublicProfilePage() {
   const params = useParams();
@@ -111,7 +101,6 @@ export default function ContractorPublicProfilePage() {
 
   const displayWebsite = profile.business_website || profile.website;
   const description = profile.business_description || profile.bio;
-  const tierLabel = getTierLabel(profile.tier);
 
   const countiesByState: Record<string, string[]> = {};
   profile.counties.forEach((c) => {
@@ -159,12 +148,6 @@ export default function ContractorPublicProfilePage() {
                     <Badge className="bg-amber-600/10 text-amber-700 border-amber-600/20 gap-1">
                       <Award className="h-3 w-3" />
                       Founding Partner
-                    </Badge>
-                  )}
-                  {tierLabel && (
-                    <Badge className="bg-lw-rust/10 text-lw-rust border-lw-rust/20 gap-1">
-                      <Star className="h-3 w-3" />
-                      {tierLabel}
                     </Badge>
                   )}
                 </div>

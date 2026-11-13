@@ -453,6 +453,23 @@ export async function POST(request: NextRequest) {
 
     const emailJobs: Promise<unknown>[] = [];
 
+    // The requested trade(s) each referred contractor covers, for the requestor's card.
+    const tradeByContractor: Record<string, string> = {};
+    if (delivered.length > 0) {
+      const { data: tradeRows } = await supabase
+        .from('contractor_categories')
+        .select('contractor_id, category_id, categories(name)')
+        .in('contractor_id', delivered.map((c) => c.id))
+        .in('category_id', categoryIds);
+      (tradeRows || []).forEach((row: any) => {
+        const name = row.categories?.name;
+        if (!name) return;
+        tradeByContractor[row.contractor_id] = tradeByContractor[row.contractor_id]
+          ? `${tradeByContractor[row.contractor_id]}, ${name}`
+          : name;
+      });
+    }
+
     let requestorEmailSent = false;
 
     if (!flaggedSpam && delivered.length > 0) {
@@ -539,8 +556,10 @@ export async function POST(request: NextRequest) {
       success: true,
       jobRequestId: jobRequest.id,
       // Each contractor here has a recorded referral (delivered = counted).
-      // Public card fields only — never private document links or billing IDs.
-      contractors: delivered.map((c) => requestorCard(c as unknown as Record<string, unknown>)),
+      // Public card fields only — never private document links, billing IDs or subscription.
+      contractors: delivered.map((c) =>
+        requestorCard(c as unknown as Record<string, unknown>, tradeByContractor[c.id] || categoryNames.join(', '))
+      ),
       noMatches: delivered.length === 0,
       // True only when the provider accepted the requestor's email.
       emailSent: requestorEmailSent,

@@ -51,7 +51,11 @@ interface Contractor {
   years_in_business?: number | null;
   response_time?: string | null;
   ironclad_accepted?: boolean | null;
+  ironclad_certified?: boolean | null;
   founder_status?: boolean | null;
+  founding_partner?: boolean | null;
+  founding_partner_badge?: boolean | null;
+  profile_slug?: string | null;
 }
 
 function formatPhoneNumber(value: string) {
@@ -411,7 +415,7 @@ function RequestPageContent() {
                           <Shield className="h-3 w-3" /> IronClad
                         </span>
                       )}
-                      {contractor.founder_status && (
+                      {(contractor.founder_status || contractor.founding_partner || contractor.founding_partner_badge) && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-1 text-xs text-amber-700">
                           <Crown className="h-3 w-3" /> Founding Partner
                         </span>
@@ -424,7 +428,7 @@ function RequestPageContent() {
                   </div>
 
                   <div className="space-y-3 text-sm">
-                    <p className="text-mkt-ink/60">Trade: {contractor.trade || 'Home service'}</p>
+                    {contractor.trade && <p className="text-mkt-ink/60">Trade: {contractor.trade}</p>}
                     <p className="text-mkt-ink/60">Years in business: {contractor.years_in_business || 'Available on request'}</p>
                     <p className="text-mkt-ink/60">Response time: {contractor.response_time || 'Typically within 24 hours'}</p>
                     <div className="flex items-center gap-2">
@@ -460,7 +464,7 @@ function RequestPageContent() {
                       <p className="text-mkt-ink/60 pt-2">{contractor.bio}</p>
                     )}
                     <a
-                      href={`/contractors/${contractor.id}`}
+                      href={`/contractors/${contractor.profile_slug || contractor.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex w-full items-center justify-center rounded-md bg-lw-rust px-3 py-2 text-sm font-medium text-white hover:bg-lw-rust-hover"
