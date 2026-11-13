@@ -234,6 +234,19 @@ export default function ContractorProfileEditor({
 
   const [socialTouched, setSocialTouched] = useState<Record<string, boolean>>({});
 
+  // Other forms on the same page (e.g. Edit Profile) also save some of these
+  // links; keep this form in step with the saved profile so saving here never
+  // blanks a value saved there.
+  const savedSocialKey = socialFields.map((field) => String((profile as any)[field.key] || '')).join('|');
+  useEffect(() => {
+    const next: Record<string, string> = {};
+    socialFields.forEach((field) => {
+      next[field.key] = String((profile as any)[field.key] || '');
+    });
+    setSocialForm(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedSocialKey]);
+
   useEffect(() => {
     setBusinessForm({
       company_name: profile.company_name || '',
