@@ -7,7 +7,7 @@ import {
   buildJobAssignmentRows,
   incrementReferralCounts,
 } from '@/lib/contractor-matching';
-import { deliverableContractors, notifyReferredContractors } from '@/lib/server/referral-notify';
+import { deliverableContractors, notifyReferredContractors, requestorCard } from '@/lib/server/referral-notify';
 import { sendEmail } from '@/lib/send-email';
 import { notifyAdmin, brandedEmail, detailRows, esc, BASE_URL as SITE_BASE } from '@/lib/server/notify';
 
@@ -539,7 +539,8 @@ export async function POST(request: NextRequest) {
       success: true,
       jobRequestId: jobRequest.id,
       // Each contractor here has a recorded referral (delivered = counted).
-      contractors: delivered.map(({ referralId: _referralId, ...c }) => c),
+      // Public card fields only — never private document links or billing IDs.
+      contractors: delivered.map((c) => requestorCard(c as unknown as Record<string, unknown>)),
       noMatches: delivered.length === 0,
       // True only when the provider accepted the requestor's email.
       emailSent: requestorEmailSent,

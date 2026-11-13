@@ -21,6 +21,7 @@ import DocumentsTab from './DocumentsTab';
 import SettingsTab from './SettingsTab';
 import AcademyTab from './AcademyTab';
 import { Toaster } from '@/components/ui/toaster';
+import { formatDateOnly, daysUntilDateOnly } from '@/lib/date-only';
 import {
   Loader as Loader2,
   CircleAlert as AlertCircle,
@@ -489,11 +490,8 @@ export default function ContractorDashboard() {
   }
 
   const isExpiringSoonOrExpired = (dateStr: string | null | undefined) => {
-    if (!dateStr) return false;
-    const d = new Date(dateStr);
-    const thirtyDays = new Date();
-    thirtyDays.setDate(thirtyDays.getDate() + 30);
-    return d <= thirtyDays;
+    const days = daysUntilDateOnly(dateStr);
+    return days !== null && days <= 30;
   };
 
   const effectiveLicenseExpiration = complianceExpirations.license || profile.license_expiration_date || null;
@@ -503,15 +501,10 @@ export default function ContractorDashboard() {
   const insuranceExpiring = isExpiringSoonOrExpired(effectiveInsuranceExpiration);
 
   const formatExpiryDate = (dateStr: string | null) =>
-    dateStr ? new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    formatDateOnly(dateStr);
 
   const getDaysUntil = (dateStr: string | null): number | null => {
-    if (!dateStr) return null;
-    const target = new Date(dateStr);
-    target.setHours(0, 0, 0, 0);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return daysUntilDateOnly(dateStr);
   };
 
   const formatDaysMessage = (days: number | null) => {

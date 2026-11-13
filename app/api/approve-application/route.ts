@@ -66,6 +66,19 @@ export async function POST(request: NextRequest) {
       toEmail = authUser?.email || '';
     }
 
+    // Keep the contractor's application record in step with the approval.
+    // (Status only — certification stays a separate admin decision.)
+    if (toEmail) {
+      const { error: applicationError } = await supabaseAdmin
+        .from('contractor_applications')
+        .update({ status: 'approved', updated_at: new Date().toISOString() })
+        .eq('email', toEmail.trim().toLowerCase())
+        .eq('status', 'pending');
+      if (applicationError) {
+        console.error('[approve-application] application status update failed:', applicationError);
+      }
+    }
+
     let emailError: string | null = null;
 
     if (toEmail) {

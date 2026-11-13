@@ -78,3 +78,28 @@ export function deliverableContractors<T extends { id: string }>(
     .filter((c) => byContractor.has(c.id))
     .map((c) => ({ ...c, referralId: byContractor.get(c.id)! }));
 }
+
+/**
+ * What a requestor may receive about a referred contractor: the public card
+ * only. Profile rows also hold private document links, billing IDs and admin
+ * fields, which must never leave the server.
+ */
+export const REQUESTOR_CARD_FIELDS = [
+  'id',
+  'company_name',
+  'owner_name',
+  'email',
+  'phone',
+  'website',
+  'bio',
+  'years_in_business',
+  'response_time',
+  'ironclad_accepted',
+  'founder_status',
+] as const;
+
+export function requestorCard(profile: Record<string, unknown>) {
+  const card: Record<string, unknown> = {};
+  for (const key of REQUESTOR_CARD_FIELDS) card[key] = profile[key] ?? null;
+  return card;
+}

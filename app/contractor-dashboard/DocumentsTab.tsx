@@ -30,6 +30,7 @@ import {
   Globe,
 } from 'lucide-react';
 import type { ContractorProfile } from './types';
+import { formatDateOnly } from '@/lib/date-only';
 
 type AdditionalDocType = 'CERTIFICATION' | 'AWARD' | 'OTHER';
 type AnyDocType = 'LICENSE' | 'INSURANCE' | AdditionalDocType;
@@ -51,7 +52,7 @@ interface ContractorDocumentRow {
 
 function formatDate(dateStr: string | null | undefined) {
   if (!dateStr) return null;
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return formatDateOnly(dateStr);
 }
 
 interface DocumentsTabProps {

@@ -29,6 +29,7 @@ import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import Navigation from '@/components/Navigation';
+import { formatDateOnly } from '@/lib/date-only';
 
 interface ContractorProfile {
   id: string;
@@ -211,6 +212,16 @@ export default function ApplicationsPage() {
 
       if (updateError) throw updateError;
 
+      // Keep the application record in step with the decision.
+      if (profile.email) {
+        const { error: applicationError } = await supabase
+          .from('contractor_applications')
+          .update({ status: 'rejected', updated_at: new Date().toISOString() })
+          .eq('email', profile.email.trim().toLowerCase())
+          .eq('status', 'pending');
+        if (applicationError) console.error('Application status update failed:', applicationError);
+      }
+
       try {
         await fetch('/api/admin/contractor-email', {
           method: 'POST',
@@ -338,10 +349,10 @@ export default function ApplicationsPage() {
               <div className="space-y-1 text-sm text-zinc-300">
                 {profile.license_number && <p>License: {profile.license_number}</p>}
                 {profile.license_expiration_date && (
-                  <p>License Expires: {new Date(profile.license_expiration_date).toLocaleDateString()}</p>
+                  <p>License Expires: {formatDateOnly(profile.license_expiration_date, { month: 'numeric', day: 'numeric', year: 'numeric' })}</p>
                 )}
                 {profile.insurance_expiration_date && (
-                  <p>Insurance Expires: {new Date(profile.insurance_expiration_date).toLocaleDateString()}</p>
+                  <p>Insurance Expires: {formatDateOnly(profile.insurance_expiration_date, { month: 'numeric', day: 'numeric', year: 'numeric' })}</p>
                 )}
               </div>
             </div>

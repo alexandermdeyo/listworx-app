@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { formatDateOnly, daysUntilDateOnly, isPastDateOnly } from '@/lib/date-only';
 import {
   FileText,
   Upload,
@@ -108,16 +109,12 @@ function statusConfig(status: DocumentStatus) {
 }
 
 function isExpiringSoon(dateStr: string | null | undefined): boolean {
-  if (!dateStr) return false;
-  const exp = new Date(dateStr);
-  const now = new Date();
-  const diff = (exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-  return diff >= 0 && diff <= 60;
+  const days = daysUntilDateOnly(dateStr);
+  return days !== null && days >= 0 && days <= 60;
 }
 
 function isExpired(dateStr: string | null | undefined): boolean {
-  if (!dateStr) return false;
-  return new Date(dateStr) < new Date();
+  return isPastDateOnly(dateStr);
 }
 
 function getDisplayFileName(doc: ContractorDocument, docType: DocumentType) {
@@ -419,7 +416,7 @@ export default function ComplianceDocuments({
                             ? 'Expires soon: '
                             : 'Expires: '}
                           <span className="font-semibold">
-                            {new Date(expDate).toLocaleDateString('en-US', {
+                            {formatDateOnly(expDate, {
                               month: 'short',
                               day: 'numeric',
                               year: 'numeric',

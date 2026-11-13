@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
 import MediaPartnerRequestButton from '@/components/site/MediaPartnerRequestButton';
+import { isPastDateOnly } from '@/lib/date-only';
 import {
   Award,
   Briefcase,
@@ -132,7 +133,7 @@ function isCredentialVerified(credential: Credential) {
   // Only documents a ListWorx administrator approved count; blank or pending never do.
   const status = String(credential.status || '').toLowerCase();
   if (status !== 'approved') return false;
-  if (credential.expiration_date && new Date(credential.expiration_date) < new Date()) return false;
+  if (credential.expiration_date && isPastDateOnly(credential.expiration_date)) return false;
   return true;
 }
 

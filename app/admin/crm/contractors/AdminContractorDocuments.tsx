@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { formatDateOnly, daysUntilDateOnly, isPastDateOnly } from '@/lib/date-only';
 import {
   Select,
   SelectContent,
@@ -79,16 +80,12 @@ function statusBadge(status: ContractorDocument['status']) {
 }
 
 function isExpired(dateStr: string | null | undefined): boolean {
-  if (!dateStr) return false;
-  return new Date(dateStr) < new Date();
+  return isPastDateOnly(dateStr);
 }
 
 function isExpiringSoon(dateStr: string | null | undefined): boolean {
-  if (!dateStr) return false;
-  const exp = new Date(dateStr);
-  const now = new Date();
-  const diff = (exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-  return diff >= 0 && diff <= 60;
+  const days = daysUntilDateOnly(dateStr);
+  return days !== null && days >= 0 && days <= 60;
 }
 
 function getDisplayFileName(doc: ContractorDocument): string {
@@ -354,7 +351,7 @@ export default function AdminContractorDocuments({
                     <span>
                       {expired ? 'Expired: ' : expiringSoon ? 'Expires soon: ' : 'Expires: '}
                       <span className="font-semibold">
-                        {new Date(doc.expiration_date).toLocaleDateString('en-US', {
+                        {formatDateOnly(doc.expiration_date, {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',

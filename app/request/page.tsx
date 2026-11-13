@@ -98,6 +98,7 @@ function RequestPageContent() {
   // no pro covers the county yet.
   const [tradeCoverage, setTradeCoverage] = useState<{ covered: boolean } | null>(null);
   const [contractors, setContractors] = useState<Contractor[]>([]);
+  const [matchEmailSent, setMatchEmailSent] = useState(false);
   const [requestId, setRequestId] = useState<string | null>(null);
   // spam honeypot — hidden from real users, bots tend to fill every field
   const [honeypot, setHoneypot] = useState('');
@@ -337,6 +338,7 @@ function RequestPageContent() {
         : [];
 
       setContractors(matchedContractors);
+      setMatchEmailSent(createData?.emailSent === true);
       setMatched(true);
       setMatching(false);
 
@@ -387,14 +389,14 @@ function RequestPageContent() {
             </h1>
             <p className="text-mkt-ink/70">
               {contractors.length > 0
-                ? `Here ${contractors.length === 1 ? 'is your vetted contractor match' : `are your ${contractors.length} vetted contractor matches`}. We've also emailed this to ${formData.clientEmail}. Questions? Call 615-362-4996 or email adeyo@listworx.co.`
+                ? `Here ${contractors.length === 1 ? 'is your vetted contractor match' : `are your ${contractors.length} vetted contractor matches`}.${matchEmailSent ? ` We've also emailed this to ${formData.clientEmail}.` : ''} Questions? Call 615-362-4996 or email adeyo@listworx.co.`
                 : `Thanks! We're hand-matching you with IronClad-verified pros and will email ${formData.clientEmail} within one business day. Need it sooner? Call 615-362-4996.`}
             </p>
           </div>
 
           {contractors.length > 0 ? (
             <>
-              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-orange-50 p-4 text-sm text-mkt-ink/80">These three contractors have been vetted by ListWorx and hold active IronClad Standards certification. Contact them directly — ListWorx does not manage scheduling or payments.</div>
+              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-orange-50 p-4 text-sm text-mkt-ink/80">{contractors.length === 1 ? 'This contractor has' : `These ${contractors.length === 2 ? 'two' : 'three'} contractors have`} been vetted by ListWorx and {contractors.length === 1 ? 'holds' : 'hold'} active IronClad Standards certification. Contact them directly — ListWorx does not manage scheduling or payments.</div>
               <div className="grid md:grid-cols-3 gap-6 mb-6">
               {contractors.map((contractor, index) => (
                 <Card key={contractor.id} className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
@@ -423,7 +425,7 @@ function RequestPageContent() {
 
                   <div className="space-y-3 text-sm">
                     <p className="text-mkt-ink/60">Trade: {contractor.trade || 'Home service'}</p>
-                    <p className="text-mkt-ink/60">Years in business: {contractor.years_in_business ?? 'Available on request'}</p>
+                    <p className="text-mkt-ink/60">Years in business: {contractor.years_in_business || 'Available on request'}</p>
                     <p className="text-mkt-ink/60">Response time: {contractor.response_time || 'Typically within 24 hours'}</p>
                     <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4 text-primary" />

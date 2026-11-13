@@ -10,6 +10,7 @@ import { PARTNER_STATUS } from '@/lib/partner-status';
 import ComplianceDocuments from './ComplianceDocuments';
 import type { ContractorProfile } from './types';
 import { ownedMediaPath } from '@/lib/media-paths';
+import ContractorProfileEditor from './ContractorProfileEditor';
 import {
   Loader as Loader2,
   CircleAlert as AlertCircle,
@@ -710,6 +711,18 @@ export default function ProfileTab({ profile, onProfileUpdated, onUserEmailUpdat
         userId={profile.user_id}
         licenseExpirationDate={profile.license_expiration_date}
         insuranceExpirationDate={profile.insurance_expiration_date}
+      />
+
+      {/* Work photos: the existing profile editor's section, same owner-only storage rules */}
+      <ContractorProfileEditor
+        section="work-photos"
+        profile={profile as any}
+        onProfileUpdated={onProfileUpdated}
+        onRefresh={() => undefined}
+        logoInputRef={fileInputRef}
+        onLogoUpload={handleLogoUpload}
+        logoUploading={uploading}
+        logoUploadError={uploadError}
       />
     </div>
   );

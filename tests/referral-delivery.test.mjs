@@ -7,6 +7,7 @@ import {
   deliverableContractors,
   notifyReferredContractors,
   referralEmailPayload,
+  requestorCard,
 } from '../lib/server/referral-notify.ts';
 
 const matched = [
@@ -77,7 +78,7 @@ test('no email address: skipped, nothing claimed', async () => {
 
 test('job-request route delivers only recorded contractors and reports emailSent truthfully', () => {
   const src = readFileSync(new URL('../app/api/job-request/route.ts', import.meta.url), 'utf8');
-  assert.match(src, /contractors: delivered\.map/);
+  assert.match(src, /contractors: delivered\.map\(\(c\) => requestorCard\(/);
   assert.match(src, /emailSent: requestorEmailSent/);
   assert.doesNotMatch(src, /jobDescription: esc\(/, 'contractor email must not carry the job description');
 });
@@ -93,4 +94,16 @@ test('referral email template has the approved wording and no request details', 
     'Thank you for being part of ListWorx.',
   ]) assert.ok(block.includes(line), line);
   assert.doesNotMatch(block, /jobCategory|jobCounty|jobState|jobDescription|requesterType/);
+});
+
+test('requestors receive only public card fields', () => {
+  const card = requestorCard({
+    id: 'c1', company_name: 'A Co', owner_name: 'A', email: 'a@x.com', phone: '1', website: null, bio: 'b',
+    years_in_business: 8, license_document_url: 'https://signed', insurance_document_url: 'https://signed',
+    stripe_customer_id: 'cus_1', license_number: 'X', partner_status: 'active', user_id: 'u1', referralId: 'r1',
+  });
+  for (const k of ['license_document_url', 'insurance_document_url', 'stripe_customer_id', 'license_number', 'partner_status', 'user_id', 'referralId']) {
+    assert.ok(!(k in card), k);
+  }
+  assert.equal(card.years_in_business, 8);
 });

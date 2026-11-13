@@ -282,7 +282,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main content area */}
-      <div className="flex flex-1 flex-col md:ml-60">
+      <div className="flex min-w-0 flex-1 flex-col md:ml-60">
         {/* Top bar */}
         <header className="sticky top-0 z-10 flex h-15 items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6 py-0" style={{ height: '60px' }}>
           <div className="flex items-center gap-3">

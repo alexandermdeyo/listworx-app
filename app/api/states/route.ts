@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+// Cached, but refreshed at most every 5 minutes so admin changes appear
+// without a redeploy (was frozen at build time).
+export const revalidate = 300;
+
 export async function GET() {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

@@ -464,6 +464,7 @@ export default function ApplicationForm({
       company_name: form.company_name.trim(),
       owner_name: `${form.first_name.trim()} ${form.last_name.trim()}`.trim(),
       phone: form.phone.trim(),
+      years_in_business: Number(form.years_in_business) || null,
       website: form.website.trim() || null,
       bio: form.bio.trim() || null,
       license_number: form.license_number.trim() || null,

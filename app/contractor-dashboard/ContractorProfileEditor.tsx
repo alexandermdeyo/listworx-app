@@ -94,6 +94,8 @@ type ContractorProfileEditorProps = {
   onLogoUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   logoUploading: boolean;
   logoUploadError: string | null;
+  /** Render only one section of the editor (the dashboard uses 'work-photos'). */
+  section?: 'work-photos';
 };
 
 const PHOTO_BUCKET = 'contractor-work-photos';
@@ -187,6 +189,7 @@ export default function ContractorProfileEditor({
   onLogoUpload,
   logoUploading,
   logoUploadError,
+  section,
 }: ContractorProfileEditorProps) {
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
@@ -589,6 +592,74 @@ export default function ContractorProfileEditor({
 
   const selectedCountyNames = counties.filter((county) => businessForm.selectedCounties.includes(county.id));
 
+  const workPhotosCard = (
+    <Card id="work-photos" className="border-gray-200 bg-white p-6 shadow-sm">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-xl font-bold text-gray-900">Work Photos</h3>
+          <p className="mt-1 text-sm text-gray-500">Show requestors what you are capable of before they reach out.</p>
+        </div>
+        <div>
+          <input ref={workPhotoInputRef} type="file" className="hidden" accept="image/jpeg,image/jpg,image/png,image/webp" multiple onChange={uploadWorkPhotos} />
+          <Button onClick={() => workPhotoInputRef.current?.click()} disabled={workPhotos.length >= MAX_WORK_PHOTOS} className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+            <Plus className="mr-2 h-4 w-4" /> Add Work Photos
+          </Button>
+          <p className="mt-2 text-xs text-gray-500">Up to 20 total. Upload 5 at a time. JPG, PNG, WEBP. Max 10MB each.</p>
+        </div>
+      </div>
+      {savedSection === 'work-photos' && <SavedNotice />}
+      {Object.keys(photoUploadProgress).length > 0 && (
+        <div className="mb-4 space-y-2">
+          {Object.entries(photoUploadProgress).map(([key, value]) => <div key={key}><p className="mb-1 text-xs text-gray-500">{key}</p><ProgressBar value={value} /></div>)}
+        </div>
+      )}
+      {workPhotos.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500">
+          <ImageIcon className="mx-auto mb-3 h-10 w-10 text-gray-300" />
+          Add photos of your completed work. Requestors want to see what you&apos;re capable of before they reach out.
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {workPhotos.map((photo) => (
+            <div key={photo.id} className="rounded-xl border border-gray-200 p-3">
+              <button type="button" onClick={() => setLightboxPhoto(photo)} className="block w-full overflow-hidden rounded-lg bg-gray-100">
+                <img src={photo.public_url || ''} alt={photo.caption || 'Work photo'} className="h-44 w-full object-cover transition hover:scale-105" />
+              </button>
+              <Input className="mt-3" maxLength={100} value={photo.caption || ''} onChange={(event) => updatePhotoCaption(photo.id, event.target.value)} placeholder="Caption (100 char max)" />
+              <Button onClick={() => deleteWorkPhoto(photo)} variant="outline" size="sm" className="mt-3 w-full border-red-200 text-red-600 hover:bg-red-50">
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+    </Card>
+  );
+
+  const lightbox = lightboxPhoto && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setLightboxPhoto(null)}>
+        <div className="max-w-5xl" onClick={(event) => event.stopPropagation()}>
+          <img src={lightboxPhoto.public_url || ''} alt={lightboxPhoto.caption || 'Work photo'} className="max-h-[80vh] rounded-xl object-contain" />
+          {lightboxPhoto.caption && <p className="mt-3 text-center text-white">{lightboxPhoto.caption}</p>}
+        </div>
+      </div>
+  );
+
+  if (section === 'work-photos') {
+    return (
+      <div className="space-y-4">
+        {sectionError && (
+          <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            {sectionError}
+          </div>
+        )}
+        {workPhotosCard}
+        {lightbox}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <Card className="border-gray-200 bg-white p-6 shadow-sm">
@@ -738,47 +809,7 @@ export default function ContractorProfileEditor({
         </div>
       </Card>
 
-      <Card id="work-photos" className="border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">Work Photos</h3>
-            <p className="mt-1 text-sm text-gray-500">Show requestors what you are capable of before they reach out.</p>
-          </div>
-          <div>
-            <input ref={workPhotoInputRef} type="file" className="hidden" accept="image/jpeg,image/jpg,image/png,image/webp" multiple onChange={uploadWorkPhotos} />
-            <Button onClick={() => workPhotoInputRef.current?.click()} disabled={workPhotos.length >= MAX_WORK_PHOTOS} className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-              <Plus className="mr-2 h-4 w-4" /> Add Work Photos
-            </Button>
-            <p className="mt-2 text-xs text-gray-500">Up to 20 total. Upload 5 at a time. JPG, PNG, WEBP. Max 10MB each.</p>
-          </div>
-        </div>
-        {savedSection === 'work-photos' && <SavedNotice />}
-        {Object.keys(photoUploadProgress).length > 0 && (
-          <div className="mb-4 space-y-2">
-            {Object.entries(photoUploadProgress).map(([key, value]) => <div key={key}><p className="mb-1 text-xs text-gray-500">{key}</p><ProgressBar value={value} /></div>)}
-          </div>
-        )}
-        {workPhotos.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500">
-            <ImageIcon className="mx-auto mb-3 h-10 w-10 text-gray-300" />
-            Add photos of your completed work. Requestors want to see what you&apos;re capable of before they reach out.
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {workPhotos.map((photo) => (
-              <div key={photo.id} className="rounded-xl border border-gray-200 p-3">
-                <button type="button" onClick={() => setLightboxPhoto(photo)} className="block w-full overflow-hidden rounded-lg bg-gray-100">
-                  <img src={photo.public_url || ''} alt={photo.caption || 'Work photo'} className="h-44 w-full object-cover transition hover:scale-105" />
-                </button>
-                <Input className="mt-3" maxLength={100} value={photo.caption || ''} onChange={(event) => updatePhotoCaption(photo.id, event.target.value)} placeholder="Caption (100 char max)" />
-                <Button onClick={() => deleteWorkPhoto(photo)} variant="outline" size="sm" className="mt-3 w-full border-red-200 text-red-600 hover:bg-red-50">
-                  <Trash2 className="mr-2 h-4 w-4" /> Delete
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
+      {workPhotosCard}
 
       <Card id="work-videos" className="border-gray-200 bg-white p-6 shadow-sm">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -895,14 +926,7 @@ export default function ContractorProfileEditor({
         </div>
       </Card>
 
-      {lightboxPhoto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setLightboxPhoto(null)}>
-          <div className="max-w-5xl" onClick={(event) => event.stopPropagation()}>
-            <img src={lightboxPhoto.public_url || ''} alt={lightboxPhoto.caption || 'Work photo'} className="max-h-[80vh] rounded-xl object-contain" />
-            {lightboxPhoto.caption && <p className="mt-3 text-center text-white">{lightboxPhoto.caption}</p>}
-          </div>
-        </div>
-      )}
+      {lightbox}
     </div>
   );
 }
