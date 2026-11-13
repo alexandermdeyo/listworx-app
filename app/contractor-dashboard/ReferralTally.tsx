@@ -60,7 +60,7 @@ export default function ReferralTally() {
       <div className="mb-5">
         <h2 className="text-xl font-bold text-lw-text">Your Referrals</h2>
         <p className="text-lw-text/50 text-sm mt-0.5">
-          How many times ListWorx has referred you to a homeowner or realtor.
+          How many times ListWorx has referred you to a homeowner or property professional.
         </p>
       </div>
 
@@ -87,9 +87,9 @@ export default function ReferralTally() {
       <div className="mt-4 flex items-start gap-3 rounded-xl border border-lw-border-light bg-lw-surface p-4 text-sm text-lw-text/70">
         <Phone className="h-4 w-4 mt-0.5 shrink-0 text-lw-text/50" />
         <p>
-          When you are referred, the homeowner or realtor receives your business name and contact
-          details and chooses whether to reach out. Expect a possible call — be ready and respond
-          quickly. You will get an email each time you are referred.
+          When you are referred, the homeowner or property professional receives your business name
+          and contact details and may contact you directly. Be ready for a possible call, text, or
+          email. You will get an email each time you are referred.
         </p>
       </div>
 
