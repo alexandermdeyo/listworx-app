@@ -291,9 +291,13 @@ export default function JobRequestsPage() {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'Release failed');
       alert(
-        data.referred > 0
-          ? `Released: ${data.referred} contractor${data.referred === 1 ? '' : 's'} referred.${data.requestorEmailSent ? '' : ' The requestor email could not be sent — follow up directly.'}`
-          : 'Released, but no contractors match this request yet.'
+        data.referralRecordingFailed
+          ? 'Released, but the referrals could not be recorded. Nothing was sent; check the logs and follow up directly.'
+          : data.referred > 0
+            ? `Released: ${data.referred} contractor${data.referred === 1 ? '' : 's'} referred.${data.requestorEmailSent ? '' : ' The requestor email could not be sent — follow up directly.'}`
+            : data.alreadyReferred > 0
+              ? 'Released. The matching contractors were already referred for this request, so nothing new was sent or counted.'
+              : 'Released, but no contractors match this request yet.'
       );
       await loadJobRequests();
     } catch (err: any) {

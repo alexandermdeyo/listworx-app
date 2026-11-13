@@ -56,7 +56,13 @@ export async function POST(request: NextRequest) {
     ? await findMatchedContractors(supabase as any, { countyId: claimed.county_id, categoryIds, jobRequestId })
     : [];
 
-  const { delivered, failed } = await recordReferrals(supabase, jobRequestId, matched);
+  // Requests held under the old rules may already have referrals; never refer
+  // (or count) the same contractor twice for one request.
+  const { data: existing } = await supabase.from('referrals').select('contractor_id').eq('job_request_id', jobRequestId);
+  const alreadyReferred = new Set((existing || []).map((r: any) => r.contractor_id));
+  const toRefer = matched.filter((c) => !alreadyReferred.has(c.id));
+
+  const { delivered, failed } = await recordReferrals(supabase, jobRequestId, toRefer);
 
   let requestorEmailSent = false;
   if (delivered.length > 0) {
@@ -79,6 +85,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     success: true,
     referred: delivered.length,
+    alreadyReferred: alreadyReferred.size,
     referralRecordingFailed: failed,
     requestorEmailSent,
   });
