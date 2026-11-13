@@ -224,7 +224,7 @@ export const ADDON_LIST: AddOn[] = [
     name: 'IronClad Decal Package — Founder',
     description: 'Vehicle decal, window cling, and yard sign with IronClad badge. Founder pricing.',
     type: 'onetime',
-    price: 49,
+    price: 75,
     includedIn: [],
     founderOnly: true,
     stripeEnvVar: 'STRIPE_ADDON_DECAL_PACKAGE_FOUNDER',
