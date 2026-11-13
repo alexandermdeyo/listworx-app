@@ -15,7 +15,7 @@ Branch `release/launch` holds the code. Nothing here has been applied to product
 | 2 | `20261112000100_billing_subscriptions.sql` (subscription records the webhook can save) | Before the code deploy (the new webhook expects it) |
 | 3 | `20261112000200_document_review_guard.sql` (contractors cannot approve their own documents) | Before or with the code deploy |
 | 4 | `20261112000300_referral_columns.sql` (referral columns the admin screens use; contractors see only referral counts, never job or requestor details) | **With** the code deploy — the old dashboard reads referral rows this step hides, the new one reads counts this step adds |
-| 5 | Deploy `release/launch` on Netlify and confirm it is live | — |
+| 5 | Deploy `release/launch` on Netlify and confirm it is live; deploy the `send-contractor-email` edge function from the same commit (new referral email wording) | — |
 | 6 | `20261111000200_media_storage_ownership.sql` (storage ownership) | **Only after step 5 is live** — the new upload paths work under the old rules, but the old paths would be refused under the new ones |
 
 Steps 1–3 are additive or compatible with the current site, so the live site keeps working between them and the deploy. Step 4 hides referral rows from contractors; on the old site that only empties a referral list that is already broken, so it is safe to run just before the deploy.
@@ -31,5 +31,5 @@ Steps 1–3 are additive or compatible with the current site, so the live site k
 
 ## Tested (local copy of production, 2026-11-12)
 
-`run_launch.sh`: steps 1–4 in order, 29 checks (alignment, document guard, billing, referral columns), rollback of all four with data present (structure restored, data kept), then re-apply. `run_media.sh`: storage rules, exploit confirmed before, blocked after, rollback and re-apply.
+`run_launch.sh`: steps 1–4 in order, 32 checks (alignment, document guard, billing, referral columns), rollback of all four with data present (structure restored, data kept), then re-apply. `run_media.sh`: storage rules, exploit confirmed before, blocked after, rollback and re-apply.
 Browser flow on the Netlify test site + Supabase test branch (2026-11-12): sign-up, application, admin approval, dashboard, documents, logo, cross-account checks and referral match tested. Step 4 was found by that test. Not yet tested: Stripe test-mode payment.
