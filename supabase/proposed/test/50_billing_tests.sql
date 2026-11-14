@@ -67,3 +67,8 @@ do $$ begin
   perform contractor_id, subscription_status from public.active_contractors_view;
   raise notice 'PASS V1-V2 active_contractors_view rebuilt, status text';
 end $$;
+do $$ begin
+  if not has_table_privilege('anon','public.active_contractors_view','select') or not has_table_privilege('authenticated','public.active_contractors_view','select') or not has_table_privilege('service_role','public.active_contractors_view','select') then raise exception 'V3 grants not restored'; end if;
+  if obj_description('public.active_contractors_view'::regclass) not like 'Public lookup view%' then raise exception 'V4 comment not restored'; end if;
+  raise notice 'PASS V3-V4 grants and comment restored';
+end $$;

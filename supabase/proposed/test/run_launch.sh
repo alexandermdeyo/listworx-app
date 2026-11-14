@@ -15,15 +15,16 @@ db=listworx_launch_test
 psql -v ON_ERROR_STOP=1 -qc "drop database if exists $db" -c "create database $db" postgres
 run() { psql -v ON_ERROR_STOP=1 -q -d "$db" -f "$1"; }
 q() { psql -v ON_ERROR_STOP=1 -qtA -d "$db" -c "$1"; }
-echo "== replica of production";   run 00_replica.sql; run 01_replica_documents.sql; run 02_replica_billing.sql; run 05_seed_before.sql
+echo "== replica of production";   run 00_replica.sql; run 01_replica_documents.sql; run 02_replica_billing.sql; run 05_seed_before.sql; run 07_view_equiv_before.sql
 echo "== apply 1, 2, 3, 4 in order";  run "$m1.sql"; run "$m2.sql"; run "$m3.sql"; run "$m4.sql"
 echo "== alignment tests";         run 10_guard_tests.sql
 echo "== document guard tests";    run 40_document_guard_tests.sql
-echo "== billing tests";           run 50_billing_tests.sql
+echo "== billing tests";           run 50_billing_tests.sql; run 55_view_equiv_after.sql
 echo "== referral column tests";   run 60_referral_columns_tests.sql
 echo "== rollback 4, 3, 2, 1 (with test data present)"; run "$m4.rollback.sql"; run "$m3.rollback.sql"; run "$m2.rollback.sql"; run "$m1.rollback.sql"
 [ "$(q "select format_type(atttypid, atttypmod) from pg_attribute where attrelid='public.subscriptions'::regclass and attname='status'")" = "subscription_status" ] || { echo "ROLLBACK FAIL: status type"; exit 1; }
-[ "$(q "select status from public.subscriptions limit 1")" = "PAST_DUE" ] || { echo "ROLLBACK FAIL: existing row status not converted"; exit 1; }
+[ "$(q "select count(*) from public.subscriptions where status::text <> upper(status::text)")" = "0" ] && [ "$(q "select count(*) from public.subscriptions where status = 'PAST_DUE'")" != "0" ] || { echo "ROLLBACK FAIL: existing row status not converted"; exit 1; }
+[ "$(q "select count(*) from public.active_contractors_view")" = "$(q "select count(*) from public._view_before")" ] && [ "$(q "select has_table_privilege('anon','public.active_contractors_view','select')")" = "t" ] || { echo "ROLLBACK FAIL: view not restored"; exit 1; }
 [ "$(q "select count(*) from information_schema.columns where table_name='subscriptions' and column_name in ('billing_period','stripe_customer_id','cancel_at_period_end')")" = "0" ] || { echo "ROLLBACK FAIL: columns remain"; exit 1; }
 [ "$(q "select count(*) from information_schema.columns where table_name='referrals' and column_name in ('slot_position','email_sent_at','requester_contacted','requester_contacted_at')")" = "0" ] || { echo "ROLLBACK FAIL: referral columns remain"; exit 1; }
 [ "$(q "select count(*) from public.referrals")" -ge "2" ] || { echo "ROLLBACK FAIL: referrals lost"; exit 1; }
@@ -33,5 +34,6 @@ echo "== rollback 4, 3, 2, 1 (with test data present)"; run "$m4.rollback.sql"; 
 [ "$(q "select count(*) from public.tiers where name like 'Network %'")" = "6" ] || { echo "ROLLBACK FAIL: original plans changed"; exit 1; }
 echo "rollback checks passed: production structure restored, data kept"
 echo "== re-apply 1, 2, 3, 4 after rollback"; run "$m1.sql"; run "$m2.sql"; run "$m3.sql"; run "$m4.sql"
-[ "$(q "select status from public.subscriptions limit 1")" = "past_due" ] || { echo "RE-APPLY FAIL"; exit 1; }
+[ "$(q "select count(*) from public.subscriptions where status <> lower(status)")" = "0" ] && [ "$(q "select count(*) from public.subscriptions where status = 'past_due'")" != "0" ] || { echo "RE-APPLY FAIL"; exit 1; }
+[ "$(q "select count(*) from public.active_contractors_view")" = "$(q "select count(*) from public._view_before")" ] || { echo "RE-APPLY FAIL: view"; exit 1; }
 echo "== all steps completed"

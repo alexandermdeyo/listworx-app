@@ -65,6 +65,8 @@ create materialized view public.active_contractors_view as
      JOIN users u ON cp.user_id = u.id
      LEFT JOIN subscriptions s ON cp.id = s.contractor_id
   WHERE cp.partner_status = 'active'::partner_status AND cp.ironclad_accepted = true AND (s.status = 'active' OR s.status IS NULL);
+grant all on public.active_contractors_view to anon, authenticated, service_role;
+comment on materialized view public.active_contractors_view is 'Public lookup view for contractor availability. Contains only non-sensitive data (contractor availability by market/category). Safe for anon/authenticated access. Used for filtering available contractors on realtor request form.';
 
 alter table public.subscriptions drop constraint if exists subscriptions_contractor_id_key;
 alter table public.subscriptions
