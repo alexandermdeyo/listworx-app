@@ -227,7 +227,7 @@ Deno.serve(async (req: Request) => {
           ${sectionLabel('IronClad Standards')}
           ${p('Every ListWorx partner must meet and maintain the IronClad Standards — a non-negotiable set of requirements covering licensing, insurance, communication, and professional conduct.')}
           ${divider()}
-          ${small(`Questions? Reply to this email or reach us at <a href="mailto:support@listworx.co" style="color:${C.rust};text-decoration:none;">support@listworx.co</a>`)}`,
+          ${small(`Questions? Reply to this email or reach us at <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}`,
           "Your application is under review — we'll be in touch within 2–3 business days."
         );
         text = `Application Received\n\nHi ${contractorName},\n\nWe've received your application for ${companyName}. Our team will review it within 2–3 business days.\n\n— The ListWorx Team`;
@@ -244,7 +244,7 @@ Deno.serve(async (req: Request) => {
           ${sectionLabel('Ongoing Requirements')}
           ${checkList(['Maintain valid licensing and insurance at all times','Respond to every referral within 24 hours','Uphold IronClad Standards throughout your membership'])}
           ${divider()}
-          ${small(`Need help? Reply to this email or contact <a href="mailto:support@listworx.co" style="color:${C.rust};text-decoration:none;">support@listworx.co</a>`)}`,
+          ${small(`Need help? Reply to this email or contact <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}`,
           'Congratulations — your application has been approved. Sign in to get started.'
         );
         text = `You're Approved\n\nCongratulations, ${contractorName},\n\n${companyName} has been approved to join the ListWorx IronClad Partner Network.\n\nSign in: ${BASE_URL}/contractor-portal\n\n— The ListWorx Team`;
@@ -258,12 +258,12 @@ Deno.serve(async (req: Request) => {
           `${p("After careful review, we're unable to approve your application at this time.")}
           ${request.reason ? `${sectionLabel('Reason for Decision')}${warningCard(p(request.reason, C.gray100))}` : ''}
           ${sectionLabel('What You Can Do')}
-          ${checkList([`Contact us at <a href="mailto:support@listworx.co" style="color:${C.rust};text-decoration:none;">support@listworx.co</a> for clarification`,"Reapply once you've addressed the concerns noted above",'Request a formal review of your application'])}
+          ${checkList([`Contact us at <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a> for clarification`,"Reapply once you've addressed the concerns noted above",'Request a formal review of your application'])}
           ${divider()}
           ${small('We appreciate your interest and wish you success. If circumstances change, we encourage you to reapply.')}`,
           'An update regarding your ListWorx contractor application.'
         );
-        text = `Application Update\n\nHi ${contractorName},\n\nAfter careful review, we're unable to approve your application at this time.\n\n${request.reason ? `Reason: ${request.reason}\n\n` : ''}Contact support@listworx.co for clarification.\n\n— The ListWorx Team`;
+        text = `Application Update\n\nHi ${contractorName},\n\nAfter careful review, we're unable to approve your application at this time.\n\n${request.reason ? `Reason: ${request.reason}\n\n` : ''}Contact adeyo@listworx.co for clarification.\n\n— The ListWorx Team`;
         break;
 
       case 'subscription_activated_welcome': {
@@ -338,7 +338,7 @@ Deno.serve(async (req: Request) => {
           ${sectionLabel('What This Means')}
           ${checkList(['No new referrals will be sent to you','Your profile is hidden from the contractor directory','Your IronClad Partner badge is inactive'])}
           ${sectionLabel('How to Reactivate')}
-          ${checkList(['Address the reason for pause noted above',`Contact us at <a href="mailto:support@listworx.co" style="color:${C.rust};text-decoration:none;">support@listworx.co</a>`,'Update your payment method if applicable'])}
+          ${checkList(['Address the reason for pause noted above',`Contact us at <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`,'Update your payment method if applicable'])}
           ${cta('Reactivate Membership &rarr;', `${BASE_URL}/billing`)}
           ${divider()}
           ${small('We hope to have you back in the network soon.')}`,
@@ -375,7 +375,7 @@ Deno.serve(async (req: Request) => {
           ${request.limitations ? `${sectionLabel('Important Limitations')}${warningCard(p(request.limitations, C.gray100))}` : ''}
           ${cta('Manage Your Add-Ons &rarr;', `${BASE_URL}/billing`)}
           ${divider()}
-          ${small(`Questions? Contact <a href="mailto:support@listworx.co" style="color:${C.rust};text-decoration:none;">support@listworx.co</a>`)}`,
+          ${small(`Questions? Contact <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}`,
           `${request.addonName} is now active on your account.`
         );
         text = `Add-On Activated: ${request.addonName}\n\nHi ${contractorName},\n\nYour ${request.addonName} add-on is now active.\n\n${request.addonDescription}\n\nManage add-ons: ${BASE_URL}/billing\n\n— The ListWorx Team`;

@@ -266,10 +266,10 @@ Deno.serve(async (req: Request) => {
           ${sectionLabel('IronClad Standards')}
           ${p('Every contractor referred through ListWorx maintains verified licensing and insurance and is held to ongoing IronClad compliance standards.')}
           ${divider()}
-          ${small(`Questions? <a href="mailto:support@listworx.co" style="color:${C.rust};text-decoration:none;">support@listworx.co</a>`)}`,
+          ${small(`Questions? <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}`,
           'Your ListWorx contractor referrals are ready — review and contact whoever you prefer.'
         );
-        text = `Your Contractor Referrals Are Ready\n\nHi ${realtorName},\n\nYour service request for ${request.propertyAddress} has been received.\n\nServices: ${request.services?.join(', ') || 'N/A'}\n\nReview the contractors and reach out to whoever you prefer. Each has been notified and is expecting to hear from you.\n\nQuestions? support@listworx.co\n\n— The ListWorx Team`;
+        text = `Your Contractor Referrals Are Ready\n\nHi ${realtorName},\n\nYour service request for ${request.propertyAddress} has been received.\n\nServices: ${request.services?.join(', ') || 'N/A'}\n\nReview the contractors and reach out to whoever you prefer. Each has been notified and is expecting to hear from you.\n\nQuestions? adeyo@listworx.co\n\n— The ListWorx Team`;
         break;
 
       case 'contractor_match': {
@@ -285,7 +285,7 @@ Deno.serve(async (req: Request) => {
           ${sectionLabel('Next Steps')}
           ${checkList(['Review the contractors above and their contact information','Reach out to whichever contractor you prefer — you are in control','Contractors have been notified and are expecting your call or email','No commitments — choose the best fit at your own pace'])}
           ${divider()}
-          ${small(`All contractors are IronClad Standards&trade; certified. ListWorx curates this referral but is not a party to any service agreements. Questions? <a href="mailto:support@listworx.co" style="color:${C.rust};text-decoration:none;">support@listworx.co</a>`)}`,
+          ${small(`All contractors are IronClad Standards&trade; certified. ListWorx curates this referral but is not a party to any service agreements. Questions? <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}`,
           `Your ${count} referral${count !== 1 ? 's are' : ' is'} ready — review and contact whoever you prefer.`
         );
         text = `Your Contractor Referrals\n\nHi ${realtorName},\n\nListWorx has selected ${count} contractor${count !== 1 ? 's' : ''} for your request at ${request.propertyAddress}.\n\n${request.contractors?.map((c, i) => `Referral ${i + 1} of ${count}\n${c.company}\nContact: ${c.name}\nPhone: ${c.phone}\nEmail: ${c.email}\n${c.website ? `Website: ${c.website}\n` : ''}Specialties: ${c.specialties.join(', ')}`).join('\n\n') || 'No contractors matched.'}\n\nAll contractors are IronClad Standards certified.\n\n— The ListWorx Team`;
@@ -304,10 +304,10 @@ Deno.serve(async (req: Request) => {
           ${sectionLabel('Why Your Feedback Matters')}
           ${checkList(['Ensures contractors maintain IronClad Standards','Improves future matching for you and your clients','Identifies top-performing contractors in the network','Allows us to address issues quickly'])}
           ${sectionLabel('Did Something Go Wrong?')}
-          ${warningCard(`${p('If you experienced unprofessional conduct, missed appointments, surprise pricing, or any IronClad Standards violation — please let us know immediately.', C.gray100)}${small(`<a href="mailto:support@listworx.co" style="color:${C.rust};text-decoration:none;font-weight:600;">Report an issue directly &rarr;</a>`)}`)}`,
+          ${warningCard(`${p('If you experienced unprofessional conduct, missed appointments, surprise pricing, or any IronClad Standards violation — please let us know immediately.', C.gray100)}${small(`<a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;font-weight:600;">Report an issue directly &rarr;</a>`)}`)}`,
           `Quick feedback on your recent service — takes under 2 minutes.`
         );
-        text = `How Was Your Experience?\n\nHi ${realtorName},\n\nWe hope the work at ${request.propertyAddress} with ${request.companyName} went well.\n\nLeave feedback (under 2 min):\n${BASE_URL}/feedback/${request.feedbackToken}\n\nIf something went wrong, contact support@listworx.co immediately.\n\n— The ListWorx Team`;
+        text = `How Was Your Experience?\n\nHi ${realtorName},\n\nWe hope the work at ${request.propertyAddress} with ${request.companyName} went well.\n\nLeave feedback (under 2 min):\n${BASE_URL}/feedback/${request.feedbackToken}\n\nIf something went wrong, contact adeyo@listworx.co immediately.\n\n— The ListWorx Team`;
         break;
 
       case 'admin_new_job_request':
