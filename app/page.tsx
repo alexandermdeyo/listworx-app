@@ -21,6 +21,15 @@ import FaqSection from '@/components/site/FaqSection';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
 import HolidayBar from '@/components/site/HolidayBar';
 import ContractorRecruitBar from '@/components/site/ContractorRecruitBar';
+import { pageMetadata, homepageStructuredData } from '@/lib/seo';
+import JsonLd from '@/components/seo/JsonLd';
+
+export const metadata = pageMetadata({
+  title: 'ListWorx | Vetted Home Service Contractor Referral Network',
+  description:
+    'ListWorx matches homeowners and realtors with up to three vetted, licensed, and insured home service contractors. Free for homeowners and realtors. Built in Gallatin, TN for Sumner County, Nashville, and Middle Tennessee.',
+  path: '',
+});
 
 // Rebuild hourly so seasonal banners switch on and off by date without a redeploy.
 export const revalidate = 3600;
@@ -44,7 +53,7 @@ const homeownerFaqs = [
   },
   {
     q: 'Why only three contractors per request?',
-    a: 'Most lead services blast your number to a dozen companies. We send you the three best matches for your trade and area, and you choose who to contact. No phone blowing up.',
+    a: 'Most lead services blast your number to a dozen companies. We send you up to three matches for your trade and area, and you choose who to contact. No phone blowing up.',
   },
   {
     q: 'What if a job goes wrong?',
@@ -86,7 +95,7 @@ const steps = [
     n: '02',
     icon: MessageSquareText,
     title: 'Get matched',
-    body: "Up to three verified contractors for your trade, area, and timeline — you'll only see trades a verified pro actually covers in your county. Your details stay private until you reach out.",
+    body: "Up to three verified contractors for your trade and area — you'll only see trades a verified pro actually covers in your county. Your details stay private until you reach out.",
   },
   {
     n: '03',
@@ -99,6 +108,7 @@ const steps = [
 export default function LandingPage() {
   return (
     <PageShell surface="marketing">
+      <JsonLd data={homepageStructuredData} />
       <Navigation variant="light" />
 
       <HolidayBar />

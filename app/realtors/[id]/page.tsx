@@ -72,9 +72,19 @@ export async function generateMetadata(
 
     const name = data?.display_name || 'Realtor';
     const brokerage = data?.brokerage_name ? ` — ${data.brokerage_name}` : '';
-    return { title: `${name}${brokerage} | ListWorx` };
+    const title = `${name}${brokerage} | ListWorx`;
+    const description = `${name}${brokerage} on ListWorx, the vetted home service contractor referral network for realtors and homeowners.`;
+    const url = `https://listworx.co/realtors/${params.id}`;
+    // Set explicitly so this profile doesn't inherit the /realtors page's canonical and share tags.
+    return {
+      title,
+      description,
+      alternates: { canonical: url },
+      openGraph: { title, description, url, siteName: 'ListWorx', type: 'profile' },
+      twitter: { card: 'summary', title, description },
+    };
   } catch {
-    return { title: 'Realtor Profile | ListWorx' };
+    return { title: 'Realtor Profile | ListWorx', alternates: { canonical: `https://listworx.co/realtors/${params.id}` } };
   }
 }
 

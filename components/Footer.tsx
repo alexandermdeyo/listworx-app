@@ -127,7 +127,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2', light ? 'text-mkt-ink' : 'text-zinc-300')}>For Contractors<Image src="/Ironclad_Cert_Partner_Final_Logo.png" alt="IronClad" width={18} height={18} className="w-4 h-4 opacity-80" /></h4>
+            <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2', light ? 'text-mkt-ink' : 'text-zinc-300')}>For Contractors<Image src="/optimized/Ironclad_Cert_Partner_Final_Logo.webp" alt="IronClad" width={18} height={18} className="w-4 h-4 opacity-80" /></h4>
             <ul className="space-y-2.5 text-sm"><li><Link href="/apply" className="hover:text-lw-rust transition-colors">Apply to Join</Link></li><li><Link href="/contractors" className="hover:text-lw-rust transition-colors">Why Partner With Us</Link></li><li><Link href="/ironclad" className="hover:text-lw-rust transition-colors">IronClad Standards</Link></li></ul>
           </div>
 

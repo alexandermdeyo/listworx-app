@@ -134,7 +134,7 @@ export default function RealtorsPage() {
                 <span className="block text-lw-rust">putting your name on the line.</span>
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-mkt-ink/70 md:text-xl">
-                One request, up to three IronClad-verified contractors, and you choose who to
+                One request, up to three approved network contractors, and you choose who to
                 contact. Free for agents. Your client&apos;s information stays private until you
                 share it.
               </p>

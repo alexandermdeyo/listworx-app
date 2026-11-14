@@ -1,23 +1,16 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Calendar, User, ArrowLeft, ArrowRight } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { Calendar, User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
+import JsonLd from '@/components/seo/JsonLd';
+import { getPublishedPost, type BlogPost } from '@/lib/blog';
+import { SITE_URL, SITE_NAME, ORGANIZATION_ID, DEFAULT_OG_IMAGE } from '@/lib/seo';
 
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  body: string | null;
-  featured_image_url: string | null;
-  author_name: string;
-  published_at: string | null;
-  created_at: string;
-}
+// Rendered on the server for every request so the article text is in the HTML
+// that search engines and AI crawlers receive, and edits show up immediately
+// (same freshness as the previous in-browser fetch).
+export const dynamic = 'force-dynamic';
 
 function formatDate(iso: string | null) {
   if (!iso) return '';
@@ -70,62 +63,40 @@ function renderBody(text: string) {
   });
 }
 
-export default function BlogPostPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = params?.slug as string;
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post: BlogPost | null = await getPublishedPost(params.slug);
+  if (!post) notFound();
 
-  useEffect(() => {
-    if (!slug) return;
-    fetch(`/api/blog?slug=${encodeURIComponent(slug)}`)
-      .then(async r => {
-        if (r.status === 404) { setNotFound(true); return; }
-        const data = await r.json();
-        setPost(data);
-      })
-      .catch(() => setNotFound(true))
-      .finally(() => setLoading(false));
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white mkt-scope">
-        <Navigation variant="light" />
-        <div className="container mx-auto px-4 py-20 max-w-3xl animate-pulse space-y-4">
-          <div className="h-3 bg-zinc-200 rounded w-1/4" />
-          <div className="h-8 bg-zinc-200 rounded w-3/4" />
-          <div className="h-8 bg-zinc-200 rounded w-2/3" />
-          <div className="aspect-[2/1] bg-zinc-200 rounded-2xl mt-6" />
-          <div className="space-y-3 mt-8">
-            {[...Array(8)].map((_, i) => <div key={i} className="h-4 bg-zinc-200 rounded" style={{ width: `${70 + Math.random() * 30}%` }} />)}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (notFound || !post) {
-    return (
-      <div className="min-h-screen bg-white mkt-scope">
-        <Navigation variant="light" />
-        <div className="container mx-auto px-4 py-28 text-center">
-          <p className="text-mkt-ink/70 text-lg mb-2">Post not found</p>
-          <p className="text-mkt-ink/60 text-sm mb-6">This article may have been removed or the URL is incorrect.</p>
-          <Link href="/blog">
-            <Button variant="outlineOrange">
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back to Blog
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const url = `${SITE_URL}/blog/${post.slug}`;
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        headline: post.title,
+        ...(post.excerpt ? { description: post.excerpt } : {}),
+        image: post.featured_image_url || DEFAULT_OG_IMAGE.url,
+        ...(post.published_at ? { datePublished: post.published_at } : {}),
+        ...(post.updated_at || post.published_at ? { dateModified: post.updated_at || post.published_at } : {}),
+        author: { '@type': 'Person', name: post.author_name || 'ListWorx Team' },
+        publisher: { '@id': ORGANIZATION_ID, '@type': 'Organization', name: SITE_NAME },
+        mainEntityOfPage: url,
+        url,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+          { '@type': 'ListItem', position: 3, name: post.title, item: url },
+        ],
+      },
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
+      <JsonLd data={structuredData} />
       <Navigation variant="light" />
 
       {/* Hero image */}

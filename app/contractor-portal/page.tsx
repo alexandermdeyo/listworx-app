@@ -535,8 +535,8 @@ export default function ContractorPortalPage() {
         <CardFooter className="flex flex-col gap-3 pt-6 border-t">
           <p className="text-sm text-lw-text/60 text-center">
             Need help? Contact us at{' '}
-            <a href="mailto:support@listworx.com" className="text-lw-rust hover:underline">
-              support@listworx.com
+            <a href="mailto:support@listworx.co" className="text-lw-rust hover:underline">
+              support@listworx.co
             </a>
           </p>
           <Link href="/" className="text-sm text-lw-text/60 hover:text-lw-rust transition-colors text-center">

@@ -6,11 +6,11 @@ type BadgeVariant = 'standards' | 'partner' | 'founder';
 
 const SOURCES: Record<BadgeVariant, { src: string; alt: string; darkOnly?: boolean }> = {
   // Primary recurring trust mark — clean transparent shield.
-  standards: { src: '/Ironclad_Standards_Logo.png', alt: 'IronClad Standards' },
+  standards: { src: '/optimized/Ironclad_Standards_Logo.webp', alt: 'IronClad Standards' },
   // Contractor-facing certification seal — transparent.
-  partner: { src: '/Ironclad_Cert_Partner_Final_Logo.png', alt: 'IronClad Certified Partner' },
+  partner: { src: '/optimized/Ironclad_Cert_Partner_Final_Logo.webp', alt: 'IronClad Certified Partner' },
   // Founding-partner seal — has a baked dark background, use on black only.
-  founder: { src: '/ironclad_founder_shield_logo.png', alt: 'IronClad Certified — Founding Partner', darkOnly: true },
+  founder: { src: '/optimized/ironclad_founder_shield_logo.webp', alt: 'IronClad Certified — Founding Partner', darkOnly: true },
 };
 
 /**
