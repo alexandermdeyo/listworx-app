@@ -10,6 +10,7 @@ import {
   type BillingPeriod,
 } from '@/lib/stripe-prices';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { getAddonById } from '@/lib/tiers-config';
 
 export async function POST(request: NextRequest) {
   const stripe = createStripeServerClient();
@@ -63,6 +64,7 @@ export async function POST(request: NextRequest) {
     let resolvedPriceId = '';
     let sessionMode: 'payment' | 'subscription' = 'subscription';
     let addonLineItems: any[] = [];
+    const chargedBundledAddonIds: string[] = [];
 
     if (isFounderActivation) {
       // Founding members no longer pay a separate one-time activation fee.
@@ -79,7 +81,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Missing founder renewal price ID' }, { status: 500 });
       }
 
-      // Look up bundled add-on prices
+      // Look up bundled add-on prices (hidden or unpriced add-ons are dropped and never recorded)
       const { ADDON_LIST: ADDON_LIST_LIB } = await import('@/lib/tiers-config');
       for (const addonId of bundledAddonIds) {
         const addon = ADDON_LIST_LIB.find((a) => a.id === addonId);
@@ -90,9 +92,13 @@ export async function POST(request: NextRequest) {
             price: addonPriceId,
             quantity: 1,
           });
+          chargedBundledAddonIds.push(addonId);
         }
       }
     } else if (isAddOn) {
+      if (!getAddonById(String(addOnId || ''))) {
+        return NextResponse.json({ error: 'Unknown add-on' }, { status: 400 });
+      }
       const addonPriceId = getAddonPriceId(addOnId, tierId as TierId | undefined);
       if (!addonPriceId) {
         return NextResponse.json({ error: 'Unknown add-on' }, { status: 400 });
@@ -178,7 +184,7 @@ export async function POST(request: NextRequest) {
       isAddOn: String(isAddOn),
       isFounderActivation: String(isFounderActivation),
       addOnId: addOnId || '',
-      bundledAddonIds: bundledAddonIds.join(','),
+      bundledAddonIds: chargedBundledAddonIds.join(','),
     };
 
     const sessionConfig: any = {

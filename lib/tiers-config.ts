@@ -61,6 +61,8 @@ export type AddOn = {
   founderOnly?: boolean;
   founderPrice?: number | null;
   stripeEnvVar?: string;
+  /** Not offered: hidden from every list and refused at checkout (e.g. no live Stripe price yet). */
+  hidden?: boolean;
   stripeMonthlyEnvVar?: string;
   stripeAnnualEnvVar?: string;
   preferredStripeMonthlyEnvVar?: string;
@@ -207,7 +209,7 @@ export const FOUNDER_TIERS: FounderTier[] = [
   },
 ];
 
-export const ADDON_LIST: AddOn[] = [
+const ALL_ADDONS: AddOn[] = [
   {
     id: 'ironclad_badge_kit',
     name: 'IronClad Digital Badge Kit',
@@ -266,6 +268,7 @@ export const ADDON_LIST: AddOn[] = [
   },
   {
     id: 'recruiting_templates',
+    hidden: true, // owner 2026-11-14: no live Stripe price yet
     name: 'Recruiting & Hiring Templates',
     description: 'Job posting templates, interview guides, and onboarding checklists for contractors ready to hire their first employee.',
     type: 'onetime',
@@ -353,6 +356,9 @@ export const ADDON_LIST: AddOn[] = [
     highlight: false,
   },
 ];
+
+/** Add-ons contractors can see and buy. Hidden add-ons are excluded everywhere. */
+export const ADDON_LIST: AddOn[] = ALL_ADDONS.filter((a) => !a.hidden);
 
 export function getTierById(id: string) {
   return STANDARD_TIERS.find((t) => t.id === id) ?? null;
