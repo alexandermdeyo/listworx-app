@@ -48,3 +48,14 @@ test('public contact address is adeyo@listworx.co (no support@ mailbox)', () => 
   for (const f of [...walk('app'), ...walk('components'), ...walk('lib')]) assert.doesNotMatch(read(f), /support@listworx\.co/, f);
   assert.match(read('components/Footer.tsx'), /'company_support_email', 'adeyo@listworx\.co'/);
 });
+
+test('realtor emails: no blanket certification claim; badge only when admin-certified', () => {
+  const fn = read('supabase/functions/send-realtor-email/index.ts');
+  assert.doesNotMatch(fn, /All contractors are IronClad|IronClad-certified contractor|IronClad Contractor\$\{|Standards Certified Partner Network|maintains verified licensing/);
+  assert.match(fn, /c\.ironcladCertified === true \? `<p/);
+  assert.match(fn, /agreed to follow the IronClad Standards/);
+  const del = read('lib/server/referral-delivery.ts');
+  assert.match(del, /select\('id, logo_url, profile_slug, ironclad_certified'\)/);
+  assert.match(del, /certifiedMap\[p\.id\] = p\.ironclad_certified === true/);
+  assert.match(del, /ironcladCertified: certifiedMap\[c\.id\] === true/);
+});

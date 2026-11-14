@@ -157,7 +157,7 @@ export async function sendRequestorMatchEmail(
   const [{ data: profileExtras }, { data: categoryRows }] = await Promise.all([
     supabase
       .from('contractor_profiles')
-      .select('id, logo_url, profile_slug')
+      .select('id, logo_url, profile_slug, ironclad_certified')
       .in('id', contractorIds),
     supabase
       .from('contractor_categories')
@@ -167,9 +167,11 @@ export async function sendRequestorMatchEmail(
 
   const logoMap: Record<string, string | null> = {};
   const slugMap: Record<string, string | null> = {};
+  const certifiedMap: Record<string, boolean> = {};
   (profileExtras || []).forEach((p: any) => {
     logoMap[p.id] = p.logo_url || null;
     slugMap[p.id] = p.profile_slug || null;
+    certifiedMap[p.id] = p.ironclad_certified === true; // admin-granted only
   });
 
   const specialtyMap: Record<string, string[]> = {};
@@ -194,6 +196,7 @@ export async function sendRequestorMatchEmail(
       ? `${BASE_URL}/contractors/${slugMap[c.id]}`
       : `${BASE_URL}/contractors/${c.id}`,
     specialties: specialtyMap[c.id] || [],
+    ironcladCertified: certifiedMap[c.id] === true,
   }));
 
   try {

@@ -25,6 +25,7 @@ interface EmailRequest {
     logoUrl?: string | null;
     profileUrl?: string;
     specialties: string[];
+    ironcladCertified?: boolean;
   }>;
   contractorName?: string;
   companyName?: string;
@@ -108,7 +109,7 @@ function linkFallback(href: string): string {
 function contractorCard(c: {
   name: string; company: string; phone: string; email: string;
   website?: string; bio?: string; logoUrl?: string | null;
-  profileUrl?: string; specialties: string[];
+  profileUrl?: string; specialties: string[]; ironcladCertified?: boolean;
 }, index: number, total: number): string {
   const initials = c.company.charAt(0).toUpperCase();
 
@@ -132,6 +133,7 @@ function contractorCard(c: {
               <p style="font-family:${C.font};font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:${C.rust};margin:0 0 4px;padding:0;">Referral ${index + 1} of ${total}</p>
               <p style="font-family:${C.font};font-size:20px;font-weight:800;color:${C.heading};margin:0 0 2px;padding:0;line-height:1.2;">${c.company}</p>
               <p style="font-family:${C.font};font-size:13px;color:${C.gray400};margin:0;padding:0;">${c.name}</p>
+              ${c.ironcladCertified === true ? `<p style="margin:6px 0 0;padding:0;"><span style="display:inline-block;background-color:${C.successBg};border:1px solid ${C.successBorder};color:${C.success};font-family:${C.font};font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;">IronClad Certified</span></p>` : ''}
             </td>
           </tr>
         </table>
@@ -217,7 +219,7 @@ ${preheader ? `<div style="display:none;font-size:1px;color:${C.outerBg};line-he
 <tr><td style="background-color:${C.dark};padding:18px 44px;text-align:center;" class="footer-pad">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr><td align="center"><img src="${BASE_URL}/Ironclad_Standards_Logo.png" alt="Ironclad Standards" height="54" style="display:inline-block;height:54px;width:auto;border:0;" /></td></tr>
-<tr><td align="center" style="padding-top:8px;"><p style="font-family:${C.font};font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#888888;margin:0;">IronClad Standards Certified Partner Network</p></td></tr>
+<tr><td align="center" style="padding-top:8px;"><p style="font-family:${C.font};font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#888888;margin:0;">IronClad Standards Partner Network</p></td></tr>
 </table>
 </td></tr>
 
@@ -258,13 +260,13 @@ Deno.serve(async (req: Request) => {
         subject = 'Your ListWorx Referrals Are Ready';
         html = layout(
           'Your Referrals Are Ready',
-          `Hi ${realtorName} — ListWorx has matched your request with IronClad-certified contractors.`,
+          `Hi ${realtorName} — ListWorx has matched your request with contractors from our network.`,
           `${p(`Your service request for <strong style="color:${C.heading};">${request.propertyAddress}</strong> has been received and your matched contractor referrals are below.`)}
           ${dataTable([['Submitted By', request.clientName || realtorName],['Property', request.propertyAddress || ''],...(request.services && request.services.length > 0 ? [['Services', request.services.join(', ')] as [string, string]] : [])])}
           ${sectionLabel('How It Works')}
           ${checkList(['<strong style="color:#1A1A1A;">You Review</strong> — Look over the matched contractors and their contact details','<strong style="color:#1A1A1A;">You Reach Out</strong> — Contact whichever contractor you prefer directly, at any time','<strong style="color:#1A1A1A;">Contractors Are Ready</strong> — Each has been notified of the referral and is expecting to hear from you','<strong style="color:#1A1A1A;">You Decide</strong> — No commitments, no pressure. Choose the best fit for your needs'])}
           ${sectionLabel('IronClad Standards')}
-          ${p('Every contractor referred through ListWorx maintains verified licensing and insurance and is held to ongoing IronClad compliance standards.')}
+          ${p('ListWorx connects you with contractors in our network who have agreed to follow the IronClad Standards. Contractors marked “IronClad Certified” have been individually certified by ListWorx.')}
           ${divider()}
           ${small(`Questions? <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}`,
           'Your ListWorx contractor referrals are ready — review and contact whoever you prefer.'
@@ -274,10 +276,10 @@ Deno.serve(async (req: Request) => {
 
       case 'contractor_match': {
         const count = request.contractors?.length || 0;
-        subject = `Your ListWorx Referrals — ${count} IronClad Contractor${count !== 1 ? 's' : ''} Selected`;
+        subject = `Your ListWorx Referrals — ${count} Contractor${count !== 1 ? 's' : ''} Selected`;
         html = layout(
           'Your Contractor Referrals',
-          `ListWorx has selected ${count} IronClad-certified contractor${count !== 1 ? 's' : ''} for your request.`,
+          `ListWorx has selected ${count} contractor${count !== 1 ? 's' : ''} from our network for your request.`,
           `${p(`Here are your matched referrals for <strong style="color:${C.heading};">${request.propertyAddress}</strong>. Review the options below and contact whoever you prefer — it's entirely your choice.`)}
           ${p(`Each contractor has been notified of this referral and is expecting to hear from you. They will not reach out to you unsolicited.`, C.gray400)}
           ${sectionLabel(`Your ${count} Matched Referral${count !== 1 ? 's' : ''}`)}
@@ -285,10 +287,10 @@ Deno.serve(async (req: Request) => {
           ${sectionLabel('Next Steps')}
           ${checkList(['Review the contractors above and their contact information','Reach out to whichever contractor you prefer — you are in control','Contractors have been notified and are expecting your call or email','No commitments — choose the best fit at your own pace'])}
           ${divider()}
-          ${small(`All contractors are IronClad Standards&trade; certified. ListWorx curates this referral but is not a party to any service agreements. Questions? <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}`,
+          ${small(`Contractors referred through ListWorx have agreed to follow the IronClad Standards&trade;. Only contractors marked “IronClad Certified” have been individually certified by ListWorx. ListWorx curates this referral but is not a party to any service agreements. Questions? <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}`,
           `Your ${count} referral${count !== 1 ? 's are' : ' is'} ready — review and contact whoever you prefer.`
         );
-        text = `Your Contractor Referrals\n\nHi ${realtorName},\n\nListWorx has selected ${count} contractor${count !== 1 ? 's' : ''} for your request at ${request.propertyAddress}.\n\n${request.contractors?.map((c, i) => `Referral ${i + 1} of ${count}\n${c.company}\nContact: ${c.name}\nPhone: ${c.phone}\nEmail: ${c.email}\n${c.website ? `Website: ${c.website}\n` : ''}Specialties: ${c.specialties.join(', ')}`).join('\n\n') || 'No contractors matched.'}\n\nAll contractors are IronClad Standards certified.\n\n— The ListWorx Team`;
+        text = `Your Contractor Referrals\n\nHi ${realtorName},\n\nListWorx has selected ${count} contractor${count !== 1 ? 's' : ''} for your request at ${request.propertyAddress}.\n\n${request.contractors?.map((c, i) => `Referral ${i + 1} of ${count}\n${c.company}\nContact: ${c.name}\nPhone: ${c.phone}\nEmail: ${c.email}\n${c.website ? `Website: ${c.website}\n` : ''}${c.ironcladCertified === true ? 'IronClad Certified\n' : ''}Specialties: ${c.specialties.join(', ')}`).join('\n\n') || 'No contractors matched.'}\n\nContractors referred through ListWorx have agreed to follow the IronClad Standards. Only contractors marked IronClad Certified have been individually certified by ListWorx.\n\n— The ListWorx Team`;
         break;
       }
 
