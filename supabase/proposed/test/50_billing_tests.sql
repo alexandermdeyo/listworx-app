@@ -59,3 +59,11 @@ do $$ begin
   if (select status from public.subscriptions where contractor_id = 'b0000000-0000-4000-8000-00000000000a') <> 'past_due' then raise exception 'B5 FAIL: contractor changed own billing status'; end if;
   raise notice 'B5 pass: own row readable, others hidden, contractors cannot change billing status';
 end $$;
+
+-- active_contractors_view is rebuilt after the status change (2026-11-14)
+do $$ begin
+  if to_regclass('public.active_contractors_view') is null then raise exception 'V1 view missing after billing migration'; end if;
+  if (select data_type from information_schema.columns where table_name='subscriptions' and column_name='status') <> 'text' then raise exception 'V2 status not text'; end if;
+  perform contractor_id, subscription_status from public.active_contractors_view;
+  raise notice 'PASS V1-V2 active_contractors_view rebuilt, status text';
+end $$;

@@ -42,6 +42,9 @@ alter table public.subscriptions
   add constraint subscriptions_billing_period_check check (billing_period in ('monthly', 'annual'));
 
 -- 3. Status: lowercase text, as written by the webhook and read by /billing and the dashboard
+-- Production has a materialized view on subscriptions.status (found 2026-11-14);
+-- it is rebuilt with the same columns and rows, comparing lowercase text.
+drop materialized view if exists public.active_contractors_view;
 alter table public.subscriptions alter column status drop default;
 alter table public.subscriptions
   alter column status type text using lower(status::text);
@@ -52,6 +55,17 @@ alter table public.subscriptions
   check (status in ('active', 'past_due', 'cancelled', 'incomplete', 'trialing'));
 
 -- 4. One subscription record per contractor (the webhook upserts on it)
+create materialized view public.active_contractors_view as
+ SELECT DISTINCT cp.id AS contractor_id,
+    cp.user_id, cp.company_name, cp.owner_name, u.email, u.phone, cp.website,
+    cp.years_in_business, cp.bio,
+    COALESCE(s.status, 'incomplete') AS subscription_status,
+    cp.partner_status, cp.ironclad_accepted
+   FROM contractor_profiles cp
+     JOIN users u ON cp.user_id = u.id
+     LEFT JOIN subscriptions s ON cp.id = s.contractor_id
+  WHERE cp.partner_status = 'active'::partner_status AND cp.ironclad_accepted = true AND (s.status = 'active' OR s.status IS NULL);
+
 alter table public.subscriptions drop constraint if exists subscriptions_contractor_id_key;
 alter table public.subscriptions
   add constraint subscriptions_contractor_id_key unique (contractor_id);

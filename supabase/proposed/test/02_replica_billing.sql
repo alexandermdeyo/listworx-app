@@ -14,3 +14,14 @@ create policy "Subscriptions insert admin or system" on public.subscriptions for
 create policy "Subscriptions read access" on public.subscriptions for select to authenticated using (((contractor_id in (select contractor_profiles.id from contractor_profiles where (contractor_profiles.user_id = (select auth.uid() as uid)))) or is_admin()));
 create policy "Subscriptions update admin or system" on public.subscriptions for update to authenticated using (is_admin()) with check (is_admin());
 grant select, insert, update, delete on public.tiers, public.subscriptions to anon, authenticated, service_role;
+-- production materialized view (found 2026-11-14)
+create materialized view public.active_contractors_view as
+ SELECT DISTINCT cp.id AS contractor_id,
+    cp.user_id, cp.company_name, cp.owner_name, u.email, u.phone, cp.website,
+    cp.years_in_business, cp.bio,
+    COALESCE(s.status, 'INCOMPLETE'::subscription_status) AS subscription_status,
+    cp.partner_status, cp.ironclad_accepted
+   FROM contractor_profiles cp
+     JOIN users u ON cp.user_id = u.id
+     LEFT JOIN subscriptions s ON cp.id = s.contractor_id
+  WHERE cp.partner_status = 'active'::partner_status AND cp.ironclad_accepted = true AND (s.status = 'ACTIVE'::subscription_status OR s.status IS NULL);

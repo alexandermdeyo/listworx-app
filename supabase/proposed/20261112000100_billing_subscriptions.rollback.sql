@@ -6,11 +6,23 @@
 begin;
 
 alter table public.subscriptions drop constraint if exists subscriptions_contractor_id_key;
+drop materialized view if exists public.active_contractors_view;
 alter table public.subscriptions drop constraint if exists subscriptions_status_check;
 alter table public.subscriptions alter column status drop default;
 alter table public.subscriptions
   alter column status type public.subscription_status using upper(status)::public.subscription_status;
 alter table public.subscriptions alter column status set default 'INCOMPLETE'::public.subscription_status;
+create materialized view public.active_contractors_view as
+ SELECT DISTINCT cp.id AS contractor_id,
+    cp.user_id, cp.company_name, cp.owner_name, u.email, u.phone, cp.website,
+    cp.years_in_business, cp.bio,
+    COALESCE(s.status, 'INCOMPLETE'::subscription_status) AS subscription_status,
+    cp.partner_status, cp.ironclad_accepted
+   FROM contractor_profiles cp
+     JOIN users u ON cp.user_id = u.id
+     LEFT JOIN subscriptions s ON cp.id = s.contractor_id
+  WHERE cp.partner_status = 'active'::partner_status AND cp.ironclad_accepted = true AND (s.status = 'ACTIVE'::subscription_status OR s.status IS NULL);
+
 
 alter table public.subscriptions drop constraint if exists subscriptions_billing_period_check;
 alter table public.subscriptions
