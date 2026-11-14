@@ -215,7 +215,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   // and this description is shown in search results for every public profile.
   const description = `${businessName} is a ${trade} contractor in the ListWorx network serving ${county}.`;
   // Self-referencing so the profile doesn't inherit the /contractors page's canonical.
-  const url = `https://listworx.co/contractors/${params.id}`;
+  // One canonical per contractor (slug when set), whether the visitor used the slug or the id.
+  const url = `https://listworx.co/contractors/${data.profile.profile_slug || data.profile.id}`;
 
   return {
     title: `${businessName} — ${trade} in ${county} | ListWorx`,
