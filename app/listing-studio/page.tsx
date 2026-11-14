@@ -884,10 +884,10 @@ export default function ListingStudioPage() {
             <p className="mt-6 text-sm text-white/60">
               Questions? Reach out at{' '}
               <a
-                href="mailto:support@listworx.co"
+                href="mailto:adeyo@listworx.co"
                 className="underline hover:text-white transition-colors"
               >
-                support@listworx.co
+                adeyo@listworx.co
               </a>
             </p>
           </Reveal>

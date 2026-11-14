@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
             </td></tr>
           </table>
           <p style="margin:0 0 8px;font-size:13px;line-height:1.5;color:#888888;">This invitation expires in 30 days. If you weren't expecting this, you can safely ignore it.</p>
-          <p style="margin:0;font-size:12px;color:#888888;text-align:center;">Questions? <a href="mailto:support@listworx.co" style="color:#E85000;text-decoration:none;">support@listworx.co</a></p>
+          <p style="margin:0;font-size:12px;color:#888888;text-align:center;">Questions? <a href="mailto:adeyo@listworx.co" style="color:#E85000;text-decoration:none;">adeyo@listworx.co</a></p>
         </td></tr>
         <!-- Footer -->
         <tr><td style="background:#1a1a1a;padding:24px 32px;text-align:center;">
@@ -207,7 +207,7 @@ export async function POST(request: NextRequest) {
     </td></tr>
   </table>
 </body></html>`,
-      text: `${realtorName} wants you in their contractor network on ListWorx.\n\nSee your invitation: ${inviteUrl}\n\nThis invitation expires in 30 days.\n\nQuestions? support@listworx.co\nListWorx — Built in Gallatin, TN`,
+      text: `${realtorName} wants you in their contractor network on ListWorx.\n\nSee your invitation: ${inviteUrl}\n\nThis invitation expires in 30 days.\n\nQuestions? adeyo@listworx.co\nListWorx — Built in Gallatin, TN`,
     });
 
     console.log(

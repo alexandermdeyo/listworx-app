@@ -70,7 +70,7 @@ export default function Footer() {
       .catch((_e) => {});
   }, []);
 
-  const supportEmail = getContent(content, 'company_support_email', 'support@listworx.co');
+  const supportEmail = getContent(content, 'company_support_email', 'adeyo@listworx.co');
   const phone = getContent(content, 'company_phone', '');
   const tagline = getContent(content, 'footer_tagline', 'The contractor network built on trust, not transactions.');
   const visibleSocials = socials

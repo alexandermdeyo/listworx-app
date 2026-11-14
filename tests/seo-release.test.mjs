@@ -44,6 +44,7 @@ test('mobile: pinch-zoom allowed', () => {
   assert.doesNotMatch(read('app/layout.tsx'), /maximum-scale/);
 });
 
-test('support address is listworx.co everywhere', () => {
-  for (const f of [...walk('app'), ...walk('components'), ...walk('lib')]) assert.doesNotMatch(read(f), /support@listworx\.com/, f);
+test('public contact address is adeyo@listworx.co (no support@ mailbox)', () => {
+  for (const f of [...walk('app'), ...walk('components'), ...walk('lib')]) assert.doesNotMatch(read(f), /support@listworx\.co/, f);
+  assert.match(read('components/Footer.tsx'), /'company_support_email', 'adeyo@listworx\.co'/);
 });

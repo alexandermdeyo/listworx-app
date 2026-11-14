@@ -350,10 +350,10 @@ export default function FoundingPartnerPage() {
           <p className="text-sm text-mkt-ink/60">
             Questions about the Founding Partner program?{' '}
             <a
-              href="mailto:support@listworx.co"
+              href="mailto:adeyo@listworx.co"
               className="text-mkt-ink/70 hover:text-mkt-ink underline transition-colors"
             >
-              support@listworx.co
+              adeyo@listworx.co
             </a>
           </p>
         </div>
