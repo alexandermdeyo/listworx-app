@@ -1,8 +1,8 @@
 /**
  * Browser-side helpers for the photo library uploader (Stage 2).
  * The file goes straight from the admin's browser to Supabase storage (no size limit
- * from the website's server functions), using the admin's own sign-in, into
- * site-media/library/… with overwriting disabled. The server then verifies it.
+ * from the website's server functions), using the admin's own sign-in, into the
+ * PRIVATE photo-library bucket (originals/…) with overwriting disabled. The server then verifies it.
  */
 import { dhashFromGrid, libraryPath } from '@/lib/photos/library';
 

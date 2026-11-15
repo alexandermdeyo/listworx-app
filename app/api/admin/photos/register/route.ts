@@ -2,21 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { requireAdminRequest } from '@/lib/server/require-admin';
 import { ALLOWED_PHOTO_TYPES, MAX_PHOTO_BYTES, cleanPhotoInput, isDhash, readImageInfo } from '@/lib/photos/library';
-import { PHOTO_COLUMNS, sha256Hex } from '@/lib/photos/server';
+import { PHOTO_COLUMNS, PRIVATE_BUCKET, sha256Hex } from '@/lib/photos/server';
 
 export const dynamic = 'force-dynamic';
 
-const BUCKET = 'site-media';
 
 /**
  * POST /api/admin/photos/register
  * { storage_path, original_filename, dhash?, import_batch?, external_ref?, ...metadata }
  *
- * The admin's browser uploads the original file straight to storage (site-media,
- * library/…, overwrite disabled). This step then re-reads the stored file on the
+ * The admin's browser uploads the original file straight to PRIVATE storage
+ * (photo-library, originals/…, overwrite disabled). This step then re-reads the stored file on the
  * server, checks its real type, size and fingerprint (nothing is trusted from the
  * browser except the optional similarity fingerprint), and adds it to the catalogue
- * as "pending". Approval is never set here.
+ * as "pending" with no public copy. Approval and the public copy are never set here.
  */
 export async function POST(request: NextRequest) {
   const adminId = await requireAdminRequest(request);
@@ -24,15 +23,15 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}));
   const path = typeof body?.storage_path === 'string' ? body.storage_path : '';
   const originalName = typeof body?.original_filename === 'string' ? body.original_filename.trim().slice(0, 200) : '';
-  if (!/^library\/\d{4}\/\d{2}\/[0-9a-f-]{36}-[A-Za-z0-9._-]+\.(jpg|png|webp)$/.test(path) || !originalName) {
-    return NextResponse.json({ error: 'A library storage path and the original file name are required' }, { status: 400 });
+  if (!/^originals\/\d{4}\/\d{2}\/[0-9a-f-]{36}-[A-Za-z0-9._-]+\.(jpg|png|webp)$/.test(path) || !originalName) {
+    return NextResponse.json({ error: 'A private originals/ storage path and the original file name are required' }, { status: 400 });
   }
   const { values, errors } = cleanPhotoInput(body);
   delete values.archived;
   if (errors.length) return NextResponse.json({ error: errors.join('. ') }, { status: 400 });
 
   const supabase = createSupabaseAdminClient();
-  const { data: file, error: dlError } = await supabase.storage.from(BUCKET).download(path);
+  const { data: file, error: dlError } = await supabase.storage.from(PRIVATE_BUCKET).download(path);
   if (dlError || !file) return NextResponse.json({ error: 'The uploaded file was not found in storage' }, { status: 404 });
   const buf = Buffer.from(await file.arrayBuffer());
   if (buf.length > MAX_PHOTO_BYTES) return NextResponse.json({ error: 'Photos must be 25 MB or smaller' }, { status: 400 });
@@ -47,14 +46,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: `This exact photo is already in the library as ${same[0].original_filename}`, duplicateOf: same[0].id }, { status: 409 });
   }
 
-  const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
   const { data, error } = await supabase
     .from('photo_assets')
     .insert({
       ...values,
-      storage_bucket: BUCKET,
+      storage_bucket: PRIVATE_BUCKET,
       storage_path: path,
-      public_url: pub.publicUrl,
       original_filename: originalName,
       mime_type: info.mime,
       file_size: buf.length,

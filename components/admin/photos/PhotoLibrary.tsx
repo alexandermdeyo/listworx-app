@@ -5,6 +5,7 @@ import { ImagePlus, Loader2, Search, X } from 'lucide-react';
 import { PHOTO_STATUS_LABELS, PHOTO_USES, PHOTO_USE_LABELS } from '@/lib/photos/library';
 import PhotoDetail from './PhotoDetail';
 import PhotoUploader from './PhotoUploader';
+import PhotoIssuesBanner from './PhotoIssuesBanner';
 import { PHOTO_STATUS_STYLES, PrimaryButton, SecondaryButton, inputCls, useAdminApi, type LibraryPhoto } from './ui';
 
 const FLAGS: { value: string; label: string }[] = [
@@ -14,6 +15,7 @@ const FLAGS: { value: string; label: string }[] = [
   { value: 'ai', label: 'AI-generated' },
   { value: 'needs_alt', label: 'Missing alt text' },
   { value: 'flagged', label: 'Marked with problems' },
+  { value: 'attention', label: 'Used in articles but not approved' },
 ];
 
 export default function PhotoLibrary() {
@@ -32,6 +34,9 @@ export default function PhotoLibrary() {
   const [archived, setArchived] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [older, setOlder] = useState(0);
+  const [securing, setSecuring] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -43,6 +48,8 @@ export default function PhotoLibrary() {
       setCounts(json.counts);
       setTotal(json.total);
       setCategories(json.categories);
+      setOlder(json.olderPublicOriginals || 0);
+      setRefreshKey((k) => k + 1);
     } catch (e: any) {
       setError(e.message);
     }
@@ -72,6 +79,32 @@ export default function PhotoLibrary() {
           {uploading ? <X className="h-4 w-4" /> : <ImagePlus className="h-4 w-4" />} {uploading ? 'Close' : 'Add photos'}
         </PrimaryButton>
       </div>
+
+      <PhotoIssuesBanner onOpenPhoto={setOpenId} refreshKey={refreshKey} />
+
+      {older > 0 && (
+        <div className="rounded-lg border border-amber-400 bg-amber-50 p-4 text-sm text-amber-950" data-testid="secure-older">
+          <p className="font-semibold">{older} older photo{older === 1 ? ' was' : 's were'} uploaded before private storage and {older === 1 ? 'is' : 'are'} still publicly reachable.</p>
+          <p className="mt-1">This copies each original into private storage (checked against its fingerprint), then keeps a public copy only for approved photos and for photos that published articles use.</p>
+          <SecondaryButton
+            className="mt-2"
+            disabled={!!securing}
+            onClick={async () => {
+              setSecuring('Working…');
+              try {
+                const r = await api('/api/admin/photos/secure-older', { method: 'POST' });
+                setSecuring(r.results.map((x: any) => `${x.file}: ${x.result}`).join(' · ') || 'Nothing to do');
+              } catch (e: any) {
+                setSecuring(e.message);
+              }
+              load();
+            }}
+          >
+            Move older originals to private storage
+          </SecondaryButton>
+          {securing && <p className="mt-2" role="status">{securing}</p>}
+        </div>
+      )}
 
       {uploading && <PhotoUploader onDone={load} />}
 
@@ -131,7 +164,7 @@ export default function PhotoLibrary() {
                 <button type="button" onClick={() => setOpenId(p.id)} className="group block w-full overflow-hidden rounded-lg border border-gray-300 bg-white text-left hover:border-[#E8621A]">
                   <div className="relative aspect-[4/3] bg-gray-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.public_url} alt={p.alt_text || ''} loading="lazy" className="h-full w-full object-cover" style={{ objectPosition: `${p.focus_x ?? 50}% ${p.focus_y ?? 30}%` }} />
+                    <img src={p.preview_url || ''} alt={p.alt_text || ''} loading="lazy" className="h-full w-full object-cover" style={{ objectPosition: `${p.focus_x ?? 50}% ${p.focus_y ?? 30}%` }} />
                     <span className={`absolute left-2 top-2 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${PHOTO_STATUS_STYLES[p.status]}`}>{PHOTO_STATUS_LABELS[p.status]}</span>
                   </div>
                   <div className="space-y-1 p-2">

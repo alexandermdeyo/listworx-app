@@ -56,8 +56,11 @@ export function useAdminApi() {
   return { api, supabase };
 }
 
+export type ArticleRef = { id: string; title: string; slug: string; status: string; published: boolean };
+
 export type LibraryPhoto = {
-  id: string; storage_path: string; public_url: string; original_filename: string; mime_type: string; file_size: number;
+  id: string; storage_bucket: string; storage_path: string; public_url: string | null; public_path: string | null;
+  public_copy_live: boolean; preview_url: string | null; used_in?: ArticleRef[]; original_filename: string; mime_type: string; file_size: number;
   width: number; height: number; sha256: string; dhash: string | null; title: string | null; description: string | null;
   alt_text: string | null; category: string | null; tags: string[]; intended_uses: string[]; source: string | null;
   usage_rights: string; rights_notes: string | null; is_ai_generated: boolean; quality_flags: string[];

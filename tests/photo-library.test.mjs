@@ -96,12 +96,14 @@ test('metadata input: whitelist and validation (never approval or file fields)',
   assert.equal(cleanTags(Array(50).fill(0).map((_, i) => `t${i}`)).length, 30);
 });
 
-test('storage names are unique, safe and inside library/', () => {
+test('originals get unique, safe names in private storage (originals/)', () => {
   const p = libraryPath('Tennessee Contractor License Review.PNG', '11111111-2222-4333-8444-555555555555', new Date('2026-11-15T00:00:00Z'));
-  assert.equal(p, 'library/2026/11/11111111-2222-4333-8444-555555555555-Tennessee-Contractor-License-Review.png');
-  assert.match(libraryPath('../../etc/passwd.jpeg', '11111111-2222-4333-8444-555555555555'), /^library\/\d{4}\/\d{2}\/[0-9a-f-]{36}-etc-passwd\.jpg$/);
+  assert.equal(p, 'originals/2026/11/11111111-2222-4333-8444-555555555555-Tennessee-Contractor-License-Review.png');
+  assert.match(libraryPath('../../etc/passwd.jpeg', '11111111-2222-4333-8444-555555555555'), /^originals\/\d{4}\/\d{2}\/[0-9a-f-]{36}-etc-passwd\.jpg$/);
   const register = read('app/api/admin/photos/register/route.ts');
-  const m = register.match(/!\/(\^library[^/]*(?:\/[^/]*)*?)\/\.test\(path\)/);
+  assert.match(register, /storage\.from\(PRIVATE_BUCKET\)\.download\(path\)/, 'registers from private storage');
+  assert.doesNotMatch(register, /public_url/, 'registration never creates a public address');
+  const m = register.match(/!\/(\^originals[^/]*(?:\/[^/]*)*?)\/\.test\(path\)/);
   assert.ok(m, 'register validates the path');
   assert.ok(new RegExp(m[1].replace(/\\\//g, '/')).test(p));
 });
@@ -143,35 +145,61 @@ test('publishing paths refuse unapproved library photos; pickers only offer appr
   const blog = read('app/api/blog/route.ts');
   assert.match(blog.split('export async function POST')[1].split('export async function')[0], /if \(is_published\)[\s\S]*unapprovedLibraryPhotos/);
   assert.match(blog.split('export async function PATCH')[1].split('export async function')[0], /willBeLive[\s\S]*unapprovedLibraryPhotos/);
-  assert.match(read('components/admin/photos/PhotoPicker.tsx'), /status: 'approved'/);
 });
 
-test('originals are preserved: no overwrite, no automatic deletion, size limit stated', () => {
+test('originals are preserved: private bucket, no overwrite, only public copies are ever removed', () => {
   const uploader = read('components/admin/photos/PhotoUploader.tsx');
   assert.match(uploader, /upsert: false/);
+  assert.match(uploader, /storage\.from\('photo-library'\)\.upload/, 'uploads go to the private bucket');
   assert.match(uploader, /\/api\/admin\/photos\/check/, 'exact duplicates are checked before uploading');
-  const files = ['lib/photos/library.ts', 'lib/photos/server.ts', 'lib/photos/browser.ts',
+  const server = read('lib/photos/server.ts');
+  const removes = server.match(/\.remove\(/g) || [];
+  assert.equal(removes.length, 1, 'exactly one removal in the photo code');
+  const idx = server.indexOf('.remove(');
+  const before = server.slice(Math.max(0, idx - 1500), idx);
+  assert.match(before, /startsWith\('library\/'\)/, 'only paths under library/ (public copies)');
+  assert.match(before, /published\.length[\s\S]*retained/, 'never while a published article uses it');
+  assert.match(server.slice(idx - 80, idx + 20), /storage\.from\(PUBLIC_BUCKET\)\.remove/, 'only from the public bucket');
+  assert.doesNotMatch(server, /from\(PRIVATE_BUCKET\)\.remove/);
+  const files = ['lib/photos/library.ts', 'lib/photos/browser.ts',
     ...readdirSync(new URL('../components/admin/photos/', import.meta.url)).map((f) => `components/admin/photos/${f}`),
     'app/api/admin/photos/route.ts', 'app/api/admin/photos/check/route.ts', 'app/api/admin/photos/register/route.ts',
-    'app/api/admin/photos/[id]/route.ts', 'app/api/admin/photos/[id]/review/route.ts'];
+    'app/api/admin/photos/[id]/route.ts', 'app/api/admin/photos/[id]/review/route.ts', 'app/api/admin/photos/issues/route.ts',
+    'app/api/admin/photos/secure-older/route.ts'];
   for (const f of files) {
     const src = read(f);
-    assert.doesNotMatch(src, /\.remove\(|\.delete\(\)|upsert:\s*true|\.update\([^)]*\)\s*\/\/\s*overwrite/, `${f} never deletes or overwrites`);
+    assert.doesNotMatch(src, /\.remove\(|\.delete\(\)|upsert:\s*true|unpublish\w*\(|is_draft:\s*true/, `${f} never deletes, overwrites or unpublishes`);
   }
+  assert.doesNotMatch(server, /upsert:\s*true|is_draft:\s*true|\.from\('blog_posts'\)\.update/, 'never overwrites or edits articles');
   assert.equal(MAX_PHOTO_BYTES, 25 * 1024 * 1024);
   const sql = read('supabase/proposed/20261116000100_photo_library.sql');
   assert.match(sql, /grant select, insert, update on public\.photo_assets to service_role;/, 'no delete grant');
-  assert.match(read('supabase/proposed/20261116000100_photo_library.rollback.sql'), /NOT deleted/);
+  const priv = read('supabase/proposed/20261116000200_photo_private_storage.sql');
+  assert.match(priv, /'photo-library', 'photo-library', false/, 'private bucket');
+  assert.doesNotMatch(priv, /for (update|delete)[^;]*photo-library/i, 'no overwrite/delete storage rules');
+  assert.match(read('supabase/proposed/20261116000200_photo_private_storage.rollback.sql'), /never deleted/);
+});
+
+test('pickers only offer approved photos with a live public copy; problems are surfaced', () => {
+  assert.match(read('components/admin/photos/PhotoPicker.tsx'), /publishable: '1'/);
+  const list = read('app/api/admin/photos/route.ts');
+  assert.match(list, /publishable && !\(a\.status === 'approved' && !a\.archived && a\.public_copy_live\)/);
+  const server = read('lib/photos/server.ts');
+  assert.match(server, /\.filter\(\(p\) => p\.status !== 'approved' \|\| p\.archived\)/, 'publish guard covers rejected, pending and archived');
+  assert.match(server, /code: 'used_while_unapproved'/);
+  assert.match(read('components/admin/content/ContentManager.tsx'), /<PhotoIssuesBanner \/>/, 'Content dashboard warning');
+  assert.match(read('components/admin/photos/PhotoLibrary.tsx'), /<PhotoIssuesBanner/, 'Photo Library warning');
+  assert.match(read('components/admin/photos/PhotoDetail.tsx'), /data-testid="photo-in-use-alert"/);
 });
 
 test('every photo API checks for an admin before touching data', () => {
-  for (const f of ['app/api/admin/photos/route.ts', 'app/api/admin/photos/check/route.ts', 'app/api/admin/photos/register/route.ts', 'app/api/admin/photos/[id]/route.ts', 'app/api/admin/photos/[id]/review/route.ts']) {
+  for (const f of ['app/api/admin/photos/route.ts', 'app/api/admin/photos/check/route.ts', 'app/api/admin/photos/register/route.ts', 'app/api/admin/photos/[id]/route.ts', 'app/api/admin/photos/[id]/review/route.ts', 'app/api/admin/photos/issues/route.ts', 'app/api/admin/photos/secure-older/route.ts']) {
     const handlers = read(f).split(/export async function (GET|POST|PATCH|DELETE)/).slice(1);
     assert.ok(handlers.length >= 2, f);
     for (let i = 1; i < handlers.length; i += 2) {
       const body = handlers[i];
       const guard = body.search(/requireAdminRequest\(request\)/);
-      const firstDb = body.search(/createSupabaseAdminClient\(\)|loadLibrary\(/);
+      const firstDb = body.search(/createSupabaseAdminClient\(\)|loadLibrary\(|photoIssues\(/);
       assert.ok(guard > 0 && (firstDb === -1 || guard < firstDb), `${f} ${handlers[i - 1]}`);
     }
   }

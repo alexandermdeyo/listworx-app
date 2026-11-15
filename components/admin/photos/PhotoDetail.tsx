@@ -14,11 +14,18 @@ import {
 
 type Detail = {
   photo: LibraryPhoto;
-  related: { id: string; original_filename: string; public_url: string; status: string; width: number; height: number }[];
-  usedIn: { id: string; title: string; slug: string; status: string }[];
+  related: { id: string; original_filename: string; preview_url: string | null; status: string; width: number; height: number }[];
+  usedIn: { id: string; title: string; slug: string; status: string; published: boolean }[];
   reviewerName: string | null;
   history: { id: string; action: string; from_status: string | null; to_status: string | null; actor_name: string | null; note: string | null; created_at: string }[];
 };
+
+function copyText(outcome?: string, published?: { title: string }[]) {
+  if (outcome === 'created') return 'A public copy was created for articles.';
+  if (outcome === 'removed') return 'Its public copy was removed; the original is kept privately.';
+  if (outcome === 'retained') return `Its public copy was KEPT because published articles use it: ${(published || []).map((x) => x.title).join(', ')}.`;
+  return '';
+}
 
 const LEVEL_STYLE = { block: 'border-red-300 bg-red-50 text-red-900', warn: 'border-amber-300 bg-amber-50 text-amber-950', info: 'border-gray-300 bg-gray-50 text-gray-800' };
 
@@ -61,9 +68,9 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
   const save = async () => {
     setBusy(true); setMsg(null);
     try {
-      await api(`/api/admin/photos/${id}`, { method: 'PATCH', body: JSON.stringify(form) });
+      const r = await api(`/api/admin/photos/${id}`, { method: 'PATCH', body: JSON.stringify(form) });
       await load(); onChanged();
-      setMsg({ text: 'Saved.' });
+      setMsg({ text: `Saved. ${r.photo?.status === 'pending' && p.status === 'approved' ? 'Rights or AI status changed, so it needs review again. ' : ''}${copyText(r.publicCopy, r.publishedUses)}` });
     } catch (e: any) { setMsg({ text: e.message, error: true }); }
     setBusy(false);
   };
@@ -71,9 +78,10 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
   const review = async (decision: 'approve' | 'reject' | 'reset') => {
     setBusy(true); setMsg(null);
     try {
-      await api(`/api/admin/photos/${id}/review`, { method: 'POST', body: JSON.stringify({ decision, note, checklist }) });
+      const r = await api(`/api/admin/photos/${id}/review`, { method: 'POST', body: JSON.stringify({ decision, note, checklist }) });
       await load(); onChanged();
-      setMsg({ text: decision === 'approve' ? 'Approved.' : decision === 'reject' ? 'Rejected.' : 'Returned to pending review.' });
+      const base = decision === 'approve' ? 'Approved.' : decision === 'reject' ? 'Rejected.' : 'Returned to pending review.';
+      setMsg({ text: `${base} ${copyText(r.publicCopy, r.publishedUses)}` });
     } catch (e: any) { setMsg({ text: e.message, error: true }); }
     setBusy(false);
   };
@@ -81,9 +89,9 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
   const archive = async (archived: boolean) => {
     setBusy(true); setMsg(null);
     try {
-      await api(`/api/admin/photos/${id}`, { method: 'PATCH', body: JSON.stringify({ archived }) });
+      const r = await api(`/api/admin/photos/${id}`, { method: 'PATCH', body: JSON.stringify({ archived }) });
       await load(); onChanged();
-      setMsg({ text: archived ? 'Archived: hidden from the library and picker. The original file is kept.' : 'Restored to the library.' });
+      setMsg({ text: `${archived ? 'Archived: hidden from the library and picker. The original file is kept.' : 'Restored to the library.'} ${copyText(r.publicCopy, r.publishedUses)}` });
     } catch (e: any) { setMsg({ text: e.message, error: true }); }
     setBusy(false);
   };
@@ -106,14 +114,42 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
       </div>
       {msg && <p className={`rounded-md border px-3 py-2 text-sm ${msg.error ? 'border-red-300 bg-red-50 text-red-800' : 'border-emerald-300 bg-emerald-50 text-emerald-900'}`} role="status">{msg.text}</p>}
 
+      {(p.status !== 'approved' || p.archived) && d.usedIn.length > 0 && (
+        <div className="rounded-lg border-2 border-red-500 bg-red-50 p-4 text-red-950" role="alert" data-testid="photo-in-use-alert">
+          <p className="flex items-center gap-2 text-base font-bold"><TriangleAlert className="h-5 w-5" /> This photo is {p.archived ? 'archived' : p.status} but articles still use it</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
+            {d.usedIn.map((u) => (
+              <li key={u.id}>
+                <strong>{u.title}</strong> — {u.published ? 'PUBLISHED (visitors can see this photo)' : `not published (${u.status}); it can't be approved or published until the photo is replaced`}
+                {' · '}<a className="font-semibold underline" href="/admin/crm/blog">Replace in the Blog editor</a>
+                {!u.published && <>{' · '}<a className="font-semibold underline" href="/admin/crm/content">Open Content</a></>}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-sm">
+            Nothing was unpublished or deleted automatically. Replace the photo in each article (or approve the photo again).
+            {p.public_copy_live ? ' Its public copy stays online until no published article uses it; after replacing, archive or re-review the photo to remove it.' : ''}
+          </p>
+        </div>
+      )}
+
       <div className="grid gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <div className="space-y-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={p.public_url} alt={p.alt_text || ''} className="max-h-[520px] w-full rounded-lg border border-gray-300 bg-gray-100 object-contain" />
+          <img src={p.preview_url || ''} alt={p.alt_text || ''} className="max-h-[520px] w-full rounded-lg border border-gray-300 bg-gray-100 object-contain" />
           <p className="text-sm text-gray-800 break-all">
             <strong>{p.original_filename}</strong> · {p.width}×{p.height} · {fmtBytes(p.file_size)} · {p.mime_type.replace('image/', '').toUpperCase()} · added {fmtDate(p.created_at)}
           </p>
-          <p className="text-xs text-gray-700 break-all">Original file (never modified): {p.storage_path}</p>
+          <p className="text-xs text-gray-700 break-all">
+            Original ({p.storage_bucket === 'photo-library' ? 'private storage' : 'older photo, still in public storage'}, never modified): {p.storage_path}
+          </p>
+          <p className="text-sm text-gray-900" data-testid="public-copy-status">
+            <strong>Public copy:</strong>{' '}
+            {p.public_copy_live
+              ? (p.status === 'approved' && !p.archived ? 'online — articles can use it.' : 'still online only because published articles use it (see the warning).')
+              : p.public_url ? 'removed — not visible to the public. Approve it again to restore it at the same address.'
+              : 'none — not visible to the public until approved.'}
+          </p>
         </div>
         <div className="space-y-2">
           <p className="text-sm font-semibold">Checks</p>
@@ -134,7 +170,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
                 {d.related.map((r) => (
                   <button key={r.id} type="button" onClick={() => onOpen(r.id)} className="w-28 text-left" title={r.original_filename}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={r.public_url} alt="" loading="lazy" className="h-20 w-28 rounded border border-gray-300 object-cover" />
+                    <img src={r.preview_url || ''} alt="" loading="lazy" className="h-20 w-28 rounded border border-gray-300 object-cover" />
                     <span className="block truncate text-xs text-gray-800">{r.original_filename}</span>
                     <span className="block text-xs text-gray-600">{r.width}×{r.height} · {r.status}</span>
                   </button>
@@ -145,7 +181,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
           <div>
             <p className="mt-2 text-sm font-semibold">Used in</p>
             {d.usedIn.length ? (
-              <ul className="text-sm">{d.usedIn.map((u) => <li key={u.id}>{u.title} <span className="text-gray-600">({u.status})</span></li>)}</ul>
+              <ul className="text-sm">{d.usedIn.map((u) => <li key={u.id}>{u.title} <span className="text-gray-600">({u.published ? 'published' : u.status})</span></li>)}</ul>
             ) : <p className="text-sm text-gray-700">Not used in any article.</p>}
           </div>
         </div>
@@ -197,7 +233,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
 
         <HeroImageControls
           key={p.id}
-          src={p.public_url}
+          src={p.preview_url || ''}
           alt={form.alt_text || p.original_filename}
           value={heroSettings}
           showFit={false}

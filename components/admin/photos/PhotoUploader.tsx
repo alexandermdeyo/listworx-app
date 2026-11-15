@@ -12,9 +12,9 @@ type Row = { name: string; size: number; state: 'waiting' | 'checking' | 'upload
 
 /**
  * Upload single photos or a whole folder. Each file is fingerprinted first; exact
- * duplicates are skipped before anything is uploaded. Originals are stored unchanged
- * (no resizing, no re-encoding) and never overwrite an existing file. Everything
- * arrives as "pending review".
+ * duplicates are skipped before anything is uploaded. Originals go to PRIVATE storage
+ * unchanged (no resizing, no re-encoding) and never overwrite an existing file.
+ * Everything arrives as "pending review" and is not publicly reachable until approved.
  */
 export default function PhotoUploader({ onDone }: { onDone: () => void }) {
   const { api, supabase } = useAdminApi();
@@ -61,7 +61,7 @@ export default function PhotoUploader({ onDone }: { onDone: () => void }) {
         const dhash = await dhashOfFile(f);
         update(i, { state: 'uploading' });
         const path = newLibraryPath(f.name);
-        const { error: upErr } = await supabase.storage.from('site-media').upload(path, f, { upsert: false, contentType: f.type || undefined, cacheControl: '31536000' });
+        const { error: upErr } = await supabase.storage.from('photo-library').upload(path, f, { upsert: false, contentType: f.type || undefined, cacheControl: '31536000' });
         if (upErr) throw new Error(upErr.message);
         const suggested = manifest ? manifestSuggestions(manifest, f.name) : null;
         const json = await api('/api/admin/photos/register', {
@@ -100,8 +100,8 @@ export default function PhotoUploader({ onDone }: { onDone: () => void }) {
       <div>
         <p className="text-base font-semibold">Add photos</p>
         <p className="text-sm text-gray-700">
-          Originals are stored exactly as they are (never resized or replaced). Identical files are skipped. Everything starts as
-          <strong> pending review</strong> — nothing can be used in a published article until you approve it.
+          Originals are stored privately, exactly as they are (never resized or replaced). Identical files are skipped. Everything
+          starts as <strong>pending review</strong> and is not visible to the public. Approving a photo makes a public copy for articles.
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">

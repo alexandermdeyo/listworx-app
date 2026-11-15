@@ -257,12 +257,12 @@ export function cleanPhotoInput(input: Record<string, unknown>) {
   return { values, errors };
 }
 
-/** Safe storage name: library/YYYY/MM/<uuid>-<cleaned original name>. */
+/** Private storage name for an original: originals/YYYY/MM/<uuid>-<cleaned original name>. */
 export function libraryPath(originalName: string, uuid: string, now = new Date()) {
   const ext = (originalName.match(/\.(jpe?g|png|webp)$/i)?.[1] || 'jpg').toLowerCase();
   const base = originalName.replace(/\.[^.]+$/, '').normalize('NFKD').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/-{2,}/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'photo';
   const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
-  return `library/${now.getUTCFullYear()}/${mm}/${uuid}-${base}.${ext === 'jpeg' ? 'jpg' : ext}`;
+  return `originals/${now.getUTCFullYear()}/${mm}/${uuid}-${base}.${ext === 'jpeg' ? 'jpg' : ext}`;
 }
 
 // ---------------------------------------------------------------- search

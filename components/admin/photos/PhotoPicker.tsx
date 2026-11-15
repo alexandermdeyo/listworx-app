@@ -7,15 +7,15 @@ import { SecondaryButton, inputCls, useAdminApi, type LibraryPhoto } from './ui'
 
 /**
  * Choose an APPROVED photo from the library (used by the Content and Blog editors).
- * Pending and rejected photos are not offered, so they can't end up in an article
- * by accident (publishing also re-checks this on the server).
+ * Only approved, active photos with a live public copy are offered; pending, rejected
+ * and archived photos never appear (publishing also re-checks this on the server).
  */
 export default function PhotoPicker({
   open, onClose, onSelect, defaultUse = 'blog_featured', title = 'Choose a photo',
 }: {
   open: boolean;
   onClose: () => void;
-  onSelect: (p: LibraryPhoto) => void;
+  onSelect: (p: LibraryPhoto & { public_url: string }) => void;
   defaultUse?: string;
   title?: string;
 }) {
@@ -39,7 +39,7 @@ export default function PhotoPicker({
     if (!open) return;
     setLoading(true);
     setError('');
-    const params = new URLSearchParams({ status: 'approved', q, use });
+    const params = new URLSearchParams({ publishable: '1', q, use });
     const t = setTimeout(() => {
       api(`/api/admin/photos?${params}`)
         .then((j) => setPhotos(j.photos))
@@ -78,7 +78,7 @@ export default function PhotoPicker({
                     <li key={p.id}>
                       <button type="button" onClick={() => setPreview(p)} className={`block w-full overflow-hidden rounded-md border text-left ${preview?.id === p.id ? 'border-[#E8621A] ring-2 ring-[#E8621A]/40' : 'border-gray-300'}`}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={p.public_url} alt={p.alt_text || ''} loading="lazy" className="aspect-[4/3] w-full object-cover" style={{ objectPosition: `${p.focus_x ?? 50}% ${p.focus_y ?? 30}%` }} />
+                        <img src={p.public_url || ''} alt={p.alt_text || ''} loading="lazy" className="aspect-[4/3] w-full object-cover" style={{ objectPosition: `${p.focus_x ?? 50}% ${p.focus_y ?? 30}%` }} />
                         <span className="block truncate px-2 py-1 text-xs">{p.title || p.original_filename}</span>
                       </button>
                     </li>
@@ -90,7 +90,7 @@ export default function PhotoPicker({
             {preview ? (
               <div className="space-y-2" data-testid="picker-preview">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={preview.public_url} alt={preview.alt_text || ''} className="max-h-72 w-full rounded-md border border-gray-300 bg-gray-100 object-contain" />
+                <img src={preview.public_url || ''} alt={preview.alt_text || ''} className="max-h-72 w-full rounded-md border border-gray-300 bg-gray-100 object-contain" />
                 <p className="text-sm font-semibold">{preview.title || preview.original_filename}</p>
                 <p className="text-sm text-gray-800">{preview.width}×{preview.height}{preview.is_ai_generated ? ' · AI-generated (approved after review)' : ''}</p>
                 <p className="text-sm text-gray-800"><strong>Alt text:</strong> {preview.alt_text}</p>
@@ -98,7 +98,7 @@ export default function PhotoPicker({
                   <p className="rounded-md border border-amber-300 bg-amber-50 px-2 py-1 text-sm text-amber-950">Narrower than {FEATURED_MIN_WIDTH}px: may look soft as a featured photo.</p>
                 )}
                 <div className="flex gap-2">
-                  <button type="button" onClick={() => { onSelect(preview); onClose(); }} className="rounded-md px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: '#E8621A' }} data-testid="picker-use">
+                  <button type="button" onClick={() => { if (preview.public_url) { onSelect(preview as LibraryPhoto & { public_url: string }); onClose(); } }} className="rounded-md px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: '#E8621A' }} data-testid="picker-use">
                     Use this photo
                   </button>
                   <SecondaryButton type="button" onClick={() => setPreview(null)}>Back</SecondaryButton>

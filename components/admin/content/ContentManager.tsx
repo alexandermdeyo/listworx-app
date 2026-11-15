@@ -7,6 +7,7 @@ import { renderBody } from '@/lib/blog-render';
 import HeroImage from '@/components/blog/HeroImage';
 import HeroImageControls from '@/components/admin/content/HeroImageControls';
 import PhotoPicker from '@/components/admin/photos/PhotoPicker';
+import PhotoIssuesBanner from '@/components/admin/photos/PhotoIssuesBanner';
 import type { HeroSettings } from '@/lib/content/hero-image';
 import {
   ACTION_LABELS, AUDIENCES, AUDIENCE_LABELS, CONTENT_STATUSES, STATUS_LABELS,
@@ -137,6 +138,8 @@ export default function ContentManager() {
         <strong>Automatic publishing: {schedulerEnabled ? 'On' : 'Off'}.</strong>{' '}
         Scheduled articles are not published automatically yet. To make an approved article live today, use the Blog section.
       </div>
+
+      <PhotoIssuesBanner />
 
       <div className="flex flex-wrap gap-2" role="tablist">
         {(['all', ...CONTENT_STATUSES] as const).map((s) => (
