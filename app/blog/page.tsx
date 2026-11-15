@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
 import { getPublishedPosts, type BlogPostSummary as BlogPost } from '@/lib/blog';
+import { objectPosition } from '@/lib/content/hero-image';
 
 // Rendered on the server for every request so post titles and links are in the
 // HTML crawlers receive, with the same freshness as the previous browser fetch.
@@ -24,6 +25,7 @@ function PostCard({ post, featured }: { post: BlogPost; featured?: boolean }) {
                 src={post.featured_image_url}
                 alt={post.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ objectPosition: objectPosition(post) }}
               />
             </div>
           )}
@@ -52,6 +54,7 @@ function PostCard({ post, featured }: { post: BlogPost; featured?: boolean }) {
               src={post.featured_image_url}
               alt={post.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ objectPosition: objectPosition(post) }}
             />
           </div>
         )}

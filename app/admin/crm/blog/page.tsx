@@ -28,6 +28,8 @@ import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
+import HeroImageControls from '@/components/admin/content/HeroImageControls';
+import type { HeroSettings } from '@/lib/content/hero-image';
 
 interface BlogPost {
   id: string;
@@ -36,6 +38,12 @@ interface BlogPost {
   excerpt: string | null;
   body: string | null;
   featured_image_url: string | null;
+  featured_image_alt?: string | null;
+  featured_image_focus_x?: number | null;
+  featured_image_focus_y?: number | null;
+  featured_image_fit?: string | null;
+  featured_image_width?: number | null;
+  featured_image_height?: number | null;
   author_name: string;
   is_published: boolean;
   published_at: string | null;
@@ -120,6 +128,8 @@ export default function AdminBlogPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
+  // Featured photo position (Stage 1B). Saved with the post; drives the public hero.
+  const [hero, setHero] = useState<HeroSettings>({ featured_image_fit: 'auto' });
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
   useEffect(() => { checkAuth(); }, []);
@@ -177,6 +187,7 @@ export default function AdminBlogPage() {
         featured_image_url: form.featured_image_url.trim() || null,
         author_name: form.author_name.trim() || 'ListWorx Team',
         is_published: form.is_published,
+        ...hero,
       };
 
       const res = await fetch('/api/blog', {
@@ -236,6 +247,13 @@ export default function AdminBlogPage() {
       featured_image_url: post.featured_image_url || '',
       author_name: post.author_name,
       is_published: post.is_published,
+    });
+    setHero({
+      featured_image_focus_x: post.featured_image_focus_x ?? null,
+      featured_image_focus_y: post.featured_image_focus_y ?? null,
+      featured_image_fit: post.featured_image_fit || 'auto',
+      featured_image_width: post.featured_image_width ?? null,
+      featured_image_height: post.featured_image_height ?? null,
     });
     setEditingId(post.id);
     setSlugManuallyEdited(true);
@@ -310,7 +328,7 @@ export default function AdminBlogPage() {
               </Button>
             </Link>
             <Button
-              onClick={() => { setShowForm(true); setEditingId(null); setForm(EMPTY_FORM); setSlugManuallyEdited(false); setError(''); }}
+              onClick={() => { setShowForm(true); setEditingId(null); setForm(EMPTY_FORM); setHero({ featured_image_fit: 'auto' }); setSlugManuallyEdited(false); setError(''); }}
               className="bg-lw-rust hover:bg-lw-rust-hover text-white"
             >
               <Plus className="h-4 w-4 mr-1.5" /> New Post
@@ -444,6 +462,16 @@ export default function AdminBlogPage() {
                   />
                 </div>
               </div>
+
+              {/* Featured photo position + previews (same display as the public article) */}
+              {form.featured_image_url && (
+                <HeroImageControls
+                  src={form.featured_image_url}
+                  alt={form.title}
+                  value={hero}
+                  onChange={(patch) => setHero((h) => ({ ...h, ...patch }))}
+                />
+              )}
 
               {/* Published toggle */}
               <div className="pt-1">

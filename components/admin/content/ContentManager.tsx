@@ -4,6 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, Eye, Loader as Loader2, Plus, Save, CalendarClock, History, PencilLine } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { renderBody } from '@/lib/blog-render';
+import HeroImage from '@/components/blog/HeroImage';
+import HeroImageControls from '@/components/admin/content/HeroImageControls';
+import type { HeroSettings } from '@/lib/content/hero-image';
 import {
   ACTION_LABELS, AUDIENCES, AUDIENCE_LABELS, CONTENT_STATUSES, STATUS_LABELS,
   availableActions, isEditable, slugify,
@@ -20,6 +23,11 @@ type Article = {
   body: string | null;
   featured_image_url: string | null;
   featured_image_alt: string | null;
+  featured_image_focus_x: number | null;
+  featured_image_focus_y: number | null;
+  featured_image_fit: string | null;
+  featured_image_width: number | null;
+  featured_image_height: number | null;
   author_name: string | null;
   status: ContentStatus;
   published_at: string | null;
@@ -180,6 +188,14 @@ const EMPTY = {
 };
 type Form = typeof EMPTY;
 
+function toHero(a: Article): HeroSettings {
+  return {
+    featured_image_focus_x: a.featured_image_focus_x, featured_image_focus_y: a.featured_image_focus_y,
+    featured_image_fit: a.featured_image_fit || 'auto',
+    featured_image_width: a.featured_image_width, featured_image_height: a.featured_image_height,
+  };
+}
+
 function toForm(a: Article): Form {
   return {
     title: a.title || '', slug: a.slug || '', excerpt: a.excerpt || '', body: a.body || '',
@@ -196,6 +212,7 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
   const [article, setArticle] = useState<Article | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [form, setForm] = useState<Form>(EMPTY);
+  const [hero, setHero] = useState<HeroSettings>({ featured_image_fit: 'auto' });
   const [slugTouched, setSlugTouched] = useState(false);
   const [loading, setLoading] = useState(!isNew);
   const [busy, setBusy] = useState(false);
@@ -214,6 +231,7 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
       setArticle(json.article);
       setHistory(json.history || []);
       setForm(toForm(json.article));
+      setHero(toHero(json.article));
       setSlugTouched(true);
     } catch (e: any) {
       setMessage({ text: e.message, error: true });
@@ -232,7 +250,7 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
   const save = async (asIdea = false) => {
     setBusy(true);
     setMessage(null);
-    const payload = { ...form, sources: form.sources.split('\n').map((s) => s.trim()).filter(Boolean) };
+    const payload = { ...form, ...hero, sources: form.sources.split('\n').map((s) => s.trim()).filter(Boolean) };
     try {
       if (isNew) {
         const json = await api('/api/admin/content', { method: 'POST', body: JSON.stringify({ ...payload, status: asIdea ? 'idea' : 'draft' }) });
@@ -316,13 +334,25 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
             <p className="text-sm text-[#006621]">listworx.co/blog/{form.slug || '…'}</p>
             <p className="text-sm text-gray-800">{seoDesc || 'No description yet.'}</p>
           </div>
+          {form.featured_image_url && (
+            <div className="rounded-lg border border-gray-300 p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-600">Featured photo on each screen size</p>
+              <div className="flex flex-wrap items-start gap-4">
+                {(['desktop', 'tablet', 'mobile'] as const).map((f) => (
+                  <figure key={f} style={{ width: f === 'desktop' ? 520 : f === 'tablet' ? 360 : 260, maxWidth: '100%' }}>
+                    <HeroImage key={form.featured_image_url} src={form.featured_image_url} alt={form.featured_image_alt || form.title} settings={hero} frame={f} className="rounded-md" />
+                    <figcaption className="mt-1 text-xs text-gray-700">{f === 'desktop' ? 'Desktop' : f === 'tablet' ? 'Tablet' : 'Phone'}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          )}
           <article className="rounded-lg border border-gray-300 p-6">
+            {form.featured_image_url && (
+              <HeroImage key={form.featured_image_url} src={form.featured_image_url} alt={form.featured_image_alt || form.title} settings={hero} className="mb-6 rounded-xl" />
+            )}
             <h1 className="mb-2 text-3xl font-bold text-gray-900">{form.title || 'Untitled'}</h1>
             <p className="mb-4 text-sm text-gray-700">By {form.author_name || 'ListWorx Team'}</p>
-            {form.featured_image_url && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={form.featured_image_url} alt={form.featured_image_alt || ''} className="mb-6 max-h-96 w-full rounded-lg object-cover" />
-            )}
             {form.excerpt && <p className="mb-4 text-lg text-gray-800">{form.excerpt}</p>}
             <div className="text-base">{form.body ? renderBody(form.body) : <p className="text-gray-600">No body yet.</p>}</div>
           </article>
@@ -381,6 +411,15 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
               <input id="c-alt" className={inputCls} value={form.featured_image_alt} onChange={(e) => set('featured_image_alt', e.target.value)} placeholder="Describe what the image shows" />
             </div>
           </div>
+          {/^https?:\/\//i.test(form.featured_image_url) && (
+            <HeroImageControls
+              src={form.featured_image_url}
+              alt={form.featured_image_alt || form.title}
+              value={hero}
+              disabled={!editable || busy}
+              onChange={(patch) => setHero((h) => ({ ...h, ...patch }))}
+            />
+          )}
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className={labelCls} htmlFor="c-sources">Sources (one web address per line)</label>

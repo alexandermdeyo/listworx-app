@@ -12,7 +12,9 @@
 /** Columns the Content section works with (internal review notes are never stored on blog_posts). */
 export const CONTENT_COLUMNS =
   'id, title, slug, excerpt, body, featured_image_url, featured_image_alt, author_name, status, is_draft, ' +
-  'published_at, scheduled_for, seo_title, meta_description, audience, category, sources, created_at, updated_at';
+  'published_at, scheduled_for, seo_title, meta_description, audience, category, sources, created_at, updated_at, ' +
+  // Hero display settings (see lib/content/hero-image.ts; validated separately by cleanHeroInput).
+  'featured_image_focus_x, featured_image_focus_y, featured_image_fit, featured_image_width, featured_image_height';
 
 export const CONTENT_STATUSES = ['idea', 'draft', 'in_review', 'approved', 'scheduled', 'published', 'rejected'] as const;
 export type ContentStatus = (typeof CONTENT_STATUSES)[number];

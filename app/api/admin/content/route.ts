@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseActorClient, createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { unsafeArticleHtmlMessage } from '@/lib/content/sanitize-html';
+import { cleanHeroInput } from '@/lib/content/hero-image';
 import { requireAdminRequest } from '@/lib/server/require-admin';
 import { CONTENT_COLUMNS, cleanArticleInput, isContentStatus, isEditable, slugify, type ContentStatus } from '@/lib/content/workflow';
 
@@ -43,6 +44,8 @@ export async function POST(request: NextRequest) {
   if (!values.title) errors.push('A title is required');
   const unsafe = unsafeArticleHtmlMessage(values.body as string | undefined);
   if (unsafe) errors.push(unsafe.replace(/\.$/, ''));
+  const hero = cleanHeroInput(body || {});
+  errors.push(...hero.errors);
   if (errors.length) return NextResponse.json({ error: Array.from(new Set(errors)).join('. ') }, { status: 400 });
 
   const status: ContentStatus = body?.status === 'idea' ? 'idea' : 'draft';
@@ -51,6 +54,7 @@ export async function POST(request: NextRequest) {
     .from('blog_posts')
     .insert({
       ...values,
+      ...hero.values,
       slug: (values.slug as string) || slugify(values.title as string),
       author_name: (values.author_name as string) || 'ListWorx Team',
       status,
@@ -83,6 +87,9 @@ export async function PATCH(request: NextRequest) {
   const { values, errors } = cleanArticleInput(body);
   const unsafe = unsafeArticleHtmlMessage(values.body as string | undefined);
   if (unsafe) errors.push(unsafe.replace(/\.$/, ''));
+  const hero = cleanHeroInput(body);
+  errors.push(...hero.errors);
+  Object.assign(values, hero.values);
   if (errors.length) return NextResponse.json({ error: Array.from(new Set(errors)).join('. ') }, { status: 400 });
   if (Object.keys(values).length === 0) return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
 

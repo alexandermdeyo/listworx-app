@@ -5,6 +5,7 @@ set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"; cd "$here"
 m="$here/../20261115000100_content_workflow"
 a="$here/../20261115000200_content_actor"
+f="$here/../20261115000300_featured_image_display"
 db=listworx_stage1b_test
 psql -v ON_ERROR_STOP=1 -qc "drop database if exists $db" -c "create database $db" postgres
 run() { psql -v ON_ERROR_STOP=1 -q -d "$db" -f "$1"; }
@@ -17,6 +18,13 @@ nullbefore=$(q "select count(*) from content_publish_log where actor_id is null"
 echo "== apply creator follow-up"; run "$a.sql"
 [ "$(q "select count(*) from content_publish_log where actor_id is null")" = "$nullbefore" ] || { echo "FAIL: migration changed existing history"; exit 1; }
 PGOPTIONS="-c c12.before=$before" run 81_content_actor_tests.sql
+sig() { q "select string_agg(md5(coalesce(title,'')||coalesce(slug,'')||coalesce(body,'')||coalesce(featured_image_url,'')||is_draft::text), ',' order by id) from blog_posts"; }
+before17=$(sig)
+echo "== apply featured image display"; run "$f.sql"
+PGOPTIONS="-c c17.before=$before17" run 82_featured_image_tests.sql
+echo "== rollback featured image display"; run "$f.rollback.sql"
+[ "$(q "select count(*) from information_schema.columns where table_name='blog_posts' and column_name like 'featured_image_%' and column_name not in ('featured_image_url','featured_image_alt')")" = "0" ] || { echo "ROLLBACK FAIL: image columns remain"; exit 1; }
+[ "$(sig)" = "$before17" ] || { echo "ROLLBACK FAIL: article content changed"; exit 1; }
 echo "== rollback creator follow-up"; run "$a.rollback.sql"
 [ "$(q "select count(*) from pg_proc where proname='content_request_actor'")" = "0" ] || { echo "ROLLBACK FAIL: helper remains"; exit 1; }
 [ "$(q "select count(*) from pg_trigger where tgname='log_blog_post_status'")" = "1" ] || { echo "ROLLBACK FAIL: history trigger missing"; exit 1; }
@@ -28,6 +36,6 @@ echo "== rollback"; run "$m.rollback.sql"
 [ "$(q "select count(*) from blog_posts")" = "3" ] || { echo "ROLLBACK FAIL: articles lost"; exit 1; }
 [ "$(q "select count(*) from pg_policies where tablename='blog_posts'")" = "2" ] || { echo "ROLLBACK FAIL: blog policies changed"; exit 1; }
 echo "rollback checks passed: blog_posts back to its original shape, articles and publish state kept"
-echo "== re-apply after rollback"; run "$m.sql"; run "$a.sql"
+echo "== re-apply after rollback"; run "$m.sql"; run "$a.sql"; run "$f.sql"
 [ "$(q "select status from blog_posts where slug='published-post'")" = "published" ] || { echo "RE-APPLY FAIL"; exit 1; }
 echo "== all stage 1B database steps completed"

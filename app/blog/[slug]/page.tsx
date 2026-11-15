@@ -6,6 +6,7 @@ import Link from 'next/link';
 import JsonLd from '@/components/seo/JsonLd';
 import { getPublishedPost, type BlogPost } from '@/lib/blog';
 import { renderBody } from '@/lib/blog-render';
+import HeroImage from '@/components/blog/HeroImage';
 import { SITE_URL, SITE_NAME, ORGANIZATION_ID, DEFAULT_OG_IMAGE } from '@/lib/seo';
 
 // Rendered on the server for every request so the article text is in the HTML
@@ -54,14 +55,17 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <JsonLd data={structuredData} />
       <Navigation variant="light" />
 
-      {/* Hero image */}
+      {/* Hero image: framed (16:9 phones/tablets, 2:1 desktop) with a per-article focus
+          point, or the whole photo when it can't fit without a heavy crop. */}
       {post.featured_image_url && (
-        <div className="w-full max-h-[480px] overflow-hidden bg-zinc-100">
-          <img
+        <div className="container mx-auto max-w-6xl px-4 pt-4 md:pt-6">
+          <HeroImage
+            key={post.featured_image_url}
             src={post.featured_image_url}
-            alt={post.title}
-            className="w-full h-full object-cover"
-            style={{ maxHeight: 480 }}
+            alt={post.featured_image_alt || post.title}
+            settings={post}
+            className="rounded-xl"
+            priority
           />
         </div>
       )}

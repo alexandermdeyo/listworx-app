@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseActorClient, createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { unsafeArticleHtmlMessage } from '@/lib/content/sanitize-html';
+import { cleanHeroInput, HERO_COLUMNS } from '@/lib/content/hero-image';
 import { requireAdminRequest } from '@/lib/server/require-admin';
 
 const unauthorized = () => NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
   const listColumns = 'id, title, slug, excerpt, featured_image_url, author_name, is_draft, published_at, created_at, updated_at';
   let query = supabaseAdmin
     .from('blog_posts')
-    .select(all ? `${listColumns}, body` : listColumns)
+    .select(all ? `${listColumns}, body, featured_image_alt, ${HERO_COLUMNS}` : listColumns)
     .order('published_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false });
 
@@ -60,6 +61,8 @@ export async function POST(request: NextRequest) {
   }
   const unsafe = unsafeArticleHtmlMessage(postBody);
   if (unsafe) return NextResponse.json({ error: unsafe }, { status: 400 });
+  const hero = cleanHeroInput(body);
+  if (hero.errors.length) return NextResponse.json({ error: hero.errors.join('. ') }, { status: 400 });
 
   const safeSlug = slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
 
@@ -72,6 +75,7 @@ export async function POST(request: NextRequest) {
       body: postBody?.trim() || null,
       featured_image_url: featured_image_url?.trim() || null,
       author_name: author_name?.trim() || 'ListWorx Team',
+      ...hero.values,
       is_draft: !(is_published ?? false),
       published_at: is_published ? new Date().toISOString() : null,
     })
@@ -94,6 +98,9 @@ export async function PATCH(request: NextRequest) {
     const unsafe = unsafeArticleHtmlMessage(updates.body);
     if (unsafe) return NextResponse.json({ error: unsafe }, { status: 400 });
   }
+  const hero = cleanHeroInput(updates);
+  if (hero.errors.length) return NextResponse.json({ error: hero.errors.join('. ') }, { status: 400 });
+  Object.assign(updates, hero.values);
 
   if (updates.slug) {
     updates.slug = updates.slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
