@@ -70,6 +70,7 @@ create index if not exists content_publish_log_post_idx on public.content_publis
 alter table public.content_publish_log enable row level security;
 revoke all on public.content_publish_log from anon, authenticated;
 grant select on public.content_publish_log to authenticated;
+grant select on public.content_publish_log to service_role; -- the admin API reads history; writes only via the functions below
 create policy "Admins read content history" on public.content_publish_log
   for select to authenticated using (public.is_admin());
 -- No insert/update/delete policies: rows are written only by the functions below.
@@ -86,6 +87,7 @@ insert into public.automation_settings (id) values (true) on conflict (id) do no
 alter table public.automation_settings enable row level security;
 revoke all on public.automation_settings from anon, authenticated;
 grant select on public.automation_settings to authenticated;
+grant select on public.automation_settings to service_role; -- the server reads the switch; it cannot change it
 create policy "Admins read automation settings" on public.automation_settings
   for select to authenticated using (public.is_admin());
 -- No update policy: the switch can only be changed by a reviewed migration or the server.
@@ -208,7 +210,9 @@ begin
   end if;
   if p_action in ('submit', 'approve', 'schedule')
      and (coalesce(btrim(cur.title), '') = '' or coalesce(btrim(cur.body), '') = '') then
-    raise exception 'An article needs a title and body before it can be %', p_action using errcode = '22023';
+    raise exception 'An article needs a title and body before it can be %',
+      case p_action when 'submit' then 'sent for approval' when 'approve' then 'approved' else 'scheduled' end
+      using errcode = '22023';
   end if;
 
   perform set_config('listworx.content_logged', 'on', true);

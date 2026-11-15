@@ -110,3 +110,9 @@ test('public blog page renders bodies exactly as before (renderer moved, unchang
 test('newsletter broadcast pause is still in place', () => {
   assert.match(read('app/api/admin/newsletter/send/route.ts'), /if \(!newsletterBroadcastsEnabled\(\)\)/);
 });
+
+test('editor remounts per article and clears the saving state after creating', () => {
+  const src = read('components/admin/content/ContentManager.tsx');
+  assert.match(src, /<ArticleEditor key=\{openId\} id=\{openId\}/);
+  assert.match(src, /setBusy\(false\);\s*onCreated\(json\.article\.id\)/);
+});

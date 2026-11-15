@@ -103,3 +103,15 @@ do $$ begin
 end $$;
 reset role;
 select set_config('request.jwt.claims', '', false);
+
+-- C11 the server role (website API) can read history and settings but not write them directly
+set role service_role;
+do $$ begin
+  if (select count(*) from content_publish_log) = 0 then raise exception 'C11a service_role cannot read history'; end if;
+  if (select scheduler_enabled from automation_settings) is not false then raise exception 'C11b service_role cannot read switch'; end if;
+  begin insert into content_publish_log (action) values ('forged'); raise exception 'C11c service_role wrote history directly'; exception when insufficient_privilege then null; end;
+  begin update automation_settings set scheduler_enabled = true; raise exception 'C11d service_role changed the switch'; exception when insufficient_privilege then null; end;
+  perform content_apply_action('c0000000-0000-4000-8000-000000000001','submit','a0000000-0000-4000-8000-0000000000ad');
+  raise notice 'PASS C11 server role: reads history and switch, writes only through content_apply_action';
+end $$;
+reset role;

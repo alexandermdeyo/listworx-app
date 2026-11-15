@@ -109,7 +109,7 @@ export default function ContentManager() {
   const shown = filter === 'all' ? articles : articles.filter((a) => a.status === filter);
 
   if (openId) {
-    return <ArticleEditor id={openId} api={api} onClose={() => { setOpenId(null); load(); }} onCreated={(id) => setOpenId(id)} />;
+    return <ArticleEditor key={openId} id={openId} api={api} onClose={() => { setOpenId(null); load(); }} onCreated={(id) => setOpenId(id)} />;
   }
 
   return (
@@ -234,6 +234,7 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
     try {
       if (isNew) {
         const json = await api('/api/admin/content', { method: 'POST', body: JSON.stringify({ ...payload, status: asIdea ? 'idea' : 'draft' }) });
+        setBusy(false);
         onCreated(json.article.id);
         return;
       }
