@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase-browser';
 import { renderBody } from '@/lib/blog-render';
 import HeroImage from '@/components/blog/HeroImage';
 import HeroImageControls from '@/components/admin/content/HeroImageControls';
+import PhotoPicker from '@/components/admin/photos/PhotoPicker';
 import type { HeroSettings } from '@/lib/content/hero-image';
 import {
   ACTION_LABELS, AUDIENCES, AUDIENCE_LABELS, CONTENT_STATUSES, STATUS_LABELS,
@@ -213,6 +214,7 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [form, setForm] = useState<Form>(EMPTY);
   const [hero, setHero] = useState<HeroSettings>({ featured_image_fit: 'auto' });
+  const [picking, setPicking] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
   const [loading, setLoading] = useState(!isNew);
   const [busy, setBusy] = useState(false);
@@ -404,7 +406,23 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
             <div>
               <label className={labelCls} htmlFor="c-img">Featured image address</label>
               <input id="c-img" className={inputCls} value={form.featured_image_url} onChange={(e) => set('featured_image_url', e.target.value)} placeholder="https://…" />
-              <p className={helpCls}>The photo library will replace this field in a later stage.</p>
+              {editable && (
+                <SecondaryButton type="button" className="mt-2" onClick={() => setPicking(true)} data-testid="choose-from-library">Choose from Photo Library</SecondaryButton>
+              )}
+              <p className={helpCls}>Only approved library photos can be chosen. An article can&apos;t be approved while it uses an unapproved library photo.</p>
+              <PhotoPicker
+                open={picking}
+                onClose={() => setPicking(false)}
+                title="Choose a featured photo"
+                onSelect={(p) => {
+                  setForm((f) => ({ ...f, featured_image_url: p.public_url, featured_image_alt: p.alt_text || f.featured_image_alt }));
+                  setHero((h) => ({
+                    ...h,
+                    featured_image_focus_x: p.focus_x, featured_image_focus_y: p.focus_y,
+                    featured_image_width: p.width, featured_image_height: p.height,
+                  }));
+                }}
+              />
             </div>
             <div>
               <label className={labelCls} htmlFor="c-alt">Image description (alt text)</label>

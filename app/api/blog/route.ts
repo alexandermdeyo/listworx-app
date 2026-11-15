@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseActorClient, createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { unsafeArticleHtmlMessage } from '@/lib/content/sanitize-html';
 import { cleanHeroInput, HERO_COLUMNS } from '@/lib/content/hero-image';
+import { unapprovedLibraryPhotos, unapprovedMessage } from '@/lib/photos/server';
 import { requireAdminRequest } from '@/lib/server/require-admin';
 
 const unauthorized = () => NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -63,6 +64,10 @@ export async function POST(request: NextRequest) {
   if (unsafe) return NextResponse.json({ error: unsafe }, { status: 400 });
   const hero = cleanHeroInput(body);
   if (hero.errors.length) return NextResponse.json({ error: hero.errors.join('. ') }, { status: 400 });
+  if (is_published) {
+    const blocked = await unapprovedLibraryPhotos(supabaseAdmin, featured_image_url, postBody);
+    if (blocked.length) return NextResponse.json({ error: unapprovedMessage(blocked) }, { status: 409 });
+  }
 
   const safeSlug = slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
 
@@ -108,13 +113,24 @@ export async function PATCH(request: NextRequest) {
 
   const { data: existing } = await supabaseAdmin
     .from('blog_posts')
-    .select('is_draft, published_at')
+    .select('is_draft, published_at, featured_image_url, body')
     .eq('id', id)
     .maybeSingle();
 
   if (Object.prototype.hasOwnProperty.call(updates, 'is_published')) {
     updates.is_draft = !updates.is_published;
     delete updates.is_published;
+  }
+
+  // Photo library rule: a live (or going-live) article can't use an unapproved library photo.
+  const willBeLive = updates.is_draft === false || (updates.is_draft === undefined && existing && existing.is_draft === false);
+  if (willBeLive && existing) {
+    const blocked = await unapprovedLibraryPhotos(
+      supabaseAdmin,
+      'featured_image_url' in updates ? updates.featured_image_url : existing.featured_image_url,
+      typeof updates.body === 'string' ? updates.body : existing.body,
+    );
+    if (blocked.length) return NextResponse.json({ error: unapprovedMessage(blocked) }, { status: 409 });
   }
 
   if (updates.is_draft === false && existing && existing.is_draft && !existing.published_at) {

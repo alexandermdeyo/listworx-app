@@ -17,13 +17,15 @@ import {
  * at what is in the photo (no face detection).
  */
 export default function HeroImageControls({
-  src, alt, value, onChange, disabled = false,
+  src, alt, value, onChange, disabled = false, showFit = true,
 }: {
   src: string;
   alt: string;
   value: HeroSettings;
   onChange: (patch: HeroSettings) => void;
   disabled?: boolean;
+  /** false in the photo library: the banner display choice belongs to each article. */
+  showFit?: boolean;
 }) {
   const focus = heroFocus(value);
   const fit = heroFit(value);
@@ -93,7 +95,7 @@ export default function HeroImageControls({
         </div>
 
         <div className="space-y-3">
-          <div>
+          {showFit && <div>
             <label className="mb-1 block text-xs font-semibold text-gray-800" htmlFor="hero-fit">Display</label>
             <select
               id="hero-fit"
@@ -107,7 +109,7 @@ export default function HeroImageControls({
             <p className="mt-1 text-xs text-gray-700">
               Automatic fills the banner unless that would trim a large part of the photo; then it shows the whole photo.
             </p>
-          </div>
+          </div>}
           <div>
             <label className="mb-1 block text-xs font-semibold text-gray-800" htmlFor="hero-x">Left ↔ right: {focus.x}%</label>
             <input id="hero-x" type="range" min={0} max={100} disabled={disabled} value={focus.x}

@@ -10,7 +10,7 @@ import {
   Loader as Loader2, CircleAlert as AlertCircle, ChartBar as BarChart3,
   LogOut, Mail, Send, Briefcase, TrendingUp, Activity,
   Shield, Bell, RefreshCw, Video, BookOpen, DatabaseZap,
-  MonitorCog, LayoutDashboard, Settings, Home, Handshake, Inbox, PenLine, ClipboardCheck } from 'lucide-react';
+  MonitorCog, LayoutDashboard, Settings, Home, Handshake, Inbox, PenLine, ClipboardCheck, Images } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
@@ -192,6 +192,7 @@ export default function AdminCRMPage() {
     { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
     { id: 'blog', label: 'Blog', icon: PenLine, href: '/admin/crm/blog' },
     { id: 'content', label: 'Content', icon: ClipboardCheck, href: '/admin/crm/content' },
+    { id: 'photos', label: 'Photos', icon: Images, href: '/admin/crm/photos' },
     { id: 'newsletter', label: 'Newsletter', icon: Mail, href: '/admin/crm/newsletter' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/crm/settings' },
   ];

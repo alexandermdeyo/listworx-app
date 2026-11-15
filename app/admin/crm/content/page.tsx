@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader as Loader2, CircleAlert as AlertCircle, LayoutDashboard, MonitorCog, Users, Clock, FileText, Home, Settings, Mail, PenLine, ClipboardCheck } from 'lucide-react';
+import { Loader as Loader2, CircleAlert as AlertCircle, LayoutDashboard, MonitorCog, Users, Clock, FileText, Home, Settings, Mail, PenLine, ClipboardCheck, Images } from 'lucide-react';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,7 @@ export default function ContentAdminPage() {
     { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
     { id: 'blog', label: 'Blog', icon: PenLine, href: '/admin/crm/blog' },
     { id: 'content', label: 'Content', icon: ClipboardCheck, href: '/admin/crm/content' },
+    { id: 'photos', label: 'Photos', icon: Images, href: '/admin/crm/photos' },
     { id: 'newsletter', label: 'Newsletter', icon: Mail, href: '/admin/crm/newsletter' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/crm/settings' },
   ];

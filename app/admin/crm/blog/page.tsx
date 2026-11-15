@@ -29,6 +29,7 @@ import { signOut } from '@/lib/auth';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
 import HeroImageControls from '@/components/admin/content/HeroImageControls';
+import PhotoPicker from '@/components/admin/photos/PhotoPicker';
 import type { HeroSettings } from '@/lib/content/hero-image';
 
 interface BlogPost {
@@ -130,6 +131,8 @@ export default function AdminBlogPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   // Featured photo position (Stage 1B). Saved with the post; drives the public hero.
   const [hero, setHero] = useState<HeroSettings>({ featured_image_fit: 'auto' });
+  // Photo Library picker: 'featured' sets the top photo, 'inline' adds a photo line to the body.
+  const [picker, setPicker] = useState<'featured' | 'inline' | null>(null);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
   useEffect(() => { checkAuth(); }, []);
@@ -416,6 +419,15 @@ export default function AdminBlogPage() {
                     {uploading === 'inline' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
                     Add photo to post
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setPicker('inline')}
+                    className="flex shrink-0 items-center gap-1.5 rounded-md border border-lw-dark-border px-2.5 py-1 text-xs text-zinc-300 hover:border-lw-rust hover:text-white"
+                    title="Adds an approved Photo Library photo to the end of the post. Move the line to where you want it."
+                    data-testid="blog-insert-library"
+                  >
+                    <ImagePlus className="h-3.5 w-3.5" /> From Photo Library
+                  </button>
                 </div>
                 {uploadError && <p className="text-xs text-red-400 mb-1.5">{uploadError}</p>}
                 <textarea
@@ -451,6 +463,34 @@ export default function AdminBlogPage() {
                       {uploading === 'featured' ? 'Uploading…' : 'Upload a photo'}
                     </button>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => setPicker('featured')}
+                    className="mt-2 w-full rounded-md border border-lw-dark-border px-2.5 py-1.5 text-xs text-zinc-300 hover:border-lw-rust hover:text-white"
+                    data-testid="blog-featured-library"
+                  >
+                    Choose from Photo Library
+                  </button>
+                  <PhotoPicker
+                    open={picker !== null}
+                    onClose={() => setPicker(null)}
+                    defaultUse={picker === 'inline' ? 'blog_inline' : 'blog_featured'}
+                    title={picker === 'inline' ? 'Add a photo to the post' : 'Choose a featured photo'}
+                    onSelect={(p) => {
+                      if (picker === 'inline') {
+                        const alt = (p.alt_text || '').replace(/"/g, '');
+                        const tag = `<img src="${p.public_url}" alt="${alt}" style="width:100%;border-radius:10px;margin:8px 0" />`;
+                        setForm(f => ({ ...f, body: `${f.body.trimEnd()}\n\n${tag}\n\n` }));
+                      } else {
+                        setForm(f => ({ ...f, featured_image_url: p.public_url }));
+                        setHero(h => ({
+                          ...h,
+                          featured_image_focus_x: p.focus_x, featured_image_focus_y: p.focus_y,
+                          featured_image_width: p.width, featured_image_height: p.height,
+                        }));
+                      }
+                    }}
+                  />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-zinc-400 mb-1.5 block">Author Name</label>

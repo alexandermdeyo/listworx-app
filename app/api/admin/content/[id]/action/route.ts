@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { requireAdminRequest } from '@/lib/server/require-admin';
 import { isContentAction } from '@/lib/content/workflow';
+import { unapprovedLibraryPhotos, unapprovedMessage } from '@/lib/photos/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +27,17 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     scheduledFor = when.toISOString();
   }
 
-  const { data, error } = await createSupabaseAdminClient().rpc('content_apply_action', {
+  const supabase = createSupabaseAdminClient();
+  // Photo library rule: an article can't be approved or scheduled with an unapproved library photo.
+  if (action === 'approve' || action === 'schedule') {
+    const { data: post } = await supabase.from('blog_posts').select('featured_image_url, body').eq('id', params.id).maybeSingle();
+    if (post) {
+      const blocked = await unapprovedLibraryPhotos(supabase, post.featured_image_url, post.body);
+      if (blocked.length) return NextResponse.json({ error: unapprovedMessage(blocked), photos: blocked }, { status: 409 });
+    }
+  }
+
+  const { data, error } = await supabase.rpc('content_apply_action', {
     p_post_id: params.id,
     p_action: action,
     p_actor_id: adminId,
