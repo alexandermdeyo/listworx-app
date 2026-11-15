@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
-import { newsletterEmailHtml, sendNewsletterBatch } from '@/lib/newsletter';
+import { newsletterEmailHtml, sendNewsletterBatch, newsletterBroadcastsEnabled, NEWSLETTER_PAUSED_MESSAGE } from '@/lib/newsletter';
 
 async function requireAdmin(request: NextRequest) {
   const authHeader = request.headers.get('authorization') || '';
@@ -18,6 +18,13 @@ async function requireAdmin(request: NextRequest) {
  * POST /api/admin/newsletter/send  { campaignId, testTo? }
  * With testTo: one [TEST] copy, campaign stays a draft. Without: sends to every active subscriber.
  */
+/** GET: whether full newsletter sends are currently allowed (admin only). */
+export async function GET(request: NextRequest) {
+  const auth = await requireAdmin(request);
+  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  return NextResponse.json({ broadcastsEnabled: newsletterBroadcastsEnabled() });
+}
+
 export async function POST(request: NextRequest) {
   const auth = await requireAdmin(request);
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -39,6 +46,11 @@ export async function POST(request: NextRequest) {
         },
       ]);
       return NextResponse.json({ success: true, test: true });
+    }
+
+    // Paused: refuse before anything is locked, loaded or sent.
+    if (!newsletterBroadcastsEnabled()) {
+      return NextResponse.json({ error: NEWSLETTER_PAUSED_MESSAGE, paused: true }, { status: 423 });
     }
 
     // Lock so a double-click can't send twice.

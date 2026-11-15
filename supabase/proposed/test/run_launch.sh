@@ -21,7 +21,8 @@ echo "== alignment tests";         run 10_guard_tests.sql
 echo "== document guard tests";    run 40_document_guard_tests.sql
 echo "== billing tests";           run 50_billing_tests.sql; run 55_view_equiv_after.sql
 echo "== referral column tests";   run 60_referral_columns_tests.sql
-echo "== rollback 4, 3, 2, 1 (with test data present)"; run "$m4.rollback.sql"; run "$m3.rollback.sql"; run "$m2.rollback.sql"; run "$m1.rollback.sql"
+echo "== view privacy (stage 1A)";  run ../20261114000100_active_contractors_view_privacy.sql; run 70_view_privacy_tests.sql
+echo "== rollback view privacy, 4, 3, 2, 1 (with test data present)"; run ../20261114000100_active_contractors_view_privacy.rollback.sql; [ "$(q "select has_column_privilege('anon','public.active_contractors_view','email','select')")" = "t" ] || { echo "ROLLBACK FAIL: view privacy not restored"; exit 1; }; run "$m4.rollback.sql"; run "$m3.rollback.sql"; run "$m2.rollback.sql"; run "$m1.rollback.sql"
 [ "$(q "select format_type(atttypid, atttypmod) from pg_attribute where attrelid='public.subscriptions'::regclass and attname='status'")" = "subscription_status" ] || { echo "ROLLBACK FAIL: status type"; exit 1; }
 [ "$(q "select count(*) from public.subscriptions where status::text <> upper(status::text)")" = "0" ] && [ "$(q "select count(*) from public.subscriptions where status = 'PAST_DUE'")" != "0" ] || { echo "ROLLBACK FAIL: existing row status not converted"; exit 1; }
 [ "$(q "select count(*) from public.active_contractors_view")" = "$(q "select count(*) from public._view_before")" ] && [ "$(q "select has_table_privilege('anon','public.active_contractors_view','select')")" = "t" ] || { echo "ROLLBACK FAIL: view not restored"; exit 1; }

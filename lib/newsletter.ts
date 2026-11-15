@@ -62,6 +62,20 @@ ${opts.previewText ? `<div style="display:none;max-height:0;overflow:hidden;opac
 </body></html>`;
 }
 
+/**
+ * Marketing broadcasts are paused unless NEWSLETTER_BROADCASTS_ENABLED is exactly "true"
+ * (owner decision 2026-11-14, Stage 1A). The bulk sender below can re-send to people who
+ * already received an issue when a later batch fails, and it has no one-click unsubscribe
+ * header, so it stays off until the newsletter is rebuilt. Signup, unsubscribe, test sends
+ * and all transactional email are unaffected.
+ */
+export function newsletterBroadcastsEnabled(): boolean {
+  return process.env.NEWSLETTER_BROADCASTS_ENABLED === 'true';
+}
+
+export const NEWSLETTER_PAUSED_MESSAGE =
+  'Newsletter sending is paused while the newsletter system is being rebuilt. Signups and unsubscribes still work, and you can still send yourself a test.';
+
 /** Sends up to 100 emails per Resend call so big lists finish inside Netlify's function time limit. */
 export async function sendNewsletterBatch(messages: { to: string; subject: string; html: string }[]) {
   const apiKey = process.env.RESEND_API_KEY;

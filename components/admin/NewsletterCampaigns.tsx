@@ -40,6 +40,8 @@ export default function NewsletterCampaigns({ activeCount }: { activeCount: numb
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<{ id: string; text: string; error?: boolean } | null>(null);
   const [error, setError] = useState('');
+  // Full sends are paused server-side unless NEWSLETTER_BROADCASTS_ENABLED=true (Stage 1A).
+  const [broadcastsEnabled, setBroadcastsEnabled] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -53,6 +55,15 @@ export default function NewsletterCampaigns({ activeCount }: { activeCount: numb
   }, [supabase]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      const res = await fetch('/api/admin/newsletter/send', { headers: { Authorization: `Bearer ${data.session?.access_token || ''}` } }).catch(() => null);
+      const json = res && res.ok ? await res.json().catch(() => null) : null;
+      setBroadcastsEnabled(json?.broadcastsEnabled === true);
+    })();
+  }, [supabase]);
 
   const call = async (body: Record<string, unknown>) => {
     const { data } = await supabase.auth.getSession();
@@ -194,6 +205,12 @@ export default function NewsletterCampaigns({ activeCount }: { activeCount: numb
         </Button>
       </div>
 
+      {!broadcastsEnabled && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Newsletter sending is paused while the newsletter system is being rebuilt. Signups and unsubscribes still work, and you can still send yourself a test.
+        </div>
+      )}
+
       {loading ? (
         <div className="py-6 text-center"><Loader2 className="h-6 w-6 animate-spin text-lw-rust inline" /></div>
       ) : campaigns.length === 0 ? (
@@ -217,7 +234,7 @@ export default function NewsletterCampaigns({ activeCount }: { activeCount: numb
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button onClick={() => { setPreview(false); setEditing(c); }} className="p-2 text-gray-400 hover:text-gray-800" title="Edit"><Pencil className="h-4 w-4" /></button>
                   <Button variant="outline" size="sm" disabled={busy === c.id} onClick={() => test(c)}>Test</Button>
-                  <Button size="sm" disabled={busy === c.id || activeCount === 0} onClick={() => send(c)} className="text-white" style={{ backgroundColor: '#E8621A' }}>
+                  <Button size="sm" disabled={busy === c.id || activeCount === 0 || !broadcastsEnabled} onClick={() => send(c)} className="text-white" style={{ backgroundColor: '#E8621A' }}>
                     {busy === c.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5 mr-1" />} Send
                   </Button>
                   <button onClick={() => remove(c)} className="p-2 text-gray-300 hover:text-red-500" title="Delete"><Trash2 className="h-4 w-4" /></button>
