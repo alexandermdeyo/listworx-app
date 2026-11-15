@@ -61,7 +61,7 @@ export default function PhotoUploader({ onDone }: { onDone: () => void }) {
         const dhash = await dhashOfFile(f);
         update(i, { state: 'uploading' });
         const path = newLibraryPath(f.name);
-        const { error: upErr } = await supabase.storage.from('photo-library').upload(path, f, { upsert: false, contentType: f.type || undefined, cacheControl: '31536000' });
+        const { error: upErr } = await supabase.storage.from('photo-library').upload(path, f, { upsert: false, contentType: f.type || undefined, cacheControl: '3600' });
         if (upErr) throw new Error(upErr.message);
         const suggested = manifest ? manifestSuggestions(manifest, f.name) : null;
         const json = await api('/api/admin/photos/register', {

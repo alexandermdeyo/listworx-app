@@ -27,6 +27,12 @@ function copyText(outcome?: string, published?: { title: string }[]) {
   return '';
 }
 
+const ACTION_LABELS: Record<string, string> = {
+  approve: 'Approved', reject: 'Rejected', reset: 'Back to pending', auto_reset: 'Back to pending (rights or AI flag changed)',
+  public_copy_created: 'Public copy created', public_copy_removed: 'Public copy removed',
+  public_copy_retained: 'Public copy kept online', original_secured: 'Original moved to private storage',
+};
+
 const LEVEL_STYLE = { block: 'border-red-300 bg-red-50 text-red-900', warn: 'border-amber-300 bg-amber-50 text-amber-950', info: 'border-gray-300 bg-gray-50 text-gray-800' };
 
 export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: string; onClose: () => void; onChanged: () => void; onOpen: (id: string) => void }) {
@@ -299,7 +305,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
           <ul className="space-y-1 text-sm" data-testid="photo-history">
             {d.history.map((h) => (
               <li key={h.id}>
-                <strong className="capitalize">{h.action.replace('_', ' ')}</strong> → {h.to_status} · {fmtDate(h.created_at)}{h.actor_name ? ` · ${h.actor_name}` : ''}
+                <strong>{ACTION_LABELS[h.action] || h.action.replace(/_/g, ' ')}</strong> → {h.to_status} · {fmtDate(h.created_at)}{h.actor_name ? ` · ${h.actor_name}` : ''}
                 {h.note ? <span className="text-gray-800"> — {h.note}</span> : null}
               </li>
             ))}

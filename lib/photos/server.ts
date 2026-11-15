@@ -15,6 +15,11 @@ type Supa = { from: (t: string) => any; storage: any; rpc: (fn: string, args: Re
 export const PRIVATE_BUCKET = 'photo-library';
 export const PUBLIC_BUCKET = 'site-media';
 const SIGNED_PREVIEW_SECONDS = 60 * 60;
+/**
+ * Browsers and the storage CDN may keep a public copy this long. Short, so a withdrawn
+ * photo doesn't linger in caches (removal itself clears Supabase's CDN within about a minute).
+ */
+const PUBLIC_COPY_CACHE_SECONDS = '3600';
 
 export const PHOTO_COLUMNS =
   'id, storage_bucket, storage_path, public_url, public_path, public_copy_live, original_filename, mime_type, file_size, width, height, sha256, dhash, ' +
@@ -155,7 +160,7 @@ export async function reconcilePublicCopy(supabase: Supa, assetId: string, actor
   if (wantLive && !asset.public_copy_live) {
     const publicPath = asset.public_path || 'library/' + asset.storage_path.replace(/^(originals|library)\//, '');
     const buf = await readFile(supabase, asset.storage_bucket, asset.storage_path);
-    const { error: upError } = await supabase.storage.from(PUBLIC_BUCKET).upload(publicPath, buf, { upsert: false, contentType: asset.mime_type, cacheControl: '31536000' });
+    const { error: upError } = await supabase.storage.from(PUBLIC_BUCKET).upload(publicPath, buf, { upsert: false, contentType: asset.mime_type, cacheControl: PUBLIC_COPY_CACHE_SECONDS });
     if (upError && !/exists/i.test(upError.message)) throw new Error(upError.message);
     const url = supabase.storage.from(PUBLIC_BUCKET).getPublicUrl(publicPath).data.publicUrl;
     const { error: rpcError } = await supabase.rpc('photo_public_copy', { p_asset_id: asset.id, p_action: 'created', p_actor_id: actorId, p_path: publicPath, p_url: url, p_note: null });
