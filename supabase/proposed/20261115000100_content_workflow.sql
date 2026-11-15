@@ -1,6 +1,6 @@
 -- ============================================================================
--- PROPOSED — Stage 1B content management foundation (owner-approved for TEST
--- only, 2026-11-14). Not applied to production.
+-- Stage 1B content management foundation. Owner-approved; applied to TEST and
+-- PRODUCTION 2026-11-14 (production also needed the two service_role revokes below).
 --
 -- Reuses public.blog_posts. The public blog keeps reading "is_draft = false"
 -- (unchanged RLS policy and pages); the new status column drives the editorial
@@ -71,6 +71,7 @@ alter table public.content_publish_log enable row level security;
 revoke all on public.content_publish_log from anon, authenticated;
 grant select on public.content_publish_log to authenticated;
 grant select on public.content_publish_log to service_role; -- the admin API reads history; writes only via the functions below
+revoke insert, update, delete on public.content_publish_log from service_role; -- some projects grant these by default
 create policy "Admins read content history" on public.content_publish_log
   for select to authenticated using (public.is_admin());
 -- No insert/update/delete policies: rows are written only by the functions below.
@@ -88,6 +89,7 @@ alter table public.automation_settings enable row level security;
 revoke all on public.automation_settings from anon, authenticated;
 grant select on public.automation_settings to authenticated;
 grant select on public.automation_settings to service_role; -- the server reads the switch; it cannot change it
+revoke insert, update, delete on public.automation_settings from service_role; -- some projects grant these by default
 create policy "Admins read automation settings" on public.automation_settings
   for select to authenticated using (public.is_admin());
 -- No update policy: the switch can only be changed by a reviewed migration or the server.
