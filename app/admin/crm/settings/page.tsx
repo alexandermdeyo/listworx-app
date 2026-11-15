@@ -13,7 +13,7 @@ import {
   Home,
   Settings,
   Mail,
-  GraduationCap, PenLine } from 'lucide-react';
+  GraduationCap, PenLine, ClipboardCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
@@ -110,6 +110,7 @@ export default function AdminSettingsPage() {
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
     { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
     { id: 'blog', label: 'Blog', icon: PenLine, href: '/admin/crm/blog' },
+    { id: 'content', label: 'Content', icon: ClipboardCheck, href: '/admin/crm/content' },
     { id: 'newsletter', label: 'Newsletter', icon: Mail, href: '/admin/crm/newsletter' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/crm/settings' },
   ];

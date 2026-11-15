@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader as Loader2, CircleAlert as AlertCircle, LogOut, LayoutDashboard, MonitorCog, Users, Clock, FileText, Home, Settings, Mail, PenLine } from 'lucide-react';
+import { Loader as Loader2, CircleAlert as AlertCircle, LogOut, LayoutDashboard, MonitorCog, Users, Clock, FileText, Home, Settings, Mail, PenLine, ClipboardCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { signOut } from '@/lib/auth';
@@ -99,6 +99,7 @@ export default function NewsletterAdminPage() {
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
     { id: 'realtors', label: 'Realtors', icon: Home, href: '/admin/crm/realtors' },
     { id: 'blog', label: 'Blog', icon: PenLine, href: '/admin/crm/blog' },
+    { id: 'content', label: 'Content', icon: ClipboardCheck, href: '/admin/crm/content' },
     { id: 'newsletter', label: 'Newsletter', icon: Mail, href: '/admin/crm/newsletter' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/crm/settings' },
   ];
