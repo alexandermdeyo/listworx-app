@@ -27,6 +27,14 @@ export default function PhotoPicker({
   const [error, setError] = useState('');
   const [preview, setPreview] = useState<LibraryPhoto | null>(null);
 
+  // Each time the picker opens, start from the use it was opened for (featured vs inline).
+  useEffect(() => {
+    if (open) {
+      setUse(defaultUse);
+      setPreview(null);
+    }
+  }, [open, defaultUse]);
+
   useEffect(() => {
     if (!open) return;
     setLoading(true);
