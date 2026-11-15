@@ -45,7 +45,9 @@ const STATUS_STYLES: Record<ContentStatus, string> = {
   rejected: 'bg-red-50 text-red-800 border-red-300',
 };
 
-const inputCls = 'w-full rounded-md border border-gray-400 bg-white px-3 py-2 text-[15px] text-gray-900 placeholder:text-gray-500 focus:border-[#E8621A] focus:outline-none focus:ring-2 focus:ring-[#E8621A]/30';
+// "!" is needed: the site-wide input rule in globals.css sets a pale border (#d4d4d8) with
+// higher specificity than a utility class. Scoped to this editor only.
+const inputCls = 'w-full rounded-md border !border-gray-500 bg-white px-3 py-2 text-[15px] text-gray-900 placeholder:text-gray-500 focus:!border-[#E8621A] focus:outline-none focus:ring-2 focus:ring-[#E8621A]/30';
 const labelCls = 'block text-sm font-semibold text-gray-900 mb-1';
 const helpCls = 'mt-1 text-xs text-gray-600';
 
@@ -448,7 +450,7 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
                 <li key={h.id} className="text-sm text-gray-900">
                   <span className="font-semibold">{h.action === 'created' ? 'Created' : h.action === 'status_changed' ? 'Status changed' : ACTION_LABELS[h.action as ContentAction] || h.action}</span>
                   {h.to_status && <> → {STATUS_LABELS[h.to_status as ContentStatus] || h.to_status}</>}
-                  <span className="text-gray-700"> · {fmt(h.created_at)}{h.actor_name ? ` · ${h.actor_name}` : ''}</span>
+                  <span className="text-gray-700"> · {fmt(h.created_at)}{h.actor_name ? ` · ${h.actor_name}` : h.action === 'created' ? ' · creator not recorded' : ''}</span>
                   {h.note && <p className="ml-3 text-gray-800">“{h.note}”</p>}
                 </li>
               ))}

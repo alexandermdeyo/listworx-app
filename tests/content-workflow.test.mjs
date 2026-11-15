@@ -52,7 +52,7 @@ test('every content API handler requires an admin before doing anything', () => 
     for (let i = 1; i < handlers.length; i += 2) {
       const body = handlers[i];
       const guard = body.search(/requireAdminRequest\(request\)/);
-      const firstDb = body.search(/createSupabaseAdminClient\(\)/);
+      const firstDb = body.search(/createSupabase(Admin|Actor)Client\(/);
       assert.ok(guard > 0 && (firstDb === -1 || guard < firstDb), `${f} ${handlers[i - 1]} checks admin first`);
     }
   }
@@ -101,7 +101,8 @@ test('public blog page renders bodies exactly as before (renderer moved, unchang
   const oldFn = before.slice(before.indexOf('function renderBody(text: string) {'), before.indexOf('export default async function BlogPostPage')).trim();
   const shared = read('lib/blog-render.tsx');
   const newFn = shared.slice(shared.indexOf('function renderBody(text: string) {')).trim();
-  assert.equal(newFn, oldFn);
+  // Only change since c93914b: paragraph HTML is sanitised (see article-html-security.test.mjs).
+  assert.equal(newFn.replace('__html: sanitizeArticleHtml(withInline)', '__html: withInline'), oldFn);
   const page = read('app/blog/[slug]/page.tsx');
   assert.match(page, /import \{ renderBody \} from '@\/lib\/blog-render';/);
   assert.match(page, /getPublishedPost/);

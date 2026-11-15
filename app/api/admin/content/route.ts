@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { createSupabaseActorClient, createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { unsafeArticleHtmlMessage } from '@/lib/content/sanitize-html';
 import { requireAdminRequest } from '@/lib/server/require-admin';
 import { CONTENT_COLUMNS, cleanArticleInput, isContentStatus, isEditable, slugify, type ContentStatus } from '@/lib/content/workflow';
 
@@ -40,10 +41,12 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}));
   const { values, errors } = cleanArticleInput(body || {});
   if (!values.title) errors.push('A title is required');
+  const unsafe = unsafeArticleHtmlMessage(values.body as string | undefined);
+  if (unsafe) errors.push(unsafe.replace(/\.$/, ''));
   if (errors.length) return NextResponse.json({ error: Array.from(new Set(errors)).join('. ') }, { status: 400 });
 
   const status: ContentStatus = body?.status === 'idea' ? 'idea' : 'draft';
-  const supabase = createSupabaseAdminClient();
+  const supabase = createSupabaseActorClient(adminId); // history records this admin as the creator
   const { data, error } = await supabase
     .from('blog_posts')
     .insert({
@@ -78,6 +81,8 @@ export async function PATCH(request: NextRequest) {
   }
 
   const { values, errors } = cleanArticleInput(body);
+  const unsafe = unsafeArticleHtmlMessage(values.body as string | undefined);
+  if (unsafe) errors.push(unsafe.replace(/\.$/, ''));
   if (errors.length) return NextResponse.json({ error: Array.from(new Set(errors)).join('. ') }, { status: 400 });
   if (Object.keys(values).length === 0) return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
 

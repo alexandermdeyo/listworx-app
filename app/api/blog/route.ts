@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { createSupabaseActorClient, createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { unsafeArticleHtmlMessage } from '@/lib/content/sanitize-html';
 import { requireAdminRequest } from '@/lib/server/require-admin';
 
 const unauthorized = () => NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -48,14 +49,17 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!(await requireAdminRequest(request))) return unauthorized();
-  const supabaseAdmin = createSupabaseAdminClient();
+  const adminId = await requireAdminRequest(request);
+  if (!adminId) return unauthorized();
+  const supabaseAdmin = createSupabaseActorClient(adminId); // history records this admin as the creator
   const body = await request.json();
   const { title, slug, excerpt, body: postBody, featured_image_url, author_name, is_published } = body;
 
   if (!title?.trim() || !slug?.trim()) {
     return NextResponse.json({ error: 'title and slug are required' }, { status: 400 });
   }
+  const unsafe = unsafeArticleHtmlMessage(postBody);
+  if (unsafe) return NextResponse.json({ error: unsafe }, { status: 400 });
 
   const safeSlug = slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
 
@@ -79,12 +83,17 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  if (!(await requireAdminRequest(request))) return unauthorized();
-  const supabaseAdmin = createSupabaseAdminClient();
+  const adminId = await requireAdminRequest(request);
+  if (!adminId) return unauthorized();
+  const supabaseAdmin = createSupabaseActorClient(adminId); // publish/unpublish history records this admin
   const body = await request.json();
   const { id, ...updates } = body;
 
   if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 });
+  if (typeof updates.body === 'string') {
+    const unsafe = unsafeArticleHtmlMessage(updates.body);
+    if (unsafe) return NextResponse.json({ error: unsafe }, { status: 400 });
+  }
 
   if (updates.slug) {
     updates.slug = updates.slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');

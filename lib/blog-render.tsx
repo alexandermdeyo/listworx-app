@@ -1,6 +1,10 @@
+import { sanitizeArticleHtml } from '@/lib/content/sanitize-html';
+
 /**
  * Renders an article body the same way on the public blog page and in the admin
- * Content preview. Moved unchanged from app/blog/[slug]/page.tsx (Stage 1B).
+ * Content preview. Moved from app/blog/[slug]/page.tsx (Stage 1B); the only change
+ * is that paragraph HTML now passes through the article allowlist before it reaches
+ * the page (scripts, event handlers and unsafe addresses are removed).
  */
 export function renderBody(text: string) {
   const paragraphs = text.split(/\n{2,}/);
@@ -43,7 +47,7 @@ export function renderBody(text: string) {
 
     const withInline = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     return (
-      <p key={i} className="text-mkt-ink/90 leading-relaxed my-3" dangerouslySetInnerHTML={{ __html: withInline }} />
+      <p key={i} className="text-mkt-ink/90 leading-relaxed my-3" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(withInline) }} />
     );
   });
 }
