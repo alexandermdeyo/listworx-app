@@ -281,7 +281,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
             </div>
           )}
           <div>
-            <label className={labelCls} htmlFor="ph-note">Review note {p.status !== 'rejected' && <span className="font-normal text-gray-600">(required to reject)</span>}</label>
+            <label className={labelCls} htmlFor="ph-note">Review note <span className="font-normal text-gray-600">(optional)</span></label>
             <input id="ph-note" className={inputCls} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Hand on the card looks unnatural" />
           </div>
           {p.status !== 'approved' && problems.length > 0 && <p className="text-sm text-gray-800">Before approving: {problems.join(' · ')}.</p>}
@@ -292,7 +292,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
               </PrimaryButton>
             )}
             {p.status !== 'rejected' && (
-              <DangerButton type="button" onClick={() => review('reject')} disabled={busy || !note.trim()} data-testid="reject-photo"><XCircle className="h-4 w-4" /> Reject</DangerButton>
+              <DangerButton type="button" onClick={() => review('reject')} disabled={busy} data-testid="reject-photo"><XCircle className="h-4 w-4" /> Reject</DangerButton>
             )}
             {p.status !== 'pending' && <SecondaryButton type="button" onClick={() => review('reset')} disabled={busy}><RotateCcw className="h-4 w-4" /> Back to pending</SecondaryButton>}
           </div>

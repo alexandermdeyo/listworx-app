@@ -213,3 +213,10 @@ test('no paid image services or AI calls', () => {
   const src = ['lib/photos/library.ts', 'lib/photos/server.ts', 'lib/photos/browser.ts', 'components/admin/photos/PhotoUploader.tsx'].map(read).join('\n');
   assert.doesNotMatch(src, /https:\/\/api\.(openai|anthropic)|render\/image|transform=/i);
 });
+
+test('a photo can be rejected without typing a reason', () => {
+  const route = read('app/api/admin/photos/[id]/review/route.ts');
+  const detail = read('components/admin/photos/PhotoDetail.tsx');
+  assert.match(route, /decision === 'reject' \? NO_REASON_NOTE : null/, 'empty rejection note gets a default');
+  assert.match(detail, /review\('reject'\)\} disabled=\{busy\}/, 'Reject button does not wait for a note');
+});

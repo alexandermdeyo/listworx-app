@@ -15,6 +15,14 @@ const DECISIONS = new Set(['approve', 'reject', 'reset']);
  * public copy is brought in line: created on approval; on rejection/reset removed,
  * unless a published article still uses it (kept and reported, never auto-removed).
  */
+/** A rejection needs no typed reason; the history then records that none was given. */
+const NO_REASON_NOTE = 'Rejected (no reason given)';
+function reviewNote(decision: string, note: unknown) {
+  const text = typeof note === 'string' ? note.trim().slice(0, 1000) : '';
+  if (text) return text;
+  return decision === 'reject' ? NO_REASON_NOTE : null;
+}
+
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   const adminId = await requireAdminRequest(request);
   if (!adminId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -28,7 +36,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     p_asset_id: params.id,
     p_decision: decision,
     p_actor_id: adminId,
-    p_note: typeof body?.note === 'string' ? body.note.slice(0, 1000) : null,
+    p_note: reviewNote(decision, body?.note),
     p_checklist: checklist,
   });
   if (error) {
