@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Archive, ArrowLeft, CheckCircle2, Loader2, RotateCcw, Save, TriangleAlert, XCircle } from 'lucide-react';
 import HeroImageControls from '@/components/admin/content/HeroImageControls';
 import {
-  AI_CHECKLIST, MANUAL_FLAGS, MANUAL_FLAG_LABELS, PHOTO_STATUS_LABELS, PHOTO_USES, PHOTO_USE_LABELS, USAGE_RIGHTS,
+  AI_CHECKLIST, REJECT_REASONS, rejectionNote, MANUAL_FLAGS, MANUAL_FLAG_LABELS, PHOTO_STATUS_LABELS, PHOTO_USES, PHOTO_USE_LABELS, USAGE_RIGHTS,
   USAGE_RIGHTS_LABELS, approvalProblems,
 } from '@/lib/photos/library';
 import {
@@ -43,6 +43,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
   const [msg, setMsg] = useState<{ text: string; error?: boolean } | null>(null);
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [note, setNote] = useState('');
+  const [reasons, setReasons] = useState<string[]>([]);
 
   const load = useCallback(async () => {
     const json: Detail = await api(`/api/admin/photos/${id}`);
@@ -56,6 +57,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
     });
     setChecklist({});
     setNote('');
+    setReasons([]);
   }, [api, id]);
 
   useEffect(() => { load().catch((e) => setMsg({ text: e.message, error: true })); }, [load]);
@@ -84,7 +86,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
   const review = async (decision: 'approve' | 'reject' | 'reset') => {
     setBusy(true); setMsg(null);
     try {
-      const r = await api(`/api/admin/photos/${id}/review`, { method: 'POST', body: JSON.stringify({ decision, note, checklist }) });
+      const r = await api(`/api/admin/photos/${id}/review`, { method: 'POST', body: JSON.stringify({ decision, note: decision === 'reject' ? rejectionNote(reasons, note) : note, checklist }) });
       await load(); onChanged();
       const base = decision === 'approve' ? 'Approved.' : decision === 'reject' ? 'Rejected.' : 'Returned to pending review.';
       setMsg({ text: `${base} ${copyText(r.publicCopy, r.publishedUses)}` });
@@ -272,12 +274,25 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
           {dirty && <p className="text-sm text-amber-900">Save your detail changes before reviewing.</p>}
           {p.is_ai_generated && p.status !== 'approved' && (
             <div className="rounded-md border border-purple-300 bg-purple-50 p-3">
-              <p className="mb-1 text-sm font-semibold text-purple-950">AI-generated photo — confirm each point after looking closely</p>
+              <p className="mb-1 text-sm font-semibold text-purple-950">To approve this AI photo, confirm all three after looking closely</p>
+              <p className="mb-1 text-xs text-purple-900">Not needed to reject.</p>
               {AI_CHECKLIST.map((c) => (
                 <label key={c.key} className="flex items-start gap-2 text-sm text-purple-950">
                   <input type="checkbox" className="mt-1 h-4 w-4 accent-[#E8621A]" checked={!!checklist[c.key]} onChange={(e) => setChecklist((x) => ({ ...x, [c.key]: e.target.checked }))} />{c.label}
                 </label>
               ))}
+            </div>
+          )}
+          {p.status !== 'rejected' && (
+            <div className="rounded-md border border-red-200 bg-red-50 p-3" data-testid="reject-reasons">
+              <p className="mb-1 text-sm font-semibold text-red-950">What&apos;s wrong with it? <span className="font-normal">(optional — tick any that apply, then Reject)</span></p>
+              <div className="grid gap-x-4 sm:grid-cols-2">
+                {REJECT_REASONS.map((r) => (
+                  <label key={r} className="flex items-start gap-2 text-sm text-red-950">
+                    <input type="checkbox" className="mt-1 h-4 w-4 accent-red-700" checked={reasons.includes(r)} onChange={(e) => setReasons((x) => (e.target.checked ? [...x, r] : x.filter((y) => y !== r)))} />{r}
+                  </label>
+                ))}
+              </div>
             </div>
           )}
           <div>

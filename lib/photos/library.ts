@@ -33,6 +33,24 @@ export const USAGE_RIGHTS_LABELS: Record<UsageRights, string> = {
   unknown: 'Unknown — cannot be approved',
 };
 
+/** Quick reasons to tick when rejecting a photo (all optional). */
+export const REJECT_REASONS = [
+  'Hands, fingers or faces look wrong',
+  'Body positions or movements look unnatural',
+  'Text, logos or signs are garbled',
+  'Fake company name or branding',
+  'Blurry, soft or low quality',
+  'Unrealistic or unsafe work shown',
+  'Looks too fake or staged',
+  'Does not fit our topics',
+  'Duplicate or too similar to another photo',
+] as const;
+
+/** Builds the saved rejection note from ticked reasons and an optional typed note. */
+export function rejectionNote(reasons: readonly string[], note: string) {
+  return [...reasons, note.trim()].filter(Boolean).join('; ');
+}
+
 export const PHOTO_STATUSES = ['pending', 'approved', 'rejected'] as const;
 export type PhotoStatus = (typeof PHOTO_STATUSES)[number];
 export const PHOTO_STATUS_LABELS: Record<PhotoStatus, string> = { pending: 'Pending review', approved: 'Approved', rejected: 'Rejected' };

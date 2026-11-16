@@ -220,3 +220,13 @@ test('a photo can be rejected without typing a reason', () => {
   assert.match(route, /decision === 'reject' \? NO_REASON_NOTE : null/, 'empty rejection note gets a default');
   assert.match(detail, /review\('reject'\)\} disabled=\{busy\}/, 'Reject button does not wait for a note');
 });
+
+test('rejection reasons are optional tick boxes saved as the note', async () => {
+  const lib = await import('../lib/photos/library.ts');
+  assert.equal(lib.rejectionNote([], ''), '');
+  assert.equal(lib.rejectionNote(['Blurry, soft or low quality'], ''), 'Blurry, soft or low quality');
+  assert.equal(lib.rejectionNote(['Text, logos or signs are garbled', 'Fake company name or branding'], ' sign says FORSALE '), 'Text, logos or signs are garbled; Fake company name or branding; sign says FORSALE');
+  const detail = read('components/admin/photos/PhotoDetail.tsx');
+  assert.match(detail, /data-testid="reject-reasons"/);
+  assert.match(detail, /decision === 'reject' \? rejectionNote\(reasons, note\)/);
+});
