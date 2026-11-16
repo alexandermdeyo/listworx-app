@@ -1,9 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { PARTNER_STATUS } from '@/lib/partner-status';
+import { requireAdminCaller } from '@/lib/require-admin';
 
 export async function POST(request: NextRequest) {
   try {
+    const caller = await requireAdminCaller();
+
+    if (!caller) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (caller.classification !== 'admin') {
+      return NextResponse.json(
+        { error: 'Forbidden: admin role required' },
+        { status: 403 }
+      );
+    }
+
     const { contractorProfileId } = await request.json();
 
     if (!contractorProfileId) {
