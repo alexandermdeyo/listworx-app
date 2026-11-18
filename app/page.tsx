@@ -491,8 +491,9 @@ export default function LandingPage() {
             </h2>
             <p className="mt-4 max-w-xl text-mkt-ink/70">
               Pre-listing prep, post-inspection repairs, move-in work — send one
-              request and hand your client a shortlist of verified pros. Free for
-              agents, and your client&apos;s info stays private until you share it.
+              request and reliably connect your clients with a shortlist of
+              verified pros. Free for agents, and your client&apos;s info stays
+              private until you share it.
             </p>
             <Link href="/realtors" className="mt-8 inline-block">
               <Button size="lg" variant="outlineOrange">
@@ -531,17 +532,18 @@ export default function LandingPage() {
                 <IroncladBadge variant="partner" hover={false} className="h-16 md:h-20" />
               </div>
               <h2 className="text-3xl font-bold leading-[1.1] tracking-tight text-white md:text-5xl">
-                Real work. Real standards. No per-lead games.
+                Real work. Real standards. A partner in your growth.
               </h2>
               <p className="mt-4 max-w-xl text-white/75 md:text-lg">
                 ListWorx is subscription-based — you pay to be in the network, not
-                per lead. Founding spots in Middle Tennessee are limited, and every
-                partner carries the IronClad Certified mark.
+                per lead — and get marketing and business-growth support to help
+                you win more work. Founding spots in Middle Tennessee are limited,
+                and every partner carries the IronClad Certified mark.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="/apply">
                   <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-                    Apply to join
+                    Join ListWorx Free
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>

@@ -32,7 +32,7 @@ export default function HomeownerHero() {
               <div className="mb-6 flex flex-wrap items-center gap-3">
                 <span className="inline-flex items-center rounded-full border border-lw-rust/40 bg-lw-rust/10 px-4 py-2 text-sm font-semibold text-lw-rust">
                   <Shield className="mr-2 h-4 w-4" />
-                  IronClad Verified Contractors
+                  Reviewed to IronClad Standards
                 </span>
                 <span className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-mkt-ink/80">
                   <MapPin className="mr-2 h-4 w-4 text-lw-rust" />
@@ -44,9 +44,10 @@ export default function HomeownerHero() {
                 <span className="block text-lw-rust">Every time. For free.</span>
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-mkt-ink/70 md:text-xl">
-                Every pro on ListWorx is IronClad Verified — licensed, insured, and
-                held to real standards. Describe the job, get matched with up to
-                three, and pick who you call.
+                ListWorx is the trusted home-service referral network — every pro
+                is reviewed against IronClad Standards for licensing, insurance,
+                and business practices before they can take a referral. Describe
+                the job, get matched with up to three, and pick who you call.
               </p>
             </Reveal>
 
