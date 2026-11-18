@@ -30,6 +30,7 @@ import Navigation from '@/components/Navigation';
 import Link from 'next/link';
 import HeroImageControls from '@/components/admin/content/HeroImageControls';
 import PhotoPicker from '@/components/admin/photos/PhotoPicker';
+import { inlinePhotoTag, insertPhotoAt } from '@/lib/content/inline-photo';
 import type { HeroSettings } from '@/lib/content/hero-image';
 
 interface BlogPost {
@@ -83,6 +84,7 @@ export default function AdminBlogPage() {
   const [uploadError, setUploadError] = useState('');
   const featuredInputRef = useRef<HTMLInputElement>(null);
   const inlineInputRef = useRef<HTMLInputElement>(null);
+  const bodyCursor = useRef<number | null>(null);
 
   /** Uploads a photo to the site-media bucket and returns its public URL. */
   const uploadPhoto = async (file: File): Promise<string | null> => {
@@ -116,9 +118,7 @@ export default function AdminBlogPage() {
     const url = await uploadPhoto(file);
     setUploading(null);
     if (!url) return;
-    const alt = (form.title || 'ListWorx').replace(/"/g, '');
-    const tag = `<img src="${url}" alt="${alt}" style="width:100%;border-radius:10px;margin:8px 0" />`;
-    setForm(f => ({ ...f, body: `${f.body.trimEnd()}\n\n${tag}\n\n` }));
+    setForm(f => ({ ...f, body: insertPhotoAt(f.body, bodyCursor.current, inlinePhotoTag(url, f.title || 'ListWorx')).body }));
   };
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -414,7 +414,7 @@ export default function AdminBlogPage() {
                     onClick={() => inlineInputRef.current?.click()}
                     disabled={uploading === 'inline'}
                     className="flex shrink-0 items-center gap-1.5 rounded-md border border-lw-dark-border px-2.5 py-1 text-xs text-zinc-300 hover:border-lw-rust hover:text-white disabled:opacity-60"
-                    title="Uploads a photo and adds it to the end of the post. Move the line to where you want it."
+                    title="Click in the paragraph the photo should follow, then upload. With no click it goes at the end."
                   >
                     {uploading === 'inline' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
                     Add photo to post
@@ -423,7 +423,7 @@ export default function AdminBlogPage() {
                     type="button"
                     onClick={() => setPicker('inline')}
                     className="flex shrink-0 items-center gap-1.5 rounded-md border border-lw-dark-border px-2.5 py-1 text-xs text-zinc-300 hover:border-lw-rust hover:text-white"
-                    title="Adds an approved Photo Library photo to the end of the post. Move the line to where you want it."
+                    title="Click in the paragraph the photo should follow, then add it. With no click it goes at the end."
                     data-testid="blog-insert-library"
                   >
                     <ImagePlus className="h-3.5 w-3.5" /> From Photo Library
@@ -432,7 +432,8 @@ export default function AdminBlogPage() {
                 {uploadError && <p className="text-xs text-red-400 mb-1.5">{uploadError}</p>}
                 <textarea
                   value={form.body}
-                  onChange={e => setForm(f => ({ ...f, body: e.target.value }))}
+                  onChange={e => { setForm(f => ({ ...f, body: e.target.value })); bodyCursor.current = e.target.selectionStart; }}
+                  onSelect={e => { bodyCursor.current = (e.target as HTMLTextAreaElement).selectionStart; }}
                   placeholder="Write your post content here..."
                   rows={16}
                   className="w-full rounded-md bg-lw-dark-surface border border-lw-dark-border text-white placeholder:text-zinc-500 text-sm px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-lw-rust/40 font-mono leading-relaxed"
@@ -478,9 +479,7 @@ export default function AdminBlogPage() {
                     title={picker === 'inline' ? 'Add a photo to the post' : 'Choose a featured photo'}
                     onSelect={(p) => {
                       if (picker === 'inline') {
-                        const alt = (p.alt_text || '').replace(/"/g, '');
-                        const tag = `<img src="${p.public_url}" alt="${alt}" style="width:100%;border-radius:10px;margin:8px 0" />`;
-                        setForm(f => ({ ...f, body: `${f.body.trimEnd()}\n\n${tag}\n\n` }));
+                        setForm(f => ({ ...f, body: insertPhotoAt(f.body, bodyCursor.current, inlinePhotoTag(p.public_url, p.alt_text || '')).body }));
                       } else {
                         setForm(f => ({ ...f, featured_image_url: p.public_url }));
                         setHero(h => ({

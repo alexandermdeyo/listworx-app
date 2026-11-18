@@ -230,3 +230,22 @@ test('rejection reasons are optional tick boxes saved as the note', async () => 
   assert.match(detail, /data-testid="reject-reasons"/);
   assert.match(detail, /decision === 'reject' \? rejectionNote\(reasons, note\)/);
 });
+
+test('inline photos go after the paragraph the cursor is in', async () => {
+  const { insertPhotoAt, inlinePhotoTag } = await import('../lib/content/inline-photo.ts');
+  const T = '<img />';
+  const body = 'First paragraph here.\n\nSecond paragraph.\n\n# Heading';
+  // cursor in the middle of the first paragraph: photo lands after it, sentence intact
+  assert.equal(insertPhotoAt(body, 5, T).body, 'First paragraph here.\n\n<img />\n\nSecond paragraph.\n\n# Heading');
+  // cursor in the second paragraph
+  assert.equal(insertPhotoAt(body, body.indexOf('Second') + 3, T).body, 'First paragraph here.\n\nSecond paragraph.\n\n<img />\n\n# Heading');
+  // no cursor: end of the article
+  assert.equal(insertPhotoAt(body, null, T).body, body + '\n\n<img />\n\n');
+  // empty article
+  assert.equal(insertPhotoAt('', 0, T).body, '<img />\n\n');
+  // several photos can be added
+  let b = insertPhotoAt(body, 0, T).body; b = insertPhotoAt(b, b.indexOf('Second'), T).body;
+  assert.equal((b.match(/<img/g) || []).length, 2);
+  // alt text is escaped
+  assert.match(inlinePhotoTag('https://x/y.png', 'He said "hi" <b>'), /alt="He said &quot;hi&quot; &lt;b&gt;"/);
+});

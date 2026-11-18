@@ -7,6 +7,7 @@ import { renderBody } from '@/lib/blog-render';
 import HeroImage from '@/components/blog/HeroImage';
 import HeroImageControls from '@/components/admin/content/HeroImageControls';
 import PhotoPicker from '@/components/admin/photos/PhotoPicker';
+import { inlinePhotoTag, insertPhotoAt } from '@/lib/content/inline-photo';
 import PhotoIssuesBanner from '@/components/admin/photos/PhotoIssuesBanner';
 import type { HeroSettings } from '@/lib/content/hero-image';
 import {
@@ -218,6 +219,9 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
   const [form, setForm] = useState<Form>(EMPTY);
   const [hero, setHero] = useState<HeroSettings>({ featured_image_fit: 'auto' });
   const [picking, setPicking] = useState(false);
+  const [pickingInline, setPickingInline] = useState(false);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const cursorRef = useRef<number | null>(null);
   const [slugTouched, setSlugTouched] = useState(false);
   const [loading, setLoading] = useState(!isNew);
   const [busy, setBusy] = useState(false);
@@ -391,9 +395,34 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
             <textarea id="c-excerpt" rows={2} className={inputCls} value={form.excerpt} onChange={(e) => set('excerpt', e.target.value)} />
           </div>
           <div>
-            <label className={labelCls} htmlFor="c-body">Article</label>
-            <textarea id="c-body" rows={16} className={`${inputCls} font-mono text-sm`} value={form.body} onChange={(e) => set('body', e.target.value)} />
-            <p className={helpCls}>Blank line between paragraphs. "# " heading, "- " bullet, "1. " numbered, "**bold**".</p>
+            <div className="mb-1 flex flex-wrap items-end justify-between gap-2">
+              <label className={labelCls} htmlFor="c-body">Article</label>
+              {editable && (
+                <SecondaryButton type="button" onClick={() => setPickingInline(true)} data-testid="add-inline-photo">Add a photo here</SecondaryButton>
+              )}
+            </div>
+            <textarea
+              id="c-body"
+              ref={bodyRef}
+              rows={16}
+              className={`${inputCls} font-mono text-sm`}
+              value={form.body}
+              onChange={(e) => { set('body', e.target.value); cursorRef.current = e.target.selectionStart; }}
+              onSelect={(e) => { cursorRef.current = (e.target as HTMLTextAreaElement).selectionStart; }}
+            />
+            <p className={helpCls}>Blank line between paragraphs. "# " heading, "- " bullet, "1. " numbered, "**bold**". To add a photo inside the article, click in the paragraph it should follow, then press &quot;Add a photo here&quot;. Add as many as you like; each one shows as an &lt;img …&gt; line you can move or delete.</p>
+            <PhotoPicker
+              open={pickingInline}
+              onClose={() => setPickingInline(false)}
+              defaultUse="blog_inline"
+              title="Add a photo inside the article"
+              onSelect={(p) => {
+                const { body, caret } = insertPhotoAt(form.body, cursorRef.current, inlinePhotoTag(p.public_url, p.alt_text || ''));
+                set('body', body);
+                cursorRef.current = caret;
+                requestAnimationFrame(() => { const el = bodyRef.current; if (el) { el.focus(); el.setSelectionRange(caret, caret); } });
+              }}
+            />
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
