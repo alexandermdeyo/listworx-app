@@ -409,6 +409,7 @@ function ArticleEditor({ id, api, onClose, onCreated }: {
               value={form.body}
               onChange={(e) => { set('body', e.target.value); cursorRef.current = e.target.selectionStart; }}
               onSelect={(e) => { cursorRef.current = (e.target as HTMLTextAreaElement).selectionStart; }}
+              onBlur={(e) => { cursorRef.current = e.target.selectionStart; }}
             />
             <p className={helpCls}>Blank line between paragraphs. "# " heading, "- " bullet, "1. " numbered, "**bold**". To add a photo inside the article, click in the paragraph it should follow, then press &quot;Add a photo here&quot;. Add as many as you like; each one shows as an &lt;img …&gt; line you can move or delete.</p>
             <PhotoPicker

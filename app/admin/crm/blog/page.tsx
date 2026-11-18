@@ -434,6 +434,7 @@ export default function AdminBlogPage() {
                   value={form.body}
                   onChange={e => { setForm(f => ({ ...f, body: e.target.value })); bodyCursor.current = e.target.selectionStart; }}
                   onSelect={e => { bodyCursor.current = (e.target as HTMLTextAreaElement).selectionStart; }}
+                  onBlur={e => { bodyCursor.current = e.target.selectionStart; }}
                   placeholder="Write your post content here..."
                   rows={16}
                   className="w-full rounded-md bg-lw-dark-surface border border-lw-dark-border text-white placeholder:text-zinc-500 text-sm px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-lw-rust/40 font-mono leading-relaxed"
