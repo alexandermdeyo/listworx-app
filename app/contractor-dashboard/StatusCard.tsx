@@ -84,6 +84,22 @@ function getStatusConfig(status: string) {
   }
 }
 
+// Archiving is an admin action that removes a contractor from referral
+// matching (lib/contractor-matching.ts filters archived = false). It takes
+// priority over partner_status here so an archived contractor is never told
+// they are active or eligible for referrals. Display only -- matching rules
+// are unchanged.
+const ARCHIVED_STATUS = {
+  icon: XCircle,
+  color: 'text-slate-700',
+  bg: 'bg-slate-50',
+  border: 'border-slate-300',
+  badgeClass: 'bg-slate-100 text-slate-700 border-slate-300',
+  headline: 'Membership Inactive',
+  message: 'Your account has been archived. Your membership is inactive and you will not receive referrals.',
+  nextStep: 'Contact adeyo@listworx.co if you believe this is a mistake or want to reactivate your account.',
+};
+
 export default function StatusCard({
   profile,
   userEmail,
@@ -91,9 +107,12 @@ export default function StatusCard({
   onRefresh,
   onLogout,
 }: StatusCardProps) {
-  const config = getStatusConfig(profile.partner_status);
+  const isArchived = profile.archived === true;
+  const config = isArchived ? ARCHIVED_STATUS : getStatusConfig(profile.partner_status);
   const StatusIcon = config.icon;
-  const label = STATUS_LABELS[profile.partner_status] || profile.partner_status;
+  const label = isArchived
+    ? 'Inactive – Archived'
+    : STATUS_LABELS[profile.partner_status] || profile.partner_status;
 
   return (
     <div className="bg-white text-gray-900 rounded-2xl border border-lw-border-light overflow-hidden shadow-sm">
@@ -121,7 +140,7 @@ export default function StatusCard({
                   <StatusIcon className="h-3 w-3" />
                   {label}
                 </span>
-                {profile.tier && profile.partner_status === PARTNER_STATUS.ACTIVE && (
+                {!isArchived && profile.tier && profile.partner_status === PARTNER_STATUS.ACTIVE && (
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-lw-rust/10 text-lw-rust border border-lw-rust/20 capitalize">
                     {profile.tier} Plan
                   </span>

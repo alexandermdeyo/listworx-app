@@ -82,3 +82,12 @@ test('approved/active dashboard copy does not imply payment is required or certi
   assert.ok(!card.includes('Your IronClad status is active'));
   assert.ok(!readFileSync('app/contractor-dashboard/types.ts', 'utf8').includes('Subscription Required'));
 });
+
+test('archived contractors are told their membership is inactive (display only; matching rules untouched)', () => {
+  const card = readFileSync('app/contractor-dashboard/StatusCard.tsx', 'utf8');
+  assert.ok(card.includes("profile.archived === true"));
+  assert.ok(card.includes('you will not receive referrals'));
+  assert.ok(card.includes('isArchived ? ARCHIVED_STATUS : getStatusConfig('));
+  const matching = readFileSync('lib/contractor-matching.ts', 'utf8');
+  assert.ok(matching.includes(".eq('archived', false)"), 'matching must still exclude archived contractors');
+});

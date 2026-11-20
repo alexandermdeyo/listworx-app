@@ -2,6 +2,8 @@ export interface ContractorProfile {
   id: string;
   user_id: string;
   email: string;
+  /** Set by an admin's Archive action; archived contractors are excluded from referral matching. */
+  archived?: boolean | null;
   company_name: string;
   owner_name: string;
   phone: string;
