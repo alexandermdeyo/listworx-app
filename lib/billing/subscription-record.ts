@@ -157,3 +157,29 @@ export function hasActivePaidSubscription(row: {
 } | null | undefined): boolean {
   return Boolean(row && row.stripe_subscription_id && (row.status || '').toLowerCase() === 'active');
 }
+
+const toIso = (seconds: unknown): string | null =>
+  typeof seconds === 'number' && seconds > 0 ? new Date(seconds * 1000).toISOString() : null;
+
+/**
+ * Billing period of a Stripe subscription. From API version 2025-03-31 the
+ * period lives on each subscription item, not on the subscription, so read the
+ * item first and fall back to the old top-level fields.
+ */
+export function subscriptionPeriod(subscription: any): { start: string | null; end: string | null } {
+  const item = subscription?.items?.data?.[0];
+  return {
+    start: toIso(item?.current_period_start ?? subscription?.current_period_start),
+    end: toIso(item?.current_period_end ?? subscription?.current_period_end),
+  };
+}
+
+/**
+ * Whether a voluntary cancellation is scheduled, and the date paid access ends.
+ * Stripe can schedule it either with cancel_at_period_end or with a cancel_at date.
+ */
+export function scheduledCancellation(subscription: any): { scheduled: boolean; endsAt: string | null } {
+  const cancelAt = toIso(subscription?.cancel_at);
+  const scheduled = Boolean(subscription?.cancel_at_period_end) || cancelAt !== null;
+  return { scheduled, endsAt: scheduled ? cancelAt ?? subscriptionPeriod(subscription).end : null };
+}

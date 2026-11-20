@@ -81,3 +81,15 @@ test('active members can open /billing to upgrade; paused members go to their da
   assert.ok(mw.includes("contractorStatus !== 'approved' && contractorStatus !== 'active'"));
   assert.ok(!mw.includes("reason: 'active contractor should use dashboard'"));
 });
+
+test('billing period is read from the subscription item (Stripe API 2025-03-31+), with a top-level fallback', async () => {
+  const { subscriptionPeriod, scheduledCancellation } = await import('../lib/billing/subscription-record.ts');
+  const t = 1797724800; // 2026-12-20T00:00:00Z
+  assert.equal(subscriptionPeriod({ items: { data: [{ current_period_start: t - 86400 * 30, current_period_end: t }] } }).end, '2026-12-20T00:00:00.000Z');
+  assert.equal(subscriptionPeriod({ current_period_end: t }).end, '2026-12-20T00:00:00.000Z');
+  assert.equal(subscriptionPeriod({}).end, null);
+  const item = { items: { data: [{ current_period_end: t }] } };
+  assert.deepEqual(scheduledCancellation({ ...item, cancel_at_period_end: false, cancel_at: null }), { scheduled: false, endsAt: null });
+  assert.deepEqual(scheduledCancellation({ ...item, cancel_at_period_end: true }), { scheduled: true, endsAt: '2026-12-20T00:00:00.000Z' });
+  assert.deepEqual(scheduledCancellation({ ...item, cancel_at_period_end: false, cancel_at: t }), { scheduled: true, endsAt: '2026-12-20T00:00:00.000Z' });
+});

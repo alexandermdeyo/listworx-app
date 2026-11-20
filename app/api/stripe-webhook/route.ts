@@ -14,6 +14,8 @@ import {
   eventMatchesCurrentSubscription,
   mapStripeStatus,
   NETWORK_TIER_NAME,
+  scheduledCancellation,
+  subscriptionPeriod,
 } from '@/lib/billing/subscription-record';
 
 function getStripe() {
@@ -627,7 +629,9 @@ async function handleSubscriptionUpdated(subscription: any) {
     stripeSubscriptionId: subscription.id,
     contractorId,
     status: subscription.status,
-    currentPeriodEnd: subscription.current_period_end,
+    currentPeriodEnd: subscriptionPeriod(subscription).end,
+    cancelAt: subscription.cancel_at,
+    cancelAtPeriodEnd: subscription.cancel_at_period_end,
   });
 
   if (!contractorId) {
@@ -644,12 +648,11 @@ async function handleSubscriptionUpdated(subscription: any) {
 
   const subscriptionStatus = mapStripeStatus(subscription.status);
 
-  const periodStart = subscription.current_period_start
-    ? new Date(subscription.current_period_start * 1000).toISOString()
-    : null;
-  const periodEnd = subscription.current_period_end
-    ? new Date(subscription.current_period_end * 1000).toISOString()
-    : null;
+  const period = subscriptionPeriod(subscription);
+  const cancellation = scheduledCancellation(subscription);
+  const periodStart = period.start;
+  // While a cancellation is scheduled, the stored period end is the paid-through date.
+  const periodEnd = cancellation.endsAt ?? period.end;
 
   const { data: existingRow } = await getSupabase().from('subscriptions')
     .select('id')
@@ -662,7 +665,7 @@ async function handleSubscriptionUpdated(subscription: any) {
         status: subscriptionStatus,
         current_period_start: periodStart,
         current_period_end: periodEnd,
-        cancel_at_period_end: subscription.cancel_at_period_end || false,
+        cancel_at_period_end: cancellation.scheduled,
         updated_at: new Date().toISOString(),
       })
       .eq('stripe_subscription_id', subscription.id);
@@ -708,7 +711,7 @@ async function handleSubscriptionUpdated(subscription: any) {
         billingPeriod: subscription.metadata?.billingPeriod,
         periodStart,
         periodEnd,
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
+        cancelAtPeriodEnd: cancellation.scheduled,
       });
 
       console.log('[stripe-webhook] No existing row — inserting subscription via upsert:', subscriptionPayload);
