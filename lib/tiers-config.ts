@@ -230,6 +230,7 @@ const ALL_ADDONS: AddOn[] = [
     includedIn: [],
     founderOnly: true,
     stripeEnvVar: 'STRIPE_ADDON_DECAL_PACKAGE_FOUNDER',
+    hidden: true, // owner 2026-11-19: founder offer retired (no founding enrollment in 2.0)
     highlight: false,
   },
   {
@@ -463,6 +464,7 @@ export const ADDON_PURCHASE_DISABLED: Record<string, string> = {
   ai_marketing_toolkit: 'No Stripe product; purchase does not unlock the AI Toolkit page',
   flyer_builder: 'A purchase never unlocks the Flyer Builder page (no purchase record is created)',
   territory_lock: 'No live Stripe price and no automated territory locking',
+  decal_package_founder: 'Retired founding-member offer',
 };
 
 export function isAddonPurchaseDisabled(addonId: string | null | undefined): boolean {

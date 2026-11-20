@@ -101,3 +101,32 @@ test('paused/suspended contractors cannot open a new checkout, and the dashboard
   assert.ok(page.includes("canUpgrade={profile?.partner_status === 'active' && profile?.archived !== true}"));
   assert.ok(readFileSync('app/contractor-dashboard/SubscriptionSection.tsx', 'utf8').includes("currentTier === 'Network' && canUpgrade &&"));
 });
+
+test('contractor dashboard: no legacy Preferred/Elite upgrades, no founder decal, honest add-on and hold messaging', async () => {
+  const marketing = readFileSync('app/contractor-dashboard/MarketingSection.tsx', 'utf8');
+  for (const legacy of ['Upgrade to Preferred', 'Upgrade to Elite', '$215/mo', '$365/mo', "'Available Now'"]) {
+    assert.ok(!marketing.includes(legacy), legacy);
+  }
+  assert.ok(marketing.includes("title: 'Growth Membership'") && marketing.includes("title: 'Business Pro Membership'"));
+  assert.ok(marketing.includes("window.location.href = '/billing'"));
+  assert.ok(marketing.includes("badge: 'Temporarily unavailable'"), 'disabled add-ons drop their availability badge');
+
+  const sub = readFileSync('app/contractor-dashboard/SubscriptionSection.tsx', 'utf8');
+  assert.ok(!sub.includes('Upgrade Plan') && !sub.includes('isBasicOrPreferred'));
+  assert.ok(!sub.includes('Update Payment & Reactivate'));
+
+  const status = readFileSync('app/contractor-dashboard/StatusCard.tsx', 'utf8');
+  assert.ok(!status.includes('IronClad Standards: Suspended'));
+  assert.ok(!status.includes('resolve your IronClad status'));
+
+  const { ADDON_LIST, isAddonPurchaseDisabled, getAddonById } = await import('../lib/tiers-config.ts');
+  assert.ok(!ADDON_LIST.some((a) => a.id === 'decal_package_founder'));
+  assert.equal(getAddonById('decal_package_founder'), null, 'refused at checkout');
+  assert.ok(isAddonPurchaseDisabled('decal_package_founder'));
+  const byId = Object.fromEntries(ADDON_LIST.map((a) => [a.id, a]));
+  // Verified against live Stripe 2026-11-19: $99, $149, $299 (and $249 discounted video price).
+  assert.equal(byId.decal_package_standard.price, 99);
+  assert.equal(byId.google_business_optimization.price, 149);
+  assert.equal(byId.contractor_profile_video.price, 299);
+  assert.equal(byId.contractor_profile_video.elitePrice, 249);
+});

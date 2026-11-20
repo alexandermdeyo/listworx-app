@@ -26,7 +26,6 @@ interface MarketingOpportunity {
   previewOnly: boolean;
   actionLabel: string;
   actionType: 'upgrade' | 'email' | 'preview';
-  tierId?: 'basic' | 'preferred' | 'elite';
   addOnId?: string;
 }
 
@@ -38,15 +37,13 @@ interface MarketingSectionProps {
 
 export default function MarketingSection({
   profile,
-  onCheckout,
   checkoutLoading,
 }: MarketingSectionProps) {
   const isActive = profile.partner_status === PARTNER_STATUS.ACTIVE;
   const isApproved =
     profile.partner_status === PARTNER_STATUS.APPROVED ||
     profile.partner_status === PARTNER_STATUS.ACTIVE;
-  const isPreferred = profile.tier === 'preferred' || profile.tier === 'elite';
-  const isElite = profile.tier === 'elite';
+  const canUpgradeMembership = isActive && profile.archived !== true;
 
   const opportunities: MarketingOpportunity[] = [
     {
@@ -58,11 +55,10 @@ export default function MarketingSection({
       value: 'Limited slots and added visibility',
       badge: 'Manual Setup',
       badgeColor: 'bg-blue-50 text-blue-700 border-blue-200',
-      eligible: isApproved && isPreferred,
-      previewOnly: !isApproved || !isPreferred,
-      actionLabel: isPreferred ? 'Contact to Add' : 'Upgrade to Preferred',
-      actionType: isPreferred ? 'email' : 'upgrade',
-      tierId: 'preferred',
+      eligible: isActive,
+      previewOnly: !isActive,
+      actionLabel: 'Contact to Add',
+      actionType: 'email',
     },
     {
       id: 'spotlight',
@@ -71,13 +67,10 @@ export default function MarketingSection({
       description:
         'Get featured placement inside the ListWorx platform, putting your business at the top of relevant searches and contractor listings.',
       value: 'Platform-wide featured visibility',
-      badge: 'Available',
-      badgeColor: 'bg-amber-50 text-amber-700 border-amber-200',
-      eligible: isApproved && isElite,
-      previewOnly: !isApproved || !isElite,
-      actionLabel: isElite ? 'Request Spotlight' : 'Upgrade to Elite',
-      actionType: isElite ? 'email' : 'upgrade',
-      tierId: 'elite',
+      eligible: isActive,
+      previewOnly: !isActive,
+      actionLabel: 'Request Spotlight',
+      actionType: 'email',
       addOnId: 'featured_spotlight',
     },
     {
@@ -87,8 +80,6 @@ export default function MarketingSection({
       description:
         'Get a physical and digital IronClad badge kit including signage, decals, and branded materials to showcase your certification.',
       value: 'Physical certification branding materials',
-      badge: 'Available Now',
-      badgeColor: 'bg-lw-rust/10 text-lw-rust border-lw-rust/20',
       eligible: isActive,
       previewOnly: !isActive,
       actionLabel: 'Order Badge Kit',
@@ -96,34 +87,32 @@ export default function MarketingSection({
       addOnId: 'ironclad_badge_kit',
     },
     {
-      id: 'upgrade-preferred',
+      id: 'membership-growth',
       icon: Zap,
-      title: 'Upgrade to Preferred',
+      title: 'Growth Membership',
       description:
-        'Get priority placement, enhanced profile visibility, and stronger referral routing priority.',
-      value: 'More visibility and better referral priority',
-      badge: 'Recommended',
+        'Adds marketing and business-growth support on top of Network. Every membership gets equal referral consideration.',
+      value: '$199/month',
+      badge: 'Membership',
       badgeColor: 'bg-lw-rust/10 text-lw-rust border-lw-rust/20',
-      eligible: isApproved && profile.tier === 'basic',
+      eligible: canUpgradeMembership,
       previewOnly: false,
-      actionLabel: 'Upgrade — $215/mo',
+      actionLabel: 'View Growth',
       actionType: 'upgrade',
-      tierId: 'preferred',
     },
     {
-      id: 'upgrade-elite',
+      id: 'membership-business-pro',
       icon: Sparkles,
-      title: 'Upgrade to Elite',
+      title: 'Business Pro Membership',
       description:
-        'Top placement in searches, strongest profile visibility, and the highest visibility tier in the platform.',
-      value: 'Maximum visibility and positioning',
-      badge: 'Top Tier',
-      badgeColor: 'bg-amber-50 text-amber-700 border-amber-200',
-      eligible: isApproved && (profile.tier === 'basic' || profile.tier === 'preferred'),
+        'Everything in Growth, plus hands-on content support. Every membership gets equal referral consideration.',
+      value: '$299/month',
+      badge: 'Membership',
+      badgeColor: 'bg-lw-rust/10 text-lw-rust border-lw-rust/20',
+      eligible: canUpgradeMembership,
       previewOnly: false,
-      actionLabel: 'Upgrade — $365/mo',
+      actionLabel: 'View Business Pro',
       actionType: 'upgrade',
-      tierId: 'elite',
     },
   ];
 
@@ -166,20 +155,28 @@ export default function MarketingSection({
   const visibleOpportunities = [...opportunities, ...additionalAddons]
     .map((o) =>
       isAddonPurchaseDisabled(addonIdOf(o)) && o.actionType !== 'upgrade'
-        ? { ...o, eligible: false, previewOnly: true, actionLabel: 'Temporarily unavailable' }
+        ? {
+            ...o,
+            eligible: false,
+            previewOnly: true,
+            badge: 'Temporarily unavailable',
+            badgeColor: 'bg-zinc-800 text-zinc-400 border-zinc-700',
+            actionLabel: 'Temporarily unavailable',
+          }
         : o
     )
     .filter((opportunity) => opportunity.eligible || opportunity.previewOnly);
 
   function handleOpportunityClick(opportunity: MarketingOpportunity) {
-    if (opportunity.actionType === 'upgrade' && opportunity.tierId) {
-      onCheckout(opportunity.tierId, false);
+    // Membership changes happen on /billing, which knows the current plan.
+    if (opportunity.actionType === 'upgrade') {
+      window.location.href = '/billing';
       return;
     }
 
     const subject = encodeURIComponent(`ListWorx: ${opportunity.title}`);
     const body = encodeURIComponent(
-      `Hi Alex,\n\nI want more information about: ${opportunity.title}\n\nBusiness name: ${profile.company_name || ''}\nTier: ${profile.tier || ''}\n\nThanks.`
+      `Hi Alex,\n\nI want more information about: ${opportunity.title}\n\nBusiness name: ${profile.company_name || ''}\nMembership status: ${profile.partner_status || ''}\n\nThanks.`
     );
 
     window.location.href = `mailto:adeyo@listworx.co?subject=${subject}&body=${body}`;

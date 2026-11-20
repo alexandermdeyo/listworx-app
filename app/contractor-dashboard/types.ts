@@ -172,7 +172,7 @@ export const STATUS_LABELS: Record<string, string> = {
   applied: 'Application In Progress',
   approved: 'Approved – Choose Membership',
   active: 'Active Partner',
-  paused: 'Subscription Paused',
+  paused: 'Membership On Hold',
   rejected: 'Not Approved',
 };
 

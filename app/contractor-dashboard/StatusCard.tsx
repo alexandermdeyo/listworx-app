@@ -55,9 +55,9 @@ function getStatusConfig(status: string) {
         bg: 'bg-amber-50',
         border: 'border-amber-200',
         badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-        headline: 'IronClad Standards: Suspended — Contact support to resolve',
-        message: 'Your subscription is past due or was paused.',
-        nextStep: 'Contact support or update billing to resolve your IronClad status.',
+        headline: 'Membership On Hold',
+        message: 'Your membership is on hold, so you are not receiving referrals right now. This is a membership status; IronClad Certification is a separate review.',
+        nextStep: 'If this is a billing issue, update your payment method under Manage Billing. Otherwise contact adeyo@listworx.co.',
       };
     case PARTNER_STATUS.REJECTED:
       return {

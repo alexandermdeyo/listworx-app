@@ -101,9 +101,9 @@ export default function FlyerBuilderPage() {
     <div className="min-h-screen bg-zinc-950 py-16 px-4">
       <div className="max-w-md mx-auto text-center">
         <h1 className="text-2xl font-bold text-white mb-3">Marketing Flyer Builder</h1>
-        <p className="text-zinc-400 mb-6">The Flyer Builder is included with Preferred and Elite plans, or available as an add-on.</p>
+        <p className="text-zinc-400 mb-6">The Flyer Builder isn&apos;t turned on for your account. Contact adeyo@listworx.co to ask about access.</p>
         <Button onClick={() => router.push('/contractor-dashboard')} className="bg-[#E8621A] hover:bg-[#d45516] text-white">
-          Upgrade Your Plan
+          Back to Dashboard
         </Button>
       </div>
     </div>

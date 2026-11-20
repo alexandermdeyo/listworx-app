@@ -553,7 +553,6 @@ export default function ContractorDashboard() {
       label: 'Promo Videos',
       icon: Video,
       disabled: true,
-      badgeLabel: 'Elite',
     },
     ...(academyEnabled
       ? [

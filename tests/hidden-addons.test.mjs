@@ -14,10 +14,11 @@ test('recruiting templates is not offered anywhere', () => {
 });
 
 test('other add-ons are still offered', () => {
-  for (const id of ['ironclad_badge_kit', 'decal_package_founder', 'decal_package_standard', 'google_business_optimization', 'contractor_profile_video']) {
+  for (const id of ['ironclad_badge_kit', 'decal_package_standard', 'google_business_optimization', 'contractor_profile_video']) {
     assert.ok(getAddonById(id), id);
   }
-  assert.equal(getAddonById('decal_package_founder').price, 75);
+  // Founder decal package retired with founding enrollment (owner 2026-11-19).
+  assert.equal(getAddonById('decal_package_founder'), null);
 });
 
 test('checkout refuses unknown/hidden add-ons and records only charged bundled add-ons', () => {

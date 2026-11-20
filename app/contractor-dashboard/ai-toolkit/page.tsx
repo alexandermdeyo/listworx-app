@@ -136,14 +136,14 @@ export default function AIToolkitPage() {
       <div className="min-h-screen bg-zinc-950 py-10 px-4">
         <div className="mx-auto max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center">
           <Zap className="mx-auto mb-4 h-8 w-8 text-[#E8621A]" />
-          <h1 className="text-xl font-bold text-white">The AI Marketing Toolkit is a Network Partner feature</h1>
+          <h1 className="text-xl font-bold text-white">The AI Marketing Toolkit isn&apos;t on your current plan</h1>
           <p className="mt-3 text-sm text-zinc-400">
-            Generate social posts, estimate follow-up emails, and job description templates — included
-            free with Network Partner and Network Elite. Upgrade your plan to unlock it.
+            Generate social posts, estimate follow-up emails, and job description templates. See the
+            Growth and Business Pro membership options, or contact adeyo@listworx.co to change your plan.
           </p>
           <div className="mt-6 flex justify-center gap-3">
-            <Button onClick={() => router.push('/contractor-dashboard')} className="bg-[#E8621A] text-white hover:bg-[#cf5516]">
-              View plans
+            <Button onClick={() => router.push('/billing')} className="bg-[#E8621A] text-white hover:bg-[#cf5516]">
+              View membership options
             </Button>
             <Button variant="outline" onClick={() => router.push('/contractor-dashboard')} className="border-zinc-700 text-zinc-300">
               Back to dashboard

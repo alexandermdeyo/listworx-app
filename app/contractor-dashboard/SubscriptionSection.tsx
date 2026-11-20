@@ -592,9 +592,11 @@ export default function SubscriptionSection({
             <AlertCircle className="h-5 w-5 text-amber-700" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-lw-text text-base mb-1">Subscription Paused</h3>
+            <h3 className="font-bold text-lw-text text-base mb-1">Membership On Hold</h3>
             <p className="text-lw-text/70 text-sm referraling-relaxed mb-4">
-              Your subscription is past due or was paused. Update your payment method to resume receiving referrals immediately.
+              You are not receiving referrals while your membership is on hold. If a payment failed,
+              update your payment method and our team will restore your membership once your account
+              is current. Otherwise contact adeyo@listworx.co.
             </p>
             <Button
               onClick={handleManageBilling}
@@ -606,7 +608,7 @@ export default function SubscriptionSection({
               ) : (
                 <CreditCard className="h-4 w-4" />
               )}
-              Update Payment & Reactivate
+              Update Payment Method
             </Button>
           </div>
         </div>
@@ -619,10 +621,6 @@ export default function SubscriptionSection({
       (t) => t.name.toLowerCase() === currentTier.toLowerCase()
     );
     const TierIcon = tierDef?.icon || Shield;
-    const isElite = currentTier.toLowerCase().includes('elite');
-    const isBasicOrPreferred =
-      currentTier.toLowerCase().includes('basic') ||
-      currentTier.toLowerCase().includes('preferred');
 
     return (
       <div className="space-y-8">
@@ -680,26 +678,6 @@ export default function SubscriptionSection({
                 )}
                 Manage Billing
               </Button>
-              )}
-              {isBasicOrPreferred && (
-                <Button
-                  onClick={() => {
-                    const nextTier = currentTier.toLowerCase().includes('basic')
-                      ? TIERS.find((t) => t.id === 'preferred')
-                      : TIERS.find((t) => t.id === 'elite');
-                    if (nextTier) handleSelectTier(nextTier);
-                  }}
-                  size="sm"
-                  className="bg-orange-600 text-white hover:bg-orange-700 gap-2"
-                  disabled={!!checkoutLoading}
-                >
-                  {checkoutLoading ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <ArrowUpCircle className="h-3.5 w-3.5" />
-                  )}
-                  Upgrade Plan
-                </Button>
               )}
             </div>
           </div>
