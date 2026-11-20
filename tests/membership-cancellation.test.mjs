@@ -93,3 +93,11 @@ test('billing period is read from the subscription item (Stripe API 2025-03-31+)
   assert.deepEqual(scheduledCancellation({ ...item, cancel_at_period_end: true }), { scheduled: true, endsAt: '2026-12-20T00:00:00.000Z' });
   assert.deepEqual(scheduledCancellation({ ...item, cancel_at_period_end: false, cancel_at: t }), { scheduled: true, endsAt: '2026-12-20T00:00:00.000Z' });
 });
+
+test('paused/suspended contractors cannot open a new checkout, and the dashboard hides Upgrade for them', () => {
+  const checkout = readFileSync('app/api/create-checkout-session/route.ts', 'utf8');
+  assert.ok(checkout.includes("if (!['approved', 'active'].includes(status)) {"));
+  const page = readFileSync('app/contractor-dashboard/page.tsx', 'utf8');
+  assert.ok(page.includes("canUpgrade={profile?.partner_status === 'active' && profile?.archived !== true}"));
+  assert.ok(readFileSync('app/contractor-dashboard/SubscriptionSection.tsx', 'utf8').includes("currentTier === 'Network' && canUpgrade &&"));
+});

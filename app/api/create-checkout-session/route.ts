@@ -38,17 +38,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing contractorId' }, { status: 400 });
     }
 
-    // Only approved (or already-active/paused) contractors can pay. This keeps
-    // anyone from skipping review by opening checkout directly.
+    // Only approved or active contractors can pay. This keeps anyone from
+    // skipping review by opening checkout directly, and a paused/suspended
+    // contractor can't pay for a plan while an admin hold is in place (a
+    // past-due member fixes payment through Manage Billing instead).
     const { data: statusRow } = await createSupabaseAdminClient()
       .from('contractor_profiles')
       .select('partner_status, archived')
       .eq('id', contractorId)
       .maybeSingle();
     const status = String(statusRow?.partner_status || '');
-    if (!['approved', 'active', 'paused'].includes(status)) {
+    if (!['approved', 'active'].includes(status)) {
       return NextResponse.json(
-        { error: status ? 'Your application must be approved before checkout.' : 'Contractor profile not found.' },
+        {
+          error: !status
+            ? 'Contractor profile not found.'
+            : status === 'paused' || status === 'suspended'
+              ? 'Your membership is on hold. Contact adeyo@listworx.co.'
+              : 'Your application must be approved before checkout.',
+        },
         { status: status ? 403 : 404 }
       );
     }

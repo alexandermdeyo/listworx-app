@@ -697,7 +697,10 @@ export default function ContractorDashboard() {
         <div className="space-y-6">
           {activeTab === 'overview' && (
             <>
-              <SubscriptionSection contractorProfileId={profile?.id} />
+              <SubscriptionSection
+                contractorProfileId={profile?.id}
+                canUpgrade={profile?.partner_status === 'active' && profile?.archived !== true}
+              />
               <MarketingSection
                 profile={profile}
                 onCheckout={handleCheckout}

@@ -177,10 +177,13 @@ const FOUNDER_TIERS = [
 
 type SubscriptionSectionProps = {
   contractorProfileId?: string | null;
+  /** False when the profile is archived or on hold; hides upgrade links. */
+  canUpgrade?: boolean;
 };
 
 export default function SubscriptionSection({
   contractorProfileId: contractorProfileIdProp = null,
+  canUpgrade = true,
 }: SubscriptionSectionProps) {
   const academyEnabled = useAcademyEnabled();
   const [isAnnual, setIsAnnual] = useState(false);
@@ -654,7 +657,7 @@ export default function SubscriptionSection({
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {currentTier === 'Network' && (
+              {currentTier === 'Network' && canUpgrade && (
                 <Button asChild size="sm" className="bg-orange-600 text-white hover:bg-orange-700 gap-2">
                   <a href="/billing">
                     <ArrowUpCircle className="h-3.5 w-3.5" />
