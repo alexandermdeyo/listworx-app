@@ -7,9 +7,9 @@ export const dynamic = 'force-dynamic';
 /** Lists public pages and every published blog post for search engines. */
 export async function GET() {
   const urls: { loc: string; lastmod?: string; priority: number }[] = [
-    '', '/request', '/contractors', '/realtors', '/pricing', '/ironclad', '/about', '/faq', '/blog',
+    '', '/request', '/contractors', '/realtors', '/ironclad', '/about', '/faq', '/blog',
     '/media-partners', '/become-a-supplier-partner', '/become-a-brokerage-partner', '/contact', '/apply',
-    '/founding-partner', '/academy', '/listing-studio', '/partners/aces',
+    '/academy', '/listing-studio', '/partners/aces',
     // Not listed yet: /terms and /privacy (pending owner review of the address
     // they display) and contractor profiles (no profiles are currently public).
   ].map((path) => ({ loc: `${SITE_URL}${path}`, priority: path === '' ? 1 : 0.7 }));

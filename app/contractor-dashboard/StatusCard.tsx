@@ -33,9 +33,9 @@ function getStatusConfig(status: string) {
         bg: 'bg-emerald-50',
         border: 'border-emerald-200',
         badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-        headline: 'IronClad Standards: Action Required — Subscription Required',
+        headline: 'Approved — Choose Your Membership',
         message: 'Congratulations! Your application has been approved.',
-        nextStep: 'Select a subscription plan below to activate your account and start receiving referrals.',
+        nextStep: 'Join Network free (no credit card), or choose Growth or Business Pro, to activate your account and start receiving referrals.',
       };
     case PARTNER_STATUS.ACTIVE:
       return {
@@ -44,8 +44,8 @@ function getStatusConfig(status: string) {
         bg: 'bg-orange-50',
         border: 'border-orange-200',
         badgeClass: 'bg-orange-100 text-lw-rust border-orange-300',
-        headline: 'IronClad Standards: Active ✓',
-        message: 'Your IronClad status is active. You are eligible to receive referrals.',
+        headline: 'Membership Active ✓',
+        message: 'Your ListWorx membership is active and you are eligible to receive referrals. IronClad Certification is a separate review.',
         nextStep: 'Keep your profile and service areas up to date for best results.',
       };
     case PARTNER_STATUS.PAUSED:

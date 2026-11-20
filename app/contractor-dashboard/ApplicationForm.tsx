@@ -636,7 +636,7 @@ export default function ApplicationForm({
               )}
             </div>
             <p className="text-lw-text/50 text-sm mt-0.5">
-              Applications are reviewed by our team within 72 hours. We vet every contractor before approving network access. After approval, you will receive instructions to complete your subscription and claim your Founding Partner spot if one is still available in your trade and county.
+              Applications are reviewed by our team within 72 hours. We vet every contractor before approving network access. After approval, you can join Network free, or choose Growth or Business Pro.
             </p>
           </div>
         </div>
@@ -1235,7 +1235,7 @@ export default function ApplicationForm({
                         ? 'bg-lw-rust border-lw-rust'
                         : 'border-lw-border-light group-hover:border-lw-rust/50'
                     }`}
-                    onClick={() => set(item.field, !form[item.field])}
+                    onClick={() => { set(item.field, !form[item.field]); setError(''); }}
                   >
                     {form[item.field] && <CheckCircle2 className="h-3 w-3 text-white" />}
                   </div>
@@ -1305,8 +1305,12 @@ export default function ApplicationForm({
             ))}
           </div>
 
+          {/* Distinct keys so React mounts a new element: reusing the Continue
+              button as the type="submit" button made the click that opened the
+              last step also submit the form and show a validation error. */}
           {step < STEPS.length ? (
             <Button
+              key="continue"
               type="button"
               onClick={handleNext}
               className="bg-orange-600 text-white hover:bg-orange-700 font-semibold"
@@ -1316,6 +1320,7 @@ export default function ApplicationForm({
             </Button>
           ) : (
             <Button
+              key="submit"
               type="submit"
               className="bg-orange-600 text-white hover:bg-orange-700 font-semibold h-10 px-6"
               disabled={submitting}

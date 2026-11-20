@@ -577,16 +577,6 @@ export default function BillingPage() {
 
       <div className="container mx-auto px-4 py-16 max-w-7xl">
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-6">
-            <Image
-              src="/Ironclad_Cert_Partner_Final_Logo.png"
-              alt="IronClad Certified Partner"
-              width={200}
-              height={200}
-              className="w-32 md:w-40 h-auto"
-            />
-          </div>
-
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Billing & Subscriptions
           </h1>

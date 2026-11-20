@@ -242,15 +242,15 @@ export default function ApplyPage() {
           </Reveal>
           <Reveal immediate delay={100}>
             <ul className="mx-auto mb-10 max-w-lg space-y-3 text-left">
-              <li className="flex items-start gap-3 text-white/85">
+              <li className="flex items-start gap-3 !text-white text-base">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
                 Network membership is free — no per-lead fees, no bidding war, ever.
               </li>
-              <li className="flex items-start gap-3 text-white/85">
+              <li className="flex items-start gap-3 !text-white text-base">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
                 Every profile is reviewed against IronClad Standards — business entity, license, and insurance confirmed.
               </li>
-              <li className="flex items-start gap-3 text-white/85">
+              <li className="flex items-start gap-3 !text-white text-base">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
                 Upgrade to Growth or Business Pro anytime for added marketing and business-growth support.
               </li>

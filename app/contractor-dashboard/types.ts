@@ -168,7 +168,7 @@ export const TIERS: TierDisplay[] = [
 
 export const STATUS_LABELS: Record<string, string> = {
   applied: 'Application In Progress',
-  approved: 'Approved – Subscription Required',
+  approved: 'Approved – Choose Membership',
   active: 'Active Partner',
   paused: 'Subscription Paused',
   rejected: 'Not Approved',

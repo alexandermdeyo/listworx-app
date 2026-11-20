@@ -63,3 +63,22 @@ test('public Listing Studio page no longer offers founding-rate checkout', () =>
   assert.ok(!src.includes('Lock Your Rate Forever'));
   for (const t of ['starter_agent', 'agent', 'elite']) assert.ok(src.includes(`${t}: {`), t);
 });
+
+test('application form no longer offers a Founding Partner spot', () => {
+  assert.ok(!readFileSync('app/contractor-dashboard/ApplicationForm.tsx', 'utf8').includes('Founding Partner spot'));
+});
+
+test('retired /pricing and /founding-partner pages redirect to /contractors and are not in the sitemap', () => {
+  const cfg = readFileSync('next.config.js', 'utf8');
+  assert.ok(cfg.includes("{ source: '/pricing', destination: '/contractors'"));
+  assert.ok(cfg.includes("{ source: '/founding-partner', destination: '/contractors'"));
+  const sitemap = readFileSync('app/sitemap.xml/route.ts', 'utf8');
+  assert.ok(!sitemap.includes("'/pricing'") && !sitemap.includes("'/founding-partner'"));
+});
+
+test('approved/active dashboard copy does not imply payment is required or certification is granted', () => {
+  const card = readFileSync('app/contractor-dashboard/StatusCard.tsx', 'utf8');
+  assert.ok(!card.includes('Subscription Required'));
+  assert.ok(!card.includes('Your IronClad status is active'));
+  assert.ok(!readFileSync('app/contractor-dashboard/types.ts', 'utf8').includes('Subscription Required'));
+});
