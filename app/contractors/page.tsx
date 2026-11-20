@@ -17,17 +17,16 @@ import {
   ArrowRight,
   Lock,
   Star,
-  Crown,
   MapPin,
   Layers,
   SlidersHorizontal,
   Camera,
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { PageShell } from '@/components/design-system';
-import { Reveal, RevealBadge } from '@/components/motion';
+import { Reveal } from '@/components/motion';
 import PhotoDark from '@/components/site/PhotoDark';
 import IroncladBadge from '@/components/site/IroncladBadge';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
@@ -37,19 +36,19 @@ import FaqSection from '@/components/site/FaqSection';
 const CONTRACTOR_FAQS = [
   {
     q: 'How is this different from a lead-gen service?',
-    a: "You're not buying leads or bidding against ten other contractors. You pay a flat monthly subscription to be in the network, and referrals are routed to you by trade, county, and availability — not by who pays the most that day.",
+    a: "You're not buying leads or bidding against ten other contractors. Referrals are routed to you by trade, county, and availability, and every member gets equal consideration for a match regardless of tier — what you pay for is growth support, not better odds at a referral.",
   },
   {
     q: 'What does it cost?',
-    a: 'Founding Partner rates are $100 (Member), $175 (Partner), and $300 (Elite) per month, locked for as long as you stay active. Standard rates after the founding period are $125 / $215 / $365.',
+    a: 'Network is free. Growth is $199/month. Business Pro is $299/month. No per-lead fees on any tier — ever.',
   },
   {
-    q: 'What is a Founding Partner?',
-    a: 'You lock your monthly rate the day you join — permanently — plus a permanent IronClad Founding Partner badge and first position in your trade and county. Spots are capped per trade, per county.',
+    q: 'Do paid tiers get more referrals than the free tier?',
+    a: "No. Every member — on every tier — gets equal consideration for a referral match, as long as they meet IronClad Standards. Growth and Business Pro add marketing and business-growth support on top of membership; they don't buy priority access to referrals.",
   },
   {
-    q: 'Are the Founding Partner spots really limited?',
-    a: 'Yes. 10 Network Member, 5 Network Partner, and 2 Network Elite contractors per trade in each county. Once a trade fills in your county, no one else joins it at Founding Partner pricing.',
+    q: 'Does joining mean I’m automatically IronClad Certified?',
+    a: "No. Membership gets your business reviewed against IronClad Standards — licensing, insurance, and business practices — before you can take a referral. Certification itself is a separate, trade-specific review the ListWorx owner signs off on, not something that comes automatically with a subscription tier.",
   },
   {
     q: 'How does verification work?',
@@ -61,84 +60,57 @@ const CONTRACTOR_FAQS = [
   },
   {
     q: 'How long until I’m approved?',
-    a: "Applications are reviewed within 72 hours. Founding Partner pricing applies once you're approved.",
+    a: 'Applications are reviewed within 72 hours.',
   },
 ];
 
-const FOUNDER_PERKS = [
-  'Your rate locked from day one — forever',
-  'Permanent IronClad Founding Partner badge',
-  'First position in your trade & county',
-];
-
-const FOUNDER_TIERS = [
+const MEMBERSHIP_TIERS = [
   {
-    name: 'Network Member — Founding',
-    price: '$100',
-    standard: '$125/mo standard',
-    save: 'Save $25 every month — forever',
+    name: 'Network',
+    price: '$0',
+    priceNote: 'Free, forever',
     highlighted: false,
-    cta: 'Join the Network',
+    cta: 'Join Free',
+    blurb: 'Get verified, get listed, and get matched with homeowners in your trade and county.',
     features: [
-      'IronClad Verified badge and profile',
+      'Reviewed against IronClad Standards before your first referral',
       'Matched with homeowners in your trade and county',
       'Verified reviews from real jobs',
-      'No per-lead fees. Cancel anytime.',
+      'No per-lead fees, ever — cancel anytime',
+      'Equal referral consideration, same as every other tier',
     ],
-    academy: 'ListWorx Academy access — powered by ACES',
+    academy: 'ListWorx Academy access',
   },
   {
-    name: 'Network Partner — Founding',
-    price: '$175',
-    standard: '$215/mo standard',
-    save: 'Save $40 every month — forever',
+    name: 'Growth',
+    price: '$199',
+    priceNote: 'per month',
     highlighted: true,
-    cta: 'Join the Network',
+    cta: 'Apply for Growth',
+    blurb: 'Everything in Network, plus marketing and business-growth support.',
     features: [
-      'Everything in Member',
-      "You're shown before Members in every match",
-      "Text alert the moment you're matched",
+      'Everything in Network',
       'IronClad badge kit for your truck, social, and print',
       'Ready-made posts and follow-up emails',
+      "Text alert the moment you're matched",
+      'Monthly performance report',
     ],
-    academy: 'Full ListWorx Academy access — powered by ACES',
+    academy: 'Full ListWorx Academy access',
   },
   {
-    name: 'Network Elite — Founding',
-    price: '$300',
-    standard: '$365/mo standard',
-    save: 'Save $65 every month — forever',
+    name: 'Business Pro',
+    price: '$299',
+    priceNote: 'per month',
     highlighted: false,
-    cta: 'Join the Network — Limited Spots',
+    cta: 'Apply for Business Pro',
+    blurb: 'Everything in Growth, plus hands-on content and growth support for your brand.',
     features: [
-      'Everything in Partner',
-      'Top spot in every match',
-      'Only 2 Elite per trade, per county',
-      'Quarterly video shoot featuring your work',
-      '2 social posts a month promoting your business',
+      'Everything in Growth',
+      'Jobsite photography and short-form video support',
+      'Monthly social content for your business',
     ],
-    academy: 'Full ListWorx Academy access — powered by ACES',
-  },
-];
-
-const REGULAR_TIERS = [
-  {
-    name: 'Network Member',
-    price: '$125',
-    blurb: 'Get verified, get listed, and get matched with homeowners in your county.',
-    highlighted: false,
-  },
-  {
-    name: 'Network Partner',
-    price: '$215',
-    blurb: "You're shown first in matches, with text alerts and the IronClad badge kit.",
-    highlighted: true,
-  },
-  {
-    name: 'Network Elite',
-    price: '$365',
-    blurb: 'Top spot in every match, only 2 Elite per county, and video and social content.',
-    highlighted: false,
+    comingSoon: ['Marketing Studio — in development'],
+    academy: 'Full ListWorx Academy access',
   },
 ];
 
@@ -152,8 +124,8 @@ const HOW_IT_WORKS = [
   {
     step: '2',
     icon: Layers,
-    title: 'Choose Your Subscription',
-    desc: "Basic, Preferred, or Elite. Pick the tier that fits your business. Higher tiers get priority matching and more referrals per month — but every tier gets real referrals, not a spot in someone else's bidding war.",
+    title: 'Choose Your Tier',
+    desc: "Network, Growth, or Business Pro. Pick the tier that fits your business — every tier gets equal consideration for a referral match, not a spot in someone else's bidding war.",
   },
   {
     step: '3',
@@ -195,9 +167,9 @@ function JoinCta({
         <div className="container mx-auto px-4">
           <Reveal className="flex flex-col items-start gap-4 border-t border-mailer-border py-8 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-lg font-semibold text-white">{headline}</p>
-            <Link href="/contractor-portal?intent=apply" className="shrink-0">
+            <Link href="/apply" className="shrink-0">
               <Button className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-                Create your account
+                Join Free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -214,9 +186,9 @@ function JoinCta({
             <p className="text-lg font-bold text-white">{headline}</p>
             {sub ? <p className="mt-1 text-sm text-white/60">{sub}</p> : null}
           </div>
-          <Link href="/contractor-portal?intent=apply" className="shrink-0">
+          <Link href="/apply" className="shrink-0">
             <Button className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-              Create your account
+              Join Free
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
@@ -261,8 +233,8 @@ export default function ContractorsPage() {
                 </Badge>
               </div>
               <h1 className="mb-6 text-4xl font-bold tracking-tight text-white md:text-6xl lg:text-7xl">
-                First Position. Locked Rate.<br className="hidden md:block" />{' '}
-                <span className="text-lw-rust">National Network.</span>
+                Real Work. Real Standards.<br className="hidden md:block" />{' '}
+                <span className="text-lw-rust">A Partner in Your Growth.</span>
               </h1>
             </Reveal>
             <Reveal immediate delay={100}>
@@ -271,18 +243,18 @@ export default function ContractorsPage() {
               </p>
               <p className="mx-auto mb-10 max-w-3xl text-base text-white/70 md:text-lg">
                 ListWorx is building the largest vetted independent contractor network in America.
-                Founding Partners lock their rate the day they join and hold first position in their
-                trade and county as we expand. That position doesn&apos;t get auctioned off. It
-                doesn&apos;t get renegotiated. It&apos;s yours.
+                Join free, or go further with a Growth or Business Pro membership that adds marketing
+                and business-growth support on top. Every member gets equal consideration for a
+                referral match — what you pay for is growth support, not better odds.
               </p>
             </Reveal>
 
             <Reveal immediate delay={200}>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Link href="/contractor-portal?intent=apply">
+                <Link href="/apply">
                   <Button size="lg" className="rounded-lg bg-lw-rust px-8 py-6 text-lg text-white shadow-lg transition-all hover:bg-lw-rust-hover hover:shadow-xl">
                     <Award className="mr-2 h-5 w-5" />
-                    Apply to Join the Network
+                    Join Free
                   </Button>
                 </Link>
                 <Link href="/ironclad">
@@ -297,7 +269,7 @@ export default function ContractorsPage() {
             <Reveal immediate delay={300}>
               <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 gap-8 md:grid-cols-3">
                 {[
-                  ['First', 'Position — in your trade & county'],
+                  ['Free', 'to join — Network membership costs nothing'],
                   ['Flat', 'Rate — no per-referral fees, ever'],
                   ['National', 'Expanding market by market'],
                 ].map(([big, small]) => (
@@ -312,24 +284,24 @@ export default function ContractorsPage() {
         </div>
       </section>
 
-      {/* ================= FOUNDING PARTNER TIERS (full breakdown up top) ================= */}
+      {/* ================= MEMBERSHIP TIERS (full breakdown up top) ================= */}
       <section className="relative bg-mailer-black py-16 md:py-24">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
         <div className="container mx-auto px-4">
           <Reveal className="mb-12 max-w-3xl">
-            <p className="lw-label mb-3">Founding Partner subscription pricing</p>
+            <p className="lw-label mb-3">Membership tiers</p>
             <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
-              What you lock in — and what&apos;s in it.
+              Join free. Grow at your own pace.
             </h2>
             <p className="mt-4 text-lg text-white/65">
-              These are your normal, ongoing monthly rates — locked from the day you join. Not a
-              trial. Not an intro offer. This is what you pay every month, for as long as you&apos;re
-              a Founding Partner. Every tier below shows exactly what&apos;s included.
+              Every tier gets equal consideration for a referral match, as long as you meet IronClad
+              Standards. Growth and Business Pro add marketing and business-growth support on top —
+              they don&apos;t buy priority access to referrals.
             </p>
           </Reveal>
 
           <div className="grid gap-6 lg:grid-cols-3">
-            {FOUNDER_TIERS.map((tier, i) => (
+            {MEMBERSHIP_TIERS.map((tier, i) => (
               <Reveal key={tier.name} delay={i * 70} pulse={tier.highlighted}>
                 <div
                   className={`lw-hover-lift-dark relative flex h-full flex-col rounded-2xl border bg-mailer-card p-7 ${
@@ -346,22 +318,13 @@ export default function ContractorsPage() {
                   </h3>
                   <div className="mt-4 text-5xl font-bold text-white">
                     {tier.price}
-                    <span className="text-xl font-normal text-white/40">/mo</span>
+                    {tier.price !== '$0' && <span className="text-xl font-normal text-white/40">/mo</span>}
                   </div>
-                  <p className="mt-1 text-sm text-white/45">Your locked rate — vs {tier.standard}</p>
-                  <p className="mt-1 text-sm font-semibold text-lw-rust">{tier.save}</p>
-
-                  <ul className="mt-5 space-y-2 border-t border-mailer-border pt-5">
-                    {FOUNDER_PERKS.map((perk) => (
-                      <li key={perk} className="flex items-start gap-2.5 text-sm text-white/85">
-                        <Star className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-                        <span>{perk}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="mt-1 text-sm text-white/45">{tier.priceNote}</p>
+                  <p className="mt-3 text-sm text-white/70">{tier.blurb}</p>
 
                   <p className="mt-6 text-xs font-bold uppercase tracking-widest text-white/40">
-                    Everything you get
+                    What&apos;s included
                   </p>
                   <ul className="mt-3 flex-1 space-y-2.5 text-sm text-white/70">
                     {tier.features.map((f) => (
@@ -376,9 +339,15 @@ export default function ContractorsPage() {
                         <span>{tier.academy}</span>
                       </li>
                     )}
+                    {tier.comingSoon?.map((f) => (
+                      <li key={f} className="flex items-start gap-2.5 text-white/45">
+                        <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+                        <span>{f} — coming soon</span>
+                      </li>
+                    ))}
                   </ul>
 
-                  <Link href="/founding-partner" className="mt-6 block">
+                  <Link href="/apply" className="mt-6 block">
                     <Button
                       className={
                         tier.highlighted
@@ -400,15 +369,15 @@ export default function ContractorsPage() {
           </Reveal>
 
           <Reveal className="mt-8 flex flex-col gap-2 text-sm text-white/55 md:flex-row md:items-center md:gap-6">
-            <span>Billing starts immediately at your locked rate — no trial, no games.</span>
+            <span>No trial period, no hidden fees — the price shown is what you pay.</span>
             <span className="text-white/40">
-              Every Founding Partner profile carries the IronClad Founding Partner badge, permanently.
+              Items marked &quot;coming soon&quot; are in development and not yet part of any tier.
             </span>
           </Reveal>
         </div>
       </section>
 
-      {/* ================= WHY FOUNDING (photo left · points right) ================= */}
+      {/* ================= WHY LISTWORX (photo left · points right) ================= */}
       <section className="overflow-hidden bg-mailer-ink py-16 md:py-24">
         <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <Reveal className="min-w-0">
@@ -423,34 +392,21 @@ export default function ContractorsPage() {
               bri={0.77}
               sat={0.51}
               objectPositionMobile="center 50%"
-            >
-              <div className="absolute left-4 top-4 z-[3] md:left-5 md:top-5">
-                <RevealBadge className="w-24 md:w-28">
-                  <Image
-                    src="/optimized/ironclad_founder_shield_logo.webp"
-                    alt="IronClad Founding Partner"
-                    width={140}
-                    height={140}
-                    className="h-auto w-24 drop-shadow-lg md:w-28"
-                  />
-                </RevealBadge>
-              </div>
-            </PhotoDark>
+            />
           </Reveal>
 
           <div className="min-w-0">
             <Reveal>
               <Badge className="mb-4 border-amber-400/30 bg-amber-400/15 text-amber-300">
-                <Crown className="mr-1 h-3 w-3" />
-                National ground floor — limited spots by trade &amp; county
+                <TrendingUp className="mr-1 h-3 w-3" />
+                Building the national network
               </Badge>
               <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
-                Founding Partner Program
+                A partner in your growth, not just a referral source
               </h2>
               <p className="mt-4 max-w-xl text-lg text-white/65">
-                The people who join now are the people who own their position in the network —
-                permanently. As ListWorx expands nationally, Founding Partners are already there.
-                That&apos;s not available later.
+                ListWorx is subscription-based, not pay-per-lead — and every paid tier adds real
+                marketing and business-growth support, not just a louder badge.
               </p>
             </Reveal>
 
@@ -458,23 +414,23 @@ export default function ContractorsPage() {
               {[
                 {
                   icon: Star,
-                  title: 'Permanent Badge. Permanent Status.',
-                  desc: 'Your Founding Partner badge stays on your profile for the life of your membership — visible to every realtor and homeowner who finds you. It cannot be bought later.',
+                  title: 'Reviewed Against IronClad Standards',
+                  desc: 'Every member is reviewed for licensing, insurance, and business practices before taking a referral — the same bar for every tier.',
                 },
                 {
                   icon: TrendingUp,
-                  title: 'First Position in Your Trade & County',
-                  desc: 'Founding Partners hold first position in referral matching for their trade and county. As the network expands, that position is already yours.',
+                  title: 'Equal Consideration, Every Tier',
+                  desc: 'Referral matching doesn’t favor a higher-priced tier. What you pay for is growth support, not priority placement.',
                 },
                 {
                   icon: Shield,
-                  title: 'Rate Locked From Day One',
-                  desc: 'The rate you lock in today is the rate you pay — forever. Standard pricing goes up when the founding window closes. Yours doesn’t.',
+                  title: 'Flat, Predictable Pricing',
+                  desc: 'No per-referral fees, no bidding, no surprise charges. Network is free; Growth and Business Pro are flat monthly rates.',
                 },
                 {
-                  icon: Lock,
-                  title: 'Closes When It Fills — No Exceptions',
-                  desc: 'Founding Partner spots are limited by trade and county. When yours fills, the program closes in your market. No waitlist, no reopening.',
+                  icon: Briefcase,
+                  title: 'Built to Grow With You',
+                  desc: 'Marketing and business-growth support scale with your tier — badge kits, content support, and more as the network grows.',
                 },
               ].map((item, i) => (
                 <Reveal key={item.title} delay={i * 70}>
@@ -490,15 +446,15 @@ export default function ContractorsPage() {
             </div>
 
             <Reveal delay={120} className="mt-8">
-              <Link href="/contractor-portal?intent=apply" className="block sm:inline-block">
+              <Link href="/apply" className="block sm:inline-block">
                 <Button size="lg" className="w-full whitespace-normal rounded-lg bg-amber-500 px-6 py-6 text-base text-white shadow-lg hover:bg-amber-600 sm:w-auto sm:px-8 sm:text-lg">
                   <Award className="mr-2 h-5 w-5 shrink-0" />
-                  Apply for Founding Partner Status
+                  Join Free
                   <ArrowRight className="ml-2 h-5 w-5 shrink-0" />
                 </Button>
               </Link>
               <p className="mt-3 text-sm text-white/50">
-                Available to qualified contractors during the network launch period only.
+                Free to apply. Approved in as little as 72 hours.
               </p>
             </Reveal>
           </div>
@@ -715,7 +671,7 @@ export default function ContractorsPage() {
                       'IronClad Standards required for all network members',
                       'Predictable monthly cost you can budget around',
                       'Relationship-driven referrals from trusted realtors',
-                      'IronClad-certified members only — your competition is qualified',
+                      'IronClad Standards required of everyone — your competition is qualified',
                     ].map((line) => (
                       <li key={line} className="flex items-start">
                         <span className="mr-3 font-bold">✓</span>
@@ -819,10 +775,9 @@ export default function ContractorsPage() {
             </h2>
             <p className="mt-4 max-w-xl text-white/65">
               Great work goes unseen when the marketing doesn&apos;t keep up. ListWorx connects
-              Partners with vetted content and media help — jobsite photography, short-form video,
+              members with vetted content and media help — jobsite photography, short-form video,
               and social posts built around your actual projects — so realtors and homeowners find a
-              polished, active business when they look you up. Higher tiers include this built in;
-              every Partner can add it.
+              polished, active business when they look you up. Business Pro includes this built in.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               {['Jobsite photography', 'Short-form video', 'Monthly social posts'].map((chip) => (
@@ -909,71 +864,8 @@ export default function ContractorsPage() {
 
       <JoinCta
         variant="inline"
-        headline="Sound like a fit? Founding spots are limited by trade and county."
+        headline="Sound like a fit? It's free to apply, and takes just a few minutes."
       />
-
-      {/* ================= REGULAR PRICING (stripped — details are up top) ================= */}
-      <section className="bg-mailer-black py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-            <Reveal className="mb-10 max-w-3xl">
-              <span className="mb-4 inline-block rounded-full border border-mailer-border bg-mailer-card px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-white/70">
-                Regular pricing — after founding spots close
-              </span>
-              <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
-                The same three tiers — at the standard rate.
-              </h2>
-              <p className="mt-4 text-lg text-white/65">
-                Same features as the Founding tiers above. What you give up by waiting: the locked
-                rate, the permanent founding badge, and first position in your market.
-              </p>
-            </Reveal>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              {REGULAR_TIERS.map((tier, i) => (
-                <Reveal key={tier.name} delay={i * 70}>
-                  <div
-                    className={`lw-hover-lift-dark relative flex h-full flex-col rounded-2xl border bg-mailer-card p-7 text-center ${
-                      tier.highlighted ? 'border-lw-rust' : 'border-mailer-border'
-                    }`}
-                  >
-                    {tier.highlighted && (
-                      <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-lw-rust px-4 py-1 text-xs font-bold text-white">
-                        Most Popular
-                      </span>
-                    )}
-                    <div className="text-4xl font-bold text-lw-rust">{tier.price}</div>
-                    <div className="mt-1 text-sm text-white/45">per month</div>
-                    <h3 className="mt-4 text-lg font-semibold text-white">{tier.name}</h3>
-                    <p className="mt-2 flex-1 text-sm text-white/60">{tier.blurb}</p>
-                    <Link href="/contractor-portal?intent=apply" className="mt-6 block">
-                      <Button
-                        className={
-                          tier.highlighted
-                            ? 'w-full bg-lw-rust text-white hover:bg-lw-rust-hover'
-                            : 'w-full border-2 border-lw-rust bg-transparent text-white hover:bg-lw-rust/10'
-                        }
-                      >
-                        Apply Now
-                      </Button>
-                    </Link>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-
-            <Reveal className="mx-auto mt-6 flex max-w-3xl items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/[0.07] p-5 text-left">
-              <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
-              <p className="text-sm leading-relaxed text-white/85">{TIER_GROWTH_NOTE}</p>
-            </Reveal>
-
-            <Reveal className="mt-8 text-center text-sm text-white/50">
-              All plans include credential tracking, compliance monitoring, and referral management
-              tools. All Partners must maintain active IronClad Standards compliance.
-            </Reveal>
-          </div>
-        </div>
-      </section>
 
       {/* ================= FAQ ================= */}
       <FaqSection
@@ -995,14 +887,14 @@ export default function ContractorsPage() {
               Join the national network.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-white/70">
-              Stop chasing bad leads. Lock your rate, hold your territory, and build a referral
-              pipeline inside the largest vetted contractor network in America. Applications reviewed
-              within 48 hours.
+              Stop chasing bad leads. Build a referral pipeline inside the largest vetted contractor
+              network in America — free to join, with Growth and Business Pro available when you're
+              ready for more. Applications reviewed within 72 hours.
             </p>
-            <Link href="/contractor-portal?intent=apply" className="mt-8 inline-block">
+            <Link href="/apply" className="mt-8 inline-block">
               <Button size="lg" className="rounded-lg bg-lw-rust px-8 py-6 text-lg text-white shadow-lg hover:bg-lw-rust-hover hover:shadow-xl md:px-10">
                 <Award className="mr-2 h-5 w-5" />
-                Submit Your Application
+                Join Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>

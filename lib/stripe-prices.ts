@@ -13,6 +13,21 @@ export const STRIPE_PRICES = {
       monthly: process.env.STRIPE_PRICE_ELITE_MONTHLY!,
       annual:  process.env.STRIPE_PRICE_ELITE_ANNUAL!,
     },
+    // New membership structure (ListWorx 2.0 Release 2). Network itself has
+    // no Stripe price at all -- see app/api/activate-free-membership --
+    // these two are Growth ($199/mo) and Business Pro ($299/mo). Env vars
+    // are intentionally unset until the matching live Stripe prices are
+    // created and approved; getTierPriceId() then returns undefined and the
+    // checkout route's existing `if (!resolvedPriceId) throw` already fails
+    // the request cleanly rather than silently.
+    growth: {
+      monthly: process.env.STRIPE_PRICE_GROWTH_MONTHLY!,
+      annual:  process.env.STRIPE_PRICE_GROWTH_ANNUAL!,
+    },
+    business_pro: {
+      monthly: process.env.STRIPE_PRICE_BUSINESS_PRO_MONTHLY!,
+      annual:  process.env.STRIPE_PRICE_BUSINESS_PRO_ANNUAL!,
+    },
   },
 
   founder: {
@@ -105,7 +120,9 @@ export const STRIPE_PRICES = {
   },
 }
 
-export type TierId = 'basic' | 'preferred' | 'elite'
+export type TierId = 'basic' | 'preferred' | 'elite' | 'growth' | 'business_pro'
+/** The three legacy founding-era tiers -- the only ones with a founder renewal price. */
+export type FounderTierId = 'basic' | 'preferred' | 'elite'
 export type BillingPeriod = 'monthly' | 'annual'
 
 export function getTierPriceId(
@@ -120,7 +137,7 @@ export function getFounderActivationPriceId(): string {
 }
 
 export function getFounderRenewalPriceId(
-  tierId: TierId,
+  tierId: FounderTierId,
   billingPeriod: BillingPeriod = 'monthly'
 ): string {
   return STRIPE_PRICES.founder.renewal[tierId][billingPeriod]
@@ -178,7 +195,7 @@ export function getAddonMode(addonId: string): 'payment' | 'subscription' {
   return subscriptionAddons.includes(addonId) ? 'subscription' : 'payment'
 }
 
-export function normalizeFounderTier(tier: string): TierId {
+export function normalizeFounderTier(tier: string): FounderTierId {
   const normalized = tier.trim().toLowerCase()
   if (normalized.includes('elite')) return 'elite'
   if (normalized.includes('preferred')) return 'preferred'

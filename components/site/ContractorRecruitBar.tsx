@@ -71,7 +71,7 @@ export default async function ContractorRecruitBar() {
           </span>
           <p className="text-sm leading-snug text-white md:text-base">
             <span className="font-bold">Contractors in Nashville and every Tennessee county within 100 miles:</span>{' '}
-            <span className="text-white/75">founding spots are open in your trade.</span>
+            <span className="text-white/75">join free in your trade.</span>
           </p>
         </div>
         <Link

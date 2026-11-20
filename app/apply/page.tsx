@@ -235,24 +235,24 @@ export default function ApplyPage() {
       <section className="bg-mkt-navy py-16 md:py-24 text-center">
         <div className="container mx-auto px-4 max-w-2xl">
           <Reveal immediate delay={0}>
-            <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-4">Founding Contractor Applications</p>
+            <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-4">Contractor Applications</p>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">
-              Founding Contractor Spots Are Open
+              Join the ListWorx Network — Free
             </h1>
           </Reveal>
           <Reveal immediate delay={100}>
             <ul className="mx-auto mb-10 max-w-lg space-y-3 text-left">
               <li className="flex items-start gap-3 text-white/85">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
-                A predictable monthly subscription — not a per-lead fee, not a bidding war.
+                Network membership is free — no per-lead fees, no bidding war, ever.
               </li>
               <li className="flex items-start gap-3 text-white/85">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
-                Every profile is IronClad Verified — business entity, license, and insurance confirmed.
+                Every profile is reviewed against IronClad Standards — business entity, license, and insurance confirmed.
               </li>
               <li className="flex items-start gap-3 text-white/85">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
-                Founding rates lock in permanently — you&apos;ll never pay the post-launch price.
+                Upgrade to Growth or Business Pro anytime for added marketing and business-growth support.
               </li>
             </ul>
           </Reveal>
@@ -274,14 +274,14 @@ export default function ApplyPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="grid gap-6 sm:grid-cols-3 mb-10">
             {[
-              { name: 'Network Member', price: '$100/mo' },
-              { name: 'Network Partner', price: '$175/mo' },
-              { name: 'Network Elite', price: '$300/mo' },
+              { name: 'Network', price: 'Free', note: 'No per-lead fees, ever' },
+              { name: 'Growth', price: '$199/mo', note: 'Adds marketing and growth support' },
+              { name: 'Business Pro', price: '$299/mo', note: 'Adds content and growth support' },
             ].map((tier) => (
               <div key={tier.name} className="lw-card-light p-5 text-center">
                 <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-1">{tier.name}</p>
                 <p className="text-2xl font-bold text-mkt-ink">{tier.price}</p>
-                <p className="text-xs text-mkt-ink/60 mt-1">Locked in permanently for founding members</p>
+                <p className="text-xs text-mkt-ink/60 mt-1">{tier.note}</p>
               </div>
             ))}
           </div>
@@ -305,7 +305,7 @@ export default function ApplyPage() {
           </div>
 
           <p className="mt-8 text-center text-sm font-semibold text-mkt-ink/70">
-            Spots are limited in your market. Founding pricing closes when the launch cohort is full.
+            Applications are reviewed within 72 hours.
           </p>
         </div>
       </section>
@@ -343,7 +343,7 @@ export default function ApplyPage() {
                 <Reveal className="mb-6 rounded-xl border border-lw-rust/40 bg-lw-rust/5 px-5 py-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold text-lw-rust">Founding Partner Selection</p>
+                      <p className="text-sm font-bold text-lw-rust">Your Membership Selection</p>
                       <p className="text-sm text-lw-text mt-0.5">
                         <span className="font-semibold">{founderSelection.tierName}</span>
                         {founderSelection.addons.length > 0 && (
@@ -357,7 +357,7 @@ export default function ApplyPage() {
                       </p>
                     </div>
                     <a
-                      href="/founding-partner"
+                      href="/apply"
                       className="text-xs text-lw-rust underline underline-offset-2 whitespace-nowrap self-start sm:self-center"
                     >
                       Change selections

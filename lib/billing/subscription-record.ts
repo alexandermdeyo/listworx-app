@@ -47,6 +47,23 @@ export function activationAfterPayment(currentPartnerStatus: string | null | und
   return { activate: false, notifyAdmin: true };
 }
 
+/**
+ * Same business rule as activationAfterPayment() above, reused verbatim for
+ * Free Network activation (no Stripe involved): only an approved applicant
+ * may activate, activation never bypasses admin approval, and a contractor
+ * an admin paused/suspended/removed is never silently reactivated by this
+ * path either. Returns a third outcome -- 'already_active' -- so the caller
+ * can treat a repeat click as a harmless no-op rather than an error.
+ */
+export function canActivateFree(currentPartnerStatus: string | null | undefined): {
+  outcome: 'activate' | 'already_active' | 'blocked';
+} {
+  const status = (currentPartnerStatus || '').toLowerCase();
+  if (status === 'active') return { outcome: 'already_active' };
+  const { activate } = activationAfterPayment(currentPartnerStatus);
+  return { outcome: activate ? 'activate' : 'blocked' };
+}
+
 /** The subscriptions row for one contractor (upserted on contractor_id). */
 export function buildSubscriptionRow(input: {
   contractorId: string;

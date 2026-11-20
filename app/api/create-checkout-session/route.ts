@@ -7,6 +7,7 @@ import {
   getAddonPriceId,
   getAddonMode,
   type TierId,
+  type FounderTierId,
   type BillingPeriod,
 } from '@/lib/stripe-prices';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
@@ -72,7 +73,10 @@ export async function POST(request: NextRequest) {
       // founder rate — Stripe creates the recurring subscription directly as
       // part of this session (see stripe-webhook's handleFounderActivationCheckout,
       // which reads session.subscription rather than creating a second one).
-      const normalizedFounderTierId = (tierId || '').trim().toLowerCase() as TierId;
+      // Founder activation is only ever for the three legacy founding tiers
+      // -- growth/business_pro are new, non-founding tiers and never reach
+      // this branch.
+      const normalizedFounderTierId = (tierId || '').trim().toLowerCase() as FounderTierId;
       const normalizedFounderBilling: BillingPeriod =
         (billingPeriod || '').trim().toLowerCase() === 'annual' ? 'annual' : 'monthly';
       resolvedPriceId = getFounderRenewalPriceId(normalizedFounderTierId, normalizedFounderBilling);

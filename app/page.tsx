@@ -317,10 +317,9 @@ export default function LandingPage() {
                 See this badge? The contractor&apos;s been vetted.
               </h2>
               <p className="mt-4 text-lg text-mkt-ink/75">
-                Every pro on ListWorx carries the IronClad Standards badge. It&apos;s your signal that
-                the business is verified, the work is rated by real homeowners, and the contractor is
-                held to a standard they can be removed for breaking — it&apos;s a badge we can pull, not
-                one we hand out.
+                The IronClad Standards badge is your signal that a business is verified, the work is
+                rated by real homeowners, and the contractor is held to a standard they can be removed
+                for breaking — it&apos;s a badge we can pull, not one we hand out.
               </p>
               <ul className="mt-6 space-y-4">
                 {[
@@ -537,8 +536,8 @@ export default function LandingPage() {
               <p className="mt-4 max-w-xl text-white/75 md:text-lg">
                 ListWorx is subscription-based — you pay to be in the network, not
                 per lead — and get marketing and business-growth support to help
-                you win more work. Founding spots in Middle Tennessee are limited,
-                and every partner carries the IronClad Certified mark.
+                you win more work. Join free, or go further with Growth or Business
+                Pro, and every member is reviewed against IronClad Standards.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="/apply">

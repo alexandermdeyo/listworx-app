@@ -36,55 +36,40 @@ interface Tier {
   description: string;
 }
 
+// ListWorx 2.0 Release 2 membership structure. Network (free) is its own
+// card above this grid, activated via /api/activate-free-membership — no
+// Stripe involved. These two are the paid tiers; their checkout still goes
+// through the existing create-checkout-session -> Stripe webhook path
+// unchanged. No annual discount has been approved yet, so annualPrice is
+// simply 12x monthly (shows no "Save $X" rather than inventing one).
 const TIERS: Tier[] = [
   {
-    id: 'basic',
-    name: 'Network Member',
-    monthlyPrice: 125,
-    annualPrice: 1250,
-    icon: Shield,
-    description: 'Essential membership features to get started',
-    features: [
-      'IronClad Verified status',
-      'Profile on the ListWorx platform',
-      'Listed in referral rotation — standard priority',
-      'Contractor dashboard access',
-      'Verified reviews system',
-      'Availability and service-area controls',
-    ],
-  },
-  {
-    id: 'preferred',
-    name: 'Network Partner',
-    monthlyPrice: 215,
-    annualPrice: 2150,
+    id: 'growth',
+    name: 'Growth',
+    monthlyPrice: 199,
+    annualPrice: 199 * 12,
     icon: Zap,
-    description: 'Enhanced visibility and priority placement',
+    highlight: true,
+    description: 'Marketing and business-growth support on top of Network',
     features: [
-      'Everything in Network Member',
-      'Priority placement — above all Network Members',
-      'Enhanced profile with additional photos and expanded bio',
-      'IronClad Digital Badge Kit included',
-      'AI Marketing Toolkit — social posts, follow-up emails, job templates',
+      'Everything in Network',
+      'IronClad badge kit for your truck, social, and print',
+      'Ready-made posts and follow-up emails',
+      'Text alert the moment you are matched',
       'Monthly performance report',
-      'Quarterly profile boost',
     ],
   },
   {
-    id: 'elite',
-    name: 'Network Elite',
-    monthlyPrice: 365,
-    annualPrice: 3650,
+    id: 'business_pro',
+    name: 'Business Pro',
+    monthlyPrice: 299,
+    annualPrice: 299 * 12,
     icon: Crown,
-    highlight: true,
-    description: 'Maximum exposure and premium benefits',
+    description: 'Everything in Growth, plus hands-on content support',
     features: [
-      'Everything in Network Partner',
-      'Top of rotation — always above Partner and Member',
-      'Territory lock — maximum 2 Elite per trade per county',
-      'Monthly profile boost',
-      '2 social media posts per month featuring your work',
-      'Annual featured contractor spotlight',
+      'Everything in Growth',
+      'Jobsite photography and short-form video support',
+      'Monthly social content for your business',
     ],
   },
 ];
@@ -145,6 +130,8 @@ export default function BillingPage() {
   const [isAnnualSubscription, setIsAnnualSubscription] = useState(false);
   const [contractorProfileId, setContractorProfileId] = useState<string | null>(null);
   const [autoRefreshCount, setAutoRefreshCount] = useState(0);
+  const [activatingFree, setActivatingFree] = useState(false);
+  const [freeActivationError, setFreeActivationError] = useState<string | null>(null);
 
   useEffect(() => {
     router.refresh();
@@ -380,6 +367,27 @@ export default function BillingPage() {
     } catch (error) {
       console.error('Error creating checkout session:', error);
       alert('An error occurred. Please try again.');
+    }
+  };
+
+  const handleActivateFree = async () => {
+    setFreeActivationError(null);
+    setActivatingFree(true);
+    try {
+      const response = await fetch('/api/activate-free-membership', { method: 'POST' });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setFreeActivationError(data.error || 'Could not activate your free membership. Please try again.');
+        return;
+      }
+
+      router.push('/contractor-dashboard');
+    } catch (error) {
+      console.error('Error activating free membership:', error);
+      setFreeActivationError('An error occurred. Please try again.');
+    } finally {
+      setActivatingFree(false);
     }
   };
 
@@ -632,9 +640,9 @@ export default function BillingPage() {
                   Annual
                 </Label>
 
-                {isAnnual && (
+                {isAnnual && calculateSavings(TIERS[TIERS.length - 1]) > 0 && (
                   <Badge className="bg-primary text-white">
-                    Save up to ${calculateSavings(TIERS[2])}
+                    Save up to ${calculateSavings(TIERS[TIERS.length - 1])}
                   </Badge>
                 )}
               </div>
@@ -644,7 +652,56 @@ export default function BillingPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-20">
+            <div className="max-w-3xl mx-auto mb-12">
+              <Card className={`p-8 border-2 ${currentTier === 'Network' ? 'ring-2 ring-primary border-primary/40' : 'border-border'}`}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Shield className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-2xl font-bold text-foreground">Network</h3>
+                        {currentTier === 'Network' && (
+                          <Badge className="bg-green-600 text-white">Current Plan</Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Get verified, get listed, and get matched — no cost, no card required.
+                      </p>
+                      <p className="text-3xl font-bold text-foreground">
+                        $0<span className="text-base font-normal text-muted-foreground">/month</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="shrink-0 sm:text-right">
+                    <Button
+                      size="lg"
+                      className="w-full sm:w-auto"
+                      disabled={!!currentTier || activatingFree}
+                      onClick={handleActivateFree}
+                    >
+                      {currentTier === 'Network'
+                        ? 'Current Plan'
+                        : currentTier
+                        ? 'Already a Member'
+                        : activatingFree
+                        ? 'Activating…'
+                        : 'Join Free'}
+                    </Button>
+                    {freeActivationError && (
+                      <p className="mt-2 text-sm text-red-600 max-w-xs">{freeActivationError}</p>
+                    )}
+                  </div>
+                </div>
+              </Card>
+              <p className="mt-4 text-center text-sm text-muted-foreground">
+                Every tier below gets equal consideration in referral matching — Growth and Business
+                Pro add marketing and business-growth support on top, not priority access.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-20 max-w-3xl mx-auto">
               {TIERS.map((tier) => {
                 const Icon = tier.icon;
                 const price = isAnnual ? tier.annualPrice : tier.monthlyPrice;
@@ -696,9 +753,11 @@ export default function BillingPage() {
                           <p className="text-sm text-muted-foreground">
                             ${price}/year (billed annually)
                           </p>
-                          <p className="text-sm text-primary font-semibold">
-                            Save ${savings}/year
-                          </p>
+                          {savings > 0 && (
+                            <p className="text-sm text-primary font-semibold">
+                              Save ${savings}/year
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>

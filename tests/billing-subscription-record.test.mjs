@@ -1,7 +1,7 @@
 // Launch blocker: Stripe payments are recorded correctly and never bypass admin approval. Run: npm test
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mapStripeStatus, normalizeBillingPeriod, activationAfterPayment, buildSubscriptionRow } from '../lib/billing/subscription-record.ts';
+import { mapStripeStatus, normalizeBillingPeriod, activationAfterPayment, buildSubscriptionRow, canActivateFree } from '../lib/billing/subscription-record.ts';
 
 const ALLOWED = ['active', 'past_due', 'cancelled', 'incomplete', 'trialing']; // DB check constraint
 
@@ -43,6 +43,37 @@ test('subscription row has only real columns and valid values', () => {
   assert.equal(row.billing_period, 'annual');
   assert.equal(row.cancel_at_period_end, false);
   assert.equal(row.current_period_start, '2026-11-12T18:00:00.000Z');
+});
+
+// --- Free Network membership activation (no Stripe) ---------------------
+
+test('Free activation uses the exact same approval rule as payment -- only an approved contractor may activate', () => {
+  assert.deepEqual(canActivateFree('approved'), { outcome: 'activate' });
+  assert.deepEqual(canActivateFree('active'), { outcome: 'already_active' });
+  for (const s of ['applied', 'under_review', 'rejected', 'paused', 'suspended', 'cancelled', 'removed', null, '', undefined]) {
+    assert.deepEqual(canActivateFree(s), { outcome: 'blocked' }, `status ${s}`);
+  }
+});
+
+test('a free-tier subscription row has genuinely null Stripe fields, never a synthetic placeholder', () => {
+  const row = buildSubscriptionRow({
+    contractorId: 'c1', tierId: 'network-tier-id', stripeSubscriptionId: null, stripeCustomerId: null,
+    stripeStatus: 'active', billingPeriod: 'monthly', now: new Date('2026-11-18T00:00:00Z'),
+  });
+  assert.equal(row.stripe_subscription_id, null);
+  assert.equal(row.stripe_customer_id, null);
+  assert.equal(row.status, 'active');
+  assert.equal(row.tier_id, 'network-tier-id');
+});
+
+test('the free-activation route resolves the contractor from the signed-in session, never a client-supplied id', async () => {
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync('app/api/activate-free-membership/route.ts', 'utf8');
+  // Must look the profile up by the authenticated user's own id...
+  assert.ok(src.includes("eq('user_id', user.id)"), 'must resolve the contractor profile from the session user, not a request body id');
+  // ...and must never read a contractorId out of the request body at all.
+  assert.ok(!/request\.json\(\)|body\.contractorId/.test(src), 'must not accept a client-supplied contractorId');
+  assert.ok(src.includes('canActivateFree('), 'must use the shared approval-gate rule');
 });
 
 test('webhook source uses the shared rules (no direct approved/active shortcuts left)', async () => {

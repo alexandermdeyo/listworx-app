@@ -106,6 +106,8 @@ async function resolveTierId(tierSlugOrId: string): Promise<string | null> {
     basic: 'Basic Partner',
     preferred: 'Preferred Partner',
     elite: 'Elite Partner',
+    growth: 'Growth',
+    business_pro: 'Business Pro',
   };
 
   const tierName = slugToNameMap[normalizedSlug] || tierSlugOrId;
