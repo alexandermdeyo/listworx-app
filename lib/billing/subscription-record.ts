@@ -91,3 +91,69 @@ export function buildSubscriptionRow(input: {
     updated_at: now,
   };
 }
+
+/** Name of the free tiers row every downgraded or free member is attached to. */
+export const NETWORK_TIER_NAME = 'Network';
+
+/**
+ * What happens when a paid Growth/Business Pro subscription actually ends
+ * (Stripe customer.subscription.deleted, or an update reporting status
+ * "canceled"). A voluntary cancel keeps paid benefits until the paid-through
+ * date -- Stripe only sends this once that date has passed.
+ *
+ * - An active, non-archived contractor drops to free Network and stays active
+ *   (approval and referral eligibility unchanged).
+ * - Anyone else (paused/suspended, archived, rejected, not yet active) only has
+ *   the paid subscription recorded as cancelled. They are never reactivated
+ *   here, and their status is left exactly as an admin or billing set it.
+ */
+export function afterPaidSubscriptionEnds(input: {
+  partnerStatus: string | null | undefined;
+  archived: boolean | null | undefined;
+}): 'downgrade_to_network' | 'record_cancelled_only' {
+  const status = (input.partnerStatus || '').toLowerCase();
+  if (status === 'active' && input.archived !== true) return 'downgrade_to_network';
+  return 'record_cancelled_only';
+}
+
+/**
+ * Idempotency/ordering guard: a Stripe event may change the contractor's
+ * membership row only if that row is still attached to the same Stripe
+ * subscription. A repeat delivery after the downgrade (row now has no Stripe
+ * subscription), or a late event for an older subscription after the
+ * contractor re-subscribed, is ignored.
+ */
+export function eventMatchesCurrentSubscription(
+  rowStripeSubscriptionId: string | null | undefined,
+  eventSubscriptionId: string | null | undefined,
+): boolean {
+  return Boolean(rowStripeSubscriptionId) && rowStripeSubscriptionId === eventSubscriptionId;
+}
+
+/** Row update that moves a membership from a paid tier back to free Network. */
+export function buildNetworkDowngrade(input: { networkTierId: string; now?: Date }) {
+  const now = (input.now || new Date()).toISOString();
+  return {
+    tier_id: input.networkTierId,
+    status: 'active' as const,
+    stripe_subscription_id: null,
+    billing_period: 'monthly' as const,
+    current_period_start: now,
+    current_period_end: null,
+    cancel_at_period_end: false,
+    cancelled_at: now,
+    updated_at: now,
+  };
+}
+
+/**
+ * A new paid-membership checkout is refused while the contractor already has
+ * an active paid subscription, so nobody is billed for two plans at once.
+ * Free Network rows (no Stripe subscription) never block an upgrade.
+ */
+export function hasActivePaidSubscription(row: {
+  status?: string | null;
+  stripe_subscription_id?: string | null;
+} | null | undefined): boolean {
+  return Boolean(row && row.stripe_subscription_id && (row.status || '').toLowerCase() === 'active');
+}

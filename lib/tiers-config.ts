@@ -446,3 +446,25 @@ export function contractorHasAiToolkit(
   if (tier == null) return true;
   return AI_TOOLKIT_TIERS.includes(tier);
 }
+
+/**
+ * Add-ons whose purchase is temporarily switched off (owner decision
+ * 2026-11-19): the price shown in the dashboard doesn't match Stripe, or there
+ * is no working way to deliver what's sold. Prices and names are unchanged
+ * here on purpose -- this only blocks buying until the offer is corrected.
+ */
+export const ADDON_PURCHASE_DISABLED: Record<string, string> = {
+  ironclad_badge_kit: 'Dashboard shows $599; Stripe price is $29 (digital kit only)',
+  featured_spotlight: 'Dashboard shows $299/mo or $2,990/yr; Stripe price is $249/mo (no annual price)',
+  social_content_pack: 'Shows $149/mo ($119 Elite); Stripe prices are $299/mo and $179/mo',
+  profile_boost: 'No Stripe product and no delivery process',
+  performance_report: 'No Stripe product and no report generation',
+  reputation_management: 'No Stripe product and no delivery process',
+  ai_marketing_toolkit: 'No Stripe product; purchase does not unlock the AI Toolkit page',
+  flyer_builder: 'A purchase never unlocks the Flyer Builder page (no purchase record is created)',
+  territory_lock: 'No live Stripe price and no automated territory locking',
+};
+
+export function isAddonPurchaseDisabled(addonId: string | null | undefined): boolean {
+  return Boolean(addonId && Object.prototype.hasOwnProperty.call(ADDON_PURCHASE_DISABLED, addonId));
+}

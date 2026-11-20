@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile, error: profileError } = await admin
       .from('contractor_profiles')
-      .select('id, partner_status')
+      .select('id, partner_status, archived')
       .eq('user_id', user.id)
       .maybeSingle();
 
@@ -46,6 +46,13 @@ export async function POST(request: NextRequest) {
 
     if (!profile) {
       return NextResponse.json({ error: 'No contractor profile found for your account.' }, { status: 404 });
+    }
+
+    if (profile.archived === true) {
+      return NextResponse.json(
+        { error: 'Your profile is inactive. Contact adeyo@listworx.co to reactivate it.' },
+        { status: 403 }
+      );
     }
 
     const { outcome } = canActivateFree(profile.partner_status);

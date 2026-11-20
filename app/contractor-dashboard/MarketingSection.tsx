@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { PARTNER_STATUS } from '@/lib/partner-status';
-import { ADDON_LIST } from '@/lib/tiers-config';
+import { ADDON_LIST, isAddonPurchaseDisabled } from '@/lib/tiers-config';
 import { ContractorProfile } from './types';
 import {
   Sparkles,
@@ -159,9 +159,17 @@ export default function MarketingSection({
       };
     });
 
-  const visibleOpportunities = [...opportunities, ...additionalAddons].filter(
-    (opportunity) => opportunity.eligible || opportunity.previewOnly
-  );
+  // Add-ons whose purchase is switched off (price mismatch or no working
+  // delivery) stay visible but can't be requested until the offer is fixed.
+  const addonIdOf = (o: MarketingOpportunity) =>
+    o.addOnId || (o.id.startsWith('addon-') ? o.id.slice('addon-'.length) : o.id === 'territory-lock' ? 'territory_lock' : '');
+  const visibleOpportunities = [...opportunities, ...additionalAddons]
+    .map((o) =>
+      isAddonPurchaseDisabled(addonIdOf(o)) && o.actionType !== 'upgrade'
+        ? { ...o, eligible: false, previewOnly: true, actionLabel: 'Temporarily unavailable' }
+        : o
+    )
+    .filter((opportunity) => opportunity.eligible || opportunity.previewOnly);
 
   function handleOpportunityClick(opportunity: MarketingOpportunity) {
     if (opportunity.actionType === 'upgrade' && opportunity.tierId) {

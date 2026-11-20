@@ -11,7 +11,8 @@ import {
   type BillingPeriod,
 } from '@/lib/stripe-prices';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
-import { getAddonById } from '@/lib/tiers-config';
+import { getAddonById, isAddonPurchaseDisabled } from '@/lib/tiers-config';
+import { hasActivePaidSubscription } from '@/lib/billing/subscription-record';
 
 /** The only memberships a new checkout may start (ListWorx 2.0). */
 const NEW_MEMBERSHIP_TIER_IDS = ['growth', 'business_pro'];
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     // anyone from skipping review by opening checkout directly.
     const { data: statusRow } = await createSupabaseAdminClient()
       .from('contractor_profiles')
-      .select('partner_status')
+      .select('partner_status, archived')
       .eq('id', contractorId)
       .maybeSingle();
     const status = String(statusRow?.partner_status || '');
@@ -49,6 +50,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: status ? 'Your application must be approved before checkout.' : 'Contractor profile not found.' },
         { status: status ? 403 : 404 }
+      );
+    }
+
+    // Archived profiles are inactive; they can't buy their way back in.
+    if (statusRow?.archived === true) {
+      return NextResponse.json(
+        { error: 'Your profile is inactive. Contact adeyo@listworx.co to reactivate it.' },
+        { status: 403 }
       );
     }
 
@@ -86,6 +95,24 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
+      // One paid plan at a time: a second checkout would bill both plans.
+      const { data: currentMembership } = await createSupabaseAdminClient()
+        .from('subscriptions')
+        .select('status, stripe_subscription_id')
+        .eq('contractor_id', contractorId)
+        .maybeSingle();
+      if (hasActivePaidSubscription(currentMembership)) {
+        return NextResponse.json(
+          { error: 'You already have an active paid membership. Use Manage Billing to change or cancel it.' },
+          { status: 409 }
+        );
+      }
+    }
+    if (isAddOn && isAddonPurchaseDisabled(String(addOnId || ''))) {
+      return NextResponse.json(
+        { error: 'This add-on is temporarily unavailable.' },
+        { status: 400 }
+      );
     }
 
     const baseUrl =

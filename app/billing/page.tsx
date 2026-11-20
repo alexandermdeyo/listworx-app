@@ -24,6 +24,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import BillingPortal from './BillingPortal';
+import { isAddonPurchaseDisabled } from '@/lib/tiers-config';
 
 interface Tier {
   id: string;
@@ -248,7 +249,7 @@ export default function BillingPage() {
 
       const { data: contractorProfile } = await supabase
         .from('contractor_profiles')
-        .select('id, partner_status, user_id, company_name, owner_name')
+        .select('id, partner_status, archived, user_id, company_name, owner_name')
         .eq('user_id', userRecord.id)
         .maybeSingle();
 
@@ -261,6 +262,13 @@ export default function BillingPage() {
 
       setPartnerStatus(contractorProfile.partner_status);
       setContractorProfileId(contractorProfile.id);
+
+      // Archived profiles are inactive; their dashboard explains why.
+      if ((contractorProfile as any).archived === true) {
+        setRedirecting(true);
+        window.location.href = '/contractor-dashboard';
+        return;
+      }
 
       if (
         contractorProfile.partner_status !== 'approved' &&
@@ -437,7 +445,11 @@ export default function BillingPage() {
     }
   };
 
+  // Already on Growth or Business Pro: a second checkout would bill both plans.
+  const onPaidPlan = currentTier === 'Growth' || currentTier === 'Business Pro';
+
   const canAccessAddOn = (addOn: AddOn): boolean => {
+    if (isAddonPurchaseDisabled(addOn.id)) return false;
     if (addOn.monthsRequired && subscriptionStartDate) {
       const monthsActive = Math.floor(
         (Date.now() - subscriptionStartDate.getTime()) / (30 * 24 * 60 * 60 * 1000)
@@ -769,10 +781,14 @@ export default function BillingPage() {
                           ? 'bg-primary hover:bg-primary/90'
                           : 'bg-primary/10 text-primary hover:bg-primary/20'
                       }`}
-                      disabled={isCurrentTier}
+                      disabled={isCurrentTier || onPaidPlan}
                       onClick={() => handleSelectTier(tier)}
                     >
-                      {isCurrentTier ? 'Current Plan' : `Select ${tier.name}`}
+                      {isCurrentTier
+                        ? 'Current Plan'
+                        : onPaidPlan
+                        ? 'Change via Manage Billing'
+                        : `Select ${tier.name}`}
                     </Button>
 
                     <div className="space-y-3">
@@ -881,6 +897,8 @@ export default function BillingPage() {
                           ? addOn.hasSubscription
                             ? `Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`
                             : 'Purchase Now'
+                          : isAddonPurchaseDisabled(addOn.id)
+                          ? 'Temporarily Unavailable'
                           : 'Not Available'}
                       </Button>
                     </Card>

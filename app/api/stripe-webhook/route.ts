@@ -6,7 +6,15 @@ import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { normalizeFounderTier } from '@/lib/stripe-prices';
 import { sendEmail } from '@/lib/send-email';
 import { notifyAdmin, brandedEmail, detailRows, BASE_URL as SITE_BASE } from '@/lib/server/notify';
-import { activationAfterPayment, buildSubscriptionRow, mapStripeStatus } from '@/lib/billing/subscription-record';
+import {
+  activationAfterPayment,
+  afterPaidSubscriptionEnds,
+  buildNetworkDowngrade,
+  buildSubscriptionRow,
+  eventMatchesCurrentSubscription,
+  mapStripeStatus,
+  NETWORK_TIER_NAME,
+} from '@/lib/billing/subscription-record';
 
 function getStripe() {
   return createStripeServerClient();
@@ -627,6 +635,13 @@ async function handleSubscriptionUpdated(subscription: any) {
     return;
   }
 
+  // A subscription that has actually ended is handled in one place, whichever
+  // event reports it first (updated with status "canceled", or deleted).
+  if (subscription.status === 'canceled') {
+    await handleSubscriptionDeleted(subscription);
+    return;
+  }
+
   const subscriptionStatus = mapStripeStatus(subscription.status);
 
   const periodStart = subscription.current_period_start
@@ -659,6 +674,25 @@ async function handleSubscriptionUpdated(subscription: any) {
 
     console.log(`[stripe-webhook] Subscription row updated for stripe_subscription_id=${subscription.id} → status=${subscriptionStatus}`);
   } else {
+    // Don't let a late event for an older subscription overwrite a different
+    // subscription the contractor is currently paying for.
+    const { data: currentRow } = await getSupabase().from('subscriptions')
+      .select('stripe_subscription_id, status')
+      .eq('contractor_id', contractorId)
+      .maybeSingle();
+    if (
+      currentRow?.stripe_subscription_id &&
+      currentRow.stripe_subscription_id !== subscription.id &&
+      currentRow.status === 'active'
+    ) {
+      console.log('[stripe-webhook] Ignoring update for an older subscription', {
+        contractorId,
+        eventSubscriptionId: subscription.id,
+        currentSubscriptionId: currentRow.stripe_subscription_id,
+      });
+      return;
+    }
+
     const tierSlug = subscription.metadata?.tierId;
     const resolvedTierId = tierSlug ? await resolveTierId(tierSlug) : null;
 
@@ -722,7 +756,7 @@ async function handleSubscriptionUpdated(subscription: any) {
       // Founder checkouts already notified the admin from checkout.session.completed.
       await notifyAdminOfUnapprovedPayment(contractorId, profileData?.partner_status, 'subscription active');
     }
-  } else if (subscription.status === 'past_due' || subscription.status === 'canceled') {
+  } else if (subscription.status === 'past_due') {
     const { data: profileData } = await getSupabase().from('contractor_profiles')
       .select('partner_status')
       .eq('id', contractorId)
@@ -741,9 +775,10 @@ async function handleSubscriptionUpdated(subscription: any) {
 async function handleSubscriptionDeleted(subscription: any) {
   const contractorId = subscription.metadata?.contractorId;
 
-  console.log('[stripe-webhook] customer.subscription.deleted', {
+  console.log('[stripe-webhook] paid subscription ended', {
     stripeSubscriptionId: subscription.id,
     contractorId,
+    reason: subscription.cancellation_details?.reason || null,
   });
 
   if (!contractorId) {
@@ -751,34 +786,68 @@ async function handleSubscriptionDeleted(subscription: any) {
     return;
   }
 
-  const { error: subscriptionError } = await getSupabase().from('subscriptions')
-    .update({
-      status: 'cancelled',
-      cancelled_at: new Date().toISOString(),
-      cancel_at_period_end: false,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('stripe_subscription_id', subscription.id);
+  const supabase = getSupabase();
 
-  if (subscriptionError) {
-    console.error('[stripe-webhook] Error updating subscription to cancelled:', subscriptionError);
+  const { data: row } = await supabase.from('subscriptions')
+    .select('id, stripe_subscription_id')
+    .eq('contractor_id', contractorId)
+    .maybeSingle();
+
+  // Idempotent: a repeat delivery (row already downgraded) or an event for a
+  // subscription the contractor has since replaced changes nothing.
+  if (!row || !eventMatchesCurrentSubscription(row.stripe_subscription_id, subscription.id)) {
+    console.log('[stripe-webhook] subscription end already handled or superseded — no change', {
+      contractorId,
+      eventSubscriptionId: subscription.id,
+      currentSubscriptionId: row?.stripe_subscription_id ?? null,
+    });
     return;
   }
 
-  console.log(`[stripe-webhook] Subscription cancelled for stripe_subscription_id=${subscription.id}`);
-
-  const { data: profileData } = await getSupabase().from('contractor_profiles')
-    .select('partner_status')
+  const { data: profile } = await supabase.from('contractor_profiles')
+    .select('partner_status, archived')
     .eq('id', contractorId)
     .maybeSingle();
 
-  if (profileData && profileData.partner_status === PARTNER_STATUS.ACTIVE) {
-    await getSupabase().from('contractor_profiles')
-      .update({ partner_status: PARTNER_STATUS.PAUSED })
-      .eq('id', contractorId);
+  const decision = afterPaidSubscriptionEnds({
+    partnerStatus: profile?.partner_status,
+    archived: profile?.archived,
+  });
 
-    console.log(`[stripe-webhook] contractor ${contractorId} partner_status → paused (subscription deleted)`);
+  if (decision === 'downgrade_to_network') {
+    const networkTierId = await resolveTierId(NETWORK_TIER_NAME);
+    if (!networkTierId) {
+      console.error('[stripe-webhook] Network tier row missing — cannot downgrade', { contractorId });
+      return;
+    }
+    const { error } = await supabase.from('subscriptions')
+      .update(buildNetworkDowngrade({ networkTierId }))
+      .eq('id', row.id)
+      .eq('stripe_subscription_id', subscription.id);
+    if (error) {
+      console.error('[stripe-webhook] Error downgrading to Network:', error);
+      return;
+    }
+    await supabase.from('contractor_profiles')
+      .update({ subscription_status: 'cancelled' })
+      .eq('id', contractorId);
+    // partner_status stays 'active': approval and referral eligibility are unchanged.
+    console.log(`[stripe-webhook] contractor ${contractorId} paid plan ended → Network (free), still active`);
+    return;
   }
+
+  const now = new Date().toISOString();
+  const { error } = await supabase.from('subscriptions')
+    .update({ status: 'cancelled', cancelled_at: now, cancel_at_period_end: false, updated_at: now })
+    .eq('id', row.id)
+    .eq('stripe_subscription_id', subscription.id);
+  if (error) {
+    console.error('[stripe-webhook] Error recording cancelled subscription:', error);
+    return;
+  }
+  // Paused/suspended, archived, rejected or not-yet-active contractors are
+  // never reactivated here; their partner_status is left untouched.
+  console.log(`[stripe-webhook] contractor ${contractorId} paid plan ended → recorded only (status ${profile?.partner_status}, archived ${profile?.archived === true})`);
 }
 
 async function handlePaymentSucceeded(invoice: any) {

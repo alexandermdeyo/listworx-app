@@ -196,22 +196,17 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/', req.url));
     }
 
-    if (contractorStatus === 'active') {
-      console.log('[middleware] contractor redirect', {
-        path,
-        reason: 'active contractor should use dashboard',
-        destination: '/contractor-dashboard',
-      });
-      return NextResponse.redirect(new URL('/contractor-dashboard', req.url));
-    }
-
-    if (contractorStatus !== 'approved') {
+    // Active members may open /billing to upgrade (e.g. Network -> Growth).
+    if (contractorStatus !== 'approved' && contractorStatus !== 'active') {
       console.log('[middleware] contractor redirect', {
         path,
         reason: 'contractor must have approved status for billing',
-        destination: '/apply',
+        destination: contractorStatus === 'paused' ? '/contractor-dashboard' : '/apply',
       });
-      return NextResponse.redirect(new URL('/apply', req.url));
+      // A paused member already applied; their dashboard explains what to do.
+      return NextResponse.redirect(
+        new URL(contractorStatus === 'paused' ? '/contractor-dashboard' : '/apply', req.url)
+      );
     }
   }
 

@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { CircleCheck as CheckCircle, Circle as CircleIcon, Shield, Zap, Crown, Truck, Star, CircleAlert as AlertCircle, Loader as Loader2, Lock, CreditCard, CircleArrowUp as ArrowUpCircle } from 'lucide-react';
 import { PARTNER_STATUS } from '@/lib/partner-status';
-import { ADDON_LIST } from '@/lib/tiers-config';
+import { ADDON_LIST, isAddonPurchaseDisabled } from '@/lib/tiers-config';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
 
 interface Tier {
@@ -199,6 +199,9 @@ export default function SubscriptionSection({
   const [subscriptionStartDate, setSubscriptionStartDate] = useState<Date | null>(null);
   const [isAnnualSubscription, setIsAnnualSubscription] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<string | null>(null);
+  // Paid plan set to cancel: benefits continue until this date, then Network (free).
+  const [paidPlanEndsOn, setPaidPlanEndsOn] = useState<Date | null>(null);
+  const [hasStripeCustomer, setHasStripeCustomer] = useState(false);
 
   // Filter ADDON_LIST to one-time add-ons not already included in selected tier
   const bundleableAddons = ADDON_LIST.filter((addon) => {
@@ -283,6 +286,9 @@ export default function SubscriptionSection({
           `
           status,
           current_period_start,
+          current_period_end,
+          cancel_at_period_end,
+          stripe_customer_id,
           billing_period,
           tier_id,
           tiers (
@@ -316,7 +322,15 @@ export default function SubscriptionSection({
         const ann = activeSubscription.billing_period === 'annual';
         setIsAnnualSubscription(ann);
         setBillingPeriod(activeSubscription.billing_period);
+        setHasStripeCustomer(Boolean((activeSubscription as any).stripe_customer_id));
+        setPaidPlanEndsOn(
+          (activeSubscription as any).cancel_at_period_end && (activeSubscription as any).current_period_end
+            ? new Date((activeSubscription as any).current_period_end)
+            : null
+        );
       } else {
+        setPaidPlanEndsOn(null);
+        setHasStripeCustomer(false);
         setCurrentTier(null);
         setSubscriptionStartDate(null);
         setIsAnnualSubscription(false);
@@ -335,6 +349,7 @@ export default function SubscriptionSection({
   };
 
   const canAccessAddOn = (addOn: AddOn): boolean => {
+    if (isAddonPurchaseDisabled(addOn.id)) return false;
     if (!currentTier) return false;
 
     if (addOn.monthsRequired && subscriptionStartDate) {
@@ -628,10 +643,26 @@ export default function SubscriptionSection({
                     <> · Member since {subscriptionStartDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</>
                   )}
                 </p>
+                {paidPlanEndsOn && (
+                  <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                    Your {currentTier} plan is canceled and stays active until{' '}
+                    {paidPlanEndsOn.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
+                    After that you&apos;ll continue on Network (free) and can still receive referrals.
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
+              {currentTier === 'Network' && (
+                <Button asChild size="sm" className="bg-orange-600 text-white hover:bg-orange-700 gap-2">
+                  <a href="/billing">
+                    <ArrowUpCircle className="h-3.5 w-3.5" />
+                    Upgrade Membership
+                  </a>
+                </Button>
+              )}
+              {hasStripeCustomer && (
               <Button
                 onClick={handleManageBilling}
                 disabled={portalLoading}
@@ -646,6 +677,7 @@ export default function SubscriptionSection({
                 )}
                 Manage Billing
               </Button>
+              )}
               {isBasicOrPreferred && (
                 <Button
                   onClick={() => {
@@ -773,6 +805,8 @@ export default function SubscriptionSection({
                           ? 'Subscribe Annually'
                           : 'Subscribe Monthly'
                         : 'Purchase Now'
+                    ) : isAddonPurchaseDisabled(addOn.id) ? (
+                      'Temporarily Unavailable'
                     ) : (
                       'Not Available'
                     )}
