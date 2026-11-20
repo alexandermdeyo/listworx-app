@@ -173,7 +173,6 @@ export default function ContractorPortalPage() {
   const [message, setMessage] = useState('');
   const modeParam = searchParams.get('mode');
   const emailParam = searchParams.get('email');
-  const joiningNetwork = searchParams.get('intent') === 'apply';
   const redirectTarget = sanitizeRedirect(searchParams.get('redirect')); // kept for handoff/sanitization behavior
 
   const handleEmailChange = (nextEmail: string) => {
@@ -345,86 +344,112 @@ export default function ContractorPortalPage() {
     }
   };
 
+  const isSignUp = activeTab === 'signup';
+
+  // Explicit colors on purpose: the site's global theme sets light text, which
+  // made the labels, title, and selected tab invisible on this white card.
+  const labelClass = 'mb-1.5 flex items-center gap-2 text-sm font-semibold text-zinc-900';
+  const iconClass = 'h-4 w-4 text-zinc-500';
+  const eyeButtonClass =
+    'absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 transition-colors hover:text-zinc-900';
+  const tabTriggerClass =
+    'h-full rounded-md text-sm font-semibold text-zinc-700 transition-colors hover:text-zinc-900 ' +
+    'data-[state=active]:bg-lw-rust data-[state=active]:text-white data-[state=active]:shadow-sm';
+
   return (
-    <div className="min-h-screen bg-lw-surface flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-xl bg-lw-surface-card">
-        <CardHeader className="text-center pb-6">
-          <Link href="/">
+    <div className="min-h-screen bg-lw-surface flex items-start justify-center px-4 py-6 sm:items-center sm:py-10">
+      <Card className="w-full max-w-md shadow-xl bg-lw-surface-card text-zinc-900">
+        <CardHeader className="space-y-0 px-5 pb-4 pt-6 text-center sm:px-8">
+          <Link href="/" className="mx-auto mb-4 inline-block">
             <Image
               src="/brand/listworx-wordmark-light.png"
               alt="ListWorx"
               width={306}
               height={36}
-              className="h-9 w-auto mx-auto mb-6"
+              className="h-8 w-auto sm:h-9"
+              priority
             />
           </Link>
-          <CardTitle className="text-3xl font-bold">
-            {joiningNetwork ? 'Join the ListWorx Network' : 'Contractor Portal'}
+          <CardTitle className="text-2xl font-bold text-zinc-900 sm:text-3xl">
+            {isSignUp ? 'Create Your Contractor Account' : 'Sign In to Your Account'}
           </CardTitle>
-          <CardDescription className="text-base mt-2">
-            {joiningNetwork
-              ? 'Step 1: create your contractor account. Next you’ll complete your business application — license, insurance, and service area. No payment until you’re approved.'
-              : 'Sign in to your account or create a new one'}
-          </CardDescription>
+          {isSignUp ? (
+            <div className="mt-2 space-y-1.5">
+              <p className="text-base font-semibold text-lw-rust">
+                Free to apply. No credit card required.
+              </p>
+              <CardDescription className="text-sm leading-relaxed text-zinc-700">
+                Next step: complete your contractor application with your business details,
+                license, insurance, and service area.
+              </CardDescription>
+            </div>
+          ) : (
+            <CardDescription className="mt-2 text-sm leading-relaxed text-zinc-700">
+              Sign in to continue your application or open your contractor dashboard.
+            </CardDescription>
+          )}
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="px-5 pb-6 sm:px-8">
           {error && (
-            <Alert variant="destructive" className="mb-6">
+            <Alert variant="destructive" className="mb-5">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           {message && (
-            <Alert className="mb-6 border-green-500 bg-green-50 text-green-900">
+            <Alert className="mb-5 border-green-500 bg-green-50 text-green-900">
               <AlertDescription>{message}</AlertDescription>
             </Alert>
           )}
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Create Account</TabsTrigger>
+            <TabsList className="mb-5 grid h-11 w-full grid-cols-2 gap-1 rounded-lg border border-zinc-200 bg-zinc-100 p-1">
+              <TabsTrigger value="signin" className={tabTriggerClass}>Sign In</TabsTrigger>
+              <TabsTrigger value="signup" className={tabTriggerClass}>Create Account</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="signin">
+            <TabsContent value="signin" className="mt-0">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div>
-                  <Label htmlFor="signin-email" className="flex items-center gap-2 mb-2">
-                    <Mail className="h-4 w-4" />
+                  <Label htmlFor="signin-email" className={labelClass}>
+                    <Mail className={iconClass} aria-hidden="true" />
                     Email Address
                   </Label>
                   <Input
                     id="signin-email"
                     type="email"
+                    autoComplete="email"
                     value={signInEmail}
                     onChange={(e) => handleEmailChange(e.target.value)}
                     disabled={loading}
-                    placeholder="your-email@example.com"
+                    placeholder="name@yourcompany.com"
+                    className="h-11"
                     required
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="signin-password" className="flex items-center gap-2 mb-2">
-                    <Lock className="h-4 w-4" />
+                  <Label htmlFor="signin-password" className={labelClass}>
+                    <Lock className={iconClass} aria-hidden="true" />
                     Password
                   </Label>
                   <div className="relative">
                     <Input
                       id="signin-password"
                       type={showSignInPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
                       value={signInPassword}
                       onChange={(e) => setSignInPassword(e.target.value)}
                       disabled={loading}
-                      placeholder="Enter your password"
                       required
-                      className="pr-10"
+                      className="h-11 pr-10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowSignInPassword(!showSignInPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-lw-text/40 hover:text-lw-text transition-colors"
+                      className={eyeButtonClass}
+                      aria-label={showSignInPassword ? 'Hide password' : 'Show password'}
                       tabIndex={-1}
                     >
                       {showSignInPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -432,7 +457,11 @@ export default function ContractorPortalPage() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="h-11 w-full bg-lw-rust text-base font-semibold text-white hover:bg-lw-rust/90"
+                  disabled={loading}
+                >
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -445,79 +474,95 @@ export default function ContractorPortalPage() {
               </form>
             </TabsContent>
 
-            <TabsContent value="signup">
+            <TabsContent value="signup" className="mt-0">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div>
-                  <Label htmlFor="signup-email" className="flex items-center gap-2 mb-2">
-                    <Mail className="h-4 w-4" />
+                  <Label htmlFor="signup-email" className={labelClass}>
+                    <Mail className={iconClass} aria-hidden="true" />
                     Email Address
                   </Label>
                   <Input
                     id="signup-email"
                     type="email"
+                    autoComplete="email"
                     value={signUpEmail}
                     onChange={(e) => handleEmailChange(e.target.value)}
                     disabled={loading}
-                    placeholder="your-email@example.com"
+                    placeholder="name@yourcompany.com"
+                    className="h-11"
                     required
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="signup-password" className="flex items-center gap-2 mb-2">
-                    <Lock className="h-4 w-4" />
+                  <Label htmlFor="signup-password" className={labelClass}>
+                    <Lock className={iconClass} aria-hidden="true" />
                     Create Password
                   </Label>
                   <div className="relative">
                     <Input
                       id="signup-password"
                       type={showSignUpPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={signUpPassword}
                       onChange={(e) => setSignUpPassword(e.target.value)}
                       disabled={loading}
-                      placeholder="At least 8 characters"
                       required
-                      className="pr-10"
+                      aria-describedby="signup-password-help"
+                      className="h-11 pr-10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowSignUpPassword(!showSignUpPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-lw-text/40 hover:text-lw-text transition-colors"
+                      className={eyeButtonClass}
+                      aria-label={showSignUpPassword ? 'Hide password' : 'Show password'}
                       tabIndex={-1}
                     >
                       {showSignUpPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                  <p id="signup-password-help" className="mt-1.5 text-sm text-zinc-600">
+                    Must be at least 8 characters.
+                  </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="signup-confirm" className="flex items-center gap-2 mb-2">
-                    <Lock className="h-4 w-4" />
+                  <Label htmlFor="signup-confirm" className={labelClass}>
+                    <Lock className={iconClass} aria-hidden="true" />
                     Confirm Password
                   </Label>
                   <div className="relative">
                     <Input
                       id="signup-confirm"
                       type={showSignUpConfirm ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={signUpConfirm}
                       onChange={(e) => setSignUpConfirm(e.target.value)}
                       disabled={loading}
-                      placeholder="Type your password again"
                       required
-                      className="pr-10"
+                      aria-describedby="signup-confirm-help"
+                      className="h-11 pr-10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowSignUpConfirm(!showSignUpConfirm)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-lw-text/40 hover:text-lw-text transition-colors"
+                      className={eyeButtonClass}
+                      aria-label={showSignUpConfirm ? 'Hide password' : 'Show password'}
                       tabIndex={-1}
                     >
                       {showSignUpConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                  <p id="signup-confirm-help" className="mt-1.5 text-sm text-zinc-600">
+                    Type the same password again.
+                  </p>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="h-11 w-full bg-lw-rust text-base font-semibold text-white hover:bg-lw-rust/90"
+                  disabled={loading}
+                >
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -532,14 +577,14 @@ export default function ContractorPortalPage() {
           </Tabs>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-3 pt-6 border-t">
-          <p className="text-sm text-lw-text/60 text-center">
+        <CardFooter className="flex flex-col gap-2 border-t border-zinc-200 px-5 py-4 sm:px-8">
+          <p className="text-center text-sm text-zinc-700">
             Need help? Contact us at{' '}
-            <a href="mailto:adeyo@listworx.co" className="text-lw-rust hover:underline">
+            <a href="mailto:adeyo@listworx.co" className="font-medium text-lw-rust hover:underline">
               adeyo@listworx.co
             </a>
           </p>
-          <Link href="/" className="text-sm text-lw-text/60 hover:text-lw-rust transition-colors text-center">
+          <Link href="/" className="text-center text-sm text-zinc-700 transition-colors hover:text-lw-rust">
             Back to Home
           </Link>
         </CardFooter>
