@@ -42,6 +42,9 @@ interface Tier {
 // through the existing create-checkout-session -> Stripe webhook path
 // unchanged. No annual discount has been approved yet, so annualPrice is
 // simply 12x monthly (shows no "Save $X" rather than inventing one).
+// No annual Growth/Business Pro price exists in Stripe yet -- monthly only.
+const ANNUAL_BILLING_AVAILABLE = false;
+
 const TIERS: Tier[] = [
   {
     id: 'growth',
@@ -614,6 +617,11 @@ export default function BillingPage() {
                 Select the plan that best fits your business needs
               </p>
 
+              {/* Annual billing is hidden until annual Growth/Business Pro prices are
+                  approved and created in Stripe -- only the monthly prices exist, so an
+                  annual selection would fail at checkout. */}
+              {ANNUAL_BILLING_AVAILABLE && (
+              <>
               <div className="flex items-center justify-center gap-4 mb-4">
                 <Label
                   htmlFor="billing-toggle"
@@ -650,6 +658,8 @@ export default function BillingPage() {
               <p className="text-sm text-muted-foreground">
                 {isAnnual ? 'Save with annual billing' : 'Flexible monthly billing'}
               </p>
+              </>
+              )}
             </div>
 
             <div className="max-w-3xl mx-auto mb-12">

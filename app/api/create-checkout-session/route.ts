@@ -13,6 +13,9 @@ import {
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { getAddonById } from '@/lib/tiers-config';
 
+/** The only memberships a new checkout may start (ListWorx 2.0). */
+const NEW_MEMBERSHIP_TIER_IDS = ['growth', 'business_pro'];
+
 export async function POST(request: NextRequest) {
   const stripe = createStripeServerClient();
 
@@ -55,6 +58,34 @@ export async function POST(request: NextRequest) {
 
     if (isAddOn && !addOnId) {
       return NextResponse.json({ error: 'Missing addOnId' }, { status: 400 });
+    }
+
+    // ListWorx 2.0: founding-member enrollment is retired and the legacy
+    // Member/Partner/Elite ($125/$215/$365) tiers are no longer sold. New
+    // membership checkout is limited to Growth and Business Pro, monthly only
+    // (no annual price exists in Stripe yet). Network is free and never
+    // reaches Stripe -- see /api/activate-free-membership. Add-on checkout is
+    // unaffected.
+    if (isFounderActivation) {
+      return NextResponse.json(
+        { error: 'Founding Partner enrollment is closed. Choose Network, Growth, or Business Pro.' },
+        { status: 400 }
+      );
+    }
+    if (!isAddOn) {
+      const requestedTier = String(tierId || '').trim().toLowerCase();
+      if (!NEW_MEMBERSHIP_TIER_IDS.includes(requestedTier)) {
+        return NextResponse.json(
+          { error: 'That membership is no longer offered. Choose Network, Growth, or Business Pro.' },
+          { status: 400 }
+        );
+      }
+      if (String(billingPeriod || 'monthly').trim().toLowerCase() !== 'monthly') {
+        return NextResponse.json(
+          { error: 'Growth and Business Pro are billed monthly.' },
+          { status: 400 }
+        );
+      }
     }
 
     const baseUrl =

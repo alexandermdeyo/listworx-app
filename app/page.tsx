@@ -380,7 +380,7 @@ export default function LandingPage() {
                       href: '/contractors',
                       name: 'IronClad Certified Founding Partner',
                       blurb:
-                        'Our founding contractors — the ones who have been with us from the start. Founding Partners hold first position in their trade and county, a standing that is not for sale and is not offered twice.',
+                        'Recognition for the contractors who have been with us from the start. It does not change referral placement: Network, Growth, and Business Pro members all receive equal referral consideration.',
                     },
                   ] as const
                 ).map((b, i) => (

@@ -57,6 +57,14 @@ export async function POST(request: NextRequest) {
         STRIPE_PRICES.realtor.pro_agent.annual,
         STRIPE_PRICES.realtor.founding_agent.annual,
         STRIPE_PRICES.realtor.founding_pro_agent.annual,
+        // Current Listing Studio tiers -- these are the IDs /listing-studio
+        // actually sends. Without them every checkout failed "Invalid price ID".
+        STRIPE_PRICES.realtor_v2.starter_agent.monthly,
+        STRIPE_PRICES.realtor_v2.starter_agent.annual,
+        STRIPE_PRICES.realtor_v2.agent_pro.monthly,
+        STRIPE_PRICES.realtor_v2.agent_pro.annual,
+        STRIPE_PRICES.realtor_v2.elite.monthly,
+        STRIPE_PRICES.realtor_v2.elite.annual,
       ].filter(Boolean)
     );
 
@@ -66,6 +74,16 @@ export async function POST(request: NextRequest) {
 
     // ── Step 5: Get or create Stripe customer ─────────────────────────────────
     const stripe = createStripeServerClient();
+
+    // Never start a new subscription on a founding-rate or inactive price
+    // (e.g. an env var pointing at a retired founding price).
+    const requestedPrice = await stripe.prices.retrieve(priceId);
+    if (!requestedPrice.active || requestedPrice.metadata?.is_founder === 'true') {
+      return NextResponse.json(
+        { error: 'This plan is not currently available. Please choose another plan.' },
+        { status: 400 }
+      );
+    }
 
     const { data: realtorProfile } = await admin
       .from('realtor_profiles')

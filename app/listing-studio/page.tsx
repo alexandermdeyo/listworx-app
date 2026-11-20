@@ -19,7 +19,6 @@ import {
   Palette,
   Rocket,
   ArrowRight,
-  Crown,
   Loader2,
   BarChart3,
   Film,
@@ -812,49 +811,6 @@ export default function ListingStudioPage() {
               All plans include the referral matching service at no extra charge. That part is always free.
             </p>
 
-            {/* Founding Partner bar */}
-            <Reveal as="div" className="rounded-xl border border-amber-300 bg-gradient-to-r from-amber-50 via-white to-amber-50 p-6 md:p-8">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-                <div className="flex items-start gap-3">
-                  <Crown className="h-6 w-6 text-amber-600 shrink-0 mt-0.5" />
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <p className="font-bold text-mkt-ink text-lg">Founding Partner — Lock Your Rate Forever</p>
-                      <span className="rounded-full bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-0.5 text-xs font-semibold">
-                        Limited Spots
-                      </span>
-                    </div>
-                    <p className="text-sm text-mkt-ink/60 mt-1">
-                      Agent Pro at $199/mo or Elite at $399/mo — locked forever.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-                  <Button
-                    onClick={() => handleCheckout('founding_agent_pro', 'annual')}
-                    disabled={loadingTier === 'founding_agent_pro'}
-                    className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap"
-                  >
-                    {loadingTier === 'founding_agent_pro' ? (
-                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Loading...</>
-                    ) : (
-                      'Founding Agent Pro'
-                    )}
-                  </Button>
-                  <Button
-                    onClick={() => handleCheckout('founding_elite', 'annual')}
-                    disabled={loadingTier === 'founding_elite'}
-                    className="bg-amber-500 hover:bg-amber-400 text-black font-bold whitespace-nowrap"
-                  >
-                    {loadingTier === 'founding_elite' ? (
-                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Loading...</>
-                    ) : (
-                      'Founding Elite'
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </Reveal>
 
           </div>
         </div>

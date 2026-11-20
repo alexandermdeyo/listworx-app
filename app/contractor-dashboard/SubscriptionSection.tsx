@@ -786,6 +786,31 @@ export default function SubscriptionSection({
     );
   }
 
+  // ListWorx 2.0: approved contractors choose Network (free), Growth, or
+  // Business Pro on /billing. The founding-partner and legacy-tier picker
+  // below is retired for new signups and is no longer reachable.
+  if (partnerStatus === PARTNER_STATUS.APPROVED) {
+    return (
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
+        <div className="flex items-start gap-4">
+          <div className="p-2.5 rounded-xl bg-emerald-100 border border-emerald-200 flex-shrink-0">
+            <CheckCircle className="h-5 w-5 text-emerald-700" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-lw-text text-base mb-1">You're approved. Pick your membership.</h3>
+            <p className="text-lw-text/70 text-sm mb-4">
+              Join Network free with no credit card, or choose Growth ($199/mo) or Business Pro ($299/mo).
+              Every membership gets equal referral consideration.
+            </p>
+            <Button asChild className="bg-lw-rust text-white hover:bg-lw-rust/90">
+              <a href="/billing">Choose your membership</a>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (partnerStatus === PARTNER_STATUS.APPROVED) {
     return (
       <div className="space-y-10">
