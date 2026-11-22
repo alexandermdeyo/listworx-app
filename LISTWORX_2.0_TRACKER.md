@@ -15,6 +15,42 @@ Standing constraints for every release:
 
 ## Releases
 
+## ListWorx 2.0 production launch: LIVE (verified Nov 22 2026)
+
+Verified against production on Nov 22 2026, 4:00 PM Central, before this entry was written.
+
+| Check | Result |
+| --- | --- |
+| Live Netlify deploy | `6b036330209659fc76dc662b`, site `earnest-longma-512604` (https://listworx.co), context `production`, state `ready`, published 2026-11-22 21:49 UTC |
+| Deployed commit | [`9531b7c`](https://github.com/alexandermdeyo/listworx-app/commit/9531b7c065cd7c79e07034ad0c616d57b1abdf4a) on `main` |
+| Media migration | `media_services_and_social_posts` recorded in production `schema_migrations` (version `20261122204005`), applied after owner-verified backup of 2026-11-22 09:14 UTC |
+| Booking availability | 0 availability rules in production, so public booking shows no times until the owner enters hours (intended) |
+| Media orders in production | 0 (no live charges were made during testing; the sandbox order #1008 lives only on the test stack) |
+| Live page checks after publish | `/about` hero photo loads, purpose/mission/vision present; `/pricing` returns 200 as its own page (no redirect); `/faq` carries the "free to join" answer |
+
+**Shipped to production, in order:**
+
+| Date | Commit | What |
+| --- | --- | --- |
+| 2026-11-22 | `9531b7c` | About page refresh (owned hero photo, purpose/mission/vision cards, faith section, "What ListWorx offers today"); booking calendar white and centered |
+| 2026-11-22 | `e5fcc99` | "Joining the network is free" copy on FAQ, homepage, realtors, contractors |
+| 2026-11-22 | `bc45714` | Booking: month calendar with a time dropdown; no appointment starts before 3:30 PM Central (`EARLIEST_START`) |
+| 2026-11-22 | `bce29bc` | Booking form labels, gray example text, no sideways overflow on mobile |
+| 2026-11-22 | `30e6716` | Real `/pricing` page; founder badge and `/founding-partner` removed; dashes and AI-sounding phrases taken out of customer-facing copy |
+| 2026-11-22 | `3e168d8` | Consolidated ListWorx 2.0 launch (Release 7 below): memberships, Media Services booking and checkout, scheduling, admin orders, social posts, Faith and Purpose, Learning Center starter library |
+
+**Owner to-dos after launch:**
+- Enter real availability at `/admin/crm/media-schedule` (any hours before 3:30 PM still only offer 3:30 PM or later).
+- Mark `SUPABASE_SERVICE_ROLE_KEY` and `RESEND_API_KEY` as secret in Netlify.
+- Decide whether `/listing-studio/founding-partner` (realtor founding offer) comes down too.
+- Take down or unpublish the old Bolt site (`listworx-contractor-1d4f.bolt.host`); it still signs in against the live database.
+- Approve the five core values before they appear on the About page.
+
+**Still not built:** admin price/package editing (prices live in `lib/media/catalog.ts`).
+
+**Next project:** ListWorx Professional Contractor Manual Library, Phase 1 planning (no manuscript, no deploys until the plan is approved).
+
+
 ### Release 1 — Homepage messaging
 
 | Field | Value |
@@ -100,7 +136,7 @@ Price IDs added to local `.env.local` (gitignored, not committed) for `STRIPE_PR
 
 Code is fully wired for all three memberships: `lib/stripe-prices.ts` has `growth`/`business_pro` `TierId`s reading new (unset) env vars, `/billing` shows exactly Free/Growth/Business Pro (old $125/$215/$365 cards removed), the webhook's `resolveTierId()` resolves `growth`→"Growth" and `business_pro`→"Business Pro", and two new proposed (unapplied) migrations seed the three `tiers` rows. **Could not create the Growth/Business Pro Stripe prices this session, test or live** — the connected Stripe integration only has a live-mode account (`acct_1Syy3O7JcUvuHoDO`, livemode:true) with no test-mode counterpart, and the app's own `.env.local` only has a live secret key (`sk_live_...`) — no test-mode credentials exist anywhere in this session. See the full report for options.
 
-### Release 7: Consolidated launch (Nov 22 2026), branch `launch/media-services-membership`, NOT deployed
+### Release 7: Consolidated launch (Nov 22 2026), branch `launch/media-services-membership`, LIVE (commit `3e168d8`, later superseded by `9531b7c`)
 
 **Built (code complete, typecheck + build + 153 tests passing):**
 - Approved membership benefits in one source (`lib/membership/benefits.ts`): cards + mobile comparison table on `/contractors`, same benefits on `/billing`, dashboard plan card, and Marketing upgrade cards. Removed advertised-but-unbuilt items (text alerts, performance report, badge kit, "Full Academy").
@@ -115,9 +151,9 @@ Code is fully wired for all three memberships: `lib/stripe-prices.ts` has `growt
 
 **Pre-deploy fixes (Nov 22, second pass):** paid orders whose hold expired are re-reserved if still free, otherwise moved to `needs_scheduling` with payment kept and an admin alert (two-visit aware); retry-safe refunds (lock, Stripe reconciliation, idempotency key, notify after recording); admin proposals validated against published availability and conflicts; claim-then-send paid notifications that retry via Stripe on email failure; Stripe line items built by one shared function. Migration verified on the isolated test database (`cwggjrxzyfhdsnvcgkzc`): 12 SQL checks passed (overlap guard, paid idempotency, expired-hold race, two-visit partial loss, permissions, RLS). Removed the unneeded `btree_gist` extension.
 
-**Still not done:** full sandbox checkout (no Stripe sandbox or test-site credentials in this session); admin price/package editing (prices stay in `lib/media/catalog.ts`).
+**Sandbox checkout:** done on the test stack (order #1008 paid, pending confirmation, appointment requested). **Still not done:** admin price/package editing (prices stay in `lib/media/catalog.ts`).
 
-**Blocked:** applying migration `20261122200000_media_services_and_social_posts.sql` to production was refused by the session's safety check. Nothing was deployed. Deploy order: apply migration, then merge the branch to `main`.
+**Deployed:** migration applied to production with owner authorization (recorded as version `20261122204005`), then the branch was merged to `main` and published.
 
 **Deferred / manual:** add availability hours in `/admin/crm/media-schedule` before announcing booking (no hours = no bookable times). Optional: add `checkout.session.expired` to the live Stripe webhook (holds also expire automatically without it). End-to-end sandbox payment not run (no sandbox keys available to this session). Customers accept a proposed time by replying to the email; the admin then confirms.
 
