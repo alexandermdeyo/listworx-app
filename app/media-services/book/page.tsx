@@ -54,17 +54,18 @@ function VisitPicker({ service, addons, visit, value, onChange, after }: { servi
   const mi = months.indexOf(activeMonth);
 
   return (
-    <div className="max-w-md">
+    <div className="mx-auto w-full max-w-md">
+      <div className="rounded-xl bg-white p-4 text-zinc-900 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
-        <button type="button" aria-label="Previous month" disabled={mi <= 0} onClick={() => setMonth(months[mi - 1])} className="rounded-md p-2 text-white/80 hover:bg-white/10 disabled:opacity-30">
+        <button type="button" aria-label="Previous month" disabled={mi <= 0} onClick={() => setMonth(months[mi - 1])} className="rounded-md p-2 text-zinc-700 hover:bg-zinc-100 disabled:opacity-30">
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <p className="font-semibold">{monthLabel(activeMonth)}</p>
-        <button type="button" aria-label="Next month" disabled={mi >= months.length - 1} onClick={() => setMonth(months[mi + 1])} className="rounded-md p-2 text-white/80 hover:bg-white/10 disabled:opacity-30">
+        <p className="font-semibold text-zinc-900">{monthLabel(activeMonth)}</p>
+        <button type="button" aria-label="Next month" disabled={mi >= months.length - 1} onClick={() => setMonth(months[mi + 1])} className="rounded-md p-2 text-zinc-700 hover:bg-zinc-100 disabled:opacity-30">
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-white/45">
+      <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-zinc-500">
         {WEEKDAYS.map((w) => <div key={w} className="py-1">{w}</div>)}
       </div>
       <div className="grid grid-cols-7 gap-1">
@@ -81,7 +82,7 @@ function VisitPicker({ service, addons, visit, value, onChange, after }: { servi
               aria-pressed={selected}
               onClick={() => { setDay(d); onChange(''); }}
               className={`aspect-square rounded-md text-sm transition ${
-                selected ? 'bg-lw-rust font-bold text-white' : open ? 'border border-lw-rust/50 font-semibold text-white hover:bg-lw-rust/20' : 'cursor-not-allowed text-white/20'
+                selected ? 'bg-lw-rust font-bold text-white' : open ? 'border-2 border-lw-rust font-semibold text-zinc-900 hover:bg-lw-rust/10' : 'cursor-not-allowed text-zinc-400'
               }`}
             >
               {Number(d.slice(8))}
@@ -89,7 +90,8 @@ function VisitPicker({ service, addons, visit, value, onChange, after }: { servi
           );
         })}
       </div>
-      <p className="mt-2 text-xs text-white/45">Outlined days have open times.</p>
+      <p className="mt-3 text-center text-xs text-zinc-500">Outlined days have open times.</p>
+      </div>
       {current && (
         <div className="mt-4">
           <label htmlFor={`time-${visit}`} className={label}>Start time on {longDate(current.date)}</label>
