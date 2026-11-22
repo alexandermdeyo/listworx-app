@@ -6,7 +6,7 @@ import { CORNER_BRISTLES, UNDERLINE_BRISTLES, type Bristle } from './brushPaths'
  *
  * Use it intentionally, not on every card:
  *  - "corner": upper-left of a navy hero (the signature placement)
- *  - "sidebar": top and bottom of the navy dashboard sidebar
+ *  - "sidebar": top of the navy dashboard sidebar
  *  - "underline": a short swash under one key headline
  *
  * Pure SVG (no image request), decorative only.
@@ -63,9 +63,7 @@ export default function Brushstroke({ variant = 'corner', className = '' }: Brus
         <g transform="translate(-60 -40) scale(0.85)">
           <Strokes bristles={CORNER_BRISTLES} filterId={fid} />
         </g>
-        <g transform="translate(-40 430) scale(0.75)" opacity="0.9">
-          <Strokes bristles={CORNER_BRISTLES} filterId={fid} />
-        </g>
+
       </svg>
     );
   }

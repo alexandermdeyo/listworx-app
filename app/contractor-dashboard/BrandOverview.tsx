@@ -105,20 +105,20 @@ export function BrandKpiRow({ tier, licenseDaysUntil, insuranceDaysUntil, onOpen
         const Icon = c.icon;
         const inner = (
           <>
-            <Icon className="h-9 w-9 shrink-0 text-brand-orange" strokeWidth={1.6} />
+            <Icon className="h-8 w-8 shrink-0 text-brand-orange md:h-9 md:w-9" strokeWidth={1.6} />
             <div className="min-w-0">
               <p className="text-sm font-semibold text-brand-ink/80">{c.label}</p>
-              <p className={`br-display truncate text-2xl md:text-3xl ${c.warn ? 'text-red-700' : 'text-brand-ink'}`}>{c.value}</p>
+              <p className={`br-display text-xl leading-tight md:text-2xl ${c.warn ? 'text-red-700' : 'text-brand-ink'}`}>{c.value}</p>
               <p className="text-xs text-brand-ink/60 md:text-sm">{c.sub}</p>
             </div>
           </>
         );
         return 'onClick' in c && c.onClick ? (
-          <button key={c.label} type="button" onClick={c.onClick} className="br-card flex items-center gap-4 p-4 text-left transition-shadow hover:shadow-lg md:p-5">
+          <button key={c.label} type="button" onClick={c.onClick} className="br-card flex flex-col items-start gap-3 p-4 text-left transition-shadow hover:shadow-lg sm:flex-row sm:items-center sm:gap-4 md:p-5">
             {inner}
           </button>
         ) : (
-          <div key={c.label} className="br-card flex items-center gap-4 p-4 md:p-5">
+          <div key={c.label} className="br-card flex flex-col items-start gap-3 p-4 sm:flex-row sm:items-center sm:gap-4 md:p-5">
             {inner}
           </div>
         );
