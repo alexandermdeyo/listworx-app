@@ -2,7 +2,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { buildMediaQuote, MediaQuoteError, mediaDiscountPercent, canTransition, visitMinutes } from '../lib/media/catalog.ts';
+import { buildMediaQuote, MediaQuoteError, mediaDiscountPercent, canTransition, visitMinutes, stripeLineItems, MEDIA_PACKAGES, MEDIA_SERVICES, MEDIA_ADDONS } from '../lib/media/catalog.ts';
+import { reconcileRefunds, liveVisitCount } from '../lib/media/refunds.ts';
 import { availableSlots, isPublishedSlot, slotFor, slotsOverlap, zonedToUtc, openWindows } from '../lib/media/schedule.ts';
 import { currentMembership, hasFlyerBuilder, hasPaidResources, socialPostAllowance, COMPARISON_ROWS, periodMonth } from '../lib/membership/benefits.ts';
 
@@ -123,17 +124,70 @@ test('unpaid orders cannot be confirmed; terminal states stay terminal', () => {
 });
 
 // ── Webhook and database guards ─────────────────────────────────────────────
-test('media webhook is verified, paid-only, and idempotent', () => {
+test('media webhook is verified, paid-only, idempotent, and retries failed notices', () => {
   const hook = readFileSync('app/api/stripe-webhook/route.ts', 'utf8');
   assert.ok(hook.indexOf('constructEvent(body, signature, webhookSecret)') < hook.indexOf('isMediaSession(event.data.object)'));
+  assert.ok(/catch \(error: any\) \{[\s\S]*status: 500/.test(hook), 'handler errors return 500 so Stripe retries');
   const media = readFileSync('lib/server/media-webhook.ts', 'utf8');
   assert.ok(media.includes("session.payment_status !== 'paid'"));
   assert.ok(media.indexOf("rpc('mark_media_order_paid'") < media.indexOf('sendAdminPaidOrderEmail('));
-  assert.ok(media.includes('if (!firstTime) return;'));
+  // Claim-then-send: claimed only when still null, released on failure, then throw.
+  assert.ok(media.includes(".is(column, null)"));
+  assert.ok(media.includes("if (!ok) await db.from('media_orders').update({ [column]: null })"));
+  assert.ok(media.includes('throw new MediaNotificationError'));
+  assert.ok(media.includes("needsScheduling ? 'paid_unscheduled' : 'paid'"));
   const sql = readFileSync('supabase/migrations/20261122200000_media_services_and_social_posts.sql', 'utf8');
-  assert.ok(sql.includes("where stripe_checkout_session_id = p_session_id and payment_status = 'pending'"));
+  assert.ok(sql.includes("where stripe_checkout_session_id = p_session_id and payment_status in ('pending', 'expired')"));
+  assert.ok(sql.includes("exception when exclusion_violation then"));
+  assert.ok(sql.includes("'needs_scheduling'"));
   assert.ok(sql.includes('exclude using gist'));
+  assert.ok(!sql.includes('btree_gist') || !/create extension/.test(sql), 'no extension needed');
   assert.ok(sql.includes('unique (contractor_id, period_month, slot_number)'));
+});
+
+test('Stripe checkout total equals the displayed total; browser cannot change it', () => {
+  for (const tier of [null, 'network', 'growth', 'business_pro']) {
+    for (const svc of [...MEDIA_PACKAGES, ...MEDIA_SERVICES]) {
+      const q = buildMediaQuote(svc.code, MEDIA_ADDONS.map((a) => a.code), tier);
+      const stripeTotal = stripeLineItems(q).reduce((s, li) => s + li.price_data.unit_amount * li.quantity, 0);
+      assert.equal(stripeTotal, q.totalCents, `${svc.code} ${tier}`);
+    }
+  }
+  const src = readFileSync('app/api/media/checkout/route.ts', 'utf8');
+  assert.ok(src.includes('line_items: stripeLineItems(quote)'));
+});
+
+test('refund reconciliation counts only real refunds and never exceeds the total', () => {
+  assert.deepEqual(reconcileRefunds(10000, []), { refundedCents: 0, refundIds: [], paymentStatus: 'paid' });
+  const r = reconcileRefunds(10000, [{ id: 're_1', amount: 4000, status: 'succeeded' }, { id: 're_2', amount: 9999, status: 'failed' }, { id: 're_3', amount: 1000, status: 'pending' }]);
+  assert.deepEqual(r, { refundedCents: 5000, refundIds: ['re_1', 're_3'], paymentStatus: 'partially_refunded' });
+  assert.equal(reconcileRefunds(10000, [{ id: 'a', amount: 10000, status: 'succeeded' }]).paymentStatus, 'refunded');
+  assert.equal(liveVisitCount([{ visit_number: 1 }, { visit_number: 1 }]), 1);
+});
+
+test('refunds are locked, reconciled against Stripe before issuing, and notified only after recording', () => {
+  const src = readFileSync('app/api/admin/media/orders/[id]/route.ts', 'utf8');
+  const lock = src.indexOf('refund_lock_at: now()');
+  const listBefore = src.indexOf('const before = await record()');
+  const create = src.indexOf('stripe.refunds.create(');
+  const recordAfter = src.indexOf('const after = issued ? await record() : before');
+  const email = src.indexOf("sendCustomerMediaEmail('refunded'");
+  assert.ok(lock > 0 && lock < listBefore && listBefore < create && create < recordAfter && recordAfter < email);
+  assert.ok(src.includes('if (before.refundedCents === Number(order.refunded_cents || 0))'), 'no new refund when Stripe already has an unrecorded one');
+  assert.ok(src.includes('idempotencyKey: `media-refund-${order.id}-after-${before.refundedCents}-${amount}`'));
+  assert.ok(src.includes("refund_lock_at.is.null,refund_lock_at.lt."));
+  assert.ok(src.includes('refund_notified_cents: after.refundedCents'));
+});
+
+test('admin proposals obey published availability and both-visit rules', () => {
+  const src = readFileSync('app/api/admin/media/orders/[id]/route.ts', 'utf8');
+  assert.ok(src.includes('loadScheduleContext(order.id)'));
+  assert.ok(src.includes('if (!isPublishedSlot(startIso, open))'));
+  assert.ok(src.includes('That time overlaps the other visit on this order.'));
+  assert.ok(src.includes('liveVisitCount(liveAppts(order)) < (order.visits_required || 1)'));
+  assert.equal(canTransition('needs_scheduling', 'confirmed', 'paid'), false);
+  assert.equal(canTransition('needs_scheduling', 'reschedule_proposed', 'paid'), true);
+  assert.equal(canTransition('needs_scheduling', 'canceled', 'paid'), true);
 });
 
 test('admin media routes require an ADMIN', () => {

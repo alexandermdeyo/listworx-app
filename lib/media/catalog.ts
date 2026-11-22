@@ -142,6 +142,24 @@ export function buildMediaQuote(serviceCode: string, addonCodes: string[] | unde
   return { service, addons, lines, retailCents, discountPercent, discountCents, totalCents: retailCents - discountCents, visits: service.visits };
 }
 
+/**
+ * Stripe Checkout line items for a quote. Checkout uses exactly these, so the
+ * Stripe total always equals the total shown before checkout.
+ */
+export function stripeLineItems(quote: Pick<Quote, 'lines' | 'discountPercent'>) {
+  return quote.lines.map((l) => ({
+    quantity: 1,
+    price_data: {
+      currency: 'usd' as const,
+      unit_amount: l.finalCents,
+      product_data: {
+        name: `ListWorx Media: ${l.name}`,
+        ...(quote.discountPercent ? { description: `Retail ${(l.retailCents / 100).toFixed(2)} less ${quote.discountPercent}% membership discount` } : {}),
+      },
+    },
+  }));
+}
+
 /** On-site minutes for one visit. Duration overrides come from admin schedule settings. */
 export function visitMinutes(quote: Pick<Quote, 'service' | 'addons'>, overrides: Record<string, number> = {}, visit = 1): number {
   const base = Number(overrides[quote.service.code]) > 0 ? Number(overrides[quote.service.code]) : quote.service.minutes;
@@ -157,6 +175,7 @@ export const formatUsd = (cents: number) =>
 export type FulfillmentStatus =
   | 'awaiting_payment'
   | 'pending_confirmation'
+  | 'needs_scheduling'
   | 'reschedule_proposed'
   | 'confirmed'
   | 'in_progress'
@@ -168,6 +187,8 @@ export type FulfillmentStatus =
 export const FULFILLMENT_TRANSITIONS: Record<FulfillmentStatus, FulfillmentStatus[]> = {
   awaiting_payment: ['canceled'],
   pending_confirmation: ['confirmed', 'reschedule_proposed', 'canceled'],
+  // Paid, but a requested time was lost (hold expired and was taken). Admin must propose.
+  needs_scheduling: ['reschedule_proposed', 'canceled'],
   reschedule_proposed: ['confirmed', 'reschedule_proposed', 'canceled'],
   confirmed: ['in_progress', 'reschedule_proposed', 'delivered', 'completed', 'canceled'],
   in_progress: ['delivered', 'completed', 'canceled'],
@@ -185,6 +206,7 @@ export function canTransition(from: string, to: string, paymentStatus: string): 
 export const FULFILLMENT_LABELS: Record<FulfillmentStatus, string> = {
   awaiting_payment: 'Awaiting payment',
   pending_confirmation: 'Appointment requested, pending confirmation',
+  needs_scheduling: 'Paid, needs scheduling',
   reschedule_proposed: 'New time proposed',
   confirmed: 'Appointment confirmed',
   in_progress: 'In progress',

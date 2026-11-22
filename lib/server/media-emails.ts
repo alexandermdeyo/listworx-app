@@ -37,12 +37,18 @@ const apptText = (appts: AppointmentForEmail[]) =>
 const serviceText = (o: MediaOrderForEmail) => o.line_items.map((l) => l.name).join(', ');
 
 /** Admin alert for a new PAID order. Built separately so it can be tested. */
-export function buildAdminPaidOrderEmail(o: MediaOrderForEmail, appts: AppointmentForEmail[]) {
-  const subject = `📸 Paid media order #${o.order_number}: ${serviceText(o)} · ${formatUsd(o.total_cents)}`;
+export function buildAdminPaidOrderEmail(o: MediaOrderForEmail, appts: AppointmentForEmail[], opts: { needsScheduling?: boolean } = {}) {
+  const subject = opts.needsScheduling
+    ? `⚠️ Paid media order #${o.order_number} NEEDS SCHEDULING: requested time was lost`
+    : `📸 Paid media order #${o.order_number}: ${serviceText(o)} · ${formatUsd(o.total_cents)}`;
+  const warning = opts.needsScheduling
+    ? '<p style="padding:12px;background:#fff4e5;border-radius:8px;color:#7a4b00"><strong>Action needed:</strong> payment succeeded, but at least one requested appointment was released before payment finished and that time is no longer free. Propose a new time to the customer, or cancel and refund.</p>'
+    : '';
   const html = brandedEmail({
     kicker: 'Admin alert',
-    title: `New paid media order #${o.order_number}`,
+    title: opts.needsScheduling ? `Paid media order #${o.order_number} needs scheduling` : `New paid media order #${o.order_number}`,
     body:
+      warning +
       detailRows([
         ['Customer', o.customer_name],
         ['Business', o.business_name],
@@ -52,7 +58,7 @@ export function buildAdminPaidOrderEmail(o: MediaOrderForEmail, appts: Appointme
         ['Amount paid', formatUsd(o.total_cents)],
         ['Membership discount', o.discount_cents ? `${o.discount_percent}% (${formatUsd(o.discount_cents)})` : 'None'],
         ['Project address', o.project_address],
-        ['Requested time', apptText(appts) || 'No time selected'],
+        ['Requested time', apptText(appts) || 'None held. Propose a time.'],
         ['Notes', o.project_notes],
       ]) + '<p style="margin-top:14px">Confirm the appointment or propose another time from the admin dashboard.</p>',
     ctaLabel: 'Open order',
@@ -63,7 +69,7 @@ export function buildAdminPaidOrderEmail(o: MediaOrderForEmail, appts: Appointme
 
 /** Customer email per event. Never includes admin-only notes or provider details. */
 export function buildCustomerMediaEmail(
-  kind: 'paid' | 'confirmed' | 'proposed' | 'canceled' | 'refunded',
+  kind: 'paid' | 'paid_unscheduled' | 'confirmed' | 'proposed' | 'canceled' | 'refunded',
   o: MediaOrderForEmail,
   appts: AppointmentForEmail[],
   extra?: { refundCents?: number },
@@ -76,6 +82,11 @@ export function buildCustomerMediaEmail(
       subject: `Payment received: ListWorx Media order #${o.order_number}`,
       title: 'Payment received. Your appointment is pending confirmation.',
       body: `<p>Hi ${first},</p><p>Thanks for booking ListWorx Media Services. We received your payment of <strong>${formatUsd(o.total_cents)}</strong> for ${esc(serviceText(o))}.</p><p><strong>Requested time:</strong><br>${when || 'Not selected'}</p><p>Your appointment is <strong>requested, not yet confirmed</strong>. We'll email you to confirm it or suggest another time. This email is your receipt; Stripe also sends a payment receipt.</p>`,
+    },
+    paid_unscheduled: {
+      subject: `Payment received: ListWorx Media order #${o.order_number}`,
+      title: 'Payment received. We need to schedule your appointment.',
+      body: `<p>Hi ${first},</p><p>Thanks for booking ListWorx Media Services. We received your payment of <strong>${formatUsd(o.total_cents)}</strong> for ${esc(serviceText(o))}.</p><p>The appointment time you picked was taken before checkout finished, so we'll contact you within one business day with another time. If none of our times work, we'll refund you in full. This email is your receipt; Stripe also sends a payment receipt.</p>`,
     },
     confirmed: {
       subject: `Confirmed: ListWorx Media appointment (order #${o.order_number})`,
@@ -120,7 +131,7 @@ export async function sendCustomerMediaEmail(
   }
 }
 
-export async function sendAdminPaidOrderEmail(o: MediaOrderForEmail, appts: AppointmentForEmail[]) {
-  const { subject, html } = buildAdminPaidOrderEmail(o, appts);
+export async function sendAdminPaidOrderEmail(o: MediaOrderForEmail, appts: AppointmentForEmail[], opts: { needsScheduling?: boolean } = {}) {
+  const { subject, html } = buildAdminPaidOrderEmail(o, appts, opts);
   return notifyAdmin(subject, html, o.email);
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createStripeServerClient } from '@/lib/stripe-server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
-import { buildMediaQuote, MediaQuoteError, visitMinutes } from '@/lib/media/catalog';
+import { buildMediaQuote, MediaQuoteError, stripeLineItems, visitMinutes } from '@/lib/media/catalog';
 import { availableSlots, isPublishedSlot, localDate, slotFor, slotsOverlap } from '@/lib/media/schedule';
 import { getRequestUser } from '@/lib/server/require-admin';
 import { getVerifiedMembership } from '@/lib/server/membership';
@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
         discount_cents: quote.discountCents,
         total_cents: quote.totalCents,
         membership_tier: membership?.tier || null,
+        visits_required: quote.visits,
         hold_expires_at: holdExpiresAt,
       })
       .select('id, order_number')
@@ -112,19 +113,7 @@ export async function POST(request: NextRequest) {
         customer_email: customer.email,
         client_reference_id: order.id,
         expires_at: sessionExpires,
-        line_items: quote.lines.map((l) => ({
-          quantity: 1,
-          price_data: {
-            currency: 'usd',
-            unit_amount: l.finalCents,
-            product_data: {
-              name: `ListWorx Media: ${l.name}`,
-              description: quote.discountPercent
-                ? `Retail ${(l.retailCents / 100).toFixed(2)} less ${quote.discountPercent}% membership discount`
-                : undefined,
-            },
-          },
-        })),
+        line_items: stripeLineItems(quote),
         metadata: { kind: 'media_order', media_order_id: order.id, order_number: String(order.order_number) },
         payment_intent_data: { metadata: { kind: 'media_order', media_order_id: order.id }, description: `ListWorx Media order #${order.order_number}` },
         success_url: `${baseUrl}/media-services/orders?paid=${order.id}`,

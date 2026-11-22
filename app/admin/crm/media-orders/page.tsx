@@ -24,16 +24,22 @@ function OrderCard({ order, onChange }: { order: any; onChange: (o: any) => void
     const j = await r.json();
     setBusy(false);
     if (!r.ok) return setMsg(j.error || 'Failed');
-    setMsg('Saved');
+    setMsg(j.message ? `Saved: ${j.message}` : 'Saved');
     onChange(j.order);
   }
 
   const next = FULFILLMENT_TRANSITIONS[order.fulfillment_status as FulfillmentStatus] || [];
   const appts = (order.media_appointments || []).filter((a: any) => !['expired', 'canceled'].includes(a.status)).sort((a: any, b: any) => a.visit_number - b.visit_number);
   const refundable = ['paid', 'partially_refunded'].includes(order.payment_status) ? order.total_cents - order.refunded_cents : 0;
+  const needsScheduling = order.fulfillment_status === 'needs_scheduling';
 
   return (
     <div className="space-y-4 border-t border-zinc-800 p-5 text-sm">
+      {needsScheduling && (
+        <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-amber-200">
+          Paid, but a requested time was lost before payment finished. Propose a new time for each missing visit, or cancel and refund.
+        </p>
+      )}
       <div className="grid gap-4 md:grid-cols-3">
         <div>
           <p className="font-semibold text-zinc-300">Customer</p>
@@ -109,7 +115,7 @@ function OrderCard({ order, onChange }: { order: any; onChange: (o: any) => void
       </div>
       <div className="flex items-center gap-3">
         <button disabled={busy} className={adminBtnGhost} onClick={() => act({ action: 'update', ...fields })}>Save details</button>
-        {msg && <span className={msg === 'Saved' ? 'text-green-400' : 'text-red-400'}>{msg}</span>}
+        {msg && <span className={msg.startsWith('Saved') ? 'text-green-400' : 'text-red-400'}>{msg}</span>}
       </div>
     </div>
   );

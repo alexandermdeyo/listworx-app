@@ -3,7 +3,8 @@
 -- so every read and write goes through API routes that use the service role and
 -- check the caller (customer or ADMIN) first.
 
-create extension if not exists btree_gist;
+-- The overlap guard uses a plain range exclusion constraint (built-in GiST
+-- range support); no extension is required.
 
 -- ── Scheduling settings (single row) ─────────────────────────────────────────
 create table if not exists public.media_schedule_settings (
@@ -67,7 +68,8 @@ create table if not exists public.media_orders (
   payment_status text not null default 'pending'
     check (payment_status in ('pending', 'paid', 'expired', 'refunded', 'partially_refunded')),
   fulfillment_status text not null default 'awaiting_payment'
-    check (fulfillment_status in ('awaiting_payment', 'pending_confirmation', 'reschedule_proposed', 'confirmed', 'in_progress', 'delivered', 'completed', 'canceled')),
+    check (fulfillment_status in ('awaiting_payment', 'pending_confirmation', 'needs_scheduling', 'reschedule_proposed', 'confirmed', 'in_progress', 'delivered', 'completed', 'canceled')),
+  visits_required int not null default 1 check (visits_required between 1 and 2),
   stripe_checkout_session_id text unique,
   stripe_payment_intent_id text,
   stripe_customer_id text,
@@ -78,6 +80,10 @@ create table if not exists public.media_orders (
   refunded_cents int not null default 0 check (refunded_cents >= 0),
   refunded_at timestamptz,
   stripe_refund_ids text[] not null default '{}',
+  refund_notified_cents int not null default 0 check (refund_notified_cents >= 0),
+  refund_lock_at timestamptz,
+  admin_notified_at timestamptz,
+  customer_notified_at timestamptz,
   hold_expires_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -136,27 +142,57 @@ begin
   end loop;
 end $$;
 
--- Paid: holds become requests and the order moves to pending confirmation.
--- Returns true only for the first call, so webhook retries can't double-notify.
+-- Paid: record the payment, then try to turn every reservation into a request.
+-- A hold that expired (or was released) is re-reserved only if its time is still
+-- free; otherwise it stays released. If any required visit has no live request,
+-- the order goes to needs_scheduling (payment preserved, admin alerted by the
+-- webhook). Returns 'scheduled', 'needs_scheduling', 'already_paid', or
+-- 'not_found'. Only the first call for a session returns a fresh result, so
+-- webhook retries never re-run the transition.
 create or replace function public.mark_media_order_paid(p_session_id text, p_payment_intent text, p_customer text)
-returns boolean
+returns text
 language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
-declare v_id uuid;
+declare
+  v_id uuid;
+  v_visits int;
+  v_live int;
+  a record;
 begin
   update public.media_orders
-     set payment_status = 'paid', fulfillment_status = 'pending_confirmation', paid_at = now(),
+     set payment_status = 'paid', paid_at = now(),
          stripe_payment_intent_id = p_payment_intent, stripe_customer_id = p_customer,
          hold_expires_at = null, updated_at = now()
-   where stripe_checkout_session_id = p_session_id and payment_status = 'pending'
-   returning id into v_id;
-  if v_id is null then return false; end if;
-  update public.media_appointments
-     set status = 'requested', hold_expires_at = null, updated_at = now()
-   where order_id = v_id and status = 'hold';
-  return true;
+   where stripe_checkout_session_id = p_session_id and payment_status in ('pending', 'expired')
+   returning id, visits_required into v_id, v_visits;
+  if v_id is null then
+    if exists (select 1 from public.media_orders where stripe_checkout_session_id = p_session_id) then
+      return 'already_paid';
+    end if;
+    return 'not_found';
+  end if;
+
+  for a in select id from public.media_appointments
+            where order_id = v_id and status in ('hold', 'expired') order by visit_number loop
+    begin
+      update public.media_appointments
+         set status = 'requested', hold_expires_at = null, updated_at = now()
+       where id = a.id;
+    exception when exclusion_violation then
+      update public.media_appointments set status = 'expired', updated_at = now() where id = a.id;
+    end;
+  end loop;
+
+  select count(distinct visit_number) into v_live
+    from public.media_appointments where order_id = v_id and status = 'requested';
+
+  update public.media_orders
+     set fulfillment_status = case when v_live >= v_visits then 'pending_confirmation' else 'needs_scheduling' end,
+         updated_at = now()
+   where id = v_id;
+  return case when v_live >= v_visits then 'scheduled' else 'needs_scheduling' end;
 end $$;
 
 -- ── Business Pro social post requests (2 per calendar month) ────────────────

@@ -113,6 +113,10 @@ Code is fully wired for all three memberships: `lib/stripe-prices.ts` has `growt
 - Brand: `/faith-and-purpose`, approved mission and vision on `/about`, footer line and links, sitemap. Corrected claims: insurance "confirmed", homeowner ratings decide standing, "more visibility", founding offers on `/ironclad` and homepage, 24 to 48 hour approval, founding rates in `/contractors` meta, media partner directory on `/realtors`.
 - Learning Center starter library (`/learning-center`): 4 free guides, 2 Growth+ resources served only through `/api/learning/[slug]`.
 
+**Pre-deploy fixes (Nov 22, second pass):** paid orders whose hold expired are re-reserved if still free, otherwise moved to `needs_scheduling` with payment kept and an admin alert (two-visit aware); retry-safe refunds (lock, Stripe reconciliation, idempotency key, notify after recording); admin proposals validated against published availability and conflicts; claim-then-send paid notifications that retry via Stripe on email failure; Stripe line items built by one shared function. Migration verified on the isolated test database (`cwggjrxzyfhdsnvcgkzc`): 12 SQL checks passed (overlap guard, paid idempotency, expired-hold race, two-visit partial loss, permissions, RLS). Removed the unneeded `btree_gist` extension.
+
+**Still not done:** full sandbox checkout (no Stripe sandbox or test-site credentials in this session); admin price/package editing (prices stay in `lib/media/catalog.ts`).
+
 **Blocked:** applying migration `20261122200000_media_services_and_social_posts.sql` to production was refused by the session's safety check. Nothing was deployed. Deploy order: apply migration, then merge the branch to `main`.
 
 **Deferred / manual:** add availability hours in `/admin/crm/media-schedule` before announcing booking (no hours = no bookable times). Optional: add `checkout.session.expired` to the live Stripe webhook (holds also expire automatically without it). End-to-end sandbox payment not run (no sandbox keys available to this session). Customers accept a proposed time by replying to the email; the admin then confirms.
