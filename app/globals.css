@@ -278,7 +278,7 @@ html {
     font-family: 'Barlow Condensed', 'Barlow', Arial, sans-serif;
   }
   .br-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-base font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg px-5 py-3 text-base font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-2;
   }
   .br-btn-primary {
     @apply br-btn bg-brand-orange text-white shadow-[0_10px_24px_-12px_rgba(242,106,33,0.8)] hover:bg-brand-orange-hover;
@@ -287,7 +287,7 @@ html {
     @apply br-btn border-2 border-white/80 bg-transparent text-white hover:bg-white hover:text-brand-navy;
   }
   .br-btn-outline {
-    @apply br-btn border-2 border-brand-orange bg-white py-2.5 text-brand-orange hover:bg-brand-orange hover:text-white;
+    @apply br-btn border-2 border-brand-orange bg-white px-4 py-2.5 text-[15px] text-brand-orange hover:bg-brand-orange hover:text-white;
   }
   .br-card {
     @apply rounded-2xl border border-brand-line bg-white shadow-[0_14px_34px_-22px_rgba(15,35,66,0.45)];
