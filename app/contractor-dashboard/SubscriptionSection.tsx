@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { MEMBERSHIP_PLANS } from '@/lib/membership/benefits';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -651,6 +652,19 @@ export default function SubscriptionSection({
                     After that you&apos;ll continue on Network (free) and can still receive referrals.
                   </p>
                 )}
+                {(() => {
+                  const plan = MEMBERSHIP_PLANS.find((p) => p.name.toLowerCase() === String(currentTier).toLowerCase());
+                  return plan ? (
+                    <ul className="mt-3 grid gap-1 text-sm text-lw-text/75 sm:grid-cols-2">
+                      {plan.highlights.map((h) => (
+                        <li key={h} className="flex items-start gap-1.5">
+                          <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-lw-rust" />
+                          {h}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null;
+                })()}
               </div>
             </div>
 

@@ -579,6 +579,24 @@ export default function ContractorDashboard() {
       onClick: () => router.push('/contractor-dashboard/flyers'),
     },
     {
+      id: 'social-posts',
+      label: 'Social Posts',
+      icon: Zap,
+      onClick: () => router.push('/contractor-dashboard/social-posts'),
+    },
+    {
+      id: 'media-services',
+      label: 'Media Services',
+      icon: Video,
+      onClick: () => router.push('/media-services'),
+    },
+    {
+      id: 'learning-center',
+      label: 'Learning Center',
+      icon: GraduationCap,
+      onClick: () => router.push('/learning-center'),
+    },
+    {
       id: 'media',
       label: 'Listing Media',
       icon: Video,

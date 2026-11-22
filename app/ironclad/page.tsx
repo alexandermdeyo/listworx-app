@@ -175,7 +175,7 @@ export default function IronCladStandardsPage() {
               {[
                 { icon: Building2, text: 'The business entity is legitimate and registered' },
                 { icon: FileCheck, text: 'The contractor holds the required licenses for their primary trade' },
-                { icon: ShieldCheck, text: 'The contractor carries required insurance' },
+                { icon: ShieldCheck, text: 'Insurance documents are on file and reviewed, with expiration dates tracked' },
               ].map((item, index) => (
                 <Reveal key={item.text} delay={index * 70}>
                   <div className="h-full rounded-2xl border border-mailer-border bg-mailer-card p-6 text-center">
@@ -273,7 +273,7 @@ export default function IronCladStandardsPage() {
         <div className="container mx-auto px-4">
           <Reveal className="flex flex-col items-start gap-4 border-y border-mailer-border py-8 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-lg font-semibold text-white">
-              Credentials in order? Applications are reviewed in 24&ndash;48 hours.
+              Credentials in order? Most applications are reviewed within a few business days.
             </p>
             <Link href={APPLY_HREF} className="shrink-0">
               <Button className="bg-lw-rust text-white hover:bg-lw-rust-hover">
@@ -527,57 +527,19 @@ export default function IronCladStandardsPage() {
         </div>
       </section>
 
-      {/* ================= FOUNDING PARTNER CREDIBILITY ================= */}
-      <section className="border-t border-amber-400/20 bg-mailer-ink py-16 md:py-20">
+      {/* ================= APPROVAL IS EARNED ================= */}
+      <section className="border-t border-mailer-border bg-mailer-ink py-16 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-            <div className="flex flex-col items-center gap-8 md:flex-row md:gap-12">
-              <div className="flex-shrink-0">
-                <Image
-                  src="/optimized/ironclad_founder_shield_logo.webp"
-                  alt="IronClad Founding Partner"
-                  width={160}
-                  height={160}
-                  className="h-auto w-32 md:w-40"
-                />
-              </div>
-              <div className="text-center md:text-left">
-                <Badge className="mb-3 border-amber-400/30 bg-amber-400/15 text-amber-300">
-                  <Crown className="mr-1 h-3 w-3" />
-                  Network Launch — Limited Spots
-                </Badge>
-                <h2 className="mb-3 text-2xl font-bold text-white md:text-3xl">
-                  Founding Partners Set the Standard
-                </h2>
-                <p className="mb-5 text-base leading-relaxed text-white/65">
-                  The contractors who join the ListWorx network during the founding period earn
-                  permanent Founding Partner recognition. These are the professionals who believe in
-                  accountability-first contracting — and back it up by committing early. Founding
-                  Partner status is a permanent mark of credibility that cannot be earned after the
-                  launch window closes.
-                </p>
-                <div className="mb-6 flex flex-wrap justify-center gap-4 md:justify-start">
-                  <div className="flex items-center gap-2 text-sm text-amber-300">
-                    <Star className="h-4 w-4" />
-                    <span>Permanent badge</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-amber-300">
-                    <Shield className="h-4 w-4" />
-                    <span>Priority positioning</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-amber-300">
-                    <Award className="h-4 w-4" />
-                    <span>Launch-period exclusive</span>
-                  </div>
-                </div>
-                <Link href={APPLY_HREF}>
-                  <Button className="bg-amber-500 px-6 py-5 text-base text-white hover:bg-amber-600">
-                    <Award className="mr-2 h-4 w-4" />
-                    Apply for Founding Partner Status
-                  </Button>
-                </Link>
-              </div>
-            </div>
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="mb-3 text-2xl font-bold text-white md:text-3xl">Approval is earned, never bought.</h2>
+            <p className="mb-6 text-base leading-relaxed text-white/65">
+              Every contractor goes through the same review. Agreeing to the IronClad Standards is required, but it is not the same as
+              IronClad Certification, which ListWorx awards and can remove after its own review. Paid membership never buys approval,
+              referral priority, or certification.
+            </p>
+            <Link href={APPLY_HREF}>
+              <Button className="bg-lw-rust px-6 py-5 text-base text-white hover:bg-lw-rust-hover">Apply as a Contractor</Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -599,7 +561,7 @@ export default function IronCladStandardsPage() {
             </h2>
             <p className="mx-auto mb-10 max-w-lg text-base leading-[1.75] text-white/65">
               Applications are reviewed manually. If your credentials are in order and your business
-              meets the standards above, approval typically takes 24&ndash;48 hours.
+              meets the standards above, approval typically takes a few business days.
             </p>
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <Link href={APPLY_HREF}>

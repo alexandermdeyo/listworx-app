@@ -262,7 +262,7 @@ export default function LandingPage() {
                     <CountUp value={100} suffix="%" />
                   </div>
                   <div className="text-xs uppercase tracking-widest text-white/50">
-                    License-verified
+                    Licenses checked where required
                   </div>
                 </div>
                 <div>
@@ -317,9 +317,9 @@ export default function LandingPage() {
                 See this badge? The contractor&apos;s been vetted.
               </h2>
               <p className="mt-4 text-lg text-mkt-ink/75">
-                The IronClad Standards badge is your signal that a business is verified, the work is
-                rated by real homeowners, and the contractor is held to a standard they can be removed
-                for breaking — it&apos;s a badge we can pull, not one we hand out.
+                The IronClad badge means ListWorx reviewed the business and the contractor agreed to a
+                standard they can be removed for breaking. It&apos;s a badge we can pull, not one we
+                hand out.
               </p>
               <ul className="mt-6 space-y-4">
                 {[
@@ -429,9 +429,8 @@ export default function LandingPage() {
                 twice.
               </p>
               <p className="mt-4 text-mkt-ink/65">
-                Every ListWorx job ends with a verified homeowner rating. That&apos;s
-                the number that decides who stays in the network — not ad spend, not
-                how long they&apos;ve been listed.
+                Contractors stay in the network by keeping the IronClad Standards, not by
+                spending more. Payment never buys placement.
               </p>
             </Reveal>
 
@@ -466,7 +465,7 @@ export default function LandingPage() {
           <Reveal>
             <p className="lw-label-lg mb-3 !text-lw-rust">Stay in the loop</p>
             <h2 className="text-2xl font-bold tracking-tight text-mkt-ink md:text-3xl">
-              Local contractor tips, network news, and founding-partner openings.
+              Local contractor tips and network news.
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-mkt-ink/65">
               A short email now and then. No spam, unsubscribe anytime.

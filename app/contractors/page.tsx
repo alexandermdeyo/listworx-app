@@ -30,7 +30,7 @@ import { Reveal } from '@/components/motion';
 import PhotoDark from '@/components/site/PhotoDark';
 import IroncladBadge from '@/components/site/IroncladBadge';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
-import { TIER_GROWTH_NOTE } from '@/lib/tiers-config';
+import MembershipComparison from '@/components/membership/MembershipComparison';
 import FaqSection from '@/components/site/FaqSection';
 
 const CONTRACTOR_FAQS = [
@@ -44,7 +44,7 @@ const CONTRACTOR_FAQS = [
   },
   {
     q: 'Do paid tiers get more referrals than the free tier?',
-    a: "No. Every member — on every tier — gets equal consideration for a referral match, as long as they meet IronClad Standards. Growth and Business Pro add marketing and business-growth support on top of membership; they don't buy priority access to referrals.",
+    a: "No. Every member — on every tier — gets equal consideration for a referral match, as long as they meet IronClad Standards. Growth and Business Pro add business resources, member pricing on ListWorx Media Services, and (on Business Pro) custom social posts and the full Flyer Builder. They don't buy priority access to referrals.",
   },
   {
     q: 'Does joining mean I’m automatically IronClad Certified?',
@@ -61,56 +61,6 @@ const CONTRACTOR_FAQS = [
   {
     q: 'How long until I’m approved?',
     a: 'Applications are reviewed within 72 hours.',
-  },
-];
-
-const MEMBERSHIP_TIERS = [
-  {
-    name: 'Network',
-    price: '$0',
-    priceNote: 'Free, forever',
-    highlighted: false,
-    cta: 'Join Free',
-    blurb: 'Get verified, get listed, and get matched with homeowners in your trade and county.',
-    features: [
-      'Reviewed against IronClad Standards before your first referral',
-      'Matched with homeowners in your trade and county',
-      'Verified reviews from real jobs',
-      'No per-lead fees, ever — cancel anytime',
-      'Equal referral consideration, same as every other tier',
-    ],
-    academy: 'ListWorx Academy access',
-  },
-  {
-    name: 'Growth',
-    price: '$199',
-    priceNote: 'per month',
-    highlighted: true,
-    cta: 'Apply for Growth',
-    blurb: 'Everything in Network, plus marketing and business-growth support.',
-    features: [
-      'Everything in Network',
-      'IronClad badge kit for your truck, social, and print',
-      'Ready-made posts and follow-up emails',
-      "Text alert the moment you're matched",
-      'Monthly performance report',
-    ],
-    academy: 'Full ListWorx Academy access',
-  },
-  {
-    name: 'Business Pro',
-    price: '$299',
-    priceNote: 'per month',
-    highlighted: false,
-    cta: 'Apply for Business Pro',
-    blurb: 'Everything in Growth, plus hands-on content and growth support for your brand.',
-    features: [
-      'Everything in Growth',
-      'Jobsite photography and short-form video support',
-      'Monthly social content for your business',
-    ],
-    comingSoon: ['Marketing Studio — in development'],
-    academy: 'Full ListWorx Academy access',
   },
 ];
 
@@ -300,80 +250,9 @@ export default function ContractorsPage() {
             </p>
           </Reveal>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {MEMBERSHIP_TIERS.map((tier, i) => (
-              <Reveal key={tier.name} delay={i * 70} pulse={tier.highlighted}>
-                <div
-                  className={`lw-hover-lift-dark relative flex h-full flex-col rounded-2xl border bg-mailer-card p-7 ${
-                    tier.highlighted ? 'border-lw-rust shadow-lg shadow-lw-rust/10' : 'border-mailer-border'
-                  }`}
-                >
-                  {tier.highlighted && (
-                    <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-lw-rust px-4 py-1 text-xs font-bold text-white">
-                      Most Popular
-                    </span>
-                  )}
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-white/50">
-                    {tier.name}
-                  </h3>
-                  <div className="mt-4 text-5xl font-bold text-white">
-                    {tier.price}
-                    {tier.price !== '$0' && <span className="text-xl font-normal text-white/40">/mo</span>}
-                  </div>
-                  <p className="mt-1 text-sm text-white/45">{tier.priceNote}</p>
-                  <p className="mt-3 text-sm text-white/70">{tier.blurb}</p>
-
-                  <p className="mt-6 text-xs font-bold uppercase tracking-widest text-white/40">
-                    What&apos;s included
-                  </p>
-                  <ul className="mt-3 flex-1 space-y-2.5 text-sm text-white/70">
-                    {tier.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5">
-                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                    {academyEnabled && (
-                      <li className="flex items-start gap-2.5">
-                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
-                        <span>{tier.academy}</span>
-                      </li>
-                    )}
-                    {tier.comingSoon?.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-white/45">
-                        <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-                        <span>{f} — coming soon</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link href="/apply" className="mt-6 block">
-                    <Button
-                      className={
-                        tier.highlighted
-                          ? 'w-full bg-lw-rust text-white hover:bg-lw-rust-hover'
-                          : 'w-full border-2 border-lw-rust bg-transparent text-white hover:bg-lw-rust/10'
-                      }
-                    >
-                      {tier.cta}
-                    </Button>
-                  </Link>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal className="mt-6 flex items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/[0.07] p-5">
-            <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
-            <p className="text-sm leading-relaxed text-white/85">{TIER_GROWTH_NOTE}</p>
-          </Reveal>
-
-          <Reveal className="mt-8 flex flex-col gap-2 text-sm text-white/55 md:flex-row md:items-center md:gap-6">
-            <span>No trial period, no hidden fees — the price shown is what you pay.</span>
-            <span className="text-white/40">
-              Items marked &quot;coming soon&quot; are in development and not yet part of any tier.
-            </span>
-          </Reveal>
+          <MembershipComparison
+            ctaFor={(id) => ({ href: '/apply', label: id === 'network' ? 'Join Free' : id === 'growth' ? 'Apply for Growth' : 'Apply for Business Pro' })}
+          />
         </div>
       </section>
 
@@ -430,7 +309,7 @@ export default function ContractorsPage() {
                 {
                   icon: Briefcase,
                   title: 'Built to Grow With You',
-                  desc: 'Marketing and business-growth support scale with your tier — badge kits, content support, and more as the network grows.',
+                  desc: 'Growth adds business manuals, templates, and media discounts. Business Pro adds two custom social posts a month and the full Flyer Builder.',
                 },
               ].map((item, i) => (
                 <Reveal key={item.title} delay={i * 70}>
@@ -774,19 +653,23 @@ export default function ContractorsPage() {
               We&apos;ll help you look as good online as you are on the job.
             </h2>
             <p className="mt-4 max-w-xl text-white/65">
-              Great work goes unseen when the marketing doesn&apos;t keep up. ListWorx connects
-              members with vetted content and media help — jobsite photography, short-form video,
-              and social posts built around your actual projects — so realtors and homeowners find a
-              polished, active business when they look you up. Business Pro includes this built in.
+              Great work goes unseen when the marketing doesn&apos;t keep up. ListWorx Media
+              Services shoots jobsite, team, and drone photography plus short-form video for your
+              business, so realtors and homeowners find a polished, active business when they look
+              you up. Book directly and pay up front. Growth members save 5% and Business Pro members
+              save 10%.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              {['Jobsite photography', 'Short-form video', 'Monthly social posts'].map((chip) => (
+              {['Jobsite photography', 'Drone photography', 'Short-form video'].map((chip) => (
                 <span key={chip} className="inline-flex items-center gap-1.5 rounded-full border border-mailer-border bg-mailer-card px-3 py-1.5 text-xs font-semibold text-white/80">
                   <Camera className="h-3.5 w-3.5 text-lw-rust" />
                   {chip}
                 </span>
               ))}
             </div>
+            <Link href="/media-services" className="mt-6 inline-flex items-center gap-2 rounded-md bg-lw-rust px-5 py-2.5 text-sm font-semibold text-white hover:bg-lw-rust-hover">
+              See ListWorx Media Services <ArrowRight className="h-4 w-4" />
+            </Link>
           </Reveal>
 
           <Reveal className="min-w-0">

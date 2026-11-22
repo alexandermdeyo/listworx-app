@@ -10,6 +10,9 @@ export async function GET() {
     '', '/request', '/contractors', '/realtors', '/ironclad', '/about', '/faq', '/blog',
     '/media-partners', '/become-a-supplier-partner', '/become-a-brokerage-partner', '/contact', '/apply',
     '/academy', '/listing-studio', '/partners/aces',
+    '/media-services', '/faith-and-purpose', '/learning-center',
+    '/learning-center/how-to-hire-a-contractor', '/learning-center/ironclad-standards-explained',
+    '/learning-center/realtor-pre-listing-repairs', '/learning-center/getting-started-on-listworx',
     // Not listed yet: /terms and /privacy (pending owner review of the address
     // they display) and contractor profiles (no profiles are currently public).
   ].map((path) => ({ loc: `${SITE_URL}${path}`, priority: path === '' ? 1 : 0.7 }));

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { MEMBERSHIP_PLANS } from '@/lib/membership/benefits';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -54,14 +55,8 @@ const TIERS: Tier[] = [
     annualPrice: 199 * 12,
     icon: Zap,
     highlight: true,
-    description: 'Marketing and business-growth support on top of Network',
-    features: [
-      'Everything in Network',
-      'IronClad badge kit for your truck, social, and print',
-      'Ready-made posts and follow-up emails',
-      'Text alert the moment you are matched',
-      'Monthly performance report',
-    ],
+    description: MEMBERSHIP_PLANS[1].tagline,
+    features: MEMBERSHIP_PLANS[1].highlights,
   },
   {
     id: 'business_pro',
@@ -69,12 +64,8 @@ const TIERS: Tier[] = [
     monthlyPrice: 299,
     annualPrice: 299 * 12,
     icon: Crown,
-    description: 'Everything in Growth, plus hands-on content support',
-    features: [
-      'Everything in Growth',
-      'Jobsite photography and short-form video support',
-      'Monthly social content for your business',
-    ],
+    description: MEMBERSHIP_PLANS[2].tagline,
+    features: MEMBERSHIP_PLANS[2].highlights,
   },
 ];
 

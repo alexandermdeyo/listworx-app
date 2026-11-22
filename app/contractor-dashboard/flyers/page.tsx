@@ -42,8 +42,12 @@ export default function FlyerBuilderPage() {
       const { data: prof } = await supabase.from('contractor_profiles').select('*').eq('user_id', session.user.id).maybeSingle();
       setProfile(prof || {});
 
-      const tier = (prof?.tier || '').toLowerCase();
-      const hasActiveTier = prof?.subscription_status === 'active' && (tier === 'preferred' || tier === 'elite');
+      // Full Flyer Builder is a Business Pro benefit, checked server-side from the
+      // contractor's verified current membership.
+      const me = await fetch('/api/membership/me', { headers: { Authorization: `Bearer ${session.access_token}` } })
+        .then((r) => r.json())
+        .catch(() => ({}));
+      const hasActiveTier = Boolean(me?.flyerBuilder);
 
       let hasPurchase = false;
       if (!hasActiveTier) {
@@ -101,7 +105,7 @@ export default function FlyerBuilderPage() {
     <div className="min-h-screen bg-zinc-950 py-16 px-4">
       <div className="max-w-md mx-auto text-center">
         <h1 className="text-2xl font-bold text-white mb-3">Marketing Flyer Builder</h1>
-        <p className="text-zinc-400 mb-6">The Flyer Builder isn&apos;t turned on for your account. Contact adeyo@listworx.co to ask about access.</p>
+        <p className="text-zinc-400 mb-6">The full Flyer Builder is included with Business Pro. Upgrade from your dashboard&apos;s Subscription page, or contact adeyo@listworx.co with questions.</p>
         <Button onClick={() => router.push('/contractor-dashboard')} className="bg-[#E8621A] hover:bg-[#d45516] text-white">
           Back to Dashboard
         </Button>

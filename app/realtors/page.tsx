@@ -326,14 +326,14 @@ export default function RealtorsPage() {
             The same network — for the people who make your listings look good.
           </h2>
           <p className="mt-4 text-lg text-mkt-ink/70">
-            Photographers and drone operators are their own kind of contractor. ListWorx connects
-            you with vetted listing-media pros the same way it connects you with the trades — one
-            request, verified matches, your call on who to book.
+            ListWorx Media Services shoots real estate photography, drone photography, and
+            short-form video for your listings. See clear prices, request a time online, and pay up
+            front. We confirm your appointment by email.
           </p>
           <div className="mt-6">
-            <Link href="/media-partners">
+            <Link href="/media-services">
               <Button variant="outlineOrange">
-                Browse media partners
+                See ListWorx Media Services
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>

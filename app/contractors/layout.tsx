@@ -5,7 +5,7 @@ import { pageMetadata } from '@/lib/seo';
 export const metadata = pageMetadata({
   title: 'Join a Vetted Contractor Referral Network in Tennessee | ListWorx',
   description:
-    'Grow your home service business with ListWorx: homeowner and realtor referrals, a flat monthly membership with no per-referral charges, and founding rates locked for life. Now recruiting in Middle Tennessee.',
+    'Grow your home service business with ListWorx: homeowner and realtor referrals, a free Network membership or flat monthly plans with no per-referral charges. Now recruiting in Middle Tennessee.',
   path: '/contractors',
 });
 

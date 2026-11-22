@@ -186,6 +186,9 @@ export default function AdminCRMPage() {
     { id: 'partners', label: 'Promo Partners', icon: Handshake, href: '/admin/crm/partners' },
     { id: 'partner-inquiries', label: 'Partner Inquiries', icon: Inbox, href: '/admin/crm/partner-inquiries' },
     { id: 'media-commissions', label: 'Media Commissions', icon: Video, href: '/admin/crm/media-commissions' },
+    { id: 'media-orders', label: 'Media Orders', icon: Video, href: '/admin/crm/media-orders' },
+    { id: 'media-schedule', label: 'Media Schedule', icon: Video, href: '/admin/crm/media-schedule' },
+    { id: 'social-posts', label: 'Social Posts', icon: Video, href: '/admin/crm/social-posts' },
     { id: 'contractors', label: 'Contractors', icon: Users, href: '/admin/crm/contractors' },
     { id: 'applications', label: 'Applications', icon: Clock, href: '/admin/crm/applications', badge: stats.pendingApplications || undefined },
     { id: 'job-requests', label: 'Job Requests', icon: FileText, href: '/admin/crm/job-requests' },
@@ -371,6 +374,9 @@ export default function AdminCRMPage() {
               { href: '/admin/crm/partners', icon: Handshake, title: 'Promo Partners', desc: 'Logos for the homepage "trusted by local businesses" strip', badge: null },
               { href: '/admin/crm/partner-inquiries', icon: Inbox, title: 'Partner Inquiries', desc: 'Supplier and brokerage partnership form submissions', badge: null },
               { href: '/admin/crm/media-commissions', icon: Video, title: 'Media Commissions', desc: 'Monthly commission owed by media partners, for invoicing', badge: null },
+              { href: '/admin/crm/media-orders', icon: Video, title: 'Media Orders', desc: 'Paid ListWorx Media Services orders: confirm, reschedule, deliver, refund', badge: null },
+              { href: '/admin/crm/media-schedule', icon: Video, title: 'Media Schedule', desc: 'Available hours, blocked days, durations, and appointments', badge: null },
+              { href: '/admin/crm/social-posts', icon: Video, title: 'Social Posts', desc: 'Business Pro monthly social post requests', badge: null },
             ].map(item => (
               <Link key={item.title} href={item.href}>
                 <div className="rounded-lg border border-gray-200 bg-white p-5 hover:border-lw-rust/30 hover:shadow-md transition-all cursor-pointer group h-full shadow-sm">

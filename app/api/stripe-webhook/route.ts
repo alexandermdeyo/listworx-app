@@ -17,6 +17,7 @@ import {
   scheduledCancellation,
   subscriptionPeriod,
 } from '@/lib/billing/subscription-record';
+import { handleMediaCheckoutCompleted, handleMediaCheckoutExpired, isMediaSession } from '@/lib/server/media-webhook';
 
 function getStripe() {
   return createStripeServerClient();
@@ -53,8 +54,17 @@ export async function POST(request: NextRequest) {
 
     switch (event.type) {
       case 'checkout.session.completed':
+        if (isMediaSession(event.data.object)) {
+          // ListWorx Media order: separate, idempotent paid handler + its own emails.
+          await handleMediaCheckoutCompleted(event.data.object);
+          break;
+        }
         await handleCheckoutCompleted(event.data.object);
         await alertAdminOfCheckout(event.data.object as any);
+        break;
+
+      case 'checkout.session.expired':
+        if (isMediaSession(event.data.object)) await handleMediaCheckoutExpired(event.data.object);
         break;
 
       case 'customer.subscription.created':

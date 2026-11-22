@@ -69,7 +69,7 @@ export default function AboutPage() {
                 Our Vision
               </p>
               <p className="text-xl md:text-2xl text-mkt-ink font-bold leading-snug">
-                To rebuild trust in the way homeowners, realtors, property managers, and contractors connect, creating a nationwide network where quality work, honest business, and real accountability still matter.
+                To become America&apos;s most trusted contractor network, known for raising the standard of the trades, creating real opportunity for hardworking people, and showing what a business built on Christian principles can do for the communities it serves.
               </p>
             </Reveal>
             {/* Mission */}
@@ -78,7 +78,7 @@ export default function AboutPage() {
                 Our Mission
               </p>
               <p className="text-xl md:text-2xl text-mkt-ink font-bold leading-snug">
-                ListWorx connects homeowners and property professionals with vetted local contractors and trusted real estate partners while equipping those businesses with marketing tools, visibility, and support to grow. We make finding the right help easier, faster, and built on standards instead of guesswork.
+                ListWorx connects homeowners and real estate professionals with vetted, accountable contractors, and helps good contractors become exceptional businesses through referrals, education, marketing support, and trusted partnerships.
               </p>
             </Reveal>
           </div>
@@ -116,7 +116,7 @@ export default function AboutPage() {
                   I moved to Tennessee not just for a better quality of life, but to build this company in a place where I can grow it the right way. Nashville is the starting point. The vision is much bigger. I want to build something here that can scale across the country and help people everywhere.
                 </p>
                 <p>
-                  ListWorx is currently in its launch phase — headquartered in Nashville, Tennessee, and accepting founding contractor applications across Middle Tennessee.
+                  ListWorx is based in Gallatin, Tennessee, and is accepting contractor applications across Middle Tennessee. ListWorx is a Christian-owned business that serves everyone. <Link href="/faith-and-purpose" className="font-semibold text-lw-rust underline">Read about our faith and purpose</Link>.
                 </p>
               </div>
             </Reveal>
@@ -145,10 +145,10 @@ export default function AboutPage() {
                   The home services industry runs on trust — but it's built on almost none. Contractors disappear. Reviews get gamed. Nobody's accountable after the check clears.
                 </p>
                 <p>
-                  ListWorx exists to change that. Every contractor in our network is IronClad Verified at the business level — entity, license, and insurance confirmed — before they're ever seen by a client. That's not a feature — it's the foundation.
+                  ListWorx exists to change that. Every contractor in our network is reviewed by ListWorx before they can be referred. Where a trade requires a license, we check it against state records, and we review each contractor's insurance documents. That's not a feature. It's the foundation.
                 </p>
                 <p>
-                  IronClad Standards is the framework that makes it real. It defines what we expect, how performance is measured, and what happens when those standards aren't met. Contractors who maintain the standard earn more trust, more visibility, and more work. Those who don't are removed.
+                  IronClad Standards is the framework that makes it real. It defines what we expect, how performance is measured, and what happens when those standards aren't met. Contractors who keep the standard stay in the network. Those who don't are removed. Nobody pays their way to the top.
                 </p>
               </div>
               <div className="mt-10">

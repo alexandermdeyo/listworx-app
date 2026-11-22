@@ -91,7 +91,7 @@ export default function MarketingSection({
       icon: Zap,
       title: 'Growth Membership',
       description:
-        'Adds marketing and business-growth support on top of Network. Every membership gets equal referral consideration.',
+        'Business manuals, templates, marketing resources, and 5% off ListWorx Media Services. Every membership gets equal referral consideration.',
       value: '$199/month',
       badge: 'Membership',
       badgeColor: 'bg-lw-rust/10 text-lw-rust border-lw-rust/20',
@@ -105,7 +105,7 @@ export default function MarketingSection({
       icon: Sparkles,
       title: 'Business Pro Membership',
       description:
-        'Everything in Growth, plus hands-on content support. Every membership gets equal referral consideration.',
+        'Everything in Growth, plus 2 custom social posts a month, the full Flyer Builder, and 10% off ListWorx Media Services. Every membership gets equal referral consideration.',
       value: '$299/month',
       badge: 'Membership',
       badgeColor: 'bg-lw-rust/10 text-lw-rust border-lw-rust/20',

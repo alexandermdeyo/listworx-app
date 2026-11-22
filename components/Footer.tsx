@@ -133,7 +133,7 @@ export default function Footer() {
 
           <div className="md:col-span-2">
             <h4 className={cn('text-xs font-semibold uppercase tracking-widest mb-4', light ? 'text-mkt-ink' : 'text-zinc-300')}>Company</h4>
-            <ul className="space-y-2.5 text-sm"><li><Link href="/about" className="hover:text-lw-rust transition-colors">About Us</Link></li><li><Link href="/blog" className="hover:text-lw-rust transition-colors">Blog</Link></li><li><Link href="/contact" className="hover:text-lw-rust transition-colors">Contact</Link></li><li><Link href="/faq" className="hover:text-lw-rust transition-colors">FAQ</Link></li><li><Link href="/privacy" className="hover:text-lw-rust transition-colors">Privacy Policy</Link></li><li><Link href="/terms" className="hover:text-lw-rust transition-colors">Terms of Service</Link></li><li><Link href="/login" className="hover:text-lw-rust transition-colors">Login</Link></li></ul>
+            <ul className="space-y-2.5 text-sm"><li><Link href="/about" className="hover:text-lw-rust transition-colors">About Us</Link></li><li><Link href="/faith-and-purpose" className="hover:text-lw-rust transition-colors">Faith and Purpose</Link></li><li><Link href="/media-services" className="hover:text-lw-rust transition-colors">Media Services</Link></li><li><Link href="/learning-center" className="hover:text-lw-rust transition-colors">Learning Center</Link></li><li><Link href="/blog" className="hover:text-lw-rust transition-colors">Blog</Link></li><li><Link href="/contact" className="hover:text-lw-rust transition-colors">Contact</Link></li><li><Link href="/faq" className="hover:text-lw-rust transition-colors">FAQ</Link></li><li><Link href="/privacy" className="hover:text-lw-rust transition-colors">Privacy Policy</Link></li><li><Link href="/terms" className="hover:text-lw-rust transition-colors">Terms of Service</Link></li><li><Link href="/login" className="hover:text-lw-rust transition-colors">Login</Link></li></ul>
           </div>
 
           <div className="md:col-span-2">
@@ -143,7 +143,7 @@ export default function Footer() {
         </div>
 
         <div className={cn('border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-sm', light ? 'border-zinc-200 text-mkt-ink/60' : 'border-lw-dark-border text-zinc-600')}>
-          <p>&copy; 2026 ListWorx LLC. All rights reserved.</p>
+          <p>&copy; 2026 ListWorx LLC. All rights reserved. Christian-owned. Everyone welcome. <Link href="/faith-and-purpose" className="underline hover:text-lw-rust">Faith and Purpose</Link></p>
           <div className="flex items-center gap-4"><p className={cn('text-xs', light ? 'text-mkt-ink/50' : 'text-zinc-700')}>Built in Gallatin, TN</p><Link href="/login?redirect=/admin/crm" className={cn('inline-flex items-center gap-1.5 text-xs hover:text-lw-rust transition-colors', light ? 'text-mkt-ink/50' : 'text-zinc-600')}><Lock className="h-3.5 w-3.5" />Admin Login</Link></div>
         </div>
       </div>

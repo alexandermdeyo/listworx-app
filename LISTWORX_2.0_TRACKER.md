@@ -100,6 +100,23 @@ Price IDs added to local `.env.local` (gitignored, not committed) for `STRIPE_PR
 
 Code is fully wired for all three memberships: `lib/stripe-prices.ts` has `growth`/`business_pro` `TierId`s reading new (unset) env vars, `/billing` shows exactly Free/Growth/Business Pro (old $125/$215/$365 cards removed), the webhook's `resolveTierId()` resolves `growth`→"Growth" and `business_pro`→"Business Pro", and two new proposed (unapplied) migrations seed the three `tiers` rows. **Could not create the Growth/Business Pro Stripe prices this session, test or live** — the connected Stripe integration only has a live-mode account (`acct_1Syy3O7JcUvuHoDO`, livemode:true) with no test-mode counterpart, and the app's own `.env.local` only has a live secret key (`sk_live_...`) — no test-mode credentials exist anywhere in this session. See the full report for options.
 
+### Release 7: Consolidated launch (Nov 22 2026), branch `launch/media-services-membership`, NOT deployed
+
+**Built (code complete, typecheck + build + 153 tests passing):**
+- Approved membership benefits in one source (`lib/membership/benefits.ts`): cards + mobile comparison table on `/contractors`, same benefits on `/billing`, dashboard plan card, and Marketing upgrade cards. Removed advertised-but-unbuilt items (text alerts, performance report, badge kit, "Full Academy").
+- Membership access from verified current subscriptions (`lib/server/membership.ts`, `/api/membership/me`): Flyer Builder is Business Pro only; member Learning Center resources are Growth+; expired, cancelled, past-due, and legacy tiers grant nothing. Referral matching untouched.
+- Business Pro social posts: `/contractor-dashboard/social-posts` (2 per calendar month, one revision each, no rollover), admin `/admin/crm/social-posts`. Allowance enforced by a unique (contractor, month, slot) key.
+- ListWorx Media Services: `/media-services`, `/media-services/book`, `/media-services/orders`. Server-side catalog pricing and membership discount (5% Growth, 10% Business Pro, never stacked, never from the browser). Add-ons require a qualifying service. Before-and-After books two visits. Matterport not sold. Stripe Checkout with inline line items (no new Stripe products). Verified webhook marks orders paid once (`mark_media_order_paid`), then emails admin and customer.
+- Scheduling: admin `/admin/crm/media-schedule` (weekly hours, blocked/extra dates, durations, buffers, hold length, manual blocks, appointment list). Database exclusion constraint prevents overlapping holds/requests/confirmed/blocked times. Unpaid holds expire with the Checkout session.
+- Admin orders: `/admin/crm/media-orders` (confirm, propose new time, status, assign provider, deliverables link, notes, cancel, Stripe refund with idempotency).
+- Emails via existing Resend setup: admin paid-order alert; customer paid/pending, confirmed, new time proposed, canceled, refunded.
+- Brand: `/faith-and-purpose`, approved mission and vision on `/about`, footer line and links, sitemap. Corrected claims: insurance "confirmed", homeowner ratings decide standing, "more visibility", founding offers on `/ironclad` and homepage, 24 to 48 hour approval, founding rates in `/contractors` meta, media partner directory on `/realtors`.
+- Learning Center starter library (`/learning-center`): 4 free guides, 2 Growth+ resources served only through `/api/learning/[slug]`.
+
+**Blocked:** applying migration `20261122200000_media_services_and_social_posts.sql` to production was refused by the session's safety check. Nothing was deployed. Deploy order: apply migration, then merge the branch to `main`.
+
+**Deferred / manual:** add availability hours in `/admin/crm/media-schedule` before announcing booking (no hours = no bookable times). Optional: add `checkout.session.expired` to the live Stripe webhook (holds also expire automatically without it). End-to-end sandbox payment not run (no sandbox keys available to this session). Customers accept a proposed time by replying to the email; the admin then confirms.
+
 ## Verified-but-unchanged (Release 1 due diligence)
 
 - The free contractor **application** destination is `/apply` (`app/apply/page.tsx` — the actual
