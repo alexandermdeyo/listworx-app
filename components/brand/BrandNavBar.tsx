@@ -156,7 +156,7 @@ export default function BrandNavBar({
           {!loading && loggedIn ? (
             <>
               {dashboardHref && (
-                <Link href={dashboardHref} className="hidden items-center gap-2 rounded-lg border border-white/60 px-3 py-2 text-sm font-semibold text-white hover:bg-white hover:text-brand-navy sm:inline-flex">
+                <Link href={dashboardHref} className="hidden items-center gap-2 whitespace-nowrap rounded-lg border border-white/60 px-3 py-2 text-sm font-semibold text-white hover:bg-white hover:text-brand-navy sm:inline-flex">
                   <LayoutDashboard className="h-4 w-4" /> Dashboard
                 </Link>
               )}
@@ -166,7 +166,7 @@ export default function BrandNavBar({
             </>
           ) : (
             <>
-              <Link href="/login" className="hidden items-center gap-2 rounded-lg border border-white/60 px-3 py-2 text-sm font-semibold text-white hover:bg-white hover:text-brand-navy sm:inline-flex">
+              <Link href="/login" className="hidden items-center gap-2 whitespace-nowrap rounded-lg border border-white/60 px-3 py-2 text-sm font-semibold text-white hover:bg-white hover:text-brand-navy sm:inline-flex">
                 <LogIn className="h-4 w-4" /> Sign In
               </Link>
               <Link href="/apply" className="hidden whitespace-nowrap rounded-lg bg-brand-orange px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-orange-hover sm:inline-flex">
