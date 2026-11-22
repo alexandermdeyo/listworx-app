@@ -6,7 +6,13 @@ import { Reveal } from '@/components/motion';
 import JobRequestWidget from './JobRequestWidget';
 import { SERVICE_CATEGORIES } from './categories';
 
-export default function HomeownerHero() {
+/**
+ * variant="hero"    original white hero with the page H1 (default)
+ * variant="section" brand redesign: sits under the navy hero, so it uses an
+ *                   H2 and the soft-gray brand surface. Widget is identical.
+ */
+export default function HomeownerHero({ variant = 'hero' }: { variant?: 'hero' | 'section' }) {
+  const isSection = variant === 'section';
   const [category, setCategory] = useState('');
   const widgetRef = useRef<HTMLDivElement>(null);
 
@@ -18,7 +24,14 @@ export default function HomeownerHero() {
   return (
     <>
       {/* ---------- HERO ---------------------------------------------------- */}
-      <section className="relative overflow-hidden border-b border-zinc-200 bg-white">
+      <section
+        id={isSection ? 'request' : undefined}
+        className={
+          isSection
+            ? 'relative scroll-mt-24 overflow-hidden border-b border-brand-line bg-brand-mist'
+            : 'relative overflow-hidden border-b border-zinc-200 bg-white'
+        }
+      >
         {/* warm wash bottom-left, keeps it from feeling clinical */}
         <div
           aria-hidden="true"
@@ -39,10 +52,17 @@ export default function HomeownerHero() {
                   Now serving Middle Tennessee
                 </span>
               </div>
-              <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-mkt-ink md:text-6xl">
-                Find the right contractor.
-                <span className="block text-lw-rust">Every time. For free.</span>
-              </h1>
+              {isSection ? (
+                <h2 className="br-display text-3xl leading-[1.08] text-brand-ink md:text-5xl">
+                  Find the right contractor.
+                  <span className="block text-brand-orange">Every time. For free.</span>
+                </h2>
+              ) : (
+                <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-mkt-ink md:text-6xl">
+                  Find the right contractor.
+                  <span className="block text-lw-rust">Every time. For free.</span>
+                </h1>
+              )}
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-mkt-ink/70 md:text-xl">
                 ListWorx is the trusted home-service referral network. Every pro
                 is reviewed against IronClad Standards for licensing, insurance,

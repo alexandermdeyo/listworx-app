@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Bell, LogOut, Menu, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 export interface NavItem {
   id: string;
@@ -26,6 +27,8 @@ interface DashboardLayoutProps {
   activeNavId: string;
   onLogout: () => void;
   hasNotifications?: boolean;
+  /** 'brand' = navy redesign theme (opt-in). Default keeps the current look. */
+  theme?: 'default' | 'brand';
   children: ReactNode;
 }
 
@@ -42,7 +45,9 @@ export default function DashboardLayout({
   onLogout,
   hasNotifications = false,
   children,
+  theme = 'default',
 }: DashboardLayoutProps) {
+  const brand = theme === 'brand';
   const router                      = useRouter();
   const supabase                    = useRef(createClient());
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -152,16 +157,19 @@ export default function DashboardLayout({
       <aside
         className={`fixed inset-y-0 left-0 z-30 flex w-60 max-w-[75vw] flex-col transition-transform duration-200
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:translate-x-0`}
-        style={{ backgroundColor: '#181818' }}
+          md:translate-x-0 ${brand ? 'overflow-hidden' : ''}`}
+        style={{ backgroundColor: brand ? '#0F2342' : '#181818' }}
       >
+        {brand && (
+          <Brushstroke variant="sidebar" className="pointer-events-none absolute inset-0 h-full w-full opacity-90" />
+        )}
         {/* Logo + mobile close button */}
-        <div className="flex h-16 items-center justify-between px-5 border-b border-white/10">
+        <div className={`relative flex h-16 items-center justify-between px-5 border-b border-white/10 ${brand ? 'bg-brand-navy-deep' : ''}`}>
           <Link href="/" className="flex items-center">
             <img
               src="/brand/listworx-wordmark-dark.png"
               alt="ListWorx"
-              className="h-5 w-auto"
+              className={brand ? 'h-6 w-auto' : 'h-5 w-auto'}
             />
           </Link>
           <button
@@ -174,7 +182,7 @@ export default function DashboardLayout({
         </div>
 
         {/* User info */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
+        <div className={`relative flex items-center gap-3 px-5 py-4 border-b border-white/10 ${brand ? 'mt-24' : ''}`}>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 flex-shrink-0">
             <span className="text-xs font-semibold text-white uppercase">
               {(userName || 'U')[0]}
@@ -194,7 +202,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Nav items */}
-        <nav className="flex-1 overflow-y-auto py-3">
+        <nav className={`relative flex-1 overflow-y-auto py-3 ${brand ? 'px-3' : ''}`}>
           {navItems.map((item) => {
             if (item.isLogout) {
               return (
@@ -235,15 +243,23 @@ export default function DashboardLayout({
               </>
             );
 
-            const baseClass = `flex w-full items-center gap-3 px-5 py-2.5 text-sm transition-colors ${
-              item.disabled
-                ? 'text-white/30 cursor-not-allowed'
-                : isActive
-                ? 'text-white font-medium'
-                : 'text-white/60 hover:text-white'
-            }`;
+            const baseClass = brand
+              ? `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] transition-colors ${
+                  item.disabled
+                    ? 'text-white/35 cursor-not-allowed'
+                    : isActive
+                    ? 'bg-brand-orange text-white font-semibold shadow-[0_8px_18px_-10px_rgba(242,106,33,0.9)]'
+                    : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`
+              : `flex w-full items-center gap-3 px-5 py-2.5 text-sm transition-colors ${
+                  item.disabled
+                    ? 'text-white/30 cursor-not-allowed'
+                    : isActive
+                    ? 'text-white font-medium'
+                    : 'text-white/60 hover:text-white'
+                }`;
 
-            const activeBg = isActive
+            const activeBg = isActive && !brand
               ? { backgroundColor: '#E8621A' }
               : {};
 
@@ -270,7 +286,7 @@ export default function DashboardLayout({
         </nav>
 
         {/* Bottom sign out */}
-        <div className="border-t border-white/10 py-3">
+        <div className={`relative border-t border-white/10 py-3 ${brand ? 'bg-brand-navy-deep/80' : ''}`}>
           <button
             onClick={() => { closeSidebar(); onLogout(); }}
             className="flex w-full items-center gap-3 px-5 py-2.5 text-sm text-white/50 hover:text-white transition-colors"
@@ -284,18 +300,18 @@ export default function DashboardLayout({
       {/* Main content area */}
       <div className="flex min-w-0 flex-1 flex-col md:ml-60">
         {/* Top bar */}
-        <header className="sticky top-0 z-10 flex h-15 items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6 py-0" style={{ height: '60px' }}>
+        <header className={`sticky top-0 z-10 flex h-15 items-center justify-between border-b px-4 md:px-6 py-0 ${brand ? 'border-white/10 bg-brand-navy-deep text-white' : 'border-gray-200 bg-white'}`} style={{ height: '60px' }}>
           <div className="flex items-center gap-3">
             {/* Hamburger — mobile only */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden text-gray-600 hover:text-gray-900 transition-colors p-1 -ml-1"
+              className={`md:hidden transition-colors p-1 -ml-1 ${brand ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
               aria-label="Open menu"
             >
               <Menu className="h-6 w-6" />
             </button>
             <h1
-              className="text-xl font-bold uppercase tracking-wide text-gray-900"
+              className={`text-xl font-bold uppercase tracking-wide ${brand ? 'text-white' : 'text-gray-900'}`}
               style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}
             >
               {pageTitle}
@@ -310,7 +326,7 @@ export default function DashboardLayout({
                 {tierBadge}
               </span>
             )}
-            <button className="relative p-1.5 text-gray-500 hover:text-gray-900 transition-colors">
+            <button className={`relative p-1.5 transition-colors ${brand ? 'text-white/80 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}>
               <Bell className="h-5 w-5" />
               {hasNotifications && (
                 <span
@@ -323,7 +339,7 @@ export default function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-white">
+        <main className={`flex-1 overflow-y-auto ${brand ? 'bg-brand-mist' : 'bg-white'}`}>
           {children}
         </main>
       </div>

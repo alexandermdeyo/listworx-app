@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import America250Strip from '@/components/site/America250Strip';
 import { cn } from '@/lib/utils';
+import BrandNavBar from '@/components/brand/BrandNavBar';
 
 type Role =
   | 'ADMIN'
@@ -24,7 +25,7 @@ function isRequestorRole(role: Role) {
   );
 }
 
-export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'light' }) {
+export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'light' | 'navy' }) {
   const light = variant === 'light';
   const supabase = useMemo(() => createClient(), []);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -150,6 +151,21 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
 
     window.location.replace('/');
   };
+
+  if (variant === 'navy') {
+    return (
+      <header className="sticky top-0 z-40">
+        <America250Strip variant="dark" />
+        <BrandNavBar
+          loggedIn={loggedIn}
+          loading={loading}
+          dashboardHref={dashboardHref}
+          academyEnabled={academyEnabled}
+          onSignOut={handleSignOut}
+        />
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-40">

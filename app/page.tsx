@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
 import HomeownerHero from '@/components/site/HomeownerHero';
+import { BrandHomeHero, BrandPathways, BrandFeaturedManual } from '@/components/brand/HomeBrandSections';
 import IroncladBadge from '@/components/site/IroncladBadge';
 import PhotoDark from '@/components/site/PhotoDark';
 import CountUp from '@/components/site/CountUp';
@@ -109,12 +110,19 @@ export default function LandingPage() {
   return (
     <PageShell surface="marketing">
       <JsonLd data={homepageStructuredData} />
-      <Navigation variant="light" />
+      <Navigation variant="navy" />
 
       <HolidayBar />
-      <ContractorRecruitBar />
 
-      <HomeownerHero />
+      {/* BRAND REDESIGN: navy hero, pathways, featured manual (Coming Soon) */}
+      <BrandHomeHero />
+      <BrandPathways />
+
+      {/* Homeowner request entry point (JobRequestWidget), unchanged logic */}
+      <HomeownerHero variant="section" />
+
+      <BrandFeaturedManual />
+      <ContractorRecruitBar />
 
       {/* ============================================================= */}
       {/* TRUST BARS — partner companies + featured network contractors */}
@@ -127,8 +135,8 @@ export default function LandingPage() {
       {/* ============================================================= */}
       <section id="how-it-works" className="container mx-auto scroll-mt-24 px-4 py-20 md:py-28">
         <Reveal className="mb-14 max-w-2xl">
-          <p className="lw-label-lg mb-3 !text-lw-rust">How it works</p>
-          <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
+          <p className="lw-label-lg mb-3 !text-brand-orange">How it works</p>
+          <h2 className="text-3xl font-bold tracking-tight text-brand-ink md:text-5xl">
             Three steps. No profile scrolling.
           </h2>
         </Reveal>
@@ -137,10 +145,10 @@ export default function LandingPage() {
           {/* Row 1 — copy left, photo right (balanced halves) */}
           <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
             <div className="flex gap-5">
-              <span className="text-5xl font-bold text-lw-rust/25">{steps[0].n}</span>
+              <span className="text-5xl font-bold text-brand-orange/25">{steps[0].n}</span>
               <div>
-                <h3 className="text-xl font-bold text-mkt-ink">{steps[0].title}</h3>
-                <p className="mt-2 text-mkt-ink/70">{steps[0].body}</p>
+                <h3 className="text-xl font-bold text-brand-ink">{steps[0].title}</h3>
+                <p className="mt-2 text-brand-ink/70">{steps[0].body}</p>
               </div>
             </div>
             <div className="lw-figure-zoom aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm">
@@ -155,24 +163,24 @@ export default function LandingPage() {
 
           {/* Row 2 — middle step, centered, carried by the numbers instead of a photo */}
           <Reveal className="border-y border-zinc-200 py-14 text-center">
-            <span className="mx-auto block text-5xl font-bold text-lw-rust/25">{steps[1].n}</span>
-            <h3 className="mt-2 text-xl font-bold text-mkt-ink">{steps[1].title}</h3>
-            <p className="mx-auto mt-2 max-w-xl text-mkt-ink/70">{steps[1].body}</p>
+            <span className="mx-auto block text-5xl font-bold text-brand-orange/25">{steps[1].n}</span>
+            <h3 className="mt-2 text-xl font-bold text-brand-ink">{steps[1].title}</h3>
+            <p className="mx-auto mt-2 max-w-xl text-brand-ink/70">{steps[1].body}</p>
             <div className="mx-auto mt-10 flex flex-col items-center gap-8 sm:flex-row sm:justify-center sm:gap-14">
               <div className="flex items-baseline gap-3">
-                <span className="text-6xl font-bold text-lw-rust md:text-7xl">
+                <span className="text-6xl font-bold text-brand-orange md:text-7xl">
                   <CountUp value={3} />
                 </span>
-                <span className="max-w-[9rem] text-left text-sm font-medium uppercase tracking-widest text-mkt-ink/60">
+                <span className="max-w-[9rem] text-left text-sm font-medium uppercase tracking-widest text-brand-ink/60">
                   verified matches, max
                 </span>
               </div>
               <span className="hidden h-14 w-px bg-zinc-300 sm:block" />
               <div className="flex items-baseline gap-3">
-                <span className="text-6xl font-bold text-mkt-ink md:text-7xl">
+                <span className="text-6xl font-bold text-brand-ink md:text-7xl">
                   <CountUp value={30} prefix="<" suffix="s" />
                 </span>
-                <span className="max-w-[10rem] text-left text-sm font-medium uppercase tracking-widest text-mkt-ink/60">
+                <span className="max-w-[10rem] text-left text-sm font-medium uppercase tracking-widest text-brand-ink/60">
                   to see them on screen
                 </span>
               </div>
@@ -190,10 +198,10 @@ export default function LandingPage() {
               />
             </div>
             <div className="order-1 flex gap-5 md:order-2">
-              <span className="text-5xl font-bold text-lw-rust/25">{steps[2].n}</span>
+              <span className="text-5xl font-bold text-brand-orange/25">{steps[2].n}</span>
               <div>
-                <h3 className="text-xl font-bold text-mkt-ink">{steps[2].title}</h3>
-                <p className="mt-2 text-mkt-ink/70">{steps[2].body}</p>
+                <h3 className="text-xl font-bold text-brand-ink">{steps[2].title}</h3>
+                <p className="mt-2 text-brand-ink/70">{steps[2].body}</p>
               </div>
             </div>
           </Reveal>
@@ -201,7 +209,7 @@ export default function LandingPage() {
 
         <Reveal className="mt-14">
           <Link href="/request">
-            <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+            <Button size="lg" className="bg-brand-orange text-white hover:bg-brand-orange-hover">
               Start a request, free
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -212,8 +220,8 @@ export default function LandingPage() {
       {/* ============================================================= */}
       {/* IRONCLAD STANDARDS — dark mailer band, no photo               */}
       {/* ============================================================= */}
-      <section className="relative overflow-hidden bg-mailer-black text-white">
-        <div className="h-1 w-full bg-lw-rust" />
+      <section className="relative overflow-hidden bg-brand-navy-deep text-white">
+        <div className="h-1 w-full bg-brand-orange" />
 
         <div className="container mx-auto grid gap-12 px-4 py-20 md:py-28 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <Reveal className="flex justify-center lg:justify-start">
@@ -243,7 +251,7 @@ export default function LandingPage() {
                 const Icon = s.icon;
                 return (
                   <Reveal key={s.title} delay={i * 80} className="flex gap-3">
-                    <Icon className="mt-0.5 h-6 w-6 shrink-0 text-lw-rust" />
+                    <Icon className="mt-0.5 h-6 w-6 shrink-0 text-brand-orange" />
                     <div>
                       <h3 className="font-bold text-white">{s.title}</h3>
                       <p className="mt-1 text-sm leading-relaxed text-white/60">
@@ -258,7 +266,7 @@ export default function LandingPage() {
             <Reveal delay={120}>
               <div className="mt-12 flex flex-wrap items-center gap-x-10 gap-y-6 border-t border-white/10 pt-8">
                 <div>
-                  <div className="text-3xl font-bold text-lw-rust md:text-4xl">
+                  <div className="text-3xl font-bold text-brand-orange md:text-4xl">
                     <CountUp value={100} suffix="%" />
                   </div>
                   <div className="text-xs uppercase tracking-widest text-white/50">
@@ -266,7 +274,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-lw-rust md:text-4xl">
+                  <div className="text-3xl font-bold text-brand-orange md:text-4xl">
                     <CountUp value={24} suffix="hr" />
                   </div>
                   <div className="text-xs uppercase tracking-widest text-white/50">
@@ -274,7 +282,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-lw-rust md:text-4xl">
+                  <div className="text-3xl font-bold text-brand-orange md:text-4xl">
                     <CountUp value={3} />
                   </div>
                   <div className="text-xs uppercase tracking-widest text-white/50">
@@ -299,7 +307,7 @@ export default function LandingPage() {
       {/* ============================================================= */}
       {/* WHAT "VERIFIED" MEANS — light, photo-led, image bleeds left  */}
       {/* ============================================================= */}
-      <section className="overflow-hidden border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
+      <section className="overflow-hidden border-y border-zinc-200 bg-brand-mist py-20 md:py-28">
         <div className="container mx-auto px-4">
           <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
             <Reveal className="flex justify-center">
@@ -312,11 +320,11 @@ export default function LandingPage() {
             </Reveal>
 
             <Reveal>
-              <p className="lw-label-lg mb-3 !text-lw-rust">The IronClad badge</p>
-              <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
+              <p className="lw-label-lg mb-3 !text-brand-orange">The IronClad badge</p>
+              <h2 className="text-3xl font-bold tracking-tight text-brand-ink md:text-4xl">
                 See this badge? The contractor&apos;s been vetted.
               </h2>
-              <p className="mt-4 text-lg text-mkt-ink/75">
+              <p className="mt-4 text-lg text-brand-ink/75">
                 The IronClad badge means ListWorx reviewed the business and the contractor agreed to a
                 standard they can be removed for breaking. It&apos;s a badge we can pull, not one we
                 hand out.
@@ -329,8 +337,8 @@ export default function LandingPage() {
                   'Slip below the standard and the referrals stop.',
                 ].map((line, i) => (
                   <Reveal as="li" key={line} delay={i * 70} className="flex items-start gap-3">
-                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
-                    <span className="text-mkt-ink/75">{line}</span>
+                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-orange" />
+                    <span className="text-brand-ink/75">{line}</span>
                   </Reveal>
                 ))}
               </ul>
@@ -348,7 +356,7 @@ export default function LandingPage() {
           {/* The two marks on a dark lineup so each badge sits on matching stock */}
           <Reveal className="mt-16 md:mt-20">
             <div className="rounded-3xl border border-mailer-border bg-mailer-ink p-8 md:p-12">
-              <p className="lw-label-lg mb-2 !text-lw-rust">The two marks</p>
+              <p className="lw-label-lg mb-2 !text-brand-orange">The two marks</p>
               <h3 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
                 One standard. Two ways it shows up.
               </h3>
@@ -416,11 +424,11 @@ export default function LandingPage() {
 
           <div className="lg:pl-6">
             <Reveal>
-              <p className="text-2xl font-bold leading-snug tracking-tight text-mkt-ink md:text-3xl">
+              <p className="text-2xl font-bold leading-snug tracking-tight text-brand-ink md:text-3xl">
                 The job&apos;s done when you&apos;d recommend them without thinking
                 twice.
               </p>
-              <p className="mt-4 text-mkt-ink/65">
+              <p className="mt-4 text-brand-ink/65">
                 Contractors stay in the network by keeping the IronClad Standards, not by
                 spending more. Payment never buys placement.
               </p>
@@ -452,14 +460,14 @@ export default function LandingPage() {
       {/* ============================================================= */}
       {/* NEWSLETTER — slim signup band                                */}
       {/* ============================================================= */}
-      <section className="border-b border-zinc-200 bg-lw-light-bg py-16 md:py-20">
+      <section id="newsletter" className="scroll-mt-24 border-b border-zinc-200 bg-brand-mist py-16 md:py-20">
         <div className="container mx-auto max-w-3xl px-4 text-center">
           <Reveal>
-            <p className="lw-label-lg mb-3 !text-lw-rust">Stay in the loop</p>
-            <h2 className="text-2xl font-bold tracking-tight text-mkt-ink md:text-3xl">
+            <p className="lw-label-lg mb-3 !text-brand-orange">Stay in the loop</p>
+            <h2 className="text-2xl font-bold tracking-tight text-brand-ink md:text-3xl">
               Local contractor tips and network news.
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-mkt-ink/65">
+            <p className="mx-auto mt-3 max-w-xl text-brand-ink/65">
               A short email now and then. No spam, unsubscribe anytime.
             </p>
           </Reveal>
@@ -475,11 +483,11 @@ export default function LandingPage() {
       <section className="overflow-hidden border-y border-zinc-200 bg-white py-20 md:py-28">
         <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-2">
           <Reveal className="order-2 lg:order-1">
-            <p className="lw-label-lg mb-3 !text-lw-rust">For real estate pros</p>
-            <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
+            <p className="lw-label-lg mb-3 !text-brand-orange">For real estate pros</p>
+            <h2 className="text-3xl font-bold tracking-tight text-brand-ink md:text-4xl">
               Refer a contractor without putting your name on the line.
             </h2>
-            <p className="mt-4 max-w-xl text-mkt-ink/70">
+            <p className="mt-4 max-w-xl text-brand-ink/70">
               Pre-listing prep, post-inspection repairs, move-in work. Send one
               request and reliably connect your clients with a shortlist of
               verified pros. Free for agents, and your client&apos;s info stays
@@ -532,7 +540,7 @@ export default function LandingPage() {
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="/apply">
-                  <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
+                  <Button size="lg" className="bg-brand-orange text-white hover:bg-brand-orange-hover">
                     Join ListWorx Free
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>

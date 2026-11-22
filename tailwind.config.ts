@@ -79,6 +79,18 @@ const config: Config = {
           'light-bg': '#F5F5F5',
           'secondary-text': '#B0B0B0',
         },
+        // Brand redesign system (navy + vibrant orange). Opt-in; existing
+        // lw/mkt/mailer tokens are untouched.
+        brand: {
+          navy: '#0F2342',
+          'navy-deep': '#0A1830',
+          'navy-soft': '#1B3358',
+          orange: '#F26A21',
+          'orange-hover': '#D9581A',
+          mist: '#F3F5F8',
+          line: '#E3E7ED',
+          ink: '#152235',
+        },
         mkt: {
           bg: '#FFFFFF',
           ink: '#3F4041',

@@ -16,6 +16,7 @@ import SubscriptionSection from './SubscriptionSection';
 import MarketingSection from './MarketingSection';
 import ApplicationForm from './ApplicationForm';
 import ReferralTally from './ReferralTally';
+import { BrandDashboardHero, BrandKpiRow, BrandQuickLinks } from './BrandOverview';
 import ProfileTab from './ProfileTab';
 import DocumentsTab from './DocumentsTab';
 import SettingsTab from './SettingsTab';
@@ -648,8 +649,11 @@ export default function ContractorDashboard() {
       activeNavId={activeNavId}
       onLogout={handleLogout}
       hasNotifications={false}
+      theme="brand"
     >
       <div className="p-6 space-y-6 text-gray-900">
+        {activeTab === 'overview' && <BrandDashboardHero />}
+
         {/* Expiry warning banners */}
         {licenseExpiring && (
           <div
@@ -714,6 +718,13 @@ export default function ContractorDashboard() {
         <div className="space-y-6">
           {activeTab === 'overview' && (
             <>
+              <BrandKpiRow
+                tier={profile.tier || null}
+                licenseDaysUntil={licenseDaysUntil}
+                insuranceDaysUntil={insuranceDaysUntil}
+                onOpenDocuments={() => setActiveTab('documents')}
+              />
+              <BrandQuickLinks />
               <SubscriptionSection
                 contractorProfileId={profile?.id}
                 canUpgrade={profile?.partner_status === 'active' && profile?.archived !== true}

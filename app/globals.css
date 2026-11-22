@@ -266,6 +266,42 @@ html {
     @apply text-sm font-bold uppercase tracking-[0.18em] text-lw-rust md:text-base;
   }
 
+  /* ---------------------------------------------------------------
+   * Brand redesign system (opt-in, prefixed .br-)
+   * Deep navy + vibrant orange, Montserrat headings, Barlow Condensed nav.
+   * ------------------------------------------------------------- */
+  .br-display {
+    font-family: var(--font-display);
+    @apply font-extrabold tracking-tight;
+  }
+  .br-nav-font {
+    font-family: 'Barlow Condensed', 'Barlow', Arial, sans-serif;
+  }
+  .br-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-base font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-2;
+  }
+  .br-btn-primary {
+    @apply br-btn bg-brand-orange text-white shadow-[0_10px_24px_-12px_rgba(242,106,33,0.8)] hover:bg-brand-orange-hover;
+  }
+  .br-btn-outline-light {
+    @apply br-btn border-2 border-white/80 bg-transparent text-white hover:bg-white hover:text-brand-navy;
+  }
+  .br-btn-outline {
+    @apply br-btn border-2 border-brand-orange bg-white py-2.5 text-brand-orange hover:bg-brand-orange hover:text-white;
+  }
+  .br-card {
+    @apply rounded-2xl border border-brand-line bg-white shadow-[0_14px_34px_-22px_rgba(15,35,66,0.45)];
+  }
+  .br-eyebrow {
+    @apply inline-block rounded-md bg-brand-orange px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-white;
+  }
+  .br-soon {
+    @apply inline-flex items-center rounded-full bg-brand-navy/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-brand-navy;
+  }
+  .br-soon-light {
+    @apply inline-flex items-center rounded-full bg-white/[0.15] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white;
+  }
+
   .lw-muted {
     color: var(--lw-secondary-text);
   }
