@@ -13,7 +13,12 @@ export type ScheduleSettings = {
   buffer_minutes: number;
   min_notice_hours: number;
   booking_window_days: number;
+  /** Earliest local start time for any appointment (HH:MM). Defaults to EARLIEST_START. */
+  earliest_start?: string;
 };
+
+/** Owner rule (Nov 22 2026): no appointment starts before 3:30 PM local time. */
+export const EARLIEST_START = '15:30';
 
 const MIN = 60_000;
 
@@ -125,8 +130,10 @@ export function availableSlots(opts: {
   const busyRanges = busy.map((b) => [Date.parse(b.block_start), Date.parse(b.block_end)] as const);
   const step = Math.max(15, settings.slot_interval_minutes);
   const slots: Slot[] = [];
+  const floor = toMinutes(settings.earliest_start || EARLIEST_START);
   for (const [ws, we] of openWindows(date, rules, exceptions)) {
-    for (let m = ws; m + durationMinutes <= we; m += step) {
+    // Start at the window's opening or the earliest allowed start, whichever is later.
+    for (let m = Math.max(ws, floor); m + durationMinutes <= we; m += step) {
       const start = zonedToUtc(date, fromMinutes(m), tz);
       if (start.getTime() < earliest || start.getTime() > latest) continue;
       const slot = slotFor(start, durationMinutes, settings.buffer_minutes, tz);

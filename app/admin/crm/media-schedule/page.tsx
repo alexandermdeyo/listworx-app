@@ -46,7 +46,7 @@ export default function MediaSchedulePage() {
   );
 
   return (
-    <AdminApiPage title="Media schedule" description="Times are Central (America/Chicago). Customers can only request times inside these hours.">
+    <AdminApiPage title="Media schedule" description="Times are Central (America/Chicago). Customers can only request times inside these hours, and no appointment starts before 3:30 PM.">
       {msg && <p className={`mb-4 ${msg === 'Saved' ? 'text-green-400' : 'text-red-400'}`}>{msg}</p>}
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">

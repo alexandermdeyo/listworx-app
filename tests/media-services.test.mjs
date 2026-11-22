@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildMediaQuote, MediaQuoteError, mediaDiscountPercent, canTransition, visitMinutes, stripeLineItems, MEDIA_PACKAGES, MEDIA_SERVICES, MEDIA_ADDONS } from '../lib/media/catalog.ts';
 import { reconcileRefunds, liveVisitCount } from '../lib/media/refunds.ts';
-import { availableSlots, isPublishedSlot, slotFor, slotsOverlap, zonedToUtc, openWindows } from '../lib/media/schedule.ts';
+import { availableSlots, isPublishedSlot, slotFor, slotsOverlap, zonedToUtc, openWindows, EARLIEST_START } from '../lib/media/schedule.ts';
 import { currentMembership, hasFlyerBuilder, hasPaidResources, socialPostAllowance, COMPARISON_ROWS, periodMonth } from '../lib/membership/benefits.ts';
 
 // ── Pricing and discounts ───────────────────────────────────────────────────
@@ -75,7 +75,7 @@ test('comparison table matches the approved benefits', () => {
 });
 
 // ── Scheduling ──────────────────────────────────────────────────────────────
-const settings = { timezone: 'America/Chicago', slot_interval_minutes: 30, buffer_minutes: 30, min_notice_hours: 24, booking_window_days: 60 };
+const settings = { timezone: 'America/Chicago', slot_interval_minutes: 30, buffer_minutes: 30, min_notice_hours: 24, booking_window_days: 60, earliest_start: '00:00' };
 const rules = [{ weekday: 1, start_time: '09:00', end_time: '13:00' }]; // Mondays
 const NOW = new Date('2026-11-20T12:00:00Z');
 
@@ -85,6 +85,16 @@ test('slots fit inside published hours, in Central time', () => {
   assert.equal(slots.at(-1).starts_at, '2026-11-23T17:30:00.000Z'); // 11:30 + 90m = 13:00
   assert.equal(availableSlots({ date: '2026-11-24', durationMinutes: 90, settings, rules, exceptions: [], busy: [], now: NOW }).length, 0, 'Tuesday closed');
   assert.equal(zonedToUtc('2026-07-06', '09:00', 'America/Chicago').toISOString(), '2026-07-06T14:00:00.000Z', 'CDT');
+});
+
+test('no appointment starts before 3:30 PM Central by default', () => {
+  assert.equal(EARLIEST_START, '15:30');
+  const { earliest_start, ...defaults } = settings;
+  const allDay = [{ weekday: 1, start_time: '08:00', end_time: '20:00' }];
+  const slots = availableSlots({ date: '2026-11-23', durationMinutes: 90, settings: defaults, rules: allDay, exceptions: [], busy: [], now: NOW });
+  assert.equal(slots[0].starts_at, '2026-11-23T21:30:00.000Z'); // 3:30 PM CST
+  assert.ok(slots.every((s) => Date.parse(s.starts_at) >= Date.parse('2026-11-23T21:30:00.000Z')));
+  assert.equal(availableSlots({ date: '2026-11-23', durationMinutes: 90, settings: defaults, rules, exceptions: [], busy: [], now: NOW }).length, 0, 'morning-only hours give no slots');
 });
 
 test('past dates, minimum notice, and blocked days produce no slots', () => {

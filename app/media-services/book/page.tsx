@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { MEDIA_ADDONS, MEDIA_PACKAGES, MEDIA_SERVICES, formatUsd, getBookableService } from '@/lib/media/catalog';
 import { authFetch, getSignedInEmail } from '@/lib/auth-fetch';
@@ -15,11 +15,16 @@ const SERVICES = [...MEDIA_PACKAGES, ...MEDIA_SERVICES];
 // Matches the site-wide form style (white field, dark text) with light gray example text.
 const input = 'w-full rounded-md border border-zinc-300 px-3 py-2.5 text-base placeholder:text-zinc-400 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/30';
 const label = 'mb-1.5 block text-sm font-semibold text-white';
-const fmtDate = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const monthKey = (d: string) => d.slice(0, 7);
+const monthLabel = (key: string) => new Date(`${key}-15T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const longDate = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' });
 
+/** Monthly calendar of open days; picking a day shows a dropdown of start times. */
 function VisitPicker({ service, addons, visit, value, onChange, after }: { service: string; addons: string[]; visit: number; value: string; onChange: (v: string) => void; after?: string }) {
   const [dates, setDates] = useState<DateSlots[] | null>(null);
   const [day, setDay] = useState('');
+  const [month, setMonth] = useState('');
   const [err, setErr] = useState('');
   useEffect(() => {
     setDates(null);
@@ -32,26 +37,68 @@ function VisitPicker({ service, addons, visit, value, onChange, after }: { servi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [service, addons.join(','), visit]);
   const shown = (dates || []).map((d) => ({ ...d, slots: d.slots.filter((s) => !after || Date.parse(s.starts_at) > Date.parse(after)) })).filter((d) => d.slots.length);
-  const current = shown.find((d) => d.date === day);
+  const byDate = new Map(shown.map((d) => [d.date, d]));
+  const months = Array.from(new Set(shown.map((d) => monthKey(d.date))));
+  const activeMonth = months.includes(month) ? month : months[0] || '';
+  const current = byDate.get(day);
+
   if (err) return <p className="text-sm text-red-400">{err}</p>;
   if (!dates) return <p className="flex items-center gap-2 text-sm text-white/60"><Loader2 className="h-4 w-4 animate-spin" /> Loading open times…</p>;
   if (!shown.length) return <p className="text-sm text-white/60">No open times right now. <a className="text-lw-rust underline" href="mailto:adeyo@listworx.co?subject=Media%20booking">Email us</a> and we&apos;ll find one.</p>;
+
+  // Build the grid for the active month (UTC date math on YYYY-MM-DD keys).
+  const [y, m] = activeMonth.split('-').map(Number);
+  const firstDow = new Date(Date.UTC(y, m - 1, 1)).getUTCDay();
+  const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const cells: Array<string | null> = [...Array(firstDow).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => `${activeMonth}-${String(i + 1).padStart(2, '0')}`)];
+  const mi = months.indexOf(activeMonth);
+
   return (
-    <div>
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {shown.map((d) => (
-          <button type="button" key={d.date} onClick={() => { setDay(d.date); onChange(''); }} className={`shrink-0 rounded-md border px-3 py-2 text-sm ${day === d.date ? 'border-lw-rust bg-lw-rust text-white' : 'border-mailer-border bg-mailer-ink text-white/80 hover:border-lw-rust'}`}>
-            {fmtDate(d.date)}
-          </button>
-        ))}
+    <div className="max-w-md">
+      <div className="mb-3 flex items-center justify-between">
+        <button type="button" aria-label="Previous month" disabled={mi <= 0} onClick={() => setMonth(months[mi - 1])} className="rounded-md p-2 text-white/80 hover:bg-white/10 disabled:opacity-30">
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <p className="font-semibold">{monthLabel(activeMonth)}</p>
+        <button type="button" aria-label="Next month" disabled={mi >= months.length - 1} onClick={() => setMonth(months[mi + 1])} className="rounded-md p-2 text-white/80 hover:bg-white/10 disabled:opacity-30">
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
-      {current && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {current.slots.map((s) => (
-            <button type="button" key={s.starts_at} onClick={() => onChange(s.starts_at)} className={`rounded-md border px-3 py-1.5 text-sm ${value === s.starts_at ? 'border-lw-rust bg-lw-rust text-white' : 'border-mailer-border text-white/80 hover:border-lw-rust'}`}>
-              {s.label}
+      <div className="grid grid-cols-7 gap-1 text-center text-xs text-white/45">
+        {WEEKDAYS.map((w) => <div key={w} className="py-1">{w}</div>)}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {cells.map((d, i) => {
+          if (!d) return <div key={`b${i}`} />;
+          const open = byDate.has(d);
+          const selected = d === day;
+          return (
+            <button
+              type="button"
+              key={d}
+              disabled={!open}
+              aria-label={`${longDate(d)}${open ? '' : ', unavailable'}`}
+              aria-pressed={selected}
+              onClick={() => { setDay(d); onChange(''); }}
+              className={`aspect-square rounded-md text-sm transition ${
+                selected ? 'bg-lw-rust font-bold text-white' : open ? 'border border-lw-rust/50 font-semibold text-white hover:bg-lw-rust/20' : 'cursor-not-allowed text-white/20'
+              }`}
+            >
+              {Number(d.slice(8))}
             </button>
-          ))}
+          );
+        })}
+      </div>
+      <p className="mt-2 text-xs text-white/45">Outlined days have open times.</p>
+      {current && (
+        <div className="mt-4">
+          <label htmlFor={`time-${visit}`} className={label}>Start time on {longDate(current.date)}</label>
+          <select id={`time-${visit}`} className={input} value={value} onChange={(e) => onChange(e.target.value)}>
+            <option value="">Choose a time</option>
+            {current.slots.map((s) => (
+              <option key={s.starts_at} value={s.starts_at}>{s.label}</option>
+            ))}
+          </select>
         </div>
       )}
     </div>
