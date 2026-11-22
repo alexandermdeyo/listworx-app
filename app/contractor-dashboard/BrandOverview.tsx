@@ -6,6 +6,7 @@ import { ArrowRight, BadgeCheck, FileCheck2, Inbox, ShieldCheck } from 'lucide-r
 import { createClient } from '@/lib/supabase-browser';
 import Brushstroke from '@/components/brand/Brushstroke';
 import PhotoBlend from '@/components/brand/PhotoBlend';
+import { BRAND_PHOTOS } from '@/lib/brand/photos';
 
 /**
  * Brand redesign: hero, KPI row, and quick links for the contractor dashboard
@@ -32,22 +33,22 @@ function expiryLabel(days: number | null) {
 
 export function BrandDashboardHero() {
   return (
-    <section className="relative isolate -mx-6 -mt-6 overflow-hidden bg-brand-navy text-white">
+    <section className="relative isolate -mx-4 -mt-4 overflow-hidden bg-brand-navy text-white md:-mx-5 md:-mt-5">
       <PhotoBlend
-        src="/images/redesign/contractor_painter-wall-crop.webp"
+        src={BRAND_PHOTOS.dashboardHero.src}
         side="right"
         priority
         className="md:left-[45%]"
         imgClassName="object-[70%_30%]"
       />
-      <div className="relative z-10 px-6 py-10 md:px-10 md:py-12">
+      <div className="relative z-10 px-5 py-6 md:px-8 md:py-8">
         <p className="text-lg font-medium text-white/90">Contractor Dashboard</p>
-        <h2 className="br-display mt-2 text-3xl leading-[1.05] md:text-5xl">
+        <h2 className="br-display mt-2 text-3xl leading-[1.05] md:text-[44px]">
           Grow Your Business
           <span className="block">with ListWorx</span>
         </h2>
         <Brushstroke variant="underline" className="mt-3 h-3 w-56 md:w-72" />
-        <p className="mt-4 max-w-xl text-base text-white/90 md:text-lg">
+        <p className="mt-3 max-w-xl text-base text-white/90 md:text-lg">
           Your referrals, profile, documents, and business tools, all in one place.
         </p>
       </div>
@@ -128,10 +129,10 @@ export function BrandKpiRow({ tier, licenseDaysUntil, insuranceDaysUntil, onOpen
 }
 
 const quickLinks = [
-  { label: 'View Referrals', href: '#referrals', img: '/images/redesign/results_house-exterior-dusk.webp' },
-  { label: 'Build a Flyer', href: '/contractor-dashboard/flyers', img: '/images/redesign/contractor_cleaning-crew.webp' },
-  { label: 'Learning Center', href: '/learning-center', img: '/images/redesign/about_contractor-realtor-handshake.webp' },
-  { label: 'Request Media Services', href: '/media-services', img: '/images/redesign/contractor_video-crew-content-shoot.webp' },
+  { label: 'View Referrals', href: '#referrals', img: BRAND_PHOTOS.quickReferrals.src },
+  { label: 'Build a Flyer', href: '/contractor-dashboard/flyers', img: BRAND_PHOTOS.quickFlyer.src },
+  { label: 'Learning Center', href: '/learning-center', img: BRAND_PHOTOS.quickLearning.src },
+  { label: 'Request Media Services', href: '/media-services', img: BRAND_PHOTOS.quickMedia.src },
 ];
 
 export function BrandQuickLinks() {
@@ -141,7 +142,7 @@ export function BrandQuickLinks() {
         <Link
           key={q.label}
           href={q.href}
-          className="group relative isolate flex h-32 items-end overflow-hidden rounded-2xl bg-brand-navy p-4 shadow-[0_14px_34px_-22px_rgba(15,35,66,0.6)] md:h-40 md:p-5"
+          className="group relative isolate flex h-28 items-end overflow-hidden rounded-2xl bg-brand-navy p-4 shadow-[0_14px_34px_-22px_rgba(15,35,66,0.6)] md:h-32"
         >
           <img src={q.img} alt="" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-brand-navy via-brand-navy/75 to-brand-navy/10" />

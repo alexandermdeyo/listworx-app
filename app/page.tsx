@@ -133,8 +133,8 @@ export default function LandingPage() {
       {/* ============================================================= */}
       {/* HOW IT WORKS — asymmetric, light                             */}
       {/* ============================================================= */}
-      <section id="how-it-works" className="container mx-auto scroll-mt-24 px-4 py-20 md:py-28">
-        <Reveal className="mb-14 max-w-2xl">
+      <section id="how-it-works" className="container mx-auto scroll-mt-24 px-4 py-12 md:py-14">
+        <Reveal className="mb-8 max-w-2xl">
           <p className="lw-label-lg mb-3 !text-brand-orange">How it works</p>
           <h2 className="text-3xl font-bold tracking-tight text-brand-ink md:text-5xl">
             Three steps. No profile scrolling.
@@ -143,7 +143,7 @@ export default function LandingPage() {
 
         <div className="space-y-16 md:space-y-24">
           {/* Row 1 — copy left, photo right (balanced halves) */}
-          <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
+          <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-10">
             <div className="flex gap-5">
               <span className="text-5xl font-bold text-brand-orange/25">{steps[0].n}</span>
               <div>
@@ -162,11 +162,11 @@ export default function LandingPage() {
           </Reveal>
 
           {/* Row 2 — middle step, centered, carried by the numbers instead of a photo */}
-          <Reveal className="border-y border-zinc-200 py-14 text-center">
+          <Reveal className="border-y border-zinc-200 py-8 text-center">
             <span className="mx-auto block text-5xl font-bold text-brand-orange/25">{steps[1].n}</span>
             <h3 className="mt-2 text-xl font-bold text-brand-ink">{steps[1].title}</h3>
             <p className="mx-auto mt-2 max-w-xl text-brand-ink/70">{steps[1].body}</p>
-            <div className="mx-auto mt-10 flex flex-col items-center gap-8 sm:flex-row sm:justify-center sm:gap-14">
+            <div className="mx-auto mt-6 flex flex-col items-center gap-8 sm:flex-row sm:justify-center sm:gap-8">
               <div className="flex items-baseline gap-3">
                 <span className="text-6xl font-bold text-brand-orange md:text-7xl">
                   <CountUp value={3} />
@@ -188,7 +188,7 @@ export default function LandingPage() {
           </Reveal>
 
           {/* Row 3 — photo left, copy right (mirror of row 1) */}
-          <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
+          <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-10">
             <div className="lw-figure-zoom order-2 aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm md:order-1">
               <img
                 src="/images/redesign/results_kitchen-white-cabinets.webp"
@@ -207,7 +207,7 @@ export default function LandingPage() {
           </Reveal>
         </div>
 
-        <Reveal className="mt-14">
+        <Reveal className="mt-8">
           <Link href="/request">
             <Button size="lg" className="bg-brand-orange text-white hover:bg-brand-orange-hover">
               Start a request, free
@@ -223,7 +223,7 @@ export default function LandingPage() {
       <section className="relative overflow-hidden bg-brand-navy-deep text-white">
         <div className="h-1 w-full bg-brand-orange" />
 
-        <div className="container mx-auto grid gap-12 px-4 py-20 md:py-28 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div className="container mx-auto grid gap-8 px-4 py-12 md:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <Reveal className="flex justify-center lg:justify-start">
             <IroncladBadge
               variant="standards"
@@ -246,7 +246,7 @@ export default function LandingPage() {
               </p>
             </Reveal>
 
-            <div className="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            <div className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2">
               {standards.map((s, i) => {
                 const Icon = s.icon;
                 return (
@@ -264,7 +264,7 @@ export default function LandingPage() {
             </div>
 
             <Reveal delay={120}>
-              <div className="mt-12 flex flex-wrap items-center gap-x-10 gap-y-6 border-t border-white/10 pt-8">
+              <div className="mt-8 flex flex-wrap items-center gap-x-10 gap-y-6 border-t border-white/10 pt-8">
                 <div>
                   <div className="text-3xl font-bold text-brand-orange md:text-4xl">
                     <CountUp value={100} suffix="%" />
@@ -307,9 +307,9 @@ export default function LandingPage() {
       {/* ============================================================= */}
       {/* WHAT "VERIFIED" MEANS — light, photo-led, image bleeds left  */}
       {/* ============================================================= */}
-      <section className="overflow-hidden border-y border-zinc-200 bg-brand-mist py-20 md:py-28">
+      <section className="overflow-hidden border-y border-zinc-200 bg-brand-mist py-12 md:py-14">
         <div className="container mx-auto px-4">
-          <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <div className="grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
             <Reveal className="flex justify-center">
               <IroncladBadge
                 variant="standards"
@@ -354,7 +354,7 @@ export default function LandingPage() {
           </div>
 
           {/* The two marks on a dark lineup so each badge sits on matching stock */}
-          <Reveal className="mt-16 md:mt-20">
+          <Reveal className="mt-8 md:mt-10">
             <div className="rounded-3xl border border-mailer-border bg-mailer-ink p-8 md:p-12">
               <p className="lw-label-lg mb-2 !text-brand-orange">The two marks</p>
               <h3 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
@@ -365,7 +365,7 @@ export default function LandingPage() {
                 far a contractor has gone to earn it.
               </p>
 
-              <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-2 sm:gap-8">
+              <div className="mx-auto mt-6 grid max-w-3xl gap-6 sm:grid-cols-2 sm:gap-8">
                 {(
                   [
                     {
@@ -411,7 +411,7 @@ export default function LandingPage() {
       {/* ============================================================= */}
       {/* RESULTS — magazine spread, two offset photos                 */}
       {/* ============================================================= */}
-      <section className="container mx-auto px-4 py-20 md:py-28">
+      <section className="container mx-auto px-4 py-12 md:py-14">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <Reveal className="lw-figure-zoom overflow-hidden rounded-2xl border border-zinc-200 shadow-lg">
             <img
@@ -455,12 +455,13 @@ export default function LandingPage() {
         title="Before you send your first request."
         intro="The questions homeowners ask us most."
         className="border-y border-zinc-200"
+        dense
       />
 
       {/* ============================================================= */}
       {/* NEWSLETTER — slim signup band                                */}
       {/* ============================================================= */}
-      <section id="newsletter" className="scroll-mt-24 border-b border-zinc-200 bg-brand-mist py-16 md:py-20">
+      <section id="newsletter" className="scroll-mt-24 border-b border-zinc-200 bg-brand-mist py-10 md:py-12">
         <div className="container mx-auto max-w-3xl px-4 text-center">
           <Reveal>
             <p className="lw-label-lg mb-3 !text-brand-orange">Stay in the loop</p>
@@ -480,8 +481,8 @@ export default function LandingPage() {
       {/* ============================================================= */}
       {/* REALTORS BRIDGE — light, image right                         */}
       {/* ============================================================= */}
-      <section className="overflow-hidden border-y border-zinc-200 bg-white py-20 md:py-28">
-        <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-2">
+      <section className="overflow-hidden border-y border-zinc-200 bg-white py-12 md:py-14">
+        <div className="container mx-auto grid items-center gap-8 px-4 lg:grid-cols-2">
           <Reveal className="order-2 lg:order-1">
             <p className="lw-label-lg mb-3 !text-brand-orange">For real estate pros</p>
             <h2 className="text-3xl font-bold tracking-tight text-brand-ink md:text-4xl">
@@ -523,7 +524,7 @@ export default function LandingPage() {
           bri={0.98}
           objectPosition="center 60%"
         >
-          <div className="lw-photo-dark__content container mx-auto flex min-h-[560px] flex-col justify-end px-4 py-16 md:min-h-[620px] md:py-20">
+          <div className="lw-photo-dark__content container mx-auto flex min-h-[440px] flex-col justify-end px-4 py-10 md:min-h-[480px] md:py-12">
             <Reveal className="max-w-2xl">
               <div className="mb-5 flex items-center gap-4 md:gap-5">
                 <p className="lw-label-lg">For contractors</p>

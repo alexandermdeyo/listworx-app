@@ -38,11 +38,11 @@ export default function HomeownerHero({ variant = 'hero' }: { variant?: 'hero' |
           className="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-lw-rust/[0.07] blur-3xl"
         />
 
-        <div className="container relative mx-auto grid items-center gap-12 px-4 py-16 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
+        <div className={`container relative mx-auto grid items-center px-4 lg:grid-cols-[1.05fr_0.95fr] ${isSection ? "gap-8 py-8 md:py-10" : "gap-12 py-16 md:py-20 lg:py-24"}`}>
           {/* left: copy + live widget */}
           <div className="max-w-2xl">
             <Reveal immediate delay={0}>
-              <div className="mb-6 flex flex-wrap items-center gap-3">
+              <div className={`flex flex-wrap items-center gap-3 ${isSection ? "mb-4" : "mb-6"}`}>
                 <span className="inline-flex items-center rounded-full border border-lw-rust/40 bg-lw-rust/10 px-4 py-2 text-sm font-semibold text-lw-rust">
                   <Shield className="mr-2 h-4 w-4" />
                   Reviewed to IronClad Standards
@@ -63,7 +63,7 @@ export default function HomeownerHero({ variant = 'hero' }: { variant?: 'hero' |
                   <span className="block text-lw-rust">Every time. For free.</span>
                 </h1>
               )}
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-mkt-ink/70 md:text-xl">
+              <p className={`max-w-xl text-lg leading-relaxed text-mkt-ink/70 ${isSection ? "mt-3" : "mt-5 md:text-xl"}`}>
                 ListWorx is the trusted home-service referral network. Every pro
                 is reviewed against IronClad Standards for licensing, insurance,
                 and business practices before they can take a referral. Describe
@@ -72,7 +72,7 @@ export default function HomeownerHero({ variant = 'hero' }: { variant?: 'hero' |
             </Reveal>
 
             <Reveal immediate delay={120}>
-              <div ref={widgetRef} className="mt-8">
+              <div ref={widgetRef} className={isSection ? "mt-6" : "mt-8"}>
                 <JobRequestWidget
                   category={category}
                   onCategoryChange={setCategory}
@@ -104,7 +104,7 @@ export default function HomeownerHero({ variant = 'hero' }: { variant?: 'hero' |
       </section>
 
       {/* ---------- BROWSE BY TRADE -------------------------------------- */}
-      <section className="container mx-auto px-4 py-16 md:py-20">
+      <section className={`container mx-auto px-4 ${isSection ? "py-8 md:py-10" : "py-16 md:py-20"}`}>
         <div className="grid gap-10 md:grid-cols-[0.85fr_1.6fr] md:items-start">
           <Reveal>
             <p className="lw-label mb-3 !text-lw-rust">Browse by trade</p>

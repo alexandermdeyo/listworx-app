@@ -1,79 +1,74 @@
 import { useId } from 'react';
-import { CORNER_BRISTLES, UNDERLINE_BRISTLES, type Bristle } from './brushPaths';
+import { BAND_MARK, CORNER_MARK, UNDERLINE_BRISTLES, type Mark } from './brushPaths';
 
 /**
- * ListWorx brand brushstroke: a hand-painted, dry-brush orange stroke.
+ * ListWorx brand paint mark.
  *
  * Use it intentionally, not on every card:
- *  - "corner": upper-left of a navy hero (the signature placement)
- *  - "sidebar": top of the navy dashboard sidebar
+ *  - "corner": solid orange wedge with a dry-brush edge, pinned to the
+ *    upper-left of a navy hero (the signature placement from the mockup)
+ *  - "sidebar": dry-brush diagonal band across the top of the navy sidebar
  *  - "underline": a short swash under one key headline
  *
- * Pure SVG (no image request), decorative only.
+ * Pure SVG (no image request), decorative only. The bristle gaps are painted
+ * in navy, so place "corner" and "sidebar" on a brand-navy background.
  */
 
 type Variant = 'corner' | 'underline' | 'sidebar';
 
-interface BrushstrokeProps {
+const ORANGE = '#F26A21';
+const NAVY = '#0F2342';
+
+function MarkPaths({ mark, gapColor }: { mark: Mark; gapColor: string }) {
+  return (
+    <>
+      <path d={mark.solid} fill={ORANGE} />
+      <path d={mark.gaps} fill={gapColor} />
+      <path d={mark.fringe} fill={ORANGE} />
+    </>
+  );
+}
+
+export default function Brushstroke({
+  variant = 'corner',
+  className = '',
+  gapColor = NAVY,
+}: {
   variant?: Variant;
   className?: string;
-}
-
-const ORANGE = '#F26A21';
-
-function Strokes({ bristles, filterId }: { bristles: Bristle[]; filterId: string }) {
-  return (
-    <g filter={`url(#${filterId})`} fill="none" stroke={ORANGE} strokeLinecap="round">
-      {bristles.map(([d, w, o], i) => (
-        <path key={i} d={d} strokeWidth={w} opacity={o} />
-      ))}
-    </g>
-  );
-}
-
-function RoughFilter({ id, scale }: { id: string; scale: number }) {
-  return (
-    <filter id={id} x="-10%" y="-10%" width="120%" height="120%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" />
-      <feDisplacementMap in="SourceGraphic" scale={scale} />
-    </filter>
-  );
-}
-
-export default function Brushstroke({ variant = 'corner', className = '' }: BrushstrokeProps) {
+  gapColor?: string;
+}) {
   const fid = `br-rough-${useId().replace(/:/g, '')}`;
 
   if (variant === 'underline') {
     return (
       <svg aria-hidden="true" viewBox="0 0 300 18" preserveAspectRatio="none" className={className}>
         <defs>
-          <RoughFilter id={fid} scale={2} />
+          <filter id={fid} x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" />
+            <feDisplacementMap in="SourceGraphic" scale={2} />
+          </filter>
         </defs>
-        <Strokes bristles={UNDERLINE_BRISTLES} filterId={fid} />
+        <g filter={`url(#${fid})`} fill="none" stroke={ORANGE} strokeLinecap="round">
+          {UNDERLINE_BRISTLES.map(([d, w, o], i) => (
+            <path key={i} d={d} strokeWidth={w} opacity={o} />
+          ))}
+        </g>
       </svg>
     );
   }
 
   if (variant === 'sidebar') {
     return (
-      <svg aria-hidden="true" viewBox="0 0 240 600" preserveAspectRatio="xMidYMid slice" className={className}>
-        <defs>
-          <RoughFilter id={fid} scale={5} />
-        </defs>
-        <g transform="translate(-60 -40) scale(0.85)">
-          <Strokes bristles={CORNER_BRISTLES} filterId={fid} />
-        </g>
-
+      <svg aria-hidden="true" viewBox="0 0 240 120" preserveAspectRatio="none" className={className}>
+        <MarkPaths mark={BAND_MARK} gapColor={gapColor} />
       </svg>
     );
   }
 
   return (
-    <svg aria-hidden="true" viewBox="0 0 420 260" className={className}>
-      <defs>
-        <RoughFilter id={fid} scale={5} />
-      </defs>
-      <Strokes bristles={CORNER_BRISTLES} filterId={fid} />
+    <svg aria-hidden="true" viewBox="0 0 230 220" className={className}>
+      <MarkPaths mark={CORNER_MARK} gapColor={gapColor} />
     </svg>
   );
 }

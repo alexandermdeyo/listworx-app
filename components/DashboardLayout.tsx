@@ -161,7 +161,7 @@ export default function DashboardLayout({
         style={{ backgroundColor: brand ? '#0F2342' : '#181818' }}
       >
         {brand && (
-          <Brushstroke variant="sidebar" className="pointer-events-none absolute inset-0 h-full w-full opacity-90" />
+          <Brushstroke variant="sidebar" className="pointer-events-none absolute left-0 top-16 h-28 w-full" />
         )}
         {/* Logo + mobile close button */}
         <div className={`relative flex h-16 items-center justify-between px-5 border-b border-white/10 ${brand ? 'bg-brand-navy-deep' : ''}`}>
@@ -182,7 +182,7 @@ export default function DashboardLayout({
         </div>
 
         {/* User info */}
-        <div className={`relative flex items-center gap-3 px-5 py-4 border-b border-white/10 ${brand ? 'mt-24' : ''}`}>
+        <div className={`relative flex items-center gap-3 px-5 py-4 border-b border-white/10 ${brand ? 'mt-24 border-t' : ''}`}>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 flex-shrink-0">
             <span className="text-xs font-semibold text-white uppercase">
               {(userName || 'U')[0]}
@@ -244,7 +244,7 @@ export default function DashboardLayout({
             );
 
             const baseClass = brand
-              ? `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] transition-colors ${
+              ? `flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[15px] transition-colors ${
                   item.disabled
                     ? 'text-white/35 cursor-not-allowed'
                     : isActive

@@ -651,7 +651,7 @@ export default function ContractorDashboard() {
       hasNotifications={false}
       theme="brand"
     >
-      <div className="p-6 space-y-6 text-gray-900">
+      <div className="p-4 md:p-5 space-y-4 text-gray-900">
         {activeTab === 'overview' && <BrandDashboardHero />}
 
         {/* Expiry warning banners */}
@@ -715,7 +715,7 @@ export default function ContractorDashboard() {
         />
 
         {/* Tab content */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {activeTab === 'overview' && (
             <>
               <BrandKpiRow

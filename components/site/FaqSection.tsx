@@ -18,6 +18,7 @@ export default function FaqSection({
   title = 'Questions, answered.',
   intro,
   className = '',
+  dense = false,
 }: {
   items: FaqItem[];
   tone?: 'light' | 'dark';
@@ -25,12 +26,14 @@ export default function FaqSection({
   title?: string;
   intro?: string;
   className?: string;
+  /** tighter vertical rhythm (brand redesign homepage) */
+  dense?: boolean;
 }) {
   const dark = tone === 'dark';
 
   return (
     <section
-      className={`${dark ? 'bg-mailer-black text-white' : 'bg-white text-mkt-ink'} py-20 md:py-28 ${className}`}
+      className={`${dark ? 'bg-mailer-black text-white' : 'bg-white text-mkt-ink'} ${dense ? 'py-12 md:py-14' : 'py-20 md:py-28'} ${className}`}
     >
       <div className="container mx-auto grid gap-10 px-4 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <Reveal>

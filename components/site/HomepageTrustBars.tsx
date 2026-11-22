@@ -59,7 +59,7 @@ export default function HomepageTrustBars() {
   }
 
   return (
-    <section className="border-b border-zinc-200 bg-white py-12 md:py-16">
+    <section className="border-b border-zinc-200 bg-white py-8 md:py-10">
       <div className="container mx-auto px-4">
         {partners.length > 0 && (
           <Reveal className={pros.length > 0 ? 'mb-12' : ''}>
