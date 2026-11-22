@@ -39,7 +39,7 @@ export function BrandHomeHero() {
 
       <div className="relative z-20 container mx-auto px-4 pb-10 pt-16 md:pb-12 md:pt-24">
         <div className="max-w-[640px]">
-          <h1 className="br-display text-[34px] leading-[1.05] md:text-[56px]">
+          <h1 className="br-display text-[31px] leading-[1.06] md:text-[56px]">
             A Stronger Business for Contractors.
             <span className="block">Trusted Pros for Homeowners.</span>
           </h1>
@@ -111,10 +111,10 @@ export function BrandPathways() {
           cta="Join the Network"
           href="/apply"
         />
-        <div className="br-card flex overflow-hidden">
-          <div className="relative hidden w-[42%] shrink-0 overflow-hidden bg-brand-navy sm:block">
+        <div className="br-card flex flex-col overflow-hidden sm:flex-row">
+          <div className="relative h-32 w-full shrink-0 overflow-hidden bg-brand-navy sm:h-auto sm:w-[42%]">
             <Brushstroke variant="corner" className="absolute -left-10 -top-4 w-[240px] opacity-90" />
-            <BookOpen className="absolute bottom-6 left-1/2 h-16 w-16 -translate-x-1/2 text-white/90" strokeWidth={1.4} />
+            <BookOpen className="absolute bottom-4 left-1/2 sm:bottom-6 h-16 w-16 -translate-x-1/2 text-white/90" strokeWidth={1.4} />
           </div>
           <div className="flex flex-1 flex-col p-6">
             <span className="br-soon mb-2 self-start">Coming Soon</span>
@@ -149,8 +149,8 @@ function PathCard({
   href: string;
 }) {
   return (
-    <div className="br-card group flex overflow-hidden">
-      <div className="relative hidden w-[42%] shrink-0 overflow-hidden sm:block">
+    <div className="br-card group flex flex-col overflow-hidden sm:flex-row">
+      <div className="relative h-44 w-full shrink-0 overflow-hidden sm:h-auto sm:w-[42%]">
         <img src={img} alt={imgAlt} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
       </div>
       <div className="flex flex-1 flex-col p-6">
