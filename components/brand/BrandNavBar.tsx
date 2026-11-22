@@ -116,10 +116,10 @@ export default function BrandNavBar({
       <div className="container mx-auto flex h-[76px] items-center justify-between gap-4 px-4">
         <Link href="/" aria-label="ListWorx home" className="flex shrink-0 flex-col justify-center">
           <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="h-6 w-auto md:h-8" />
-          <span className="br-nav-font mt-1 hidden text-[13px] leading-none text-white/80 xl:block">{tagline}</span>
+          <span className="br-nav-font mt-1 hidden whitespace-nowrap text-[12px] leading-none text-white/80 2xl:block">{tagline}</span>
         </Link>
 
-        <nav aria-label="Main" className="br-nav-font hidden items-center gap-1 lg:flex">
+        <nav aria-label="Main" className="br-nav-font hidden items-center gap-0.5 lg:flex">
           {groups.map((g) => (
             <div
               key={g.label}
@@ -131,7 +131,7 @@ export default function BrandNavBar({
                 aria-expanded={openGroup === g.label}
                 onClick={() => setOpenGroup((cur) => (cur === g.label ? null : g.label))}
                 onMouseEnter={() => setOpenGroup(g.label)}
-                className="flex items-center gap-1 rounded-md px-2.5 py-2 text-[17px] font-medium text-white/90 hover:text-white xl:px-3"
+                className="flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-2 text-[15px] font-medium text-white/90 hover:text-white xl:text-[17px] 2xl:px-3"
               >
                 {g.label}
                 <ChevronDown className="h-4 w-4 opacity-80" />
@@ -169,7 +169,7 @@ export default function BrandNavBar({
               <Link href="/login" className="hidden items-center gap-2 rounded-lg border border-white/60 px-3 py-2 text-sm font-semibold text-white hover:bg-white hover:text-brand-navy sm:inline-flex">
                 <LogIn className="h-4 w-4" /> Sign In
               </Link>
-              <Link href="/apply" className="hidden rounded-lg bg-brand-orange px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-orange-hover sm:inline-flex">
+              <Link href="/apply" className="hidden whitespace-nowrap rounded-lg bg-brand-orange px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-orange-hover sm:inline-flex">
                 Join ListWorx
               </Link>
             </>
