@@ -113,7 +113,7 @@ export default function BrandNavBar({
 
   return (
     <div className="border-b border-white/10 bg-brand-navy-deep text-white">
-      <div className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between gap-4 px-4 lg:px-8">
+      <div className="container mx-auto flex h-[76px] items-center justify-between gap-4 px-4">
         <Link href="/" aria-label="ListWorx home" className="flex shrink-0 flex-col justify-center">
           <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="h-6 w-auto md:h-8" />
           <span className="br-nav-font mt-1 hidden text-[13px] leading-none text-white/80 xl:block">{tagline}</span>
@@ -188,7 +188,7 @@ export default function BrandNavBar({
 
       {mobileOpen && (
         <div className="border-t border-white/10 bg-brand-navy-deep lg:hidden">
-          <nav aria-label="Mobile" className="mx-auto max-w-[1440px] space-y-4 px-4 py-5">
+          <nav aria-label="Mobile" className="container mx-auto space-y-4 px-4 py-5">
             {groups.map((g) => (
               <div key={g.label}>
                 <p className="br-nav-font mb-1 text-sm font-semibold uppercase tracking-wider text-brand-orange">{g.label}</p>

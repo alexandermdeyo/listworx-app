@@ -37,7 +37,7 @@ export function BrandHomeHero() {
       />
       <Brushstroke variant="corner" className="pointer-events-none absolute -left-6 -top-4 z-10 w-[260px] md:-left-8 md:-top-6 md:w-[420px]" />
 
-      <div className="relative z-20 mx-auto max-w-[1440px] px-4 pb-10 pt-16 md:pb-12 md:pt-24 lg:px-8">
+      <div className="relative z-20 container mx-auto px-4 pb-10 pt-16 md:pb-12 md:pt-24">
         <div className="max-w-[640px]">
           <h1 className="br-display text-[34px] leading-[1.05] md:text-[56px]">
             A Stronger Business for Contractors.
@@ -94,7 +94,7 @@ export function BrandHomeHero() {
 export function BrandPathways() {
   return (
     <section className="bg-brand-mist py-10 md:py-14">
-      <div className="mx-auto grid max-w-[1440px] gap-5 px-4 lg:grid-cols-3 lg:px-8">
+      <div className="container mx-auto grid gap-5 px-4 lg:grid-cols-3">
         <PathCard
           img="/images/redesign/realtor_couple-consultation-laptop.webp"
           imgAlt="A homeowner couple reviewing contractor options with their realtor"
@@ -118,7 +118,7 @@ export function BrandPathways() {
           </div>
           <div className="flex flex-1 flex-col p-6">
             <span className="br-soon mb-2 self-start">Coming Soon</span>
-            <h3 className="br-display text-2xl leading-tight text-brand-ink">Manual Library &amp; Business Tools</h3>
+            <h3 className="br-display text-xl leading-tight text-brand-ink xl:text-2xl">Manual Library &amp; Business Tools</h3>
             <p className="mt-2 flex-1 text-[15px] leading-relaxed text-brand-ink/75">
               In-depth manuals, calculators, worksheets, and jobsite tools built for real contractors.
               In development now.
@@ -154,7 +154,7 @@ function PathCard({
         <img src={img} alt={imgAlt} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
       </div>
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="br-display text-2xl leading-tight text-brand-ink">{title}</h3>
+        <h3 className="br-display text-xl leading-tight text-brand-ink xl:text-2xl">{title}</h3>
         <p className="mt-2 flex-1 text-[15px] leading-relaxed text-brand-ink/75">{body}</p>
         <Link href={href} className="br-btn-outline mt-5 self-start">
           {cta} <ArrowRight className="h-4 w-4" />
@@ -178,7 +178,7 @@ const planned = [
 export function BrandFeaturedManual() {
   return (
     <section className="border-y border-brand-line bg-white">
-      <div className="mx-auto grid max-w-[1440px] items-center gap-10 px-4 py-14 md:py-16 lg:grid-cols-[0.8fr_1.2fr_1fr] lg:px-8">
+      <div className="container mx-auto grid items-center gap-10 px-4 py-14 md:py-16 lg:grid-cols-[0.8fr_1.2fr_1fr]">
         <div className="relative mx-auto aspect-[3/4] w-48 overflow-hidden rounded-r-lg rounded-l-sm bg-brand-navy shadow-[18px_24px_40px_-20px_rgba(15,35,66,0.7)] md:w-56">
           <Brushstroke variant="corner" className="absolute -left-12 -top-6 w-[260px]" />
           <div className="absolute inset-x-5 bottom-6">

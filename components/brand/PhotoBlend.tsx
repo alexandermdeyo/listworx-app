@@ -38,8 +38,8 @@ export default function PhotoBlend({
         className={cn(
           'absolute inset-0 hidden md:block',
           right
-            ? 'bg-gradient-to-r from-brand-navy via-brand-navy/[0.55] via-35% to-transparent'
-            : 'bg-gradient-to-l from-brand-navy via-brand-navy/[0.55] via-35% to-transparent'
+            ? 'bg-gradient-to-r from-brand-navy from-5% via-brand-navy/60 via-40% to-transparent'
+            : 'bg-gradient-to-l from-brand-navy from-5% via-brand-navy/60 via-40% to-transparent'
         )}
       />
       {/* bottom fade so the feature strip sits on navy */}
