@@ -490,8 +490,8 @@ export default function RealtorsPage() {
               It&apos;s free. Start using it today.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-white/90">
-              No membership fees. No per-request charges. Contractors pay to be in the network. You
-              get vetted matches at zero cost, every request, every time.
+              No membership fees. No per-request charges. You get vetted matches at zero cost,
+              every request, every time.
             </p>
             <Link href="/request" className="mt-8 inline-block">
               <Button size="lg" className="bg-white text-lw-rust hover:bg-white/90">

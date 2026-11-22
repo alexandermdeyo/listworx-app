@@ -37,7 +37,7 @@ export const revalidate = 3600;
 const homeownerFaqs = [
   {
     q: 'Does ListWorx cost anything for homeowners?',
-    a: "No. ListWorx is free for homeowners and realtors. Contractors pay a flat monthly subscription to be in the network. You're never charged, and no contractor pays for your individual request.",
+    a: "No. ListWorx is free for homeowners and realtors, and joining the network is free for contractors too. You're never charged, and no contractor pays for your individual request.",
   },
   {
     q: 'How fast will I be matched?',
@@ -525,10 +525,10 @@ export default function LandingPage() {
                 Real work. Real standards. A partner in your growth.
               </h2>
               <p className="mt-4 max-w-xl text-white/75 md:text-lg">
-                ListWorx is subscription-based. You pay to be in the network, not
-                per lead, and get marketing and business-growth support to help
-                you win more work. Join free, or go further with Growth or Business
-                Pro, and every member is reviewed against IronClad Standards.
+                Joining the ListWorx network is free, and nobody pays per lead.
+                Want more help winning work? Growth and Business Pro add marketing
+                and business-growth support. Every member is reviewed against
+                IronClad Standards.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="/apply">

@@ -290,7 +290,7 @@ export default function ContractorsPage() {
                 A partner in your growth, not just a referral source
               </h2>
               <p className="mt-4 max-w-xl text-lg text-white/65">
-                ListWorx is subscription-based, not pay-per-lead, and every paid tier adds real
+                Joining is free and nobody pays per lead. Every paid tier adds real
                 marketing and business-growth support, not just a louder badge.
               </p>
             </Reveal>
@@ -551,7 +551,7 @@ export default function ContractorsPage() {
                   </h3>
                   <ul className="space-y-3 text-sm md:text-base">
                     {[
-                      'Flat monthly subscription, no per-referral fees, ever',
+                      'Free to join, no per-referral fees, ever',
                       'Maximum 3 contractors matched per request',
                       'IronClad Standards required for all network members',
                       'Predictable monthly cost you can budget around',
@@ -573,7 +573,7 @@ export default function ContractorsPage() {
 
       <JoinCta
         headline="Stop bidding for your own name."
-        sub="Flat monthly subscription, three matches max per request, and every contractor you're up against is IronClad-verified too."
+        sub="Free to join, no per-lead fees, three matches max per request, and every contractor you're up against is IronClad-verified too."
       />
 
       {/* ================= REQUIREMENTS (badge highlight · concept) ================= */}
