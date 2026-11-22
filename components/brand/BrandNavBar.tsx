@@ -115,11 +115,11 @@ export default function BrandNavBar({
     <div className="border-b border-white/10 bg-brand-navy-deep text-white">
       <div className="container mx-auto flex h-[76px] items-center justify-between gap-4 px-4">
         <Link href="/" aria-label="ListWorx home" className="flex shrink-0 flex-col justify-center">
-          <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="h-6 w-auto md:h-8" />
+          <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="h-6 w-auto md:h-7" />
           <span className="br-nav-font mt-1 hidden whitespace-nowrap text-[12px] leading-none text-white/80 2xl:block">{tagline}</span>
         </Link>
 
-        <nav aria-label="Main" className="br-nav-font hidden items-center gap-0.5 lg:flex">
+        <nav aria-label="Main" className="br-nav-font hidden items-center xl:flex">
           {groups.map((g) => (
             <div
               key={g.label}
@@ -131,7 +131,7 @@ export default function BrandNavBar({
                 aria-expanded={openGroup === g.label}
                 onClick={() => setOpenGroup((cur) => (cur === g.label ? null : g.label))}
                 onMouseEnter={() => setOpenGroup(g.label)}
-                className="flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-2 text-[15px] font-medium text-white/90 hover:text-white xl:text-[17px] 2xl:px-3"
+                className="flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-2 text-[15px] font-medium text-white/90 hover:text-white 2xl:px-3 2xl:text-[17px]"
               >
                 {g.label}
                 <ChevronDown className="h-4 w-4 opacity-80" />
@@ -179,7 +179,7 @@ export default function BrandNavBar({
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
-            className="inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-white/10 lg:hidden"
+            className="inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-white/10 xl:hidden"
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -187,7 +187,7 @@ export default function BrandNavBar({
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-white/10 bg-brand-navy-deep lg:hidden">
+        <div className="border-t border-white/10 bg-brand-navy-deep xl:hidden">
           <nav aria-label="Mobile" className="container mx-auto space-y-4 px-4 py-5">
             {groups.map((g) => (
               <div key={g.label}>
