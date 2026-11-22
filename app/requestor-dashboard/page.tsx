@@ -464,12 +464,6 @@ export default function RequestorDashboardPage() {
                                   <span>IronClad Certified</span>
                                 </div>
                               )}
-                              {(contractor?.founder_status || contractor?.founding_partner || contractor?.founding_partner_badge) && (
-                                <div className="inline-flex items-center gap-1 text-amber-700">
-                                  <ShieldCheck className="h-4 w-4 shrink-0" />
-                                  <span>Founding Partner</span>
-                                </div>
-                              )}
                               {contractor?.owner_name && (
                                 <div className="inline-flex items-center gap-1">
                                   <Building2 className="h-4 w-4 shrink-0" />
@@ -530,7 +524,7 @@ export default function RequestorDashboardPage() {
                                 {referral.status === 'CONTACTED' ? (
                                   <div className="flex items-center gap-2 text-green-400 text-sm py-1">
                                     <CheckCircle className="h-4 w-4 shrink-0" />
-                                    <span>Your pick — we notified ListWorx</span>
+                                    <span>Your pick. We notified ListWorx</span>
                                   </div>
                                 ) : (
                                   <Button

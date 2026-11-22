@@ -59,7 +59,7 @@ export default function America250Strip({ variant = 'dark' }: { variant?: 'dark'
           className="flex-shrink-0 relative z-10"
           style={{ fontSize: 12, fontWeight: 700, color: '#E86B2B', letterSpacing: '2px' }}
         >
-          ★ &nbsp;1776 — 2026&nbsp; ★
+          ★ &nbsp;1776, 2026&nbsp; ★
         </span>
 
         <div className="hidden sm:block w-px h-4 flex-shrink-0 relative z-10" style={{ background: dividerColor }} />
@@ -72,7 +72,7 @@ export default function America250Strip({ variant = 'dark' }: { variant?: 'dark'
           <span style={{ color: '#E86B2B' }}>250 Years</span>{' '}
           of American Workers &nbsp;·&nbsp; The Hands That{' '}
           <strong>Built This Nation. Still Building.</strong>{' '}
-          &nbsp;·&nbsp; <strong>ListWorx</strong> — The Largest Vetted Contractor Network in America
+          &nbsp;·&nbsp; <strong>ListWorx</strong>. The Largest Vetted Contractor Network in America
         </p>
 
         {/* Mobile shorter text */}
@@ -80,7 +80,7 @@ export default function America250Strip({ variant = 'dark' }: { variant?: 'dark'
           className="relative z-10 text-center flex-1 sm:hidden"
           style={{ fontSize: 11, fontWeight: 600, color: textColor, letterSpacing: '1px', textTransform: 'uppercase' }}
         >
-          Honoring <span style={{ color: '#E86B2B' }}>America&apos;s 250th</span> — <strong>ListWorx</strong>
+          Honoring <span style={{ color: '#E86B2B' }}>America&apos;s 250th</span>, <strong>ListWorx</strong>
         </p>
 
         <div className="hidden sm:block w-px h-4 flex-shrink-0 relative z-10" style={{ background: dividerColor }} />

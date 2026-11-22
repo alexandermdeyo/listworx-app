@@ -47,7 +47,7 @@ export default function TermsPage() {
 
             <h3 className="text-xl font-semibold text-mkt-ink mb-3 mt-6">For Contractors (Partners)</h3>
             <p className="text-mkt-ink/70 mb-4">
-              Subscription tiers (Basic $199/mo, Preferred $349/mo, Elite $599/mo – plus add-ons) for directory listing, referral eligibility, priority weighting, badges, logos, video perks (annual Elite only). We vet applications (license/insurance verification); approval not guaranteed.
+              Subscription tiers (Basic $199/mo, Preferred $349/mo, Elite $599/mo, plus add-ons) for directory listing, referral eligibility, priority weighting, badges, logos, video perks (annual Elite only). We vet applications (license/insurance verification); approval not guaranteed.
             </p>
             <p className="text-mkt-ink/70 mb-4">
               Matching algorithm uses submitted data; we do not guarantee referrals, volume, or conversions.

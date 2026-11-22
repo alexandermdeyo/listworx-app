@@ -40,7 +40,7 @@ export default function NewsletterSignupForm() {
       <div className="rounded-2xl border border-zinc-200 bg-white px-8 py-10 text-center shadow-sm">
         <p className="text-lg font-bold text-mkt-ink">You&apos;re in.</p>
         <p className="mt-2 text-sm text-mkt-ink/60">
-          Thanks for subscribing — we&apos;ll be in touch.
+          Thanks for subscribing. We&apos;ll be in touch.
         </p>
       </div>
     );

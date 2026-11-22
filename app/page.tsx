@@ -37,7 +37,7 @@ export const revalidate = 3600;
 const homeownerFaqs = [
   {
     q: 'Does ListWorx cost anything for homeowners?',
-    a: "No. ListWorx is free for homeowners and realtors. Contractors pay a flat monthly subscription to be in the network — you're never charged, and no contractor pays for your individual request.",
+    a: "No. ListWorx is free for homeowners and realtors. Contractors pay a flat monthly subscription to be in the network. You're never charged, and no contractor pays for your individual request.",
   },
   {
     q: 'How fast will I be matched?',
@@ -49,7 +49,7 @@ const homeownerFaqs = [
   },
   {
     q: 'What information do the contractors get about me?',
-    a: 'None of your contact details. Each matched contractor sees the service type, the county, and a short summary of the job — no name, phone, or email. You get their info and decide who to call.',
+    a: 'None of your contact details. Each matched contractor sees the service type, the county, and a short summary of the job, no name, phone, or email. You get their info and decide who to call.',
   },
   {
     q: 'Why only three contractors per request?',
@@ -70,7 +70,7 @@ const standards = [
   {
     icon: ShieldCheck,
     title: 'Insurance kept current',
-    body: 'Active general liability and workers-comp are a condition of staying in the network — not a one-time check.',
+    body: 'Active general liability and workers-comp are a condition of staying in the network, not a one-time check.',
   },
   {
     icon: Clock,
@@ -89,13 +89,13 @@ const steps = [
     n: '01',
     icon: ClipboardList,
     title: 'Describe the project',
-    body: 'Tell us what you need and where. Two minutes from your phone — no account required.',
+    body: 'Tell us what you need and where. Two minutes from your phone, no account required.',
   },
   {
     n: '02',
     icon: MessageSquareText,
     title: 'Get matched',
-    body: "Up to three verified contractors for your trade and area — you'll only see trades a verified pro actually covers in your county. Your details stay private until you reach out.",
+    body: "Up to three verified contractors for your trade and area. You'll only see trades a verified pro actually covers in your county. Your details stay private until you reach out.",
   },
   {
     n: '03',
@@ -202,7 +202,7 @@ export default function LandingPage() {
         <Reveal className="mt-14">
           <Link href="/request">
             <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-              Start a request — free
+              Start a request, free
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
@@ -233,7 +233,7 @@ export default function LandingPage() {
               </h2>
               <p className="mt-4 max-w-xl text-white/65 md:text-lg">
                 IronClad isn&apos;t a directory listing. It&apos;s a standard every
-                ListWorx contractor is held to — checked up front, monitored after,
+                ListWorx contractor is held to, checked up front, monitored after,
                 and enforced.
               </p>
             </Reveal>
@@ -345,20 +345,19 @@ export default function LandingPage() {
             </Reveal>
           </div>
 
-          {/* The three marks — dark lineup so every badge, including the
-             founder seal with its baked background, sits on matching stock */}
+          {/* The two marks on a dark lineup so each badge sits on matching stock */}
           <Reveal className="mt-16 md:mt-20">
             <div className="rounded-3xl border border-mailer-border bg-mailer-ink p-8 md:p-12">
-              <p className="lw-label-lg mb-2 !text-lw-rust">The three marks</p>
+              <p className="lw-label-lg mb-2 !text-lw-rust">The two marks</p>
               <h3 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
-                One standard. Three ways it shows up.
+                One standard. Two ways it shows up.
               </h3>
               <p className="mt-3 max-w-2xl text-white/70">
                 Every badge here traces back to the same IronClad Standard. The difference is how
                 far a contractor has gone to earn it.
               </p>
 
-              <div className="mt-10 grid gap-6 sm:grid-cols-3 sm:gap-8">
+              <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-2 sm:gap-8">
                 {(
                   [
                     {
@@ -366,7 +365,7 @@ export default function LandingPage() {
                       href: '/ironclad',
                       name: 'IronClad Standards',
                       blurb:
-                        'The standard every ListWorx contractor is checked against, monitored on, and held to — the badge homeowners look for.',
+                        'The standard every ListWorx contractor is checked against, monitored on, and held to. It is the badge homeowners look for.',
                     },
                     {
                       variant: 'partner',
@@ -374,13 +373,6 @@ export default function LandingPage() {
                       name: 'IronClad Certified Partner',
                       blurb:
                         'A contractor who has cleared IronClad certification and holds an active place in the network.',
-                    },
-                    {
-                      variant: 'founder',
-                      href: '/contractors',
-                      name: 'IronClad Certified Founding Partner',
-                      blurb:
-                        'Recognition for the contractors who have been with us from the start. It does not change referral placement: Network, Growth, and Business Pro members all receive equal referral consideration.',
                     },
                   ] as const
                 ).map((b, i) => (
@@ -488,7 +480,7 @@ export default function LandingPage() {
               Refer a contractor without putting your name on the line.
             </h2>
             <p className="mt-4 max-w-xl text-mkt-ink/70">
-              Pre-listing prep, post-inspection repairs, move-in work — send one
+              Pre-listing prep, post-inspection repairs, move-in work. Send one
               request and reliably connect your clients with a shortlist of
               verified pros. Free for agents, and your client&apos;s info stays
               private until you share it.
@@ -533,8 +525,8 @@ export default function LandingPage() {
                 Real work. Real standards. A partner in your growth.
               </h2>
               <p className="mt-4 max-w-xl text-white/75 md:text-lg">
-                ListWorx is subscription-based — you pay to be in the network, not
-                per lead — and get marketing and business-growth support to help
+                ListWorx is subscription-based. You pay to be in the network, not
+                per lead, and get marketing and business-growth support to help
                 you win more work. Join free, or go further with Growth or Business
                 Pro, and every member is reviewed against IronClad Standards.
               </p>

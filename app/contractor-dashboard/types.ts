@@ -118,7 +118,7 @@ export const TIERS: TierDisplay[] = [
     features: [
       'IronClad Verified status',
       'Profile on the ListWorx platform',
-      'Listed in referral rotation — standard priority',
+      'Listed in referral rotation, standard priority',
       'Contractor dashboard access',
       'Verified reviews system',
       'Availability and service-area controls',
@@ -138,10 +138,10 @@ export const TIERS: TierDisplay[] = [
     popular: true,
     features: [
       'Everything in Network Member',
-      'Priority placement — above all Network Members',
+      'Priority placement, above all Network Members',
       'Enhanced profile with additional photos and expanded bio',
       'IronClad Digital Badge Kit included',
-      'AI Marketing Toolkit — social posts, follow-up emails, job templates',
+      'AI Marketing Toolkit, social posts, follow-up emails, job templates',
       'Monthly performance report',
       'Quarterly profile boost',
     ],
@@ -158,8 +158,8 @@ export const TIERS: TierDisplay[] = [
     badge: 'Top Tier',
     features: [
       'Everything in Network Partner',
-      'Top of rotation — always above Partner and Member',
-      'Territory lock — maximum 2 Elite per trade per county',
+      'Top of rotation, always above Partner and Member',
+      'Territory lock, maximum 2 Elite per trade per county',
       'Monthly profile boost',
       '2 social media posts per month featuring your work',
       'Annual featured contractor spotlight',
@@ -170,7 +170,7 @@ export const TIERS: TierDisplay[] = [
 
 export const STATUS_LABELS: Record<string, string> = {
   applied: 'Application In Progress',
-  approved: 'Approved – Choose Membership',
+  approved: 'Approved: Choose Membership',
   active: 'Active Partner',
   paused: 'Membership On Hold',
   rejected: 'Not Approved',

@@ -50,10 +50,11 @@ test('Listing Studio checkout accepts the current tier prices and refuses foundi
   assert.ok(src.includes('!requestedPrice.active'));
 });
 
-test('homepage no longer claims Founding Partners get first referral position', () => {
+test('homepage no longer shows a Founding Partner badge or referral priority', () => {
   const src = readFileSync('app/page.tsx', 'utf8');
   assert.ok(!src.includes('hold first position'));
-  assert.ok(src.includes('equal referral consideration'));
+  assert.ok(!src.includes("variant: 'founder'"));
+  assert.ok(!src.includes('Founding Partner'));
 });
 
 test('public Listing Studio page no longer offers founding-rate checkout', () => {
@@ -68,12 +69,15 @@ test('application form no longer offers a Founding Partner spot', () => {
   assert.ok(!readFileSync('app/contractor-dashboard/ApplicationForm.tsx', 'utf8').includes('Founding Partner spot'));
 });
 
-test('retired /pricing and /founding-partner pages redirect to /contractors and are not in the sitemap', () => {
+test('/founding-partner stays retired; /pricing is its own page with only current plans', () => {
   const cfg = readFileSync('next.config.js', 'utf8');
-  assert.ok(cfg.includes("{ source: '/pricing', destination: '/contractors'"));
+  assert.ok(!cfg.includes("{ source: '/pricing', destination: '/contractors'"));
   assert.ok(cfg.includes("{ source: '/founding-partner', destination: '/contractors'"));
+  const pricing = readFileSync('app/pricing/page.tsx', 'utf8') + readFileSync('app/pricing/layout.tsx', 'utf8');
+  assert.ok(!/founding|founder|locked for life|\$125|\$100/i.test(pricing));
+  assert.ok(pricing.includes('MembershipComparison'));
   const sitemap = readFileSync('app/sitemap.xml/route.ts', 'utf8');
-  assert.ok(!sitemap.includes("'/pricing'") && !sitemap.includes("'/founding-partner'"));
+  assert.ok(sitemap.includes("'/pricing'") && !sitemap.includes("'/founding-partner'"));
 });
 
 test('approved/active dashboard copy does not imply payment is required or certification is granted', () => {

@@ -45,7 +45,7 @@ export default function AboutPage() {
                 </Link>
                 <Link href="/request">
                   <Button size="lg" variant="outlineOrange" className="font-semibold px-8">
-                    Request a Contractor — Free
+                    Request a Contractor: Free
                   </Button>
                 </Link>
               </div>
@@ -104,13 +104,13 @@ export default function AboutPage() {
               <div className="space-y-6 text-lg text-mkt-ink/70 leading-[1.85]">
                 <p>I didn't build ListWorx from a boardroom. I built it from real life.</p>
                 <p>
-                  I'm Alex Deyo — an Air Force veteran, truck driver, former chef, photographer, business owner, and someone who has worked around homes, contractors, and real estate from more than one angle. I've seen what happens when people don't show up, don't communicate, and don't take pride in their work. I've also seen what happens when good people get overlooked because there's no better system in place.
+                  I'm Alex Deyo, an Air Force veteran, truck driver, former chef, photographer, business owner, and someone who has worked around homes, contractors, and real estate from more than one angle. I've seen what happens when people don't show up, don't communicate, and don't take pride in their work. I've also seen what happens when good people get overlooked because there's no better system in place.
                 </p>
                 <p>
                   I've seen contractors struggle to get steady work. I've seen homeowners take risks and regret it. I've seen realtors deal with the fallout when the wrong person gets trusted with the job.
                 </p>
                 <p>
-                  That's why I built ListWorx. Not to create another lead marketplace. Not to become another noisy directory. But to build a better system. A system with standards. A system that rewards the people who do things right.
+                  That's why I built ListWorx. I didn't want another lead marketplace or another noisy directory. I wanted a better system, one with real standards that rewards the people who do things right.
                 </p>
                 <p>
                   I moved to Tennessee not just for a better quality of life, but to build this company in a place where I can grow it the right way. Nashville is the starting point. The vision is much bigger. I want to build something here that can scale across the country and help people everywhere.
@@ -142,10 +142,10 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-5 text-lg text-mkt-ink/70 leading-[1.85]">
                 <p>
-                  The home services industry runs on trust — but it's built on almost none. Contractors disappear. Reviews get gamed. Nobody's accountable after the check clears.
+                  The home services industry runs on trust, but it's built on almost none. Contractors disappear. Reviews get gamed. Nobody's accountable after the check clears.
                 </p>
                 <p>
-                  ListWorx exists to change that. Every contractor in our network is reviewed by ListWorx before they can be referred. Where a trade requires a license, we check it against state records, and we review each contractor's insurance documents. That's not a feature. It's the foundation.
+                  ListWorx exists to change that. Every contractor in our network is reviewed by ListWorx before they can be referred. Where a trade requires a license, we check it against state records, and we review each contractor's insurance documents. Everything else we do is built on that.
                 </p>
                 <p>
                   IronClad Standards is the framework that makes it real. It defines what we expect, how performance is measured, and what happens when those standards aren't met. Contractors who keep the standard stay in the network. Those who don't are removed. Nobody pays their way to the top.
@@ -179,7 +179,7 @@ export default function AboutPage() {
                 Who This Is Built For
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">
-                Three groups. One standard.
+                Three groups held to the same standard.
               </h2>
             </Reveal>
           </div>
@@ -193,7 +193,7 @@ export default function AboutPage() {
               },
               {
                 audience: 'Homeowners',
-                body: 'Stop guessing. Get connected to contractors who are actually vetted — no lead farms, no anonymous bids, no surprises.',
+                body: 'Stop guessing. Get connected to contractors who are actually vetted, no lead farms, no anonymous bids, no surprises.',
                 href: '/request',
                 cta: 'Request a contractor',
               },
@@ -234,10 +234,10 @@ export default function AboutPage() {
           <div className="mx-auto" style={{ maxWidth: '680px' }}>
             <Reveal as="div">
               <h2 className="text-3xl md:text-5xl font-bold text-mkt-ink leading-tight mb-6 tracking-tight">
-                Ready to be part of something built right?
+                Want to be part of it?
               </h2>
               <p className="text-lg text-mkt-ink/70 mb-10 leading-relaxed">
-                Whether you're a contractor who's tired of chasing leads, or a homeowner who's tired of guessing — this is for you.
+                If you're a contractor tired of chasing leads, or a homeowner tired of guessing, this is for you.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/apply">
@@ -248,7 +248,7 @@ export default function AboutPage() {
                 </Link>
                 <Link href="/request">
                   <Button size="lg" variant="outlineOrange" className="font-semibold px-8">
-                    Request a Contractor — Free
+                    Request a Contractor: Free
                   </Button>
                 </Link>
               </div>

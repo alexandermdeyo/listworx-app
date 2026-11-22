@@ -13,7 +13,6 @@ const nextConfig = {
   // so the paths can be reused later without browsers caching the redirect.
   async redirects() {
     return [
-      { source: '/pricing', destination: '/contractors', permanent: false },
       { source: '/founding-partner', destination: '/contractors', permanent: false },
     ];
   },

@@ -61,8 +61,8 @@ export default function MediaPartnersPage() {
               Vetted photographers, videographers, and drone operators.
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-lg text-mkt-ink/70">
-              Every media partner is in the ListWorx network. Send a request in-platform — no phone
-              tag — and they confirm or decline.
+              Every media partner is in the ListWorx network. Send a request in-platform, no phone
+              tag, and they confirm or decline.
             </p>
           </Reveal>
         </div>
@@ -91,7 +91,7 @@ export default function MediaPartnersPage() {
           <div className="rounded-2xl border border-zinc-200 bg-white p-12 text-center">
             <p className="text-mkt-ink/70">
               {partners.length === 0
-                ? 'No media partners are listed yet — check back soon.'
+                ? 'No media partners are listed yet. Check back soon.'
                 : 'No media partners match that filter.'}
             </p>
           </div>

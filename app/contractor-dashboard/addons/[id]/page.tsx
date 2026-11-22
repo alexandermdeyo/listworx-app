@@ -104,7 +104,7 @@ export default function AddonDetailPage() {
               onClick={() => router.push(`/contractor-dashboard?openAddon=${addonId}`)}
               className="w-full bg-[#E8621A] hover:bg-[#d45516] text-white py-3 text-base"
             >
-              {addon.type === 'monthly' ? 'Subscribe' : 'Purchase'} — {priceLabel}
+              {addon.type === 'monthly' ? 'Subscribe' : 'Purchase'}, {priceLabel}
             </Button>
           )}
         </div>

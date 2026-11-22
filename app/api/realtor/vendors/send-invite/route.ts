@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
             <strong>${inviteeName}</strong>, you've been added to the trusted contractor network of <strong>${realtorName}</strong>${realtorBrokerage ? `, ${realtorBrokerage}` : ''} on ListWorx.
           </p>
           <p style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#333333;">
-            Your work speaks for itself. ListWorx helps realtors find and refer reliable local pros like you — and being in their network means you're the first call when their clients need help.
+            Your work speaks for itself. ListWorx helps realtors find and refer reliable local pros like you, and being in their network means you're the first call when their clients need help.
           </p>
           <!-- CTA button -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
@@ -201,13 +201,13 @@ export async function POST(request: NextRequest) {
         <!-- Footer -->
         <tr><td style="background:#1a1a1a;padding:24px 32px;text-align:center;">
           <img src="https://listworx.co/Ironclad_Standards_Logo.png" alt="IronClad Standards" width="56" style="display:inline-block;max-width:56px;height:auto;opacity:0.9;" />
-          <p style="margin:12px 0 0;font-size:11px;color:#999999;letter-spacing:0.5px;">ListWorx — Built in Gallatin, TN</p>
+          <p style="margin:12px 0 0;font-size:11px;color:#999999;letter-spacing:0.5px;">ListWorx: Built in Gallatin, TN</p>
         </td></tr>
       </table>
     </td></tr>
   </table>
 </body></html>`,
-      text: `${realtorName} wants you in their contractor network on ListWorx.\n\nSee your invitation: ${inviteUrl}\n\nThis invitation expires in 30 days.\n\nQuestions? adeyo@listworx.co\nListWorx — Built in Gallatin, TN`,
+      text: `${realtorName} wants you in their contractor network on ListWorx.\n\nSee your invitation: ${inviteUrl}\n\nThis invitation expires in 30 days.\n\nQuestions? adeyo@listworx.co\nListWorx: Built in Gallatin, TN`,
     });
 
     console.log(

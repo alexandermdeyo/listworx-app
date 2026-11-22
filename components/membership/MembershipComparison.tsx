@@ -8,6 +8,7 @@ type Props = {
   /** Highlight a plan (e.g. the member's current plan). */
   currentTier?: MembershipTierId | null;
   showCards?: boolean;
+  showTable?: boolean;
 };
 
 const cell = (v: string) =>
@@ -20,7 +21,7 @@ const cell = (v: string) =>
   );
 
 /** Membership cards plus the full comparison table (dark brand theme). */
-export default function MembershipComparison({ ctaFor, currentTier = null, showCards = true }: Props) {
+export default function MembershipComparison({ ctaFor, currentTier = null, showCards = true, showTable = true }: Props) {
   return (
     <div>
       {showCards && (
@@ -71,6 +72,7 @@ export default function MembershipComparison({ ctaFor, currentTier = null, showC
         </div>
       )}
 
+      {showTable && (
       <div className={showCards ? 'mt-12' : ''}>
         <h3 className="mb-4 text-xl font-bold text-white md:text-2xl">Compare memberships</h3>
         <div className="overflow-x-auto rounded-2xl border border-mailer-border">
@@ -110,6 +112,7 @@ export default function MembershipComparison({ ctaFor, currentTier = null, showC
           Monthly billing only. No activation fees. Cancel anytime; a canceled paid plan stays active through the paid period, then moves to Network.
         </p>
       </div>
+      )}
     </div>
   );
 }

@@ -12,12 +12,12 @@ import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 export const metadata: Metadata = pageMetadata({
   title: 'Become a Supplier Partner | ListWorx',
   description:
-    'Put your business in front of every ListWorx contractor — featured placement in their dashboard, a logo on the homepage, and newsletter mentions.',
+    'Put your business in front of every ListWorx contractor, featured placement in their dashboard, a logo on the homepage, and newsletter mentions.',
   path: '/become-a-supplier-partner',
 });
 
 const WHAT_YOU_GET = [
-  'Featured placement in every contractor’s dashboard — the exact audience buying what you sell',
+  'Featured placement in every contractor’s dashboard, the exact audience buying what you sell',
   'Logo on the ListWorx homepage',
   'Mentions in the ListWorx newsletter',
   'Occasional promotional content, including shoots filmed at your location',
@@ -114,7 +114,7 @@ export default function SupplierPartnerPage() {
               Founding Supplier pricing available for a limited number of partners.
             </p>
             <p className="mx-auto mt-4 max-w-2xl text-mkt-ink/70">
-              Partners display ListWorx materials at their location — it&apos;s part of being a
+              Partners display ListWorx materials at their location. It&apos;s part of being a
               partner, not an add-on.
             </p>
           </Reveal>

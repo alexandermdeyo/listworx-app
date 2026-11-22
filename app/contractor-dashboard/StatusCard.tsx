@@ -22,9 +22,9 @@ function getStatusConfig(status: string) {
         bg: 'bg-amber-50',
         border: 'border-amber-200',
         badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-        headline: 'IronClad Standards: Action Required — Application Under Review',
-        message: 'Our team is reviewing your application. You\'ll hear back within 24–48 hours.',
-        nextStep: 'Sit tight — we\'re vetting your credentials and will reach out shortly.',
+        headline: 'IronClad Standards: Action Required. Application Under Review',
+        message: 'Our team is reviewing your application. You\'ll hear back within 24 to 48 hours.',
+        nextStep: 'Sit tight. We\'re vetting your credentials and will reach out shortly.',
       };
     case PARTNER_STATUS.APPROVED:
       return {
@@ -33,7 +33,7 @@ function getStatusConfig(status: string) {
         bg: 'bg-emerald-50',
         border: 'border-emerald-200',
         badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-        headline: 'Approved — Choose Your Membership',
+        headline: 'Approved: Choose Your Membership',
         message: 'Congratulations! Your application has been approved.',
         nextStep: 'Join Network free (no credit card), or choose Growth or Business Pro, to activate your account and start receiving referrals.',
       };
@@ -111,7 +111,7 @@ export default function StatusCard({
   const config = isArchived ? ARCHIVED_STATUS : getStatusConfig(profile.partner_status);
   const StatusIcon = config.icon;
   const label = isArchived
-    ? 'Inactive – Archived'
+    ? 'Inactive: Archived'
     : STATUS_LABELS[profile.partner_status] || profile.partner_status;
 
   return (

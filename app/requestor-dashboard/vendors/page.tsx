@@ -375,7 +375,7 @@ export default function VendorsPage() {
             My Contractor Network
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Your contractors already do great work. Help them get found by more clients — and
+            Your contractors already do great work. Help them get found by more clients, and
             make sure there is always a vetted backup when your first call is unavailable.
           </p>
         </div>
@@ -645,7 +645,7 @@ export default function VendorsPage() {
                             {vendor.phone}
                           </a>
                         ) : (
-                          <span className="text-zinc-600 text-sm">—</span>
+                          <span className="text-zinc-600 text-sm">, </span>
                         )}
                       </div>
 

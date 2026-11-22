@@ -112,7 +112,7 @@ const socialFields = [
   { key: 'tiktok_url', label: 'TikTok', host: 'tiktok.com', icon: Video, placeholder: 'https://tiktok.com/@your-business' },
   { key: 'linkedin_url', label: 'LinkedIn', host: 'linkedin.com', icon: Linkedin, placeholder: 'https://linkedin.com/company/your-business' },
   { key: 'youtube_url', label: 'YouTube Channel', host: 'youtube.com', icon: Youtube, placeholder: 'https://youtube.com/@your-business' },
-  { key: 'google_business_url', label: 'Google Business Profile — highly recommended', host: 'google.com', icon: Globe, placeholder: 'https://g.page/r/your-profile' },
+  { key: 'google_business_url', label: 'Google Business Profile, highly recommended', host: 'google.com', icon: Globe, placeholder: 'https://g.page/r/your-profile' },
   { key: 'google_review_url', label: 'Google Reviews link', host: 'google.com', icon: Star, placeholder: 'https://g.page/r/your-profile/review' },
   { key: 'yelp_url', label: 'Yelp', host: 'yelp.com', icon: Star, placeholder: 'https://yelp.com/biz/your-business' },
   { key: 'bbb_url', label: 'Better Business Bureau (BBB)', host: 'bbb.org', icon: Shield, placeholder: 'https://bbb.org/us/your-listing' },
@@ -848,7 +848,7 @@ export default function ContractorProfileEditor({
               maxLength={100}
               value={businessForm.tagline}
               onChange={(event) => setBusinessForm({ ...businessForm, tagline: event.target.value.slice(0, 100) })}
-              placeholder="Brief headline for your business — e.g. 'Nashville's most trusted painter since 2005'"
+              placeholder="Brief headline for your business, e.g. 'Nashville's most trusted painter since 2005'"
             />
             <p className="mt-1 text-xs text-gray-400">{businessForm.tagline.length}/100</p>
           </div>
@@ -909,7 +909,7 @@ export default function ContractorProfileEditor({
                   {logoUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
                   Change Logo
                 </Button>
-                <p className="mt-2 text-xs text-gray-500">JPG, PNG, or SVG — square format recommended, minimum 200x200px</p>
+                <p className="mt-2 text-xs text-gray-500">JPG, PNG, or SVG, square format recommended, minimum 200x200px</p>
                 {logoUploadError && <p className="mt-2 text-xs text-red-600">{logoUploadError}</p>}
               </div>
             </div>

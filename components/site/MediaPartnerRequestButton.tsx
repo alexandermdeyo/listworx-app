@@ -51,7 +51,7 @@ export default function MediaPartnerRequestButton({
       setState('done');
     } catch {
       setState('error');
-      setMessage('Network error — please try again.');
+      setMessage('Network error, please try again.');
     }
   };
 

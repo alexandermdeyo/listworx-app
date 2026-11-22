@@ -279,7 +279,7 @@ export default function AIToolkitPage() {
                       {tool.id === 'hiring_post' && <>
                         <Field label="Trade" value={inp.trade || ''} onChange={v => setField(tool.id, 'trade', v)} />
                         <Field label="City" value={inp.city || ''} onChange={v => setField(tool.id, 'city', v)} />
-                        <Field label="Pay Range (e.g. $22–$28/hour)" value={inp.pay_range || ''} onChange={v => setField(tool.id, 'pay_range', v)} />
+                        <Field label="Pay Range (e.g. $22 to $28/hour)" value={inp.pay_range || ''} onChange={v => setField(tool.id, 'pay_range', v)} />
                         <TextareaField label="Requirements" value={inp.requirements || ''} onChange={v => setField(tool.id, 'requirements', v)} />
                         <Field label="Business Name" value={inp.business_name || ''} onChange={v => setField(tool.id, 'business_name', v)} />
                         <GenerateButton tool={tool.id} generating={generating} onClick={() => generate(tool.id)} label="Generate Hiring Post" />

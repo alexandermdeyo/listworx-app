@@ -71,7 +71,7 @@ export async function generateMetadata(
       .maybeSingle();
 
     const name = data?.display_name || 'Realtor';
-    const brokerage = data?.brokerage_name ? ` — ${data.brokerage_name}` : '';
+    const brokerage = data?.brokerage_name ? `, ${data.brokerage_name}` : '';
     const title = `${name}${brokerage} | ListWorx`;
     const description = `${name}${brokerage} on ListWorx, the vetted home service contractor referral network for realtors and homeowners.`;
     const url = `https://listworx.co/realtors/${params.id}`;
@@ -227,7 +227,7 @@ export default async function RealtorProfilePage({
   // ── Derived ──────────────────────────────────────────────────────────────────
   const accentColor    = kit.primary_color || '#E8621A';
   const contactEmail   = kit.email || '';
-  const mailtoSubject  = `Inquiry from ListWorx — ${kit.display_name || 'Realtor'}`;
+  const mailtoSubject  = `Inquiry from ListWorx, ${kit.display_name || 'Realtor'}`;
   const hasSocialLinks = kit.phone || kit.email || kit.website || kit.instagram_handle
                          || kit.facebook_url || kit.linkedin_url || kit.youtube_url;
 
@@ -399,7 +399,7 @@ export default async function RealtorProfilePage({
                     </p>
                     {contactEmail && (
                       <a
-                        href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Inquiry about ${listing.address} — ${listing.city}, ${listing.state}`)}`}
+                        href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Inquiry about ${listing.address}, ${listing.city}, ${listing.state}`)}`}
                         className="mt-auto pt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg py-2 text-white text-xs font-semibold transition hover:opacity-90"
                         style={{ backgroundColor: accentColor }}
                       >

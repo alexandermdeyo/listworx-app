@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     if (!networkTier) {
       // The 20261118000000_network_free_tier.sql migration has not been
       // applied yet -- fail safely and loudly rather than guessing a tier.
-      console.error('[activate-free-membership] "Network" tier row not found — has the migration been applied?');
+      console.error('[activate-free-membership] "Network" tier row not found, has the migration been applied?');
       return NextResponse.json(
         { error: 'Free membership is not available yet. Please try again shortly or contact support.' },
         { status: 500 }

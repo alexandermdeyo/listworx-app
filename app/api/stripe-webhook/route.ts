@@ -151,7 +151,7 @@ async function notifyAdminOfUnapprovedPayment(contractorId: string, partnerStatu
   await notifyAdmin(
     `ListWorx: payment received from a contractor who is "${partnerStatus || 'unknown'}"`,
     brandedEmail({
-      kicker: 'Admin — billing',
+      kicker: 'Admin, billing',
       title: 'Payment received, account not activated',
       body: `<p>A Stripe payment (${source}) was recorded for a contractor whose status is <strong>${partnerStatus || 'unknown'}</strong>.
              Payment does not activate a contractor without administrator approval, so their status was left unchanged.
@@ -233,13 +233,13 @@ async function handleCheckoutCompleted(session: any) {
   }
 
   if (!tierSlug) {
-    console.error('[stripe-webhook] No tier ID/slug in checkout session metadata — cannot create subscription row');
+    console.error('[stripe-webhook] No tier ID/slug in checkout session metadata, cannot create subscription row');
     return;
   }
 
   const resolvedTierId = await resolveTierId(tierSlug);
   if (!resolvedTierId) {
-    console.error(`[stripe-webhook] Failed to resolve tier UUID for "${tierSlug}" — subscription row not created`);
+    console.error(`[stripe-webhook] Failed to resolve tier UUID for "${tierSlug}", subscription row not created`);
     return;
   }
 
@@ -284,7 +284,7 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
   const subscriptionId = session.subscription;
 
   if (!subscriptionId) {
-    console.error('[stripe-webhook] Founder activation session has no subscription id — expected subscription-mode checkout', { sessionId: session.id });
+    console.error('[stripe-webhook] Founder activation session has no subscription id, expected subscription-mode checkout', { sessionId: session.id });
     return;
   }
 
@@ -347,7 +347,7 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
     const territory = [contractor.service_area_counties?.[0], contractor.service_area_state].filter(Boolean).join(', ') || 'your approved service area';
     await sendEmail({
       to: contractor.email,
-      subject: "Welcome to ListWorx — You're a Founding Partner",
+      subject: "Welcome to ListWorx: You're a Founding Partner",
       html: `<!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;background:#F5F5F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
@@ -371,9 +371,9 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
               <p style="margin:0 0 6px;font-size:13px;color:#666666;">Territory</p>
               <p style="margin:0 0 14px;font-size:16px;font-weight:600;color:#111111;">${territory}</p>
               <p style="margin:0 0 6px;font-size:13px;color:#666666;">Billing starts</p>
-              <p style="margin:0 0 14px;font-size:16px;font-weight:600;color:#111111;">Immediately — your locked rate begins today</p>
+              <p style="margin:0 0 14px;font-size:16px;font-weight:600;color:#111111;">Immediately. Your locked rate begins today</p>
               <p style="margin:0 0 6px;font-size:13px;color:#666666;">Locked renewal rate</p>
-              <p style="margin:0;font-size:16px;font-weight:600;color:#111111;">${renewalAmount}/month — for life</p>
+              <p style="margin:0;font-size:16px;font-weight:600;color:#111111;">${renewalAmount}/month, for life</p>
             </td></tr>
           </table>
           <p style="margin:0 0 8px;font-size:16px;line-height:1.55;color:#333333;">IronClad Standards still apply: respond within 24 hours, keep insurance current, communicate like a pro. Violations may result in losing Founding Partner status.</p>
@@ -382,12 +382,12 @@ async function handleFounderActivationCheckout(session: any, contractorId: strin
               <a href="${process.env.NEXT_PUBLIC_BASE_URL || process.env.APP_BASE_URL || 'https://listworx.co'}/contractor-dashboard" target="_blank" style="display:inline-block;background:#E85000;color:#ffffff;font-family:-apple-system,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.3px;text-decoration:none;padding:14px 34px;border-radius:7px;line-height:1.4;">Open Your Dashboard →</a>
             </td></tr>
           </table>
-          <p style="margin:8px 0 0;font-size:12px;color:#888888;text-align:center;">Questions? Reply to this email or contact Alexander Deyo, Founder — adeyo@listworx.co | 615-362-4996</p>
+          <p style="margin:8px 0 0;font-size:12px;color:#888888;text-align:center;">Questions? Reply to this email or contact Alexander Deyo, Founder, adeyo@listworx.co | 615-362-4996</p>
         </td></tr>
         <!-- Footer with IronClad shield -->
         <tr><td style="background:#1a1a1a;padding:24px 32px;text-align:center;">
           <img src="https://listworx.co/Ironclad_Standards_Logo.png" alt="IronClad Standards" width="64" style="display:inline-block;max-width:64px;height:auto;opacity:0.95;" />
-          <p style="margin:12px 0 0;font-size:11px;color:#999999;letter-spacing:0.5px;">ListWorx LLC — 2147 Springdale Ln F104, Gallatin, TN 37066</p>
+          <p style="margin:12px 0 0;font-size:11px;color:#999999;letter-spacing:0.5px;">ListWorx LLC, 2147 Springdale Ln F104, Gallatin, TN 37066</p>
         </td></tr>
       </table>
     </td></tr>
@@ -710,7 +710,7 @@ async function handleSubscriptionUpdated(subscription: any) {
     const resolvedTierId = tierSlug ? await resolveTierId(tierSlug) : null;
 
     if (!resolvedTierId) {
-      console.error('[stripe-webhook] No existing subscription row and no tier metadata — cannot upsert');
+      console.error('[stripe-webhook] No existing subscription row and no tier metadata, cannot upsert');
     } else {
       const subscriptionPayload = buildSubscriptionRow({
         contractorId,
@@ -724,7 +724,7 @@ async function handleSubscriptionUpdated(subscription: any) {
         cancelAtPeriodEnd: cancellation.scheduled,
       });
 
-      console.log('[stripe-webhook] No existing row — inserting subscription via upsert:', subscriptionPayload);
+      console.log('[stripe-webhook] No existing row, inserting subscription via upsert:', subscriptionPayload);
 
       const { data: upsertedSub, error: upsertError } = await getSupabase().from('subscriptions')
         .upsert(subscriptionPayload, { onConflict: 'contractor_id' })
@@ -809,7 +809,7 @@ async function handleSubscriptionDeleted(subscription: any) {
   // Idempotent: a repeat delivery (row already downgraded) or an event for a
   // subscription the contractor has since replaced changes nothing.
   if (!row || !eventMatchesCurrentSubscription(row.stripe_subscription_id, subscription.id)) {
-    console.log('[stripe-webhook] subscription end already handled or superseded — no change', {
+    console.log('[stripe-webhook] subscription end already handled or superseded, no change', {
       contractorId,
       eventSubscriptionId: subscription.id,
       currentSubscriptionId: row?.stripe_subscription_id ?? null,
@@ -830,7 +830,7 @@ async function handleSubscriptionDeleted(subscription: any) {
   if (decision === 'downgrade_to_network') {
     const networkTierId = await resolveTierId(NETWORK_TIER_NAME);
     if (!networkTierId) {
-      console.error('[stripe-webhook] Network tier row missing — cannot downgrade', { contractorId });
+      console.error('[stripe-webhook] Network tier row missing, cannot downgrade', { contractorId });
       return;
     }
     const { error } = await supabase.from('subscriptions')

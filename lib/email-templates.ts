@@ -170,7 +170,7 @@ function layout(
 
   const eyebrowText =
     footerVariant === 'requestor'
-      ? 'ListWorx — Curated Contractor Referrals'
+      ? 'ListWorx: Curated Contractor Referrals'
       : 'ListWorx IronClad Partner Network';
 
   return `<!DOCTYPE html>
@@ -236,7 +236,7 @@ function layout(
                 <tr>
                   <td style="border-top:1px solid ${C.border};padding-top:16px;">
                     <p style="font-family:${C.font};font-size:12px;color:${C.gray600};line-height:1.6;margin:0 0 4px;">
-                      <strong style="color:${C.gray400};">ListWorx LLC</strong> &mdash; Professional Contractor Referral Network
+                      <strong style="color:${C.gray400};">ListWorx LLC</strong>: Professional Contractor Referral Network
                     </p>
                     <p style="font-family:${C.font};font-size:12px;color:${C.gray600};margin:0;">
                       2147 Springdale Ln F104, Gallatin, TN 37066 &nbsp;&bull;&nbsp;
@@ -268,7 +268,7 @@ export const contractorEmails = {
       'Application Received',
       `Thank you for applying to join the ListWorx IronClad Partner Network, ${contractorName}.`,
       `
-      ${p(`We've received your application for <strong style="color:${C.white};">${companyName}</strong>. Our team will review it and respond within <strong style="color:${C.white};">2–3 business days</strong>.`)}
+      ${p(`We've received your application for <strong style="color:${C.white};">${companyName}</strong>. Our team will review it and respond within <strong style="color:${C.white};">2 to 3 business days</strong>.`)}
 
       ${sectionLabel('What We Review')}
       ${checkList([
@@ -279,22 +279,22 @@ export const contractorEmails = {
       ])}
 
       ${sectionLabel('IronClad Standards')}
-      ${p('Every ListWorx partner must meet and maintain the IronClad Standards — a non-negotiable set of requirements covering licensing, insurance, communication, and professional conduct.')}
+      ${p('Every ListWorx partner must meet and maintain the IronClad Standards, a non-negotiable set of requirements covering licensing, insurance, communication, and professional conduct.')}
 
       ${divider()}
       ${small(`Questions? Reply to this email or reach us at <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}
       `,
-      "Your application is under review — we'll be in touch within 2–3 business days.",
+      "Your application is under review. We'll be in touch within 2 to 3 business days.",
       'contractor'
     ),
-    text: `Application Received\n\nHi ${contractorName},\n\nWe've received your application for ${companyName}. Our team will review it within 2–3 business days.\n\nWe review: licensing, insurance, credentials, and IronClad Standards alignment.\n\nQuestions? Email adeyo@listworx.co\n\n— The ListWorx Team`,
+    text: `Application Received\n\nHi ${contractorName},\n\nWe've received your application for ${companyName}. Our team will review it within 2 to 3 business days.\n\nWe review: licensing, insurance, credentials, and IronClad Standards alignment.\n\nQuestions? Email adeyo@listworx.co\n\nThe ListWorx Team`,
   }),
 
   applicationApproved: (contractorName: string, companyName: string): EmailTemplate => ({
-    subject: "You're Approved — Sign In and Choose Your Plan",
+    subject: "You're Approved: Sign In and Choose Your Plan",
     html: layout(
       'Application Approved',
-      `Congratulations, ${contractorName} — ${companyName} has been approved.`,
+      `Congratulations, ${contractorName}! ${companyName} has been approved.`,
       `
       ${successCard(`
         ${p(`<strong style="color:${C.white};">You're in the network.</strong> Sign in to your dashboard, select your partnership tier, and complete checkout to activate your account and start receiving referrals.`, C.gray200)}
@@ -320,10 +320,10 @@ export const contractorEmails = {
       ${divider()}
       ${small(`Need help? Reply to this email or contact <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}
       `,
-      'Congratulations — your application has been approved. Sign in to get started.',
+      'Congratulations. Your application has been approved. Sign in to get started.',
       'contractor'
     ),
-    text: `You're Approved\n\nCongratulations, ${contractorName},\n\n${companyName} has been approved to join the ListWorx IronClad Partner Network.\n\nSign in to your dashboard and choose your plan:\n${BASE_URL}/contractor-portal?redirect=${encodeURIComponent('/contractor-dashboard')}\n\nOnce active you'll receive qualified referrals from realtors and homeowners in your area.\n\n— The ListWorx Team`,
+    text: `You're Approved\n\nCongratulations, ${contractorName},\n\n${companyName} has been approved to join the ListWorx IronClad Partner Network.\n\nSign in to your dashboard and choose your plan:\n${BASE_URL}/contractor-portal?redirect=${encodeURIComponent('/contractor-dashboard')}\n\nOnce active you'll receive qualified referrals from realtors and homeowners in your area.\n\nThe ListWorx Team`,
   }),
 
   applicationDeclined: (contractorName: string, reason: string): EmailTemplate => ({
@@ -350,11 +350,11 @@ export const contractorEmails = {
       'An update regarding your ListWorx contractor application.',
       'contractor'
     ),
-    text: `Application Update\n\nHi ${contractorName},\n\nThank you for your interest in ListWorx. After careful review, we're unable to approve your application at this time.\n\nReason: ${reason}\n\nContact adeyo@listworx.co for clarification or reapply when circumstances change.\n\n— The ListWorx Team`,
+    text: `Application Update\n\nHi ${contractorName},\n\nThank you for your interest in ListWorx. After careful review, we're unable to approve your application at this time.\n\nReason: ${reason}\n\nContact adeyo@listworx.co for clarification or reapply when circumstances change.\n\nThe ListWorx Team`,
   }),
 
   subscriptionConfirmation: (contractorName: string, tierName: string, isAnnual: boolean, benefits: string[]): EmailTemplate => ({
-    subject: `Welcome to ListWorx — ${tierName} Membership Activated`,
+    subject: `Welcome to ListWorx, ${tierName} Membership Activated`,
     html: layout(
       'Membership Activated',
       `Welcome to the network, ${contractorName}. Your membership is now live.`,
@@ -372,7 +372,7 @@ export const contractorEmails = {
 
       ${isAnnual && tierName.toLowerCase().includes('elite') ? `
         ${sectionLabel('Annual Elite Bonus')}
-        ${infoCard(p(`As an Annual Elite member, you're eligible for our <strong style="color:${C.white};">Professional Promotional Video Package</strong> — a $499 value included with your membership. Our team will reach out to schedule your shoot.`, C.gray200))}
+        ${infoCard(p(`As an Annual Elite member, you're eligible for our <strong style="color:${C.white};">Professional Promotional Video Package</strong>, a $499 value included with your membership. Our team will reach out to schedule your shoot.`, C.gray200))}
       ` : ''}
 
       ${cta('Go to Your Dashboard &rarr;', `${BASE_URL}/contractor-dashboard`)}
@@ -387,14 +387,14 @@ export const contractorEmails = {
 
       ${small('Non-compliance may result in suspension or removal from the network.', C.gray400)}
       `,
-      `Your ${tierName} membership is active — start receiving referrals today.`,
+      `Your ${tierName} membership is active. Start receiving referrals today.`,
       'contractor'
     ),
-    text: `Membership Activated\n\nWelcome, ${contractorName},\n\nYour ${tierName} membership (${isAnnual ? 'Annual' : 'Monthly'}) is now active.\n\nBenefits: ${benefits.join(', ')}\n\n${isAnnual && tierName.toLowerCase().includes('elite') ? "As an Annual Elite member, you're eligible for a Professional Video Package. We'll be in touch to schedule.\n\n" : ''}Dashboard: ${BASE_URL}/contractor-dashboard\n\nMaintain IronClad Standards to keep your active status.\n\n— The ListWorx Team`,
+    text: `Membership Activated\n\nWelcome, ${contractorName},\n\nYour ${tierName} membership (${isAnnual ? 'Annual' : 'Monthly'}) is now active.\n\nBenefits: ${benefits.join(', ')}\n\n${isAnnual && tierName.toLowerCase().includes('elite') ? "As an Annual Elite member, you're eligible for a Professional Video Package. We'll be in touch to schedule.\n\n" : ''}Dashboard: ${BASE_URL}/contractor-dashboard\n\nMaintain IronClad Standards to keep your active status.\n\nThe ListWorx Team`,
   }),
 
   paymentFailed: (contractorName: string, amountDue: string, retryDate: string): EmailTemplate => ({
-    subject: 'Action Required — Membership Payment Issue',
+    subject: 'Action Required: Membership Payment Issue',
     html: layout(
       'Payment Issue',
       `Hi ${contractorName}, we need you to update your billing information.`,
@@ -417,10 +417,10 @@ export const contractorEmails = {
       ${divider()}
       ${small(`Believe this is an error? Contact <a href="mailto:billing@listworx.com" style="color:${C.rust};text-decoration:none;">billing@listworx.com</a> immediately.`)}
       `,
-      'Your payment failed — update your billing info to keep receiving referrals.',
+      'Your payment failed. Update your billing info to keep receiving referrals.',
       'contractor'
     ),
-    text: `Payment Issue — Action Required\n\nHi ${contractorName},\n\nWe were unable to process your ListWorx membership payment.\n\nAmount Due: ${amountDue}\nNext Retry: ${retryDate}\n\nYou have a 7-day grace period. Update your payment method:\n${BASE_URL}/billing\n\nIf unresolved, your account will be suspended and you'll stop receiving referrals.\n\nContact billing@listworx.com for assistance.\n\n— The ListWorx Team`,
+    text: `Payment Issue: Action Required\n\nHi ${contractorName},\n\nWe were unable to process your ListWorx membership payment.\n\nAmount Due: ${amountDue}\nNext Retry: ${retryDate}\n\nYou have a 7-day grace period. Update your payment method:\n${BASE_URL}/billing\n\nIf unresolved, your account will be suspended and you'll stop receiving referrals.\n\nContact billing@listworx.com for assistance.\n\nThe ListWorx Team`,
   }),
 
   subscriptionPaused: (contractorName: string, reason: string): EmailTemplate => ({
@@ -457,23 +457,23 @@ export const contractorEmails = {
       'Your ListWorx membership has been paused.',
       'contractor'
     ),
-    text: `Membership Paused\n\nHi ${contractorName},\n\nYour ListWorx membership has been paused.\n\nReason: ${reason}\n\nYou will not receive referrals and your profile is hidden. To reactivate, contact adeyo@listworx.co or visit ${BASE_URL}/billing.\n\n— The ListWorx Team`,
+    text: `Membership Paused\n\nHi ${contractorName},\n\nYour ListWorx membership has been paused.\n\nReason: ${reason}\n\nYou will not receive referrals and your profile is hidden. To reactivate, contact adeyo@listworx.co or visit ${BASE_URL}/billing.\n\nThe ListWorx Team`,
   }),
 
   eliteVideoPackage: (contractorName: string): EmailTemplate => ({
-    subject: 'Your Elite Video Package — Schedule Your Shoot',
+    subject: 'Your Elite Video Package. Schedule Your Shoot',
     html: layout(
       'Elite Video Package',
       `Your Annual Elite benefit is ready to activate, ${contractorName}.`,
       `
-      ${p(`As an <strong style="color:${C.white};">Annual Network Elite</strong> member, you're entitled to our Professional Promotional Video Package — a $499 value included with your membership.`)}
+      ${p(`As an <strong style="color:${C.white};">Annual Network Elite</strong> member, you're entitled to our Professional Promotional Video Package, a $499 value included with your membership.`)}
 
       ${sectionLabel("What's Included")}
       ${infoCard(`
         ${checkList([
           'Professional video shoot at your job site or office',
           'Listing-quality footage and professional editing',
-          'Marketing-ready 60–90 second promotional video',
+          'Marketing-ready 60 to 90 second promotional video',
           'Full usage rights for your website and social media',
           'Featured rotating placement on the ListWorx homepage',
         ])}
@@ -489,7 +489,7 @@ export const contractorEmails = {
       'Your Annual Elite video package benefit is ready to schedule.',
       'contractor'
     ),
-    text: `Your Elite Video Package\n\nHi ${contractorName},\n\nAs an Annual Network Elite member, you're entitled to our Professional Promotional Video Package (a $499 value).\n\nIncludes: professional video shoot, editing, 60-90 second promo, full usage rights, and featured homepage placement.\n\nThis benefit is exclusive to Annual Elite members.\n\nEmail marketing@listworx.com to schedule.\n\n— The ListWorx Marketing Team`,
+    text: `Your Elite Video Package\n\nHi ${contractorName},\n\nAs an Annual Network Elite member, you're entitled to our Professional Promotional Video Package (a $499 value).\n\nIncludes: professional video shoot, editing, 60-90 second promo, full usage rights, and featured homepage placement.\n\nThis benefit is exclusive to Annual Elite members.\n\nEmail marketing@listworx.com to schedule.\n\nThe ListWorx Marketing Team`,
   }),
 
   subscriptionCancellation: (contractorName: string, companyName: string, tierName: string, endDate: string): EmailTemplate => ({
@@ -513,14 +513,14 @@ export const contractorEmails = {
       ${divider()}
       ${small(`We're sorry to see you go. If there's anything we could have done better, we'd love to hear from you at <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>. Thank you for being a ListWorx partner.`)}
       `,
-      `Your membership ends on ${endDate} — you can still reactivate before then.`,
+      `Your membership ends on ${endDate}. You can still reactivate before then.`,
       'contractor'
     ),
-    text: `Membership Cancellation Confirmed\n\nHi ${contractorName},\n\nYour ${tierName} membership for ${companyName} has been cancelled.\n\nYour access continues through ${endDate}. After that, your account will be deactivated.\n\nReactivate any time before ${endDate}: ${BASE_URL}/contractor-dashboard\n\nThank you for being a ListWorx partner.\n\n— The ListWorx Team`,
+    text: `Membership Cancellation Confirmed\n\nHi ${contractorName},\n\nYour ${tierName} membership for ${companyName} has been cancelled.\n\nYour access continues through ${endDate}. After that, your account will be deactivated.\n\nReactivate any time before ${endDate}: ${BASE_URL}/contractor-dashboard\n\nThank you for being a ListWorx partner.\n\nThe ListWorx Team`,
   }),
 
   addonPurchaseConfirmation: (contractorName: string, addonName: string, addonDescription: string, limitations: string): EmailTemplate => ({
-    subject: `Add-On Activated — ${addonName}`,
+    subject: `Add-On Activated, ${addonName}`,
     html: layout(
       'Add-On Activated',
       `${addonName} is now active on your account.`,
@@ -543,7 +543,7 @@ export const contractorEmails = {
       `${addonName} is now active on your account.`,
       'contractor'
     ),
-    text: `Add-On Activated: ${addonName}\n\nHi ${contractorName},\n\nYour ${addonName} add-on is now active.\n\n${addonDescription}\n\n${limitations ? `Limitations: ${limitations}\n\n` : ''}Manage add-ons at ${BASE_URL}/billing\n\n— The ListWorx Team`,
+    text: `Add-On Activated: ${addonName}\n\nHi ${contractorName},\n\nYour ${addonName} add-on is now active.\n\n${addonDescription}\n\n${limitations ? `Limitations: ${limitations}\n\n` : ''}Manage add-ons at ${BASE_URL}/billing\n\nThe ListWorx Team`,
   }),
 };
 
@@ -557,7 +557,7 @@ export const realtorEmails = {
     subject: 'Your ListWorx Referrals Are Ready',
     html: layout(
       'Your Referrals Are Ready',
-      `Hi ${realtorName} — ListWorx has matched your request with IronClad-certified contractors.`,
+      `Hi ${realtorName}: ListWorx has matched your request with IronClad-certified contractors.`,
       `
       ${p(`Your service request for <strong style="color:${C.white};">${propertyAddress}</strong> has been received and your matched contractor referrals are ready below.`)}
 
@@ -569,10 +569,10 @@ export const realtorEmails = {
 
       ${sectionLabel('How It Works')}
       ${checkList([
-        '<strong style="color:#FFFFFF;">You Review</strong> — Look over the matched contractors and their contact details',
-        '<strong style="color:#FFFFFF;">You Reach Out</strong> — Contact whichever contractor you prefer directly, at any time',
-        '<strong style="color:#FFFFFF;">Contractors Are Ready</strong> — Each has been notified of the referral and is expecting to hear from you',
-        '<strong style="color:#FFFFFF;">You Decide</strong> — No commitments, no pressure. Choose the best fit for your needs',
+        '<strong style="color:#FFFFFF;">You Review</strong>. Look over the matched contractors and their contact details',
+        '<strong style="color:#FFFFFF;">You Reach Out</strong>. Contact whichever contractor you prefer directly, at any time',
+        '<strong style="color:#FFFFFF;">Contractors Are Ready</strong>. Each has been notified of the referral and is expecting to hear from you',
+        '<strong style="color:#FFFFFF;">You Decide</strong>. No commitments, no pressure. Choose the best fit for your needs',
       ])}
 
       ${sectionLabel('IronClad Standards')}
@@ -581,10 +581,10 @@ export const realtorEmails = {
       ${divider()}
       ${small(`Questions? <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}
       `,
-      `Your request is in — we're matching you with up to 3 qualified contractors now.`,
+      `Your request is in. We're matching you with up to 3 qualified contractors now.`,
       'requestor'
     ),
-    text: `Your Contractor Referrals Are Ready\n\nHi ${realtorName},\n\nYour service request for ${clientName} at ${propertyAddress} has been received and matched instantly with IronClad-certified contractors.\n\nServices: ${services.join(', ')}\n\nEach matched contractor has been notified of the referral and is expecting to hear from you.\n\nQuestions? Email adeyo@listworx.co\n\n— The ListWorx Team`,
+    text: `Your Contractor Referrals Are Ready\n\nHi ${realtorName},\n\nYour service request for ${clientName} at ${propertyAddress} has been received and matched instantly with IronClad-certified contractors.\n\nServices: ${services.join(', ')}\n\nEach matched contractor has been notified of the referral and is expecting to hear from you.\n\nQuestions? Email adeyo@listworx.co\n\nThe ListWorx Team`,
   }),
 
   contractorMatchSent: (
@@ -651,12 +651,12 @@ export const realtorEmails = {
     };
 
     return {
-      subject: `Your ListWorx Referrals — ${count} IronClad Contractor${count !== 1 ? 's' : ''} Selected`,
+      subject: `Your ListWorx Referrals, ${count} IronClad Contractor${count !== 1 ? 's' : ''} Selected`,
       html: layout(
         'Your Contractor Referrals',
         `ListWorx has selected ${count} IronClad-certified contractor${count !== 1 ? 's' : ''} for your request.`,
         `
-        ${p(`Here are your matched referrals for <strong style="color:${C.white};">${propertyAddress}</strong>. Review the options below and contact whoever you prefer — it's entirely your choice.`)}
+        ${p(`Here are your matched referrals for <strong style="color:${C.white};">${propertyAddress}</strong>. Review the options below and contact whoever you prefer. It's entirely your choice.`)}
         ${p('Each contractor has been notified of this referral and is expecting to hear from you. They will not reach out to you unsolicited.', C.gray400)}
 
         ${sectionLabel(`Your ${count} Matched Referral${count !== 1 ? 's' : ''}`)}
@@ -666,18 +666,18 @@ export const realtorEmails = {
         ${sectionLabel('Next Steps')}
         ${checkList([
           'Review the contractors above and their contact information',
-          'Reach out to whichever contractor you prefer — you are in control',
+          'Reach out to whichever contractor you prefer. You are in control',
           'Contractors have been notified and are expecting your call or email',
-          'No commitments — choose the best fit at your own pace',
+          'No commitments. Choose the best fit at your own pace',
         ])}
 
         ${divider()}
         ${small(`All contractors are IronClad Standards™ certified. ListWorx curates this referral but is not a party to any service agreements. Questions? <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>`)}
         `,
-        `Your ${count} referral${count !== 1 ? 's are' : ' is'} ready — review and contact whoever you prefer.`,
+        `Your ${count} referral${count !== 1 ? 's are' : ' is'} ready, review and contact whoever you prefer.`,
         'requestor'
       ),
-      text: `Your Contractor Referrals\n\nHi ${realtorName},\n\nHere are your matched contractors for ${propertyAddress}:\n\n${contractors.map((c, i) => `${i + 1}. ${c.company}\n   Contact: ${c.name}\n   Phone: ${c.phone}\n   Email: ${c.email}\n   ${c.website ? `Website: ${c.website}\n   ` : ''}Specialties: ${c.specialties.join(', ')}`).join('\n\n')}\n\nContact them directly — you are in control. Each contractor is expecting to hear from you.\n\nAll contractors are IronClad Standards certified.\n\n— The ListWorx Team`,
+      text: `Your Contractor Referrals\n\nHi ${realtorName},\n\nHere are your matched contractors for ${propertyAddress}:\n\n${contractors.map((c, i) => `${i + 1}. ${c.company}\n   Contact: ${c.name}\n   Phone: ${c.phone}\n   Email: ${c.email}\n   ${c.website ? `Website: ${c.website}\n   ` : ''}Specialties: ${c.specialties.join(', ')}`).join('\n\n')}\n\nContact them directly. You are in control. Each contractor is expecting to hear from you.\n\nAll contractors are IronClad Standards certified.\n\nThe ListWorx Team`,
     };
   },
 
@@ -685,7 +685,7 @@ export const realtorEmails = {
     subject: 'How Did Your Service Go?',
     html: layout(
       'How Was Your Experience?',
-      `Hi ${realtorName} — we'd love your feedback on the recent work at ${propertyAddress}.`,
+      `Hi ${realtorName}, we'd love your feedback on the recent work at ${propertyAddress}.`,
       `
       ${p(`We hope the work at <strong style="color:${C.white};">${propertyAddress}</strong> with <strong style="color:${C.white};">${companyName}</strong> went smoothly. Your honest feedback helps us maintain the quality of our contractor network.`)}
 
@@ -704,13 +704,13 @@ export const realtorEmails = {
 
       ${sectionLabel('Did Something Go Wrong?')}
       ${warningCard(`
-        ${p('If you experienced unprofessional conduct, missed appointments, surprise pricing, or any other IronClad Standards violation — please let us know immediately. We take compliance seriously and investigate every report.', C.gray100)}
+        ${p('If you experienced unprofessional conduct, missed appointments, surprise pricing, or any other IronClad Standards violation, please let us know immediately. We take compliance seriously and investigate every report.', C.gray100)}
         ${small(`<a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;font-weight:600;">Report an issue directly &rarr;</a>`)}
       `)}
       `,
-      `Quick question about your recent service at ${propertyAddress} — takes under 2 minutes.`,
+      `Quick question about your recent service at ${propertyAddress}, takes under 2 minutes.`,
       'requestor'
     ),
-    text: `How Was Your Experience?\n\nHi ${realtorName},\n\nWe hope the work at ${propertyAddress} with ${companyName} went well.\n\nYour feedback helps us maintain IronClad Standards:\n${BASE_URL}/feedback/${jobRequestId}\n\nIf something went wrong, contact adeyo@listworx.co immediately.\n\n— The ListWorx Team`,
+    text: `How Was Your Experience?\n\nHi ${realtorName},\n\nWe hope the work at ${propertyAddress} with ${companyName} went well.\n\nYour feedback helps us maintain IronClad Standards:\n${BASE_URL}/feedback/${jobRequestId}\n\nIf something went wrong, contact adeyo@listworx.co immediately.\n\nThe ListWorx Team`,
   }),
 };

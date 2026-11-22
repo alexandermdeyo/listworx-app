@@ -20,17 +20,17 @@ const PATHWAY_STEPS = [
   {
     icon: GraduationCap,
     title: 'Get Licensed',
-    description: 'Pass your state contractor exam with ACES — the national standard for contractor licensing prep in all 50 states.',
+    description: 'Pass your state contractor exam with ACES, the national standard for contractor licensing prep in all 50 states.',
   },
   {
     icon: ShieldCheck,
     title: 'Get Verified',
-    description: 'Complete IronClad certification. License confirmed. Insurance confirmed. References checked. You\'re not just licensed — you\'re verified.',
+    description: 'Complete IronClad certification. License confirmed. Insurance confirmed. References checked. You\'re not just licensed. You\'re verified.',
   },
   {
     icon: ListChecks,
     title: 'Get Listed',
-    description: 'Your IronClad profile goes live in the ListWorx contractor network — visible to realtors, builders, investors, and property managers in your area.',
+    description: 'Your IronClad profile goes live in the ListWorx contractor network, visible to realtors, builders, investors, and property managers in your area.',
   },
   {
     icon: Users,
@@ -46,14 +46,14 @@ const PATHWAY_STEPS = [
 
 const CONTRACTOR_BENEFITS = [
   'Your IronClad badge tells realtors and builders you are verified before they even call you',
-  'Get matched directly — no competing against 15 other guys for the same lead',
-  'Flat monthly membership — you keep every dollar you earn',
+  'Get matched directly, no competing against 15 other guys for the same lead',
+  'Flat monthly membership. You keep every dollar you earn',
   'The ACES Trained badge on your profile tells the world you took your license seriously',
   'ListWorx Academy gives you the tools to grow beyond just getting jobs',
 ];
 
 const ACES_BENEFITS = [
-  'Your courses featured inside ListWorx Academy — visible to every active contractor on the platform',
+  'Your courses featured inside ListWorx Academy, visible to every active contractor on the platform',
   'A referral dashboard showing exactly how many contractors came through your pipeline',
   'Commission on every active subscriber who came through ACES',
   'Co-branded materials your students can use when they join',
@@ -75,7 +75,7 @@ export default function AcesPartnerPage() {
                 You Prepare Them to Get Licensed. We Give Them Somewhere to Put That License to Work.
               </h1>
               <p className="text-lg md:text-xl text-mkt-ink/70 mb-10 max-w-xl">
-                American Contractors Exam Services and ListWorx share the same belief — that American tradespeople deserve more than a participation trophy. They deserve credentials that mean something, a network that respects their craft, and a pipeline that rewards their professionalism.
+                American Contractors Exam Services and ListWorx share the same belief. That American tradespeople deserve more than a participation trophy. They deserve credentials that mean something, a network that respects their craft, and a pipeline that rewards their professionalism.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/apply">
@@ -196,9 +196,9 @@ export default function AcesPartnerPage() {
               25 Years of Doing It Right
             </h2>
             <p className="text-lg text-white/70 leading-relaxed mb-8">
-              American Contractors Exam Services was founded on a simple idea — that getting a contractor&apos;s license should not be a guessing game. For 25 years they have served more than 60,000 contractors across all 50 states with classroom and online exam prep, a 95% pass rate, and a reputation built on results.
+              American Contractors Exam Services was founded on a simple idea. That getting a contractor&apos;s license should not be a guessing game. For 25 years they have served more than 60,000 contractors across all 50 states with classroom and online exam prep, a 95% pass rate, and a reputation built on results.
               <br /><br />
-              They are based right here in Nashville, Tennessee — and they have been doing this work long before it was fashionable to care about the trades.
+              They are based right here in Nashville, Tennessee, and they have been doing this work long before it was fashionable to care about the trades.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">

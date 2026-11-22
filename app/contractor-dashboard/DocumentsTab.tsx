@@ -511,7 +511,7 @@ export default function DocumentsTab({ profile, onNavigateToProfile }: Documents
             <Switch checked={isPublic} onCheckedChange={setIsPublic} id="doc-visibility" />
             <Label htmlFor="doc-visibility" className="flex items-center gap-1.5 cursor-pointer">
               {isPublic ? <Globe className="h-3.5 w-3.5 text-lw-rust" /> : <Lock className="h-3.5 w-3.5 text-gray-400" />}
-              {isPublic ? 'Public — shows on your profile' : 'Private — only you and admin'}
+              {isPublic ? 'Public, shows on your profile' : 'Private, only you and admin'}
             </Label>
           </div>
 
@@ -531,7 +531,7 @@ export default function DocumentsTab({ profile, onNavigateToProfile }: Documents
             {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
             {uploading ? 'Uploading...' : 'Upload Document'}
           </Button>
-          <p className="mt-2 text-xs text-gray-400">PDF, JPG, or PNG — max 10MB.</p>
+          <p className="mt-2 text-xs text-gray-400">PDF, JPG, or PNG, max 10MB.</p>
         </div>
 
         {loading ? (

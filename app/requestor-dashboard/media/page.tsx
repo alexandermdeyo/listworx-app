@@ -90,7 +90,7 @@ export default function RequestorMediaPage() {
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <h1 className="text-xl font-bold text-mkt-ink">Book listing media</h1>
           <p className="mt-1 text-mkt-ink/70">
-            Photographers, videographers, and drone operators in the ListWorx network — free for
+            Photographers, videographers, and drone operators in the ListWorx network, free for
             you, covered by the partner&apos;s membership. Send a request and they confirm or
             decline.
           </p>

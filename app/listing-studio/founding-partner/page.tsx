@@ -36,7 +36,7 @@ const FOUNDING_TIERS = [
       'Directory listing and public profile',
       'Unlimited vendor invites',
       'Founding Realtor badge on profile',
-      'Rate locked forever — never increases',
+      'Rate locked forever, never increases',
     ],
   },
   {
@@ -58,7 +58,7 @@ const FOUNDING_TIERS = [
       '5 team seats',
       'Luxury templates and advanced analytics',
       'Founding Realtor badge on profile',
-      'Rate locked forever — never increases',
+      'Rate locked forever, never increases',
     ],
   },
 ];
@@ -72,7 +72,7 @@ const STATS = [
 const FAQS = [
   {
     q: 'What does "locked forever" actually mean?',
-    a: 'Your founding rate is the rate you pay for as long as your subscription stays active — even as we raise prices for new members. We will never increase your rate.',
+    a: 'Your founding rate is the rate you pay for as long as your subscription stays active, even as we raise prices for new members. We will never increase your rate.',
   },
   {
     q: 'What happens if I cancel?',
@@ -80,7 +80,7 @@ const FAQS = [
   },
   {
     q: 'How many founding spots are available?',
-    a: 'We have a limited number of founding spots. Once they are gone, this program closes. We do not publish the exact number to avoid artificial urgency — but when it is gone, it is gone.',
+    a: 'We have a limited number of founding spots. Once they are gone, this program closes. We do not publish the exact number to avoid artificial urgency, but when it is gone, it is gone.',
   },
   {
     q: 'How does billing work?',
@@ -173,7 +173,7 @@ export default function FoundingPartnerPage() {
           </Reveal>
           <Reveal immediate delay={100}>
             <p className="text-lg md:text-xl text-mkt-ink/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Founding Partners get the rate they sign up at — permanently. As we grow and raise prices for new members, your rate stays exactly where it is. For life.
+              Founding Partners get the rate they sign up at, permanently. As we grow and raise prices for new members, your rate stays exactly where it is. For life.
             </p>
           </Reveal>
 
@@ -241,7 +241,7 @@ export default function FoundingPartnerPage() {
                     ${tier.annualTotal.toLocaleString()}/yr billed annually
                   </p>
                   <p className="text-xs mb-6 text-mkt-ink/50">
-                    vs standard ${tier.standardMonthly}/mo — saves ${tier.savingsPerYear.toLocaleString()}/yr
+                    vs standard ${tier.standardMonthly}/mo, saves ${tier.savingsPerYear.toLocaleString()}/yr
                   </p>
 
                   {/* Features */}
@@ -296,7 +296,7 @@ export default function FoundingPartnerPage() {
               The Founding Realtor Badge
             </h2>
             <p className="text-lg text-white/70 mb-6 leading-relaxed">
-              Every Founding Partner gets a permanent badge on their ListWorx profile marking them as one of the original members who helped build this platform. It stays there — forever — even as Listing Studio grows.
+              Every Founding Partner gets a permanent badge on their ListWorx profile marking them as one of the original members who helped build this platform. It stays there, forever, even as Listing Studio grows.
             </p>
             <p className="text-white/60 leading-relaxed">
               It is a small thing, but it is real. The people who show up early deserve to be recognized for it.

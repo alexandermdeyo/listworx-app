@@ -9,7 +9,7 @@ import { pageMetadata } from '@/lib/seo';
 export const metadata = pageMetadata({
   title: 'FAQ: How ListWorx Referrals Work | ListWorx',
   description:
-    'Answers about ListWorx: how contractor referrals work, IronClad certification, Founding Partner status, and what homeowners, realtors, and contractors can expect.',
+    'Answers about ListWorx: how contractor referrals work, IronClad certification, memberships, and what homeowners, realtors, and contractors can expect.',
   path: '/faq',
 });
 
@@ -17,24 +17,22 @@ const generalFaqs = [
   ['What is ListWorx?', 'ListWorx is a contractor referral network for realtors and homeowners. We match each request with up to three active, approved contractors from our network who cover your trade and county. No referral fees. No bidding wars.'],
   ['How are contractors vetted?', 'Every contractor in the network is reviewed against IronClad Standards before approval: valid licensing and insurance, professional communication, no history of ghosting customers, and a commitment to responding within 24 hours.'],
   ['Does it cost realtors or homeowners anything to use ListWorx?', 'No. ListWorx is free for realtors and homeowners. Contractors pay a flat monthly subscription to participate in the network.'],
-  ['How fast will I get matched with a contractor?', 'Instantly — in under 30 seconds. The moment you submit a request, you will see your matched contractor profiles right on your screen. We also send the same information to your email, and it stays saved in your dashboard so you can find it anytime.'],
+  ['How fast will I get matched with a contractor?', 'Instantly, in under 30 seconds. The moment you submit a request, you will see your matched contractor profiles right on your screen. We also send the same information to your email, and it stays saved in your dashboard so you can find it anytime.'],
   ['What if I have a bad experience with a contractor?', 'Tell us. Every job is followed by a feedback survey covering response time, quality, and professionalism. Contractors who violate IronClad Standards lose their network status.'],
 ];
 
-const founderFaqs = [
-  ['What is a Founding Partner?', 'Simple. Pick your tier, and your monthly billing starts right away at your locked founder rate. Network Member is $100/month. Network Partner is $175. Network Elite is $300. That rate is yours permanently — no increases, no renegotiating, no surprises. Standard pricing for contractors who join after the founding period is $125, $215, or $365 a month. Founding Partners never pay that.'],
-  ['Why should I become a Founding Partner instead of joining standard monthly?', 'Three reasons: locked pricing as low as $100/month forever (versus standard $125–$365/month), Founding Partner badge on every referral we send, and territory reservation for your trade and county.'],
-  ['How long does Founding Partner pricing last?', 'For life — as long as you maintain active status and IronClad compliance. If you cancel or get removed for IronClad violations, Founding Partner pricing is forfeited.'],
-  ['Are spots really limited?', 'Yes. We are accepting 10 Network Member, 5 Network Partner, and 2 Network Elite contractors per trade in each county. Once a trade fills in your county, no other contractor of that trade joins at Founding Partner pricing.'],
-  ['What if I apply but you have not approved me yet?', 'You can apply at any time. Founding Partner pricing is only available after admin approval. We review applications within 72 hours.'],
-];
+const membershipFaqs = [
+  ['What does a contractor membership cost?', 'Network is free. Growth is $199 a month and Business Pro is $299 a month. There are no per-lead fees and no activation fees, and you can cancel anytime. See the full comparison on our pricing page.'],
+  ['Do paid plans get more referrals?', 'No. Network, Growth, and Business Pro members all get equal consideration for a referral. Paying more gets you business resources and member pricing on media. It never buys placement, approval, or IronClad Certification.'],
+  ['What happens if I cancel a paid plan?', 'Your plan stays active through the month you already paid for. After that you move to Network for free and can still receive referrals.'],
+]
 
 const requestorFaqs = [
-  ['How do I request a contractor?', 'The moment you submit a request ListWorx gets to work. Within about 30 seconds you will see up to three contractor cards on your screen — company name, contact info, a link to their full profile, and their IronClad status if they have earned it.\n\nYou will also get an email with those same three cards so you have everything in one place.\n\nFrom there it is completely up to you. Review the contractors, check out their profiles, and reach out to whoever feels like the right fit. Nobody is going to pressure you and no contractor is going to blow up your phone because they do not have your number.\n\nWhen you have made your choice just mark who you picked in your dashboard. We keep track of it so we can follow up after the job and make sure everything went the way it should.'],
+  ['How do I request a contractor?', 'The moment you submit a request ListWorx gets to work. Within about 30 seconds you will see up to three contractor cards on your screen: company name, contact info, a link to their full profile, and their IronClad status if they have earned it.\n\nYou will also get an email with those same three cards so you have everything in one place.\n\nFrom there it is completely up to you. Review the contractors, check out their profiles, and reach out to whoever feels like the right fit. Nobody is going to pressure you and no contractor is going to blow up your phone because they do not have your number.\n\nWhen you have made your choice just mark who you picked in your dashboard. We keep track of it so we can follow up after the job and make sure everything went the way it should.'],
   ['Why only three contractors per request?', 'Most lead-generation services dump your contact info to 20+ contractors who all call you within minutes. We do not do that. We send you the best three matches in your area. You decide who to talk to.'],
   ['Do contractors pay to be shown to me?', 'Contractors pay a flat monthly membership to be in the network. No one pays per lead or per referral. Your matches come from active contractors who cover your trade and county. Among those, higher membership tiers get priority, and a rotation spreads referrals around so the same contractors are not sent every request.'],
-  ['Can I request a specific contractor?', 'Not directly through a job request — but your dashboard keeps track of contractors you have worked with before. If you had a great experience with someone you can find them in your saved contractors and reach out to them directly through their profile page.\n\nWe are also building a preferred contractor feature for realtors specifically — so the contractors you trust show up first when it matters.'],
-  ['What information do you share with the contractors?', 'None of your personal contact information goes to the contractors. That is not how we work.\n\nWhen a referral goes out, each matched contractor gets an email that tells them the service category, the county, whether the request came from a homeowner or a realtor, and a summary of the job. That is it. No name. No phone number. No email address. Nothing they can use to track you down.\n\nYou get their information — not the other way around. You review the three contractors we matched you with, decide who you want to reach out to, and you make the call. The power stays with you.'],
+  ['Can I request a specific contractor?', 'Not directly through a job request, but your dashboard keeps track of contractors you have worked with before. If you had a great experience with someone you can find them in your saved contractors and reach out to them directly through their profile page.\n\nWe are also building a preferred contractor feature for realtors specifically, so the contractors you trust show up first when it matters.'],
+  ['What information do you share with the contractors?', 'None of your personal contact information goes to the contractors. That is not how we work.\n\nWhen a referral goes out, each matched contractor gets an email that tells them the service category, the county, whether the request came from a homeowner or a realtor, and a summary of the job. That is it. No name. No phone number. No email address. Nothing they can use to track you down.\n\nYou get their information, not the other way around. You review the three contractors we matched you with, decide who you want to reach out to, and you make the call. The power stays with you.'],
 ];
 
 function FaqGroup({ title, faqs }: { title: string; faqs: string[][] }) {
@@ -71,12 +69,12 @@ export default function FaqPage() {
         <div className="mx-auto max-w-4xl">
           <Reveal as="div" className="mb-12 text-center">
             <h1 className="mb-4 text-4xl md:text-6xl font-bold text-mkt-ink">Frequently Asked Questions</h1>
-            <p className="text-lg text-mkt-ink/70">Everything you need to know about ListWorx, IronClad certification, Founding Partner status, and how referrals work.</p>
+            <p className="text-lg text-mkt-ink/70">Everything you need to know about ListWorx, IronClad certification, memberships, and how referrals work.</p>
           </Reveal>
           <Reveal as="div">
             <FaqGroup title="About ListWorx" faqs={generalFaqs} />
           </Reveal>
-          <FaqGroup title="Founding Partner Program" faqs={founderFaqs} />
+          <FaqGroup title="Memberships and Pricing" faqs={membershipFaqs} />
           <FaqGroup title="For Realtors and Homeowners" faqs={requestorFaqs} />
         </div>
       </section>

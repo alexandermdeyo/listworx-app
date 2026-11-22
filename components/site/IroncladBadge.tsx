@@ -10,7 +10,7 @@ const SOURCES: Record<BadgeVariant, { src: string; alt: string; darkOnly?: boole
   // Contractor-facing certification seal — transparent.
   partner: { src: '/optimized/Ironclad_Cert_Partner_Final_Logo.webp', alt: 'IronClad Certified Partner' },
   // Founding-partner seal — has a baked dark background, use on black only.
-  founder: { src: '/optimized/ironclad_founder_shield_logo.webp', alt: 'IronClad Certified — Founding Partner', darkOnly: true },
+  founder: { src: '/optimized/ironclad_founder_shield_logo.webp', alt: 'IronClad Certified: Founding Partner', darkOnly: true },
 };
 
 /**

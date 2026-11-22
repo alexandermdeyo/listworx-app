@@ -48,7 +48,7 @@ const SAMPLE_TABS = [
 4 bed | 3 bath | 2,340 sqft | $489,000
 412 Maple Creek Drive, Hendersonville TN
 
-Corner lot, open floor plan, primary suite on main — and Sumner County schools within minutes. This one checks every box.
+Corner lot, open floor plan, primary suite on main, and Sumner County schools within minutes. This one checks every box.
 
 DM me to schedule a showing before it's gone.
 
@@ -57,7 +57,7 @@ DM me to schedule a showing before it's gone.
   {
     id: 'facebook',
     label: 'Facebook Post',
-    content: `Just Listed in Hendersonville — and this one moves fast.
+    content: `Just Listed in Hendersonville, and this one moves fast.
 
 412 Maple Creek Drive is a 4-bedroom, 3-bath home with 2,340 square feet of thoughtfully designed space. Built in 2018, it features quartz countertops, hardwood floors, a gas fireplace, and a covered back porch made for Tennessee evenings.
 
@@ -70,18 +70,18 @@ Drop a comment or send me a message to schedule your private showing.`,
   {
     id: 'description',
     label: 'Property Description',
-    content: `Welcome to 412 Maple Creek Drive — a move-in ready 4-bedroom, 3-bathroom home nestled on a corner lot in one of Hendersonville's most sought-after neighborhoods.
+    content: `Welcome to 412 Maple Creek Drive, a move-in ready 4-bedroom, 3-bathroom home nestled on a corner lot in one of Hendersonville's most sought-after neighborhoods.
 
-Built in 2018, this 2,340 square foot home combines modern finishes with everyday livability. The open floor plan flows from a chef-inspired kitchen — complete with quartz countertops, stainless appliances, and a gas fireplace — to a bright and airy living space perfect for entertaining.
+Built in 2018, this 2,340 square foot home combines modern finishes with everyday livability. The open floor plan flows from a chef-inspired kitchen, complete with quartz countertops, stainless appliances, and a gas fireplace, to a bright and airy living space perfect for entertaining.
 
-The primary suite on the main level offers a private retreat, while three additional bedrooms provide flexibility for family, guests, or a home office. Step outside to a covered back porch overlooking the corner lot — your own slice of Tennessee outdoor living.
+The primary suite on the main level offers a private retreat, while three additional bedrooms provide flexibility for family, guests, or a home office. Step outside to a covered back porch overlooking the corner lot. Your own slice of Tennessee outdoor living.
 
-Priced at $489,000. Homes like this don't last — schedule your showing today.`,
+Priced at $489,000. Homes like this don't last. Schedule your showing today.`,
   },
   {
     id: 'email',
     label: 'Email to Buyer List',
-    content: `Subject: New Listing Alert — 4BR in Hendersonville, $489K
+    content: `Subject: New Listing Alert, 4BR in Hendersonville, $489K
 
 Hi [First Name],
 
@@ -90,7 +90,7 @@ I wanted to make sure you saw this one before it hits the weekend rush.
 412 Maple Creek Drive just hit the market in Hendersonville at $489,000.
 
 Here's what makes it stand out:
-• 4 bed / 3 bath / 2,340 sqft — built in 2018
+• 4 bed / 3 bath / 2,340 sqft, built in 2018
 • Primary suite on the main level
 • Open floor plan with quartz countertops and hardwood floors
 • Covered back porch on a corner lot
@@ -127,7 +127,7 @@ function SampleOutputSection() {
       <div className="px-6 py-4 border-b border-zinc-800">
         <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-1">Real Output. Real Listing.</p>
         <h3 className="text-lg font-bold text-white">See What ListWorx Generates</h3>
-        <p className="text-sm text-zinc-400 mt-1">Here's a real sample for a Nashville listing — generated in seconds.</p>
+        <p className="text-sm text-zinc-400 mt-1">Here's a real sample for a Nashville listing, generated in seconds.</p>
       </div>
 
       {/* Tab bar */}
@@ -314,7 +314,7 @@ export default function ListingStudioPage() {
               Unlock Listing Studio
             </h2>
             <p className="text-base text-gray-500 max-w-lg mx-auto">
-              Generate Instagram captions, Facebook posts, property descriptions, and buyer emails from any listing — in seconds.
+              Generate Instagram captions, Facebook posts, property descriptions, and buyer emails from any listing, in seconds.
             </p>
           </div>
 

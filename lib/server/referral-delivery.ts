@@ -29,7 +29,7 @@ export async function recordReferrals<T extends Matched>(supabase: SupabaseClien
     .from('referrals')
     .insert(buildReferralRows(jobRequestId, matched as any))
     .select('id, contractor_id');
-  if (error) console.error('[referrals] insert failed — no contractors delivered:', error);
+  if (error) console.error('[referrals] insert failed, no contractors delivered:', error);
   const delivered = deliverableContractors(matched, error ? [] : data);
   if (delivered.length > 0) {
     const inserted = delivered.map((c) => ({ id: c.referralId, contractor_id: c.id }));
@@ -72,7 +72,7 @@ export async function buildRequestorCards(
 }
 
 /* ─────────────────────────────────────────────────────────────
-   EMAIL HELPERS — called only AFTER all DB writes complete.
+   EMAIL HELPERS, called only AFTER all DB writes complete.
    These do NOT modify any referral/matching logic.
    ───────────────────────────────────────────────────────────── */
 

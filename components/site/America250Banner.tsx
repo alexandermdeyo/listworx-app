@@ -42,7 +42,7 @@ export default function America250Banner() {
                 color: '#E86B2B',
               }}
             >
-              ★ America&apos;s 250th Birthday &nbsp;·&nbsp; 1776 — 2026 ★
+              ★ America&apos;s 250th Birthday &nbsp;·&nbsp; 1776, 2026 ★
             </p>
 
             {/* Headline */}
@@ -80,7 +80,7 @@ export default function America250Banner() {
               }}
             >
               250 years of tradespeople, craftsmen, and independent
-              contractors — the hands that built everything worth having.{' '}
+              contractors, the hands that built everything worth having.{' '}
               <strong style={{ color: '#3F4041', fontWeight: 600 }}>ListWorx is their network.</strong>
             </p>
 
@@ -109,7 +109,7 @@ export default function America250Banner() {
           <div className="flex-shrink-0 flex items-center justify-center" style={{ background: 'transparent' }}>
             <Image
               src="/optimized/america250-medallion-transparent.webp"
-              alt="America 250 — Still Building"
+              alt="America 250: Still Building"
               width={260}
               height={260}
               className="w-48 md:w-64 h-auto"
@@ -156,7 +156,7 @@ export default function America250Banner() {
               color: 'rgba(63,64,65,0.6)',
             }}
           >
-            <span style={{ color: '#3F4041' }}>ListWorx.co</span> — Largest Vetted Contractor Network in America
+            <span style={{ color: '#3F4041' }}>ListWorx.co</span>: Largest Vetted Contractor Network in America
           </p>
         </div>
       </div>

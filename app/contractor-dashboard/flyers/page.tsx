@@ -271,7 +271,7 @@ function TF({ label, k, fields, setField, multi }: { label: string; k: string; f
 
 function FlyerPreview({ template, fields, beforePhotoUrl, afterPhotoUrl, profile }: any) {
   const isIronClad = profile?.ironclad_certified;
-  const isFounder = profile?.founding_partner || profile?.founder_status;
+
 
   return (
     <div className="flyer-preview bg-white" style={{ aspectRatio: '8.5 / 11', fontFamily: 'Georgia, serif', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
@@ -359,7 +359,6 @@ function FlyerPreview({ template, fields, beforePhotoUrl, afterPhotoUrl, profile
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
           <span style={{ fontSize: 10, color: '#9ca3af' }}>Vetted by ListWorx</span>
           {isIronClad && <span style={{ fontSize: 10, fontWeight: 700, color: '#E8621A' }}>⬡ IronClad Certified</span>}
-          {isFounder && <span style={{ fontSize: 10, fontWeight: 700, color: '#d97706' }}>★ Founding Partner</span>}
         </div>
       </div>
     </div>

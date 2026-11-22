@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const stateCode = searchParams.get('stateCode');
 
     console.log(
-      `[available-trades] Request — countyId: ${countyId}, stateCode: ${stateCode}`
+      `[available-trades] Request, countyId: ${countyId}, stateCode: ${stateCode}`
     );
 
     if (!countyId) {

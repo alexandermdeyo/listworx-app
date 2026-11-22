@@ -26,7 +26,7 @@ export default function RemembranceBar() {
 
       <p className="relative mx-auto max-w-3xl px-4 py-4 text-center text-sm leading-snug text-white [text-shadow:_0_1px_4px_rgba(0,0,0,0.75)] md:py-6 md:text-base">
         <span className="font-bold tracking-wide">In remembrance of September 11, 2001.</span>{' '}
-        ListWorx stands with the military and first responders who answered the call — then and
+        ListWorx stands with the military and first responders who answered the call, then and
         now.
       </p>
     </section>

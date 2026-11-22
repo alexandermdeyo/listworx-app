@@ -123,7 +123,7 @@ export function newsletterBodyFromPost(post: {
     `<p style="margin:24px 0;"><a href="${url}" class="cta">Read the full article →</a></p>`,
     `<h3>Need a pro you can trust?</h3>`,
     `<p>Every contractor on ListWorx is IronClad Verified: licensed, insured, and held to real standards. <a href="${BASE_URL}/request">Get matched free →</a></p>`,
-    `<p>— Alex Deyo, ListWorx</p>`,
+    `<p>Alex Deyo, ListWorx</p>`,
   ]
     .filter(Boolean)
     .join('\n');

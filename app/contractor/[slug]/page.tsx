@@ -144,12 +144,6 @@ export default function ContractorPublicProfilePage() {
                       IronClad Certified
                     </Badge>
                   )}
-                  {profile.founding_partner && (
-                    <Badge className="bg-amber-600/10 text-amber-700 border-amber-600/20 gap-1">
-                      <Award className="h-3 w-3" />
-                      Founding Partner
-                    </Badge>
-                  )}
                 </div>
               </div>
             </Reveal>
@@ -325,21 +319,6 @@ export default function ContractorPublicProfilePage() {
                         <div>
                           <p className="text-sm font-semibold text-mkt-ink">IronClad Certified</p>
                           <p className="text-xs text-mkt-ink/60">Vetted, verified, accountable</p>
-                        </div>
-                      </div>
-                    )}
-                    {profile.founding_partner && (
-                      <div className="flex items-center gap-3">
-                        <Image
-                          src="/ironclad_founder_shield_logo.png"
-                          alt="Founding Partner"
-                          width={48}
-                          height={48}
-                          className="flex-shrink-0"
-                        />
-                        <div>
-                          <p className="text-sm font-semibold text-mkt-ink">Founding Partner</p>
-                          <p className="text-xs text-mkt-ink/60">Original network member</p>
                         </div>
                       </div>
                     )}

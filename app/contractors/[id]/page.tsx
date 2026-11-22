@@ -101,9 +101,6 @@ function isActiveIronClad(profile: ContractorProfile) {
   return profile.partner_status === 'active' && profile.ironclad_certified === true;
 }
 
-function isFoundingPartner(profile: ContractorProfile) {
-  return Boolean(profile.founder_status || profile.founding_partner || profile.founding_partner_badge);
-}
 
 function getVideoEmbedUrl(url: string) {
   try {
@@ -219,7 +216,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const url = `https://listworx.co/contractors/${data.profile.profile_slug || data.profile.id}`;
 
   return {
-    title: `${businessName} — ${trade} in ${county} | ListWorx`,
+    title: `${businessName}, ${trade} in ${county} | ListWorx`,
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -272,7 +269,6 @@ export default async function ContractorProfilePage({ params }: { params: { id: 
                 <div className="mt-5 flex flex-wrap gap-2">
                   {trades.map((trade) => <Badge key={trade.id} className="bg-lw-rust text-white"><Briefcase className="mr-1 h-3 w-3" />{trade.name}</Badge>)}
                   {isActiveIronClad(profile) && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-300"><Shield className="mr-1 h-3 w-3" />IronClad Certified</Badge>}
-                  {isFoundingPartner(profile) && <Badge className="bg-amber-50 text-amber-700 border-amber-300"><Award className="mr-1 h-3 w-3" />Founding Partner</Badge>}
                 </div>
                 <div className="mt-5 flex flex-wrap gap-4 text-sm text-mkt-ink/70">
                   {profile.years_in_business ? <span><Star className="mr-1 inline h-4 w-4" />{profile.years_in_business} years in business</span> : null}
@@ -292,7 +288,7 @@ export default async function ContractorProfilePage({ params }: { params: { id: 
                   <h2 className="mb-2 text-2xl font-bold text-mkt-ink">Book {businessName}</h2>
                   <p className="mb-4 text-mkt-ink/70">
                     Media partners are booked through ListWorx. Send a request and they&apos;ll
-                    confirm or decline — contact details are shared once they accept.
+                    confirm or decline, contact details are shared once they accept.
                   </p>
                   <MediaPartnerRequestButton mediaPartnerId={profile.id} companyName={businessName} />
                 </Card>
@@ -396,7 +392,7 @@ export default async function ContractorProfilePage({ params }: { params: { id: 
                 <Card className="border-emerald-300 bg-emerald-50 p-6">
                   <Shield className="mb-3 h-8 w-8 text-emerald-600" />
                   <h2 className="mb-3 text-xl font-bold text-mkt-ink">IronClad Standards</h2>
-                  <p className="text-sm leading-6 text-mkt-ink/70">This contractor is a member of the ListWorx network and maintains IronClad Standards — including 24-hour response time, valid insurance, and professional conduct. IronClad certification is monitored continuously.</p>
+                  <p className="text-sm leading-6 text-mkt-ink/70">This contractor is a member of the ListWorx network and maintains IronClad Standards, including 24-hour response time, valid insurance, and professional conduct. IronClad certification is monitored continuously.</p>
                   <Link href="/ironclad" className="mt-4 inline-flex text-sm font-semibold text-emerald-700 hover:underline">Learn more about IronClad Standards</Link>
                 </Card>
               </Reveal>

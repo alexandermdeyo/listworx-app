@@ -36,7 +36,7 @@ export default function PrivacyPage() {
               We collect:
             </p>
             <ul className="list-disc list-inside text-mkt-ink/70 space-y-2 mb-4">
-              <li><strong>Personal Information you provide:</strong> Name, email, phone, address/property location (from job requests), company name/details (from contractor applications), license/insurance documents (for vetting), payment info (processed via Stripe – we do not store full card details).</li>
+              <li><strong>Personal Information you provide:</strong> Name, email, phone, address/property location (from job requests), company name/details (from contractor applications), license/insurance documents (for vetting), payment info (processed via Stripe. We do not store full card details).</li>
               <li><strong>Automatically Collected:</strong> IP address, browser type, device info, pages visited, referral source, cookies/session data for functionality/analytics.</li>
               <li><strong>From Third Parties:</strong> None currently, but may include verification services for licenses/insurance in the future.</li>
             </ul>
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
             <h2 className="text-2xl font-bold text-mkt-ink mb-4">3. Sharing Your Information</h2>
             <ul className="list-disc list-inside text-mkt-ink/70 space-y-2">
               <li><strong>With Matched Parties:</strong> Job request details (name, phone, email, job description, location) shared with the 3 selected contractors (and vice versa if they respond). Contractors' profiles (name, company, phone, specialties, badges) shared with requesters.</li>
-              <li><strong>Service Providers:</strong> Stripe (payments), hosting (Netlify/Supabase), email delivery, analytics tools – bound by confidentiality.</li>
+              <li><strong>Service Providers:</strong> Stripe (payments), hosting (Netlify/Supabase), email delivery, analytics tools, bound by confidentiality.</li>
               <li><strong>Legal Requirements:</strong> If required by law, subpoena, or to protect rights/safety.</li>
               <li><strong>Business Transfers:</strong> In merger/acquisition/sale scenarios.</li>
             </ul>

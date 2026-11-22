@@ -657,7 +657,7 @@ export default function ContractorDashboard() {
             style={{ backgroundColor: '#b91c1c' }}
           >
             <p className="text-sm font-semibold text-white">
-              Your contractor license {formatDaysMessage(licenseDaysUntil)} ({formatExpiryDate(effectiveLicenseExpiration)}). Renew your license through ListWorx Academy — powered by ACES, the national standard for contractor licensing in all 50 states — and upload your updated license to your profile to stay active with ListWorx.
+              Your contractor license {formatDaysMessage(licenseDaysUntil)} ({formatExpiryDate(effectiveLicenseExpiration)}). Renew your license through ListWorx Academy, powered by ACES, the national standard for contractor licensing in all 50 states, and upload your updated license to your profile to stay active with ListWorx.
             </p>
             <div className="flex items-center gap-2 flex-shrink-0">
               <button

@@ -223,7 +223,7 @@ const ALL_ADDONS: AddOn[] = [
   },
   {
     id: 'decal_package_founder',
-    name: 'IronClad Decal Package — Founder',
+    name: 'IronClad Decal Package: Founder',
     description: 'Vehicle decal, window cling, and yard sign with IronClad badge. Founder pricing.',
     type: 'onetime',
     price: 75,
@@ -247,7 +247,7 @@ const ALL_ADDONS: AddOn[] = [
   {
     id: 'google_business_optimization',
     name: 'Google Business Profile Optimization',
-    description: 'We fully build out your Google Business Profile — every field, photos, services, and a proper description. Most contractors pay $149 for this separately.',
+    description: 'We fully build out your Google Business Profile. Every field, photos, services, and a proper description. Most contractors pay $149 for this separately.',
     type: 'onetime',
     price: 149,
     includedIn: ['elite'],
@@ -327,7 +327,7 @@ const ALL_ADDONS: AddOn[] = [
   {
     id: 'ai_marketing_toolkit',
     name: 'AI Marketing Toolkit',
-    description: 'Generate social posts, estimate follow-up emails, and job description templates using AI — built specifically for contractors.',
+    description: 'Generate social posts, estimate follow-up emails, and job description templates using AI, built specifically for contractors.',
     type: 'monthly',
     price: 79,
     // Included at no charge with Network Partner and Network Elite; Network
@@ -433,7 +433,7 @@ export const AI_TOOLKIT_TIERS: StandardTierId[] = ['preferred', 'elite'];
  * Standard tiers. No specific partner/supplier names.
  */
 export const TIER_GROWTH_NOTE =
-  "Your membership keeps growing. We're adding direct supplier connections, training, and business tools you'll reach right from your dashboard — each one included in your plan as it launches, at no extra cost. What you get today is the floor, not the ceiling.";
+  "Your membership keeps growing. We're adding direct supplier connections, training, and business tools you'll reach right from your dashboard. Each one included in your plan as it launches, at no extra cost. What you get today is the floor, not the ceiling.";
 
 /**
  * Whether this contractor gets the AI Marketing Toolkit as part of their plan.

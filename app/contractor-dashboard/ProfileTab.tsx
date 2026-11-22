@@ -646,7 +646,7 @@ export default function ProfileTab({ profile, onProfileUpdated, onUserEmailUpdat
                 )}
               </div>
 
-              <p className="text-center text-xs text-gray-400">PNG, JPG, WebP — max 5MB</p>
+              <p className="text-center text-xs text-gray-400">PNG, JPG, WebP, max 5MB</p>
 
               {uploadError && (
                 <div className="flex w-full items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">

@@ -1,297 +1,139 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
+import { ArrowRight, CircleCheck as CheckCircle, Home, Camera, Megaphone } from 'lucide-react';
 import Navigation from '@/components/Navigation';
-import { Button } from '@/components/ui/button';
-import { PageShell } from '@/components/design-system';
-import { CircleCheck as CheckCircle, Crown, TrendingUp, ArrowRight } from 'lucide-react';
-import { Reveal } from '@/components/motion';
-import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
-import { TIER_GROWTH_NOTE } from '@/lib/tiers-config';
+import MembershipComparison from '@/components/membership/MembershipComparison';
+import { MEDIA_PACKAGES, MEDIA_SERVICES, formatUsd } from '@/lib/media/catalog';
 
-/**
- * One plan list drives both the Founding and Standard cards. Keep bullets to
- * what a contractor actually gets, in plain words, five max.
- */
-const PLANS = [
+const FAQ = [
   {
-    name: 'Network Member',
-    tagline: 'Get in the network',
-    founding: { monthly: 100, annual: 1000 },
-    standard: { monthly: 125, annual: 1250 },
-    highlight: false,
-    bullets: [
-      'IronClad Verified badge and profile',
-      'Matched with homeowners in your trade and county',
-      'Verified reviews from real jobs',
-      'No per-lead fees. Cancel anytime.',
-    ],
-    cta: 'Join the Network',
+    q: 'Do paid plans get more referrals?',
+    a: "No. Network, Growth, and Business Pro members all get the same shot at a referral. Paying more gets you business tools and member pricing on media. It never buys placement, approval, or IronClad Certification.",
   },
   {
-    name: 'Network Partner',
-    tagline: 'Get picked first',
-    founding: { monthly: 175, annual: 1750 },
-    standard: { monthly: 215, annual: 2150 },
-    highlight: true,
-    bullets: [
-      'Everything in Member',
-      "You're shown before Members in every match",
-      "Text alert the moment you're matched",
-      'IronClad badge kit for your truck, social, and print',
-      'Ready-made posts and follow-up emails',
-    ],
-    cta: 'Join the Network',
+    q: 'Is there a contract?',
+    a: "No. Plans are month to month and you can cancel anytime. If you cancel a paid plan, it stays active until the end of the month you paid for, and then you move to Network for free.",
   },
   {
-    name: 'Network Elite',
-    tagline: 'Own your county',
-    founding: { monthly: 300, annual: 3000 },
-    standard: { monthly: 365, annual: 3650 },
-    highlight: false,
-    bullets: [
-      'Everything in Partner',
-      'Top spot in every match',
-      'Only 2 Elite per trade, per county',
-      'Quarterly video shoot featuring your work',
-      '2 social posts a month promoting your business',
-    ],
-    cta: 'Join the Network — Limited Spots',
+    q: 'Do you charge per lead?',
+    a: "Never. You pay your monthly plan and that's it, no matter how many referrals come your way.",
+  },
+  {
+    q: 'Do homeowners or realtors pay anything?',
+    a: "No. Sending a request is free. Realtors only pay if they choose a Listing Studio marketing plan or book a photo or video shoot.",
   },
 ];
 
-const FOUNDING_EXTRAS = ['Founding Partner badge', 'Price locked for life'];
-
 export default function PricingPage() {
-  const [isAnnual, setIsAnnual] = useState(false);
-  const academyEnabled = useAcademyEnabled();
-
   return (
-    <PageShell surface="marketing" className="!bg-mailer-black !text-white">
+    <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
       <Navigation variant="light" />
 
-      <section className="bg-lw-rust py-3 text-center text-white">
-        <p className="px-4 text-sm font-semibold md:text-base">
-          Founding Partner spots are open in Nashville and Sumner County. Limited per trade — when
-          they&apos;re gone, they&apos;re gone.
+      <section className="mx-auto max-w-5xl px-6 pb-14 pt-28 md:pt-36">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-lw-rust">Pricing</p>
+        <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-6xl">Straightforward pricing. No per-lead fees.</h1>
+        <p className="mt-5 max-w-2xl text-lg text-mkt-ink/70">
+          Here&apos;s everything ListWorx charges for, all on one page. If you&apos;re a homeowner or a realtor looking for a contractor, it costs you
+          nothing.
         </p>
       </section>
 
-      {/* ================= FOUNDING INTRO ================= */}
-      <section className="relative overflow-hidden bg-mailer-black py-16 md:py-24">
-        <div className="h-1 w-full bg-lw-rust" />
-        <div className="container relative mx-auto max-w-3xl px-4 pt-10 text-center">
-          <Reveal>
-            <p className="lw-label-lg mb-3 inline-flex items-center gap-2">
-              <Crown className="h-4 w-4" />
-              Founding Partner pricing
-            </p>
-            <h1 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
-              Lock your rate. Limited by county.
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-white/65">
-              Founding spots are limited per trade, per county. Join during the founding period and
-              your rate is locked for life — it never increases as long as membership stays active.
-              No setup fee, no activation charge.
-            </p>
-          </Reveal>
-
-          <Reveal delay={80}>
-            <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-mailer-border bg-mailer-card p-1">
-              <button
-                type="button"
-                onClick={() => setIsAnnual(false)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                  !isAnnual ? 'bg-lw-rust text-white' : 'text-white/60 hover:text-white'
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsAnnual(true)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                  isAnnual ? 'bg-lw-rust text-white' : 'text-white/60 hover:text-white'
-                }`}
-              >
-                Annual — save 2 months
-              </button>
+      <section className="mx-auto max-w-5xl px-6 pb-16">
+        <div className="grid gap-5 md:grid-cols-3">
+          {[
+            { icon: Home, title: 'Homeowners and realtors', price: 'Free', body: 'Send a request and get up to three approved local contractors to choose from.', href: '/request', cta: 'Find a contractor' },
+            { icon: Megaphone, title: 'Contractors', price: '$0 to $299/mo', body: 'Join the network free, or add business resources and member pricing.', href: '#memberships', cta: 'See memberships' },
+            { icon: Camera, title: 'Photo and video', price: `From ${formatUsd(Math.min(...MEDIA_SERVICES.map((s) => s.priceCents), ...MEDIA_PACKAGES.map((p) => p.priceCents)))}`, body: 'Jobsite, branding, real estate, and drone photography plus short video.', href: '#media', cta: 'See media pricing' },
+          ].map((c) => (
+            <div key={c.title} className="flex flex-col rounded-2xl border border-mkt-ink/10 p-6">
+              <c.icon className="h-6 w-6 text-lw-rust" />
+              <p className="mt-4 text-sm font-semibold text-mkt-ink/60">{c.title}</p>
+              <p className="mt-1 text-3xl font-bold">{c.price}</p>
+              <p className="mt-2 flex-1 text-sm text-mkt-ink/70">{c.body}</p>
+              <Link href={c.href} className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-lw-rust hover:underline">
+                {c.cta} <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
-          </Reveal>
+          ))}
         </div>
       </section>
 
-      {/* ================= FOUNDING TIERS ================= */}
-      <section className="bg-mailer-black pb-16 md:pb-24">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
-            {PLANS.map((plan, index) => (
-              <Reveal key={plan.name} delay={index * 70} pulse={plan.highlight}>
-                <div
-                  className={`lw-hover-lift-dark relative flex h-full flex-col rounded-2xl border bg-mailer-card p-7 ${
-                    plan.highlight
-                      ? 'border-lw-rust shadow-lg shadow-lw-rust/10'
-                      : 'border-mailer-border'
-                  }`}
-                >
-                  {plan.highlight && (
-                    <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-lw-rust px-4 py-1 text-xs font-bold uppercase tracking-widest text-white">
-                      Most Popular
-                    </span>
-                  )}
-                  <p className="text-xs font-bold uppercase tracking-widest text-white/45">
-                    Founding Partner
-                  </p>
-                  <h2 className="mt-3 text-2xl font-bold text-white">{plan.name}</h2>
-                  <p className="mt-1 text-sm font-semibold text-lw-rust">{plan.tagline}</p>
-                  <p className="mt-3 text-4xl font-bold text-lw-rust">
-                    {isAnnual ? `$${plan.founding.annual.toLocaleString()}` : `$${plan.founding.monthly}`}
-                    <span className="text-base font-normal text-white/40">
-                      {isAnnual ? '/yr' : '/mo'}
-                    </span>
-                  </p>
-                  <p className="mt-1 text-xs text-white/45">
-                    Billed {isAnnual ? 'annually' : 'monthly'} · rate locked for life
-                    {isAnnual ? ' · save 2 months' : ''}
-                  </p>
-
-                  <div className="mt-5 flex-1 space-y-2.5 border-t border-mailer-border pt-5 text-sm text-white/80">
-                    {plan.bullets.map((feature) => (
-                      <div key={feature} className="flex gap-2.5">
-                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
-                        {feature}
-                      </div>
-                    ))}
-                    {academyEnabled && plan.name === 'Network Member' && (
-                      <div className="flex gap-2.5">
-                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
-                        ListWorx Academy access
-                      </div>
-                    )}
-                    <div className="mt-3 space-y-2.5 border-t border-mailer-border pt-3">
-                      {FOUNDING_EXTRAS.map((feature) => (
-                        <div key={feature} className="flex gap-2.5 font-semibold text-white">
-                          <Crown className="mt-0.5 h-4 w-4 shrink-0 text-lw-rust" />
-                          {feature}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Link href="/founding-partner" className="mt-6 block">
-                    <Button
-                      className={
-                        plan.highlight
-                          ? 'w-full bg-lw-rust text-white hover:bg-lw-rust-hover'
-                          : 'w-full border-2 border-lw-rust bg-transparent text-white hover:bg-lw-rust/10'
-                      }
-                    >
-                      {plan.cta}
-                    </Button>
-                  </Link>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <p className="mx-auto mt-6 max-w-2xl text-center text-sm text-white/50">
-            Elite spots are limited by trade and county. Once filled, Elite is closed to new members
-            in that market.
+      <section id="memberships" className="scroll-mt-24 bg-mailer-black py-16 text-white md:py-20">
+        <div className="container mx-auto max-w-6xl px-4">
+          <h2 className="text-3xl font-bold md:text-4xl">Contractor memberships</h2>
+          <p className="mb-10 mt-3 max-w-2xl text-white/65">
+            Every contractor is reviewed by ListWorx before getting referrals. Pick the plan that fits where your business is today. You can change it
+            anytime.
           </p>
-
-          <div className="mx-auto mt-6 flex max-w-3xl items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/[0.07] p-5">
-            <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
-            <p className="text-sm leading-relaxed text-white/85">{TIER_GROWTH_NOTE}</p>
-          </div>
+          <MembershipComparison
+            ctaFor={(id) => ({ href: '/apply', label: id === 'network' ? 'Join free' : id === 'growth' ? 'Apply for Growth' : 'Apply for Business Pro' })}
+          />
         </div>
       </section>
 
-      {/* ================= STANDARD PRICING ================= */}
-      <section className="bg-mailer-ink py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <Reveal className="mx-auto mb-10 max-w-2xl text-center">
-            <p className="lw-label-lg mb-3">After the founding period</p>
-            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-              Standard pricing
-            </h2>
-            <p className="mt-3 text-white/60">
-              For contractors who join after Founding Partner spots close in their county.
-            </p>
-          </Reveal>
-
-          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
-            {PLANS.map((plan, index) => (
-              <Reveal key={plan.name} delay={index * 70}>
-                <div className="flex h-full flex-col rounded-2xl border border-mailer-border bg-mailer-card p-7">
-                  <h3 className="text-xl font-bold text-white">{plan.name}</h3>
-                  <p className="mt-1 text-sm font-semibold text-white/55">{plan.tagline}</p>
-                  <p className="mt-2 text-3xl font-bold text-white/85">
-                    {isAnnual ? `$${plan.standard.annual.toLocaleString()}` : `$${plan.standard.monthly}`}
-                    <span className="text-sm font-normal text-white/40">
-                      {isAnnual ? '/yr' : '/mo'}
-                    </span>
-                  </p>
-                  <p className="mt-1 text-xs text-white/45">
-                    {isAnnual ? 'Billed annually · save 2 months' : 'Billed monthly'}
-                  </p>
-                  <div className="mt-5 flex-1 space-y-2.5 border-t border-mailer-border pt-5 text-sm text-white/70">
-                    {plan.bullets.map((feature) => (
-                      <div key={feature} className="flex gap-2.5">
-                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-white/35" />
-                        {feature}
-                      </div>
-                    ))}
-                    {academyEnabled && plan.name === 'Network Member' && (
-                      <div className="flex gap-2.5">
-                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-white/35" />
-                        ListWorx Academy access
-                      </div>
-                    )}
-                  </div>
-                  <Link href="/apply" className="mt-6 block">
-                    <Button className="w-full bg-lw-rust text-white hover:bg-lw-rust-hover">
-                      {plan.cta === 'Join the Network — Limited Spots' ? 'Apply Now — Limited Spots' : 'Apply Now'}
-                    </Button>
-                  </Link>
-                </div>
-              </Reveal>
-            ))}
+      <section id="media" className="mx-auto max-w-5xl scroll-mt-24 px-6 py-16 md:py-20">
+        <h2 className="text-3xl font-bold md:text-4xl">ListWorx Media Services</h2>
+        <p className="mt-3 max-w-2xl text-mkt-ink/70">
+          Paid up front when you book. Growth members save 5% and Business Pro members save 10%, applied automatically when you&apos;re signed in.
+        </p>
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="rounded-2xl border border-mkt-ink/10 p-6">
+            <p className="font-bold">Contractor packages</p>
+            <ul className="mt-4 space-y-3 text-sm">
+              {MEDIA_PACKAGES.map((p) => (
+                <li key={p.code} className="flex items-start justify-between gap-4">
+                  <span>
+                    <span className="font-semibold">{p.name}</span>
+                    <span className="block text-mkt-ink/60">{p.includes.slice(0, 3).join(', ')}</span>
+                  </span>
+                  <span className="whitespace-nowrap font-bold">{formatUsd(p.priceCents)}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-
-          <div className="mx-auto mt-6 flex max-w-3xl items-start gap-3 rounded-xl border border-lw-rust/30 bg-lw-rust/[0.07] p-5">
-            <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
-            <p className="text-sm leading-relaxed text-white/85">{TIER_GROWTH_NOTE}</p>
+          <div className="rounded-2xl border border-mkt-ink/10 p-6">
+            <p className="font-bold">Single services</p>
+            <ul className="mt-4 space-y-3 text-sm">
+              {MEDIA_SERVICES.map((s) => (
+                <li key={s.code} className="flex items-start justify-between gap-4">
+                  <span className="font-semibold">{s.name}</span>
+                  <span className="whitespace-nowrap font-bold">{formatUsd(s.priceCents)}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-xs text-mkt-ink/55">Add-ons like drone photos, extra edited photos, a social reel, or an extra hour are added at booking.</p>
           </div>
+        </div>
+        <Link href="/media-services" className="mt-6 inline-flex items-center gap-2 rounded-md bg-lw-rust px-5 py-2.5 font-semibold text-white hover:bg-lw-rust-hover">
+          See all media services <ArrowRight className="h-4 w-4" />
+        </Link>
+      </section>
+
+      <section className="bg-mkt-ink/[0.03] py-16">
+        <div className="mx-auto max-w-5xl px-6">
+          <h2 className="text-2xl font-bold">For realtors: Listing Studio</h2>
+          <p className="mt-2 max-w-2xl text-mkt-ink/70">
+            Contractor requests are always free for agents. Listing Studio is an optional marketing tool for your listings, with its own monthly plans.
+          </p>
+          <Link href="/listing-studio" className="mt-4 inline-flex items-center gap-1.5 font-semibold text-lw-rust hover:underline">
+            See Listing Studio plans <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
-      {/* ================= FREE FOR REALTORS / HOMEOWNERS ================= */}
-      <section className="relative overflow-hidden bg-mailer-black py-16 md:py-24">
-        <div className="h-1 w-full bg-lw-rust" />
-        <div className="container mx-auto px-4 pt-10 text-center">
-          <Reveal className="mx-auto max-w-2xl">
-            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-              Free for realtors and homeowners
-            </h2>
-            <p className="mx-auto mt-4 text-white/65">
-              Finding and referring contractors through ListWorx is always free. Create an account,
-              submit a request, and get matches from IronClad Verified contractors in your area. No
-              fees, no subscriptions, no pay-per-lead. The contractors pay to be in the network —
-              you just get the referrals.
-            </p>
-            <Link href="/request" className="mt-8 inline-block">
-              <Button
-                variant="outline"
-                className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white"
-              >
-                Request a contractor
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </Reveal>
+      <section className="mx-auto max-w-3xl px-6 py-16 md:py-20">
+        <h2 className="text-2xl font-bold">Common questions</h2>
+        <div className="mt-6 divide-y divide-mkt-ink/10">
+          {FAQ.map((f) => (
+            <div key={f.q} className="py-5">
+              <p className="flex items-start gap-2 font-semibold">
+                <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
+                {f.q}
+              </p>
+              <p className="mt-2 pl-7 text-mkt-ink/70">{f.a}</p>
+            </div>
+          ))}
         </div>
       </section>
-    </PageShell>
+    </div>
   );
 }

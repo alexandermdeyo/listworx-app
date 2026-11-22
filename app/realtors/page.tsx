@@ -29,7 +29,7 @@ const differentiators = [
   {
     icon: Shield,
     title: 'Every contractor is verified',
-    body: 'Licensed, insured, and actively held to IronClad Standards — checked before approval, monitored after. Refer them knowing your name is covered.',
+    body: 'Licensed, insured, and actively held to IronClad Standards, checked before approval, monitored after. Refer them knowing your name is covered.',
   },
   {
     icon: ShieldCheck,
@@ -39,7 +39,7 @@ const differentiators = [
   {
     icon: Clock,
     title: 'Keep the deal on schedule',
-    body: 'Pre-sale prep, post-inspection repairs, move-in work — matched pros commit to a 24-hour response so timelines don’t slip.',
+    body: 'Pre-sale prep, post-inspection repairs, move-in work. Matched pros commit to a 24-hour response so timelines don’t slip.',
   },
 ];
 
@@ -52,7 +52,7 @@ const steps = [
   {
     n: '02',
     title: 'Get up to three matches',
-    body: 'In about 30 seconds you see matched contractors on screen — plus an email and a copy saved to your dashboard. No bidding war, no junk list.',
+    body: 'In about 30 seconds you see matched contractors on screen, plus an email and a copy saved to your dashboard. No bidding war, no junk list.',
   },
   {
     n: '03',
@@ -94,7 +94,7 @@ const useCases = [
 const realtorFaqs = [
   {
     q: 'Does it cost realtors anything?',
-    a: 'No. ListWorx is free for realtors and homeowners — no fees, no per-request charges. Contractors pay a monthly subscription to be in the network.',
+    a: 'No. ListWorx is free for realtors and homeowners, no fees, no per-request charges. Contractors pay a monthly subscription to be in the network.',
   },
   {
     q: 'Will my client get spammed?',
@@ -102,7 +102,7 @@ const realtorFaqs = [
   },
   {
     q: 'What areas do you cover?',
-    a: 'We’re building coverage market by market across Tennessee, starting in Middle Tennessee. If a trade isn’t covered in your county yet, submit anyway — we follow up as coverage fills in.',
+    a: 'We’re building coverage market by market across Tennessee, starting in Middle Tennessee. If a trade isn’t covered in your county yet, submit anyway. We follow up as coverage fills in.',
   },
   {
     q: 'Can I build a list of contractors I trust?',
@@ -144,7 +144,7 @@ export default function RealtorsPage() {
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="/request">
                   <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-                    Request a contractor — free
+                    Request a contractor, free
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -161,7 +161,7 @@ export default function RealtorsPage() {
                 <div>
                   <div className="text-3xl font-bold text-lw-rust md:text-4xl">Free</div>
                   <div className="text-xs uppercase tracking-widest text-mkt-ink/50">
-                    For agents — always
+                    For agents, always
                   </div>
                 </div>
                 <div>
@@ -203,7 +203,7 @@ export default function RealtorsPage() {
           <Reveal>
             <p className="lw-label-lg mb-3 !text-lw-rust">The difference</p>
             <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-4xl">
-              Not a directory. Not a referral marketplace.
+              This isn't a directory or a lead marketplace.
             </h2>
             <p className="mt-4 max-w-md text-lg text-mkt-ink/70">
               Directories hand you names. Referral platforms hand everyone your contact info.
@@ -266,7 +266,7 @@ export default function RealtorsPage() {
           <Reveal className="mt-12">
             <Link href="/request">
               <Button size="lg" className="bg-lw-rust text-white hover:bg-lw-rust-hover">
-                Submit a request now — free
+                Submit a request now, free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -288,7 +288,7 @@ export default function RealtorsPage() {
                 Refer an IronClad Partner and you&apos;re not guessing.
               </h2>
               <p className="mt-4 max-w-xl text-white/65 md:text-lg">
-                You know exactly what standard they&apos;ve agreed to — and what gets them removed
+                You know exactly what standard they&apos;ve agreed to, and what gets them removed
                 for breaking it.
               </p>
             </Reveal>
@@ -323,7 +323,7 @@ export default function RealtorsPage() {
         <Reveal className="mb-12 max-w-2xl">
           <p className="lw-label-lg mb-3 !text-lw-rust">Listing media</p>
           <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
-            The same network — for the people who make your listings look good.
+            The same network, for the people who make your listings look good.
           </h2>
           <p className="mt-4 text-lg text-mkt-ink/70">
             ListWorx Media Services shoots real estate photography, drone photography, and
@@ -353,7 +353,7 @@ export default function RealtorsPage() {
           <div>
             <h3 className="text-2xl font-bold tracking-tight text-mkt-ink">Listing photography</h3>
             <p className="mt-3 text-mkt-ink/70">
-              Interior and exterior photographers who shoot for real estate — staged rooms, natural
+              Interior and exterior photographers who shoot for real estate: staged rooms, natural
               light, fast turnaround so the listing goes live on schedule. Booked through the same
               request flow, matched to your area and timeline.
             </p>
@@ -365,7 +365,7 @@ export default function RealtorsPage() {
           <div className="order-2 md:order-1">
             <h3 className="text-2xl font-bold tracking-tight text-mkt-ink">Aerial & drone</h3>
             <p className="mt-3 text-mkt-ink/70">
-              Licensed drone operators for aerial stills and video — lot lines, acreage, roof
+              Licensed drone operators for aerial stills and video: lot lines, acreage, roof
               condition, the view from the deck. The pros who make a bigger property actually read
               as bigger.
             </p>
@@ -402,14 +402,14 @@ export default function RealtorsPage() {
               <p>
                 Put in a property and walk away with Instagram captions, Facebook posts, a LinkedIn
                 update, your email campaign, an open-house announcement, and a rewritten property
-                description — in about 30 seconds. It also builds a clean, branded listing page for
+                description, in about 30 seconds. It also builds a clean, branded listing page for
                 every property.
               </p>
             </div>
             <ul className="mt-6 space-y-3">
               {[
-                'Full content packages — every caption, post, and email for a listing in one shot',
-                'Branded landing pages — a real URL for every listing, same day it goes live',
+                'Full content packages. Every caption, post, and email for a listing in one shot',
+                'Branded landing pages, a real URL for every listing, same day it goes live',
                 'PDF listing and open-house flyers, built from your data',
                 'Your name, photo, colors, and contact info on everything',
               ].map((line, i) => (
@@ -490,12 +490,12 @@ export default function RealtorsPage() {
               It&apos;s free. Start using it today.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-white/90">
-              No membership fees. No per-request charges. Contractors pay to be in the network — you
+              No membership fees. No per-request charges. Contractors pay to be in the network. You
               get vetted matches at zero cost, every request, every time.
             </p>
             <Link href="/request" className="mt-8 inline-block">
               <Button size="lg" className="bg-white text-lw-rust hover:bg-white/90">
-                Submit your first request — free
+                Submit your first request, free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>

@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    console.log('[SET PASSWORD] No existing auth user — looking up contractor profile for:', normalizedEmail);
+    console.log('[SET PASSWORD] No existing auth user, looking up contractor profile for:', normalizedEmail);
     const { data: contractorProfile, error: profileError } = await supabase
       .from('contractor_profiles')
       .select('company_name, owner_name')

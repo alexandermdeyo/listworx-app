@@ -97,7 +97,7 @@ export default function ReferralTally() {
         <div className="mt-3 flex items-start gap-3 text-sm text-lw-text/50">
           <Inbox className="h-4 w-4 mt-0.5 shrink-0" />
           <p>
-            No referrals yet. Referral volume grows as the network grows in your area — keep your
+            No referrals yet. Referral volume grows as the network grows in your area, keep your
             profile, trades and service counties up to date.
           </p>
         </div>

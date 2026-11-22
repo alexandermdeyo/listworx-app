@@ -36,23 +36,23 @@ import FaqSection from '@/components/site/FaqSection';
 const CONTRACTOR_FAQS = [
   {
     q: 'How is this different from a lead-gen service?',
-    a: "You're not buying leads or bidding against ten other contractors. Referrals are routed to you by trade, county, and availability, and every member gets equal consideration for a match regardless of tier — what you pay for is growth support, not better odds at a referral.",
+    a: "You're not buying leads or bidding against ten other contractors. Referrals are routed to you by trade, county, and availability, and every member gets equal consideration for a match regardless of tier. What you pay for is growth support, not better odds at a referral.",
   },
   {
     q: 'What does it cost?',
-    a: 'Network is free. Growth is $199/month. Business Pro is $299/month. No per-lead fees on any tier — ever.',
+    a: 'Network is free. Growth is $199/month. Business Pro is $299/month. No per-lead fees on any tier, ever.',
   },
   {
     q: 'Do paid tiers get more referrals than the free tier?',
-    a: "No. Every member — on every tier — gets equal consideration for a referral match, as long as they meet IronClad Standards. Growth and Business Pro add business resources, member pricing on ListWorx Media Services, and (on Business Pro) custom social posts and the full Flyer Builder. They don't buy priority access to referrals.",
+    a: "No. Every member, on every tier, gets equal consideration for a referral match, as long as they meet IronClad Standards. Growth and Business Pro add business resources, member pricing on ListWorx Media Services, and (on Business Pro) custom social posts and the full Flyer Builder. They don't buy priority access to referrals.",
   },
   {
     q: 'Does joining mean I’m automatically IronClad Certified?',
-    a: "No. Membership gets your business reviewed against IronClad Standards — licensing, insurance, and business practices — before you can take a referral. Certification itself is a separate, trade-specific review the ListWorx owner signs off on, not something that comes automatically with a subscription tier.",
+    a: "No. Membership gets your business reviewed against IronClad Standards (licensing, insurance, and business practices) before you can take a referral. Certification itself is a separate, trade-specific review the ListWorx owner signs off on, not something that comes automatically with a subscription tier.",
   },
   {
     q: 'How does verification work?',
-    a: "We confirm your business is legitimate — entity, license, and insurance — before you take a referral. It's business-level verification, not a review of every job or employee. Lose your license or coverage and your referrals pause until it's current.",
+    a: "We confirm your business is legitimate, entity, license, and insurance, before you take a referral. It's business-level verification, not a review of every job or employee. Lose your license or coverage and your referrals pause until it's current.",
   },
   {
     q: 'Can I pause when I’m slammed?',
@@ -69,31 +69,31 @@ const HOW_IT_WORKS = [
     step: '1',
     icon: FileText,
     title: 'Apply & Get Verified',
-    desc: "Submit your application. We confirm your business is legitimate — entity, license, and insurance. This is business-level verification, not a review of every job, every employee, or every trade you touch.",
+    desc: "Submit your application. We confirm your business is legitimate: entity, license, and insurance. This is business-level verification, not a review of every job, every employee, or every trade you touch.",
   },
   {
     step: '2',
     icon: Layers,
     title: 'Choose Your Tier',
-    desc: "Network, Growth, or Business Pro. Pick the tier that fits your business — every tier gets equal consideration for a referral match, not a spot in someone else's bidding war.",
+    desc: "Network, Growth, or Business Pro. Pick the tier that fits your business. Every tier gets equal consideration for a referral match, not a spot in someone else's bidding war.",
   },
   {
     step: '3',
     icon: Target,
     title: 'Receive Qualified Referrals',
-    desc: "When a homeowner's request matches your service area, trade category, and availability, we route it to you. You're not one of fifteen contractors bidding on a lead — you're matched because you're a fit.",
+    desc: "When a homeowner's request matches your service area, trade category, and availability, we route it to you. You're not one of fifteen contractors bidding on a lead. You're matched because you're a fit.",
   },
   {
     step: '4',
     icon: Star,
     title: 'Build Your Reputation',
-    desc: "Finish the job, and the homeowner leaves a verified review through ListWorx — tied to a confirmed project, not an anonymous post from who-knows-where. Your reputation builds on real work, not gamed ratings.",
+    desc: "Finish the job, and the homeowner leaves a verified review through ListWorx, tied to a confirmed project, not an anonymous post from who-knows-where. Your reputation builds on real work, not gamed ratings.",
   },
   {
     step: '5',
     icon: SlidersHorizontal,
     title: 'Grow on Your Terms',
-    desc: "Turn your availability on or off whenever you need to. Control your service counties and categories yourself. No penalty for pausing — it's your business, not ours.",
+    desc: "Turn your availability on or off whenever you need to. Control your service counties and categories yourself. No penalty for pausing. It's your business, not ours.",
   },
 ];
 
@@ -189,13 +189,13 @@ export default function ContractorsPage() {
             </Reveal>
             <Reveal immediate delay={100}>
               <p className="mx-auto mb-4 max-w-3xl text-lg text-white/80 md:text-xl lg:text-2xl">
-                You do the work. We make sure the right people know your name — everywhere we go.
+                You do the work. We make sure the right people know your name, everywhere we go.
               </p>
               <p className="mx-auto mb-10 max-w-3xl text-base text-white/70 md:text-lg">
                 ListWorx is building the largest vetted independent contractor network in America.
                 Join free, or go further with a Growth or Business Pro membership that adds marketing
                 and business-growth support on top. Every member gets equal consideration for a
-                referral match — what you pay for is growth support, not better odds.
+                referral match. What you pay for is growth support, not better odds.
               </p>
             </Reveal>
 
@@ -219,8 +219,8 @@ export default function ContractorsPage() {
             <Reveal immediate delay={300}>
               <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 gap-8 md:grid-cols-3">
                 {[
-                  ['Free', 'to join — Network membership costs nothing'],
-                  ['Flat', 'Rate — no per-referral fees, ever'],
+                  ['Free', 'to join: Network membership costs nothing'],
+                  ['Flat', 'Rate, no per-referral fees, ever'],
                   ['National', 'Expanding market by market'],
                 ].map(([big, small]) => (
                   <div key={big} className="text-center">
@@ -245,14 +245,20 @@ export default function ContractorsPage() {
             </h2>
             <p className="mt-4 text-lg text-white/65">
               Every tier gets equal consideration for a referral match, as long as you meet IronClad
-              Standards. Growth and Business Pro add marketing and business-growth support on top —
-              they don&apos;t buy priority access to referrals.
+              Standards. Growth and Business Pro add business resources and member pricing on top.
+              They don&apos;t buy priority access to referrals.
             </p>
           </Reveal>
 
           <MembershipComparison
+            showTable={false}
             ctaFor={(id) => ({ href: '/apply', label: id === 'network' ? 'Join Free' : id === 'growth' ? 'Apply for Growth' : 'Apply for Business Pro' })}
           />
+          <Reveal className="mt-8">
+            <Link href="/pricing" className="inline-flex items-center gap-2 font-semibold text-lw-rust hover:underline">
+              Compare every plan side by side <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Reveal>
         </div>
       </section>
 
@@ -284,7 +290,7 @@ export default function ContractorsPage() {
                 A partner in your growth, not just a referral source
               </h2>
               <p className="mt-4 max-w-xl text-lg text-white/65">
-                ListWorx is subscription-based, not pay-per-lead — and every paid tier adds real
+                ListWorx is subscription-based, not pay-per-lead, and every paid tier adds real
                 marketing and business-growth support, not just a louder badge.
               </p>
             </Reveal>
@@ -294,7 +300,7 @@ export default function ContractorsPage() {
                 {
                   icon: Star,
                   title: 'Reviewed Against IronClad Standards',
-                  desc: 'Every member is reviewed for licensing, insurance, and business practices before taking a referral — the same bar for every tier.',
+                  desc: 'Every member is reviewed for licensing, insurance, and business practices before taking a referral, the same bar for every tier.',
                 },
                 {
                   icon: TrendingUp,
@@ -411,7 +417,7 @@ export default function ContractorsPage() {
               <p className="mt-4 text-base leading-relaxed text-white/75 md:text-lg">
                 Lead platforms make money when you fail. They charge you per contact, sell that same
                 contact to fifteen other contractors, and pocket the spread while you race to
-                underbid everyone. That&apos;s the business model. That&apos;s why it feels bad —
+                underbid everyone. That&apos;s the business model. That&apos;s why it feels bad,
                 because it is.
               </p>
               <p className="mt-4 text-base leading-relaxed text-white/75 md:text-lg">
@@ -423,7 +429,7 @@ export default function ContractorsPage() {
                 {[
                   'No per-referral fees. Ever.',
                   'No lead auctions. You don’t bid for your own name.',
-                  'Two other vetted pros — not fifteen strangers.',
+                  'Two other vetted pros, not fifteen strangers.',
                 ].map((line) => (
                   <div key={line} className="rounded-lg border border-white/15 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm">
                     {line}
@@ -467,17 +473,17 @@ export default function ContractorsPage() {
                 {
                   icon: Lock,
                   title: 'Max 3 Contractors Per Request',
-                  desc: 'Your referral isn’t sold to 15 others. You compete against at most 2 — both vetted. Higher close rates, better margins.',
+                  desc: 'Your referral isn’t sold to 15 others. You compete against at most 2, both vetted. Higher close rates, better margins.',
                 },
                 {
                   icon: TrendingUp,
                   title: 'Predictable Business Costs',
-                  desc: 'One flat monthly rate — no per-referral fees, no surprise charges, no bidding for priority. Budget around it.',
+                  desc: 'One flat monthly rate, no per-referral fees, no surprise charges, no bidding for priority. Budget around it.',
                 },
                 {
                   icon: Shield,
                   title: 'The Badge Builds Your Brand',
-                  desc: 'Being an IronClad Partner signals professionalism to every realtor and homeowner — credibility built into every referral.',
+                  desc: 'Being an IronClad Partner signals professionalism to every realtor and homeowner, credibility built into every referral.',
                 },
               ].map((item, i) => (
                 <Reveal key={item.title} delay={i * 70}>
@@ -521,12 +527,12 @@ export default function ContractorsPage() {
                   </h3>
                   <ul className="space-y-3 text-sm text-white/65 md:text-base">
                     {[
-                      'Pay $15–$100+ per shared contact received',
-                      'Same referral sold to 10–20 other contractors',
+                      'Pay $15 to $100+ per shared contact received',
+                      'Same referral sold to 10 to 20 other contractors',
                       'No quality standards or credential verification',
                       'Monthly costs swing wildly with no predictability',
                       'Forced to underprice to outbid competitors',
-                      'No network standards — anyone can buy a lead',
+                      'No network standards, anyone can buy a lead',
                     ].map((line) => (
                       <li key={line} className="flex items-start">
                         <span className="mr-3 font-bold text-red-400">✗</span>
@@ -545,12 +551,12 @@ export default function ContractorsPage() {
                   </h3>
                   <ul className="space-y-3 text-sm md:text-base">
                     {[
-                      'Flat monthly subscription — no per-referral fees, ever',
+                      'Flat monthly subscription, no per-referral fees, ever',
                       'Maximum 3 contractors matched per request',
                       'IronClad Standards required for all network members',
                       'Predictable monthly cost you can budget around',
                       'Relationship-driven referrals from trusted realtors',
-                      'IronClad Standards required of everyone — your competition is qualified',
+                      'IronClad Standards required of everyone. Your competition is qualified',
                     ].map((line) => (
                       <li key={line} className="flex items-start">
                         <span className="mr-3 font-bold">✓</span>
@@ -622,7 +628,7 @@ export default function ContractorsPage() {
                       'Professional, timely communication on every job',
                       'Written estimates provided for jobs over $500',
                       'Show up on time and honor your commitments',
-                      'Stand behind your work — or risk network removal',
+                      'Stand behind your work, or risk network removal',
                     ].map((line) => (
                       <li key={line} className="flex items-start">
                         <CheckCheck className="mr-3 mt-0.5 h-5 w-5 shrink-0 text-lw-rust" />
@@ -635,7 +641,7 @@ export default function ContractorsPage() {
             </div>
             <Reveal delay={120} className="mt-6 rounded-2xl border border-mailer-border bg-mailer-card/60 p-6">
               <p className="text-sm text-white/60">
-                <span className="font-semibold text-white">Standards are enforced — not just stated.</span>{' '}
+                <span className="font-semibold text-white">Standards are enforced, not just stated.</span>{' '}
                 Poor performance or complaints can result in suspension or removal. IronClad Standards
                 protect realtors, homeowners, and the contractors who maintain them.
               </p>
@@ -693,7 +699,7 @@ export default function ContractorsPage() {
               <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
                 Built for contractors who take pride in their work.
               </h2>
-              <p className="mt-4 text-lg text-white/65">Not everyone qualifies — and that&apos;s by design.</p>
+              <p className="mt-4 text-lg text-white/65">Not everyone qualifies, and we&apos;re fine with that.</p>
             </Reveal>
 
             <div className="grid gap-6 md:grid-cols-2 md:gap-8">
@@ -726,7 +732,7 @@ export default function ContractorsPage() {
                   <ul className="space-y-3 text-sm text-white/65 md:text-base">
                     {[
                       'Are unlicensed or don’t carry proper insurance',
-                      'Want volume over quality — high-count, low-margin work',
+                      'Want volume over quality: high-count, low-margin work',
                       'Can’t commit to 24-hour response times on referrals',
                       'Are just starting out with no verifiable history',
                       'Won’t meet professional communication or conduct standards',
@@ -771,7 +777,7 @@ export default function ContractorsPage() {
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-white/70">
               Stop chasing bad leads. Build a referral pipeline inside the largest vetted contractor
-              network in America — free to join, with Growth and Business Pro available when you're
+              network in America, free to join, with Growth and Business Pro available when you're
               ready for more. Applications reviewed within 72 hours.
             </p>
             <Link href="/apply" className="mt-8 inline-block">

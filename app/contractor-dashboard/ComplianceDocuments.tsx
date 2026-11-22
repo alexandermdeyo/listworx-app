@@ -439,7 +439,7 @@ export default function ComplianceDocuments({
                     <div>
                       <p className="text-lw-text/50 text-sm font-medium">No document uploaded</p>
                       <p className="text-lw-text/30 text-xs mt-0.5">
-                        PDF, JPG, or PNG — max 10MB
+                        PDF, JPG, or PNG, max 10MB
                       </p>
                     </div>
                   </div>
@@ -520,7 +520,7 @@ export default function ComplianceDocuments({
 
       <p className="mt-3 text-xs text-lw-text/30 text-center">
         Documents are stored securely and only visible to you and the ListWorx review team.
-        Accepted formats: PDF, JPG, PNG — max 10MB.
+        Accepted formats: PDF, JPG, PNG, max 10MB.
       </p>
     </section>
   );

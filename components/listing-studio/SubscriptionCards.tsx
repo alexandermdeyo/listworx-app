@@ -320,7 +320,7 @@ function FreePlanCards() {
           Content That Closes Listings
         </h3>
         <p className="text-zinc-400 max-w-xl mx-auto text-sm">
-          AI-powered flyers, landing pages, social content, and email copy — all branded to you. Generate more in less time.
+          AI-powered flyers, landing pages, social content, and email copy, all branded to you. Generate more in less time.
         </p>
       </div>
 
@@ -402,7 +402,7 @@ function FreePlanCards() {
                   <p className={`text-xs mt-1 ${
                     tier.highlight ? 'text-gray-400' : 'text-zinc-500'
                   }`}>
-                    Billed annually — save {tier.savingsPct}%
+                    Billed annually, save {tier.savingsPct}%
                   </p>
                 ) : (
                   <p className={`text-xs mt-1 ${
@@ -464,16 +464,16 @@ function FreePlanCards() {
                 </span>
               </div>
               <p className="text-zinc-300 text-sm mb-3">
-                Lock in your rate before it closes — forever.
+                Lock in your rate before it closes, forever.
               </p>
               <div className="flex flex-col sm:flex-row gap-y-1.5 gap-x-5 text-sm text-zinc-400">
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                  <span><span className="text-white font-semibold">Founding Agent Pro</span> — $828/yr ($69/mo)</span>
+                  <span><span className="text-white font-semibold">Founding Agent Pro</span>, $828/yr ($69/mo)</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                  <span><span className="text-white font-semibold">Founding Elite</span> — $1,428/yr ($119/mo)</span>
+                  <span><span className="text-white font-semibold">Founding Elite</span>, $1,428/yr ($119/mo)</span>
                 </span>
               </div>
             </div>

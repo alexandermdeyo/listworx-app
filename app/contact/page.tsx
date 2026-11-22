@@ -80,7 +80,7 @@ export default function ContactPage() {
               {submitStatus === 'success' && (
                 <div className="mt-6 rounded-lg border border-green-500/30 bg-green-500/10 p-4">
                   <p className="font-semibold text-green-400">
-                    Thanks — your message is in. We&apos;ll be in touch soon.
+                    Thanks. Your message is in. We&apos;ll be in touch soon.
                   </p>
                 </div>
               )}
@@ -208,11 +208,11 @@ export default function ContactPage() {
                 <h3 className="mb-3 font-semibold text-white">Office hours</h3>
                 <div className="space-y-2 text-sm text-white/65">
                   <div className="flex justify-between">
-                    <span>Monday – Friday</span>
-                    <span className="font-medium text-white">9:00 AM – 5:00 PM CST</span>
+                    <span>Monday: Friday</span>
+                    <span className="font-medium text-white">9:00 AM, 5:00 PM CST</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Saturday – Sunday</span>
+                    <span>Saturday: Sunday</span>
                     <span className="font-medium text-white">Closed</span>
                   </div>
                 </div>

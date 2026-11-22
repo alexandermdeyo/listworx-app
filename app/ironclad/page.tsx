@@ -23,17 +23,17 @@ const AGREEMENT_SECTIONS = [
   {
     num: '2',
     title: 'Licensing Requirements',
-    body: 'Contractor shall maintain, in active and good standing, all state-issued trade licenses applicable to the services offered under this agreement. Licenses must be held in the legal name of the business entity applying to the network — not in the name of a third party, subcontractor, or affiliated business. Contractors operating across multiple trades are required to hold valid credentials for each trade in which they accept referrals. Any suspension, revocation, lapse, restriction, or change in licensing status must be disclosed to ListWorx in writing within 48 hours of the contractor becoming aware of such a change. Failure to disclose a licensing deficiency is grounds for immediate removal from the network.',
+    body: 'Contractor shall maintain, in active and good standing, all state-issued trade licenses applicable to the services offered under this agreement. Licenses must be held in the legal name of the business entity applying to the network, not in the name of a third party, subcontractor, or affiliated business. Contractors operating across multiple trades are required to hold valid credentials for each trade in which they accept referrals. Any suspension, revocation, lapse, restriction, or change in licensing status must be disclosed to ListWorx in writing within 48 hours of the contractor becoming aware of such a change. Failure to disclose a licensing deficiency is grounds for immediate removal from the network.',
   },
   {
     num: '3',
     title: 'Insurance Requirements',
-    body: 'Contractor shall maintain general liability insurance at a minimum coverage level of $1,000,000 per occurrence and $2,000,000 aggregate. Where required by state law, workers\' compensation insurance must also be maintained and current certificates kept on file with ListWorx. Documentation of insurance coverage must be submitted during the application process and updated prior to any policy expiration. There is no grace period for lapses in coverage. If insurance expires or is cancelled, the contractor\'s referral eligibility is automatically suspended until current documentation is received and verified. Contractor is responsible for proactively submitting updated certificates — ListWorx does not send reminders as a condition of compliance.',
+    body: 'Contractor shall maintain general liability insurance at a minimum coverage level of $1,000,000 per occurrence and $2,000,000 aggregate. Where required by state law, workers\' compensation insurance must also be maintained and current certificates kept on file with ListWorx. Documentation of insurance coverage must be submitted during the application process and updated prior to any policy expiration. There is no grace period for lapses in coverage. If insurance expires or is cancelled, the contractor\'s referral eligibility is automatically suspended until current documentation is received and verified. Contractor is responsible for proactively submitting updated certificates. ListWorx does not send reminders as a condition of compliance.',
   },
   {
     num: '4',
     title: 'Communication Standards',
-    body: 'Contractor shall respond to every referral inquiry received through ListWorx within 24 hours of receipt, without exception. A response constitutes direct contact — a voicemail or text message qualifies; delayed callbacks or missed calls do not. All written estimates shall be provided within a reasonable period not to exceed 48 hours following an initial site visit or client meeting, unless otherwise agreed in writing by both parties. Phone calls, text messages, and emails from clients or realtors connected through ListWorx shall be returned within one business day. Scheduling changes, delays, or inability to complete a scheduled appointment must be communicated to the client in advance — not after the scheduled time has passed.',
+    body: 'Contractor shall respond to every referral inquiry received through ListWorx within 24 hours of receipt, without exception. A response means direct contact. A voicemail or text message qualifies; delayed callbacks or missed calls do not. All written estimates shall be provided within a reasonable period not to exceed 48 hours following an initial site visit or client meeting, unless otherwise agreed in writing by both parties. Phone calls, text messages, and emails from clients or realtors connected through ListWorx shall be returned within one business day. Scheduling changes, delays, or inability to complete a scheduled appointment must be communicated to the client in advance, not after the scheduled time has passed.',
   },
   {
     num: '5',
@@ -48,7 +48,7 @@ const AGREEMENT_SECTIONS = [
   {
     num: '7',
     title: 'Workmanship Expectations',
-    body: 'All work performed under referrals received through ListWorx shall be executed in compliance with applicable building codes, trade standards, and local regulations. Contractor shall use materials of appropriate grade and quality for the scope of work, as represented in the estimate. Material substitutions not previously disclosed to and approved by the client are prohibited. Where deficiencies in the completed work are identified — whether by the client, the client\'s agent, or a third-party inspection — the contractor is required to address those deficiencies promptly and without dispute, subject to reasonable professional judgment. Warranties on labor and materials shall be provided to the client in writing where such warranties are standard for the relevant trade.',
+    body: 'All work performed under referrals received through ListWorx shall be executed in compliance with applicable building codes, trade standards, and local regulations. Contractor shall use materials of appropriate grade and quality for the scope of work, as represented in the estimate. Material substitutions not previously disclosed to and approved by the client are prohibited. Where deficiencies in the completed work are identified, whether by the client, the client\'s agent, or a third-party inspection, the contractor is required to address those deficiencies promptly and without dispute, subject to reasonable professional judgment. Warranties on labor and materials shall be provided to the client in writing where such warranties are standard for the relevant trade.',
   },
   {
     num: '8',
@@ -58,12 +58,12 @@ const AGREEMENT_SECTIONS = [
   {
     num: '9',
     title: 'Performance Monitoring and Enforcement',
-    body: 'ListWorx collects structured feedback from clients and realtors following each referral. This feedback contributes to an ongoing performance record maintained for each contractor in the network. Referral response rates, job completion outcomes, client ratings, and documented complaint history are all factors in the performance record. ListWorx tracks license and insurance expiration dates. Contractors are solely responsible for maintaining current documentation — an expired credential results in an automatic hold on new referrals until updated documentation is received. Contractors whose performance records indicate persistent non-response, incomplete work, unresolved complaints, or documentation lapses are subject to progressive enforcement action including written notice, referral priority reduction, suspension, or permanent removal, at ListWorx\'s discretion.',
+    body: 'ListWorx collects structured feedback from clients and realtors following each referral. This feedback contributes to an ongoing performance record maintained for each contractor in the network. Referral response rates, job completion outcomes, client ratings, and documented complaint history are all factors in the performance record. ListWorx tracks license and insurance expiration dates. Contractors are solely responsible for maintaining current documentation, an expired credential results in an automatic hold on new referrals until updated documentation is received. Contractors whose performance records indicate persistent non-response, incomplete work, unresolved complaints, or documentation lapses are subject to progressive enforcement action including written notice, referral priority reduction, suspension, or permanent removal, at ListWorx\'s discretion.',
   },
   {
     num: '10',
     title: 'Termination Conditions',
-    body: 'Either party may terminate this agreement with 30 days written notice. ListWorx reserves the right to immediately suspend or permanently remove a contractor — without prior notice and without refund of any subscription fees — for any of the following: material breach of these Standards; misrepresentation of licensing, insurance, or credentials; fraud or deceptive practices directed at a client; actions causing physical or financial harm to a client or their property; criminal conduct related to contracting activities; failure to disclose known material defects; or any conduct that, in the sole judgment of ListWorx, poses a risk to the integrity of the network or the safety of clients. Upon termination, all active referrals associated with the contractor are subject to reassignment at ListWorx\'s discretion.',
+    body: 'Either party may terminate this agreement with 30 days written notice. ListWorx reserves the right to immediately suspend or permanently remove a contractor, without prior notice and without refund of any subscription fees, for any of the following: material breach of these Standards; misrepresentation of licensing, insurance, or credentials; fraud or deceptive practices directed at a client; actions causing physical or financial harm to a client or their property; criminal conduct related to contracting activities; failure to disclose known material defects; or any conduct that, in the sole judgment of ListWorx, poses a risk to the integrity of the network or the safety of clients. Upon termination, all active referrals associated with the contractor are subject to reassignment at ListWorx\'s discretion.',
   },
 ];
 
@@ -97,7 +97,7 @@ export default function IronCladStandardsPage() {
             <Reveal immediate delay={240}>
               <p className="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-white/75">
                 The enforced compliance framework governing every contractor in the ListWorx network.
-                Not a badge. A binding agreement.
+                It's a binding agreement, not just a badge.
               </p>
               <div className="flex flex-col justify-center gap-3 sm:flex-row">
                 <Link href={APPLY_HREF}>
@@ -125,11 +125,11 @@ export default function IronCladStandardsPage() {
               <div className="md:col-span-3">
                 <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-lw-rust">What It Is</p>
                 <h2 className="mb-5 font-display text-3xl font-semibold uppercase leading-snug tracking-wide text-white md:text-4xl">
-                  A binding framework — not a badge
+                  A binding agreement every contractor signs
                 </h2>
                 <p className="mb-4 text-base leading-[1.75] text-white/65">
                   Every contractor in the ListWorx network must formally accept IronClad Standards
-                  before receiving a single referral. Acceptance is not a checkbox — it is a
+                  before receiving a single referral. Acceptance is not a checkbox. It is a
                   documented commitment covering licensing, insurance, communication, pricing,
                   worksite conduct, and response to complaints.
                 </p>
@@ -208,7 +208,7 @@ export default function IronCladStandardsPage() {
             <Reveal className="mx-auto mb-14 max-w-2xl text-center">
               <p className="text-base leading-[1.75] text-white/65">
                 This is business-level verification only. The badge tells homeowners the business is
-                real, licensed, and insured — not that the work is guaranteed.
+                real, licensed, and insured, not that the work is guaranteed.
               </p>
             </Reveal>
 
@@ -217,7 +217,7 @@ export default function IronCladStandardsPage() {
               <p className="text-base leading-[1.75] text-white/65">
                 The IronClad Verified badge sets ListWorx contractors apart from unlicensed or
                 uninsured competitors showing up on generic platforms. Homeowners on ListWorx know
-                they&apos;re being matched with verified professionals — which means the referrals you
+                they&apos;re being matched with verified professionals, which means the referrals you
                 receive come from homeowners who are specifically seeking that.
               </p>
             </Reveal>
@@ -241,9 +241,9 @@ export default function IronCladStandardsPage() {
             <div className="overflow-hidden rounded-xl border border-mailer-border">
               {[
                 { num: '01', title: 'Application Review', body: 'Every applicant completes a detailed business profile including trade specialties, service area, years in operation, and references. Incomplete or inconsistent applications are not advanced to the next stage.' },
-                { num: '02', title: 'License Verification', body: 'State licensing records are verified directly against government databases. Licenses must be active, in the correct trade category, and held by the business entity submitting the application — not a subcontractor or third party.' },
-                { num: '03', title: 'Insurance Documentation', body: 'Current certificates of insurance are collected and reviewed for coverage type, coverage amounts, and policy dates. The policy must be active at the time of review — expired or lapsed policies are not accepted.' },
-                { num: '04', title: 'Standards Agreement', body: 'Every applicant reads and formally accepts the IronClad Standards Partner Agreement in full. This constitutes a documented, binding commitment — not a summary acknowledgment.' },
+                { num: '02', title: 'License Verification', body: 'State licensing records are verified directly against government databases. Licenses must be active, in the correct trade category, and held by the business entity submitting the application, not a subcontractor or third party.' },
+                { num: '03', title: 'Insurance Documentation', body: 'Current certificates of insurance are collected and reviewed for coverage type, coverage amounts, and policy dates. The policy must be active at the time of review, expired or lapsed policies are not accepted.' },
+                { num: '04', title: 'Standards Agreement', body: 'Every applicant reads and formally accepts the IronClad Standards Partner Agreement in full. This constitutes a documented, binding commitment, not a summary acknowledgment.' },
                 { num: '05', title: 'Manual Approval', body: 'A ListWorx team member reviews each application individually before any approval decision is made. No application is automatically approved. Approval may be declined for inconsistent, incomplete, or otherwise insufficient information.' },
                 { num: '06', title: 'Ongoing Monitoring', body: 'Approval is not permanent. License and insurance expiration dates are tracked in the system. Client and realtor feedback is collected after each referral. Performance data is reviewed on a continuous basis.' },
               ].map((step, i, arr) => (
@@ -294,7 +294,7 @@ export default function IronCladStandardsPage() {
               <h2 className="mb-3 font-display text-4xl font-bold uppercase tracking-wide text-white md:text-5xl">
                 IronClad Standards<TM /> Partner Agreement
               </h2>
-              <p className="text-sm text-white/50">Version 1.0 &mdash; Effective February 2026</p>
+              <p className="text-sm text-white/50">Version 1.0: Effective February 2026</p>
             </div>
 
             <div className="overflow-hidden rounded-2xl border border-mailer-border">
@@ -304,7 +304,7 @@ export default function IronCladStandardsPage() {
                   compliance, and accountability requirements for all ListWorx Partner Contractors. By
                   formally accepting these Standards, Contractor commits to operating at a level of
                   professionalism that protects Realtors, Homeowners, and the integrity of the
-                  ListWorx referral network. These Standards are a binding legal agreement — not a
+                  ListWorx referral network. These Standards are a binding legal agreement, not a
                   summary of preferences.
                 </p>
               </div>
@@ -343,17 +343,17 @@ export default function IronCladStandardsPage() {
               <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-lw-rust">Section 3</p>
               <h2 className="mb-4 font-display text-4xl font-bold uppercase tracking-wide text-white md:text-5xl">Ongoing Expectations</h2>
               <p className="max-w-2xl text-base leading-[1.75] text-white/65">
-                Approval is the beginning — not the end. Active contractors are held to these
+                Approval is the beginning, not the end. Active contractors are held to these
                 standards continuously, and performance data is reviewed on an ongoing basis.
               </p>
             </div>
 
             <div className="space-y-5">
               {[
-                { label: '24-Hour Response', body: 'Every referral received through ListWorx requires an initial direct response within 24 hours. This is not a guideline — it is a condition of continued participation in the network. Patterns of delayed or absent responses are flagged for review.' },
+                { label: '24-Hour Response', body: 'Every referral received through ListWorx requires an initial direct response within 24 hours. This is not a guideline. It is a condition of continued participation in the network. Patterns of delayed or absent responses are flagged for review.' },
                 { label: 'Post-Referral Feedback', body: 'After each referral, ListWorx requests structured feedback from the client or referring realtor. This feedback is logged to the contractor\'s performance record. Both positive and negative responses are recorded and contribute to the contractor\'s standing.' },
                 { label: 'Credential Maintenance', body: 'License and insurance expiration dates are tracked in the ListWorx system. Contractors are solely responsible for submitting updated documentation prior to expiration. An expired credential results in an automatic hold on new referrals until current documentation is received.' },
-                { label: 'Referral Outcome Tracking', body: 'ListWorx tracks referral outcomes — including whether the client was contacted, whether an estimate was provided, and whether the job was completed. Persistent non-conversion without documented explanation is subject to formal performance review.' },
+                { label: 'Referral Outcome Tracking', body: 'ListWorx tracks referral outcomes, including whether the client was contacted, whether an estimate was provided, and whether the job was completed. Persistent non-conversion without documented explanation is subject to formal performance review.' },
               ].map((item) => (
                 <div key={item.label} className="flex gap-5 rounded-2xl border border-mailer-border bg-mailer-card p-5">
                   <div className="w-1 flex-shrink-0 rounded-full bg-lw-rust" />
@@ -396,7 +396,7 @@ export default function IronCladStandardsPage() {
 
             <div className="mb-6 overflow-hidden rounded-xl border border-mailer-border">
               {[
-                { title: 'Structured Feedback', body: 'After every referral, a feedback request is sent to the client. Responses — both positive and negative — are logged directly to the contractor\'s record and contribute to their ongoing standing in the network.' },
+                { title: 'Structured Feedback', body: 'After every referral, a feedback request is sent to the client. Responses, both positive and negative, are logged directly to the contractor\'s record and contribute to their ongoing standing in the network.' },
                 { title: 'Formal Complaint Review', body: 'Complaints forwarded by clients or realtors are documented. The contractor is notified and given a defined window to respond. ListWorx does not arbitrate disputes unilaterally but tracks resolution behavior as part of the performance record.' },
                 { title: 'Realtor Reporting', body: 'Realtors in the ListWorx network may report conduct, missed responses, or performance issues directly. These reports are documented and contribute to the contractor\'s ongoing compliance record.' },
               ].map((item, i, arr) => (
@@ -509,11 +509,11 @@ export default function IronCladStandardsPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[
-                { title: 'Verified Before You Meet Them', body: 'By the time you receive a contractor match, licensing and insurance have already been checked. You are not doing the vetting — we are.' },
+                { title: 'Verified Before You Meet Them', body: 'By the time you receive a contractor match, licensing and insurance have already been checked. You are not doing the vetting. We are.' },
                 { title: 'Accountability You Can Point To', body: 'If something goes wrong, there is a documented standard, a defined response process, and a review mechanism. You are not alone in managing the relationship.' },
-                { title: 'Predictable Professional Conduct', body: 'Contractors have agreed in writing to communication timelines, pricing transparency, and site conduct standards. These are documented obligations — not verbal assurances.' },
+                { title: 'Predictable Professional Conduct', body: 'Contractors have agreed in writing to communication timelines, pricing transparency, and site conduct standards. These are documented obligations, not verbal assurances.' },
                 { title: 'Designed for Real Estate Timelines', body: 'Listing preparation, inspection response, and closing timelines are unforgiving. IronClad Standards are built with that operational reality in mind.' },
-                { title: 'Performance Consequences Are Real', body: 'Contractors who fail to perform are not quietly deprioritized. They are reviewed and removed if they do not correct course — and the record is maintained.' },
+                { title: 'Performance Consequences Are Real', body: 'Contractors who fail to perform are not quietly deprioritized. They are reviewed and removed if they do not correct course, and the record is maintained.' },
                 { title: 'Your Reputation Is Protected', body: 'When you refer a contractor through ListWorx, you are referring someone who has passed a formal vetting process and is held to documented, enforceable standards.' },
               ].map((item) => (
                 <div key={item.title} className="rounded-2xl border border-mailer-border bg-mailer-card p-5 transition-colors hover:border-lw-rust/40">

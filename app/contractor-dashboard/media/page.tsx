@@ -195,7 +195,7 @@ export default function ContractorMediaPage() {
             </div>
             <p className="mt-1 text-sm text-zinc-400">
               Elite includes one free video content session per quarter. ListWorx pays the media
-              partner directly — no cost to you.
+              partner directly, no cost to you.
             </p>
 
             {thisQuarterClaim ? (
@@ -207,7 +207,7 @@ export default function ContractorMediaPage() {
                     month: 'short',
                     day: 'numeric',
                   })}
-                  {thisQuarterClaim.decline_reason ? ` — ${thisQuarterClaim.decline_reason}` : ''}
+                  {thisQuarterClaim.decline_reason ? `, ${thisQuarterClaim.decline_reason}` : ''}
                 </span>
               </div>
             ) : (

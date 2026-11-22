@@ -53,7 +53,7 @@ export default function AcademyTab() {
       <div>
         <h1 className="text-xl font-bold text-gray-900">ListWorx Academy</h1>
         <p className="text-sm text-gray-500 mt-0.5">
-          Free training built for contractors — licensing, insurance, bookkeeping, safety, marketing, and legal essentials.
+          Free training built for contractors, licensing, insurance, bookkeeping, safety, marketing, and legal essentials.
         </p>
       </div>
 

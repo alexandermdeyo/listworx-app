@@ -670,7 +670,7 @@ export default function BillingPage() {
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">
-                        Get verified, get listed, and get matched — no cost, no card required.
+                        Get verified, get listed, and get matched. No cost, no card required.
                       </p>
                       <p className="text-3xl font-bold text-foreground">
                         $0<span className="text-base font-normal text-muted-foreground">/month</span>
@@ -699,7 +699,7 @@ export default function BillingPage() {
                 </div>
               </Card>
               <p className="mt-4 text-center text-sm text-muted-foreground">
-                Every tier below gets equal consideration in referral matching — Growth and Business
+                Every tier below gets equal consideration in referral matching. Growth and Business
                 Pro add marketing and business-growth support on top, not priority access.
               </p>
             </div>

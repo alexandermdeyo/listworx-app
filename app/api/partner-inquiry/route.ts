@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
           clientName: `[${kind.toUpperCase()} PARTNER INQUIRY] ${org_name}`,
           clientEmail: email,
           clientPhone: phone || 'Not provided',
-          propertyAddress: `NOT a job request — ${kind} partner inquiry. Details: ${details.slice(0, 200) || '(none provided)'}`,
+          propertyAddress: `NOT a job request, ${kind} partner inquiry. Details: ${details.slice(0, 200) || '(none provided)'}`,
           services: [],
           matchedContractors: 0,
         }),

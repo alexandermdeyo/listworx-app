@@ -44,7 +44,7 @@ export default function HomeownerHero() {
                 <span className="block text-lw-rust">Every time. For free.</span>
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-mkt-ink/70 md:text-xl">
-                ListWorx is the trusted home-service referral network — every pro
+                ListWorx is the trusted home-service referral network. Every pro
                 is reviewed against IronClad Standards for licensing, insurance,
                 and business practices before they can take a referral. Describe
                 the job, get matched with up to three, and pick who you call.
@@ -92,7 +92,7 @@ export default function HomeownerHero() {
               Start with what you need done.
             </h2>
             <p className="mt-3 text-mkt-ink/65">
-              Pick a trade to prefill your request — or just describe the project
+              Pick a trade to prefill your request, or just describe the project
               in your own words in the box above. Either way you&apos;re matched
               with verified pros only.
             </p>

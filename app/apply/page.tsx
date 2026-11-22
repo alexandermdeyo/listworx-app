@@ -237,18 +237,18 @@ export default function ApplyPage() {
           <Reveal immediate delay={0}>
             <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-4">Contractor Applications</p>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">
-              Join the ListWorx Network — Free
+              Join the ListWorx Network: Free
             </h1>
           </Reveal>
           <Reveal immediate delay={100}>
             <ul className="mx-auto mb-10 max-w-lg space-y-3 text-left">
               <li className="flex items-start gap-3 !text-white text-base">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
-                Network membership is free — no per-lead fees, no bidding war, ever.
+                Network membership is free, no per-lead fees, no bidding war, ever.
               </li>
               <li className="flex items-start gap-3 !text-white text-base">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
-                Every profile is reviewed against IronClad Standards — business entity, license, and insurance confirmed.
+                Every profile is reviewed against IronClad Standards, business entity, license, and insurance confirmed.
               </li>
               <li className="flex items-start gap-3 !text-white text-base">
                 <CheckCircle2 className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
@@ -290,13 +290,13 @@ export default function ApplyPage() {
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
               <p className="text-sm text-mkt-ink/80">
-                <span className="font-semibold text-mkt-ink">No bidding wars.</span> You&apos;re matched by fit — trade, service area, and availability — not by who pays the most.
+                <span className="font-semibold text-mkt-ink">No bidding wars.</span> You&apos;re matched by fit, trade, service area, and availability, not by who pays the most.
               </p>
             </div>
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
               <p className="text-sm text-mkt-ink/80">
-                <span className="font-semibold text-mkt-ink">IronClad Verified</span> means ListWorx has confirmed your business entity, license, and insurance — before homeowners ever see your profile.{' '}
+                <span className="font-semibold text-mkt-ink">IronClad Verified</span> means ListWorx has confirmed your business entity, license, and insurance, before homeowners ever see your profile.{' '}
                 <Link href="/ironclad" target="_blank" rel="noopener noreferrer" className="text-lw-rust underline underline-offset-2">
                   Read the standards
                 </Link>.
@@ -328,7 +328,7 @@ export default function ApplyPage() {
           <div className="max-w-xl mx-auto text-center lw-card-light p-8">
             <h2 className="text-xl font-bold text-mkt-ink mb-3">Create your free account to get started</h2>
             <p className="text-mkt-ink/70 mb-6">
-              Your application takes about 10 minutes. Create a free contractor account first — no payment required until after approval.
+              Your application takes about 10 minutes. Create a free contractor account first, no payment required until after approval.
             </p>
             <Link href="/contractor-portal">
               <Button size="lg" className="bg-lw-rust hover:bg-lw-rust-hover text-white font-semibold px-8">

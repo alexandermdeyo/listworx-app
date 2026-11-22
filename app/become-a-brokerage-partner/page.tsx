@@ -12,7 +12,7 @@ import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 export const metadata: Metadata = pageMetadata({
   title: 'Become a Brokerage Partner | ListWorx',
   description:
-    'Get your brokerage in front of homeowners before they’ve chosen an agent — a credited interview or video on the ListWorx site and newsletter, plus a logo on the homepage.',
+    'Get your brokerage in front of homeowners before they’ve chosen an agent, a credited interview or video on the ListWorx site and newsletter, plus a logo on the homepage.',
   path: '/become-a-brokerage-partner',
 });
 
@@ -20,7 +20,7 @@ const WHAT_YOU_GET = [
   'One of your realtors featured in a short interview or video on a topic that matters to sellers (staging, pricing, timing to list)',
   'Credited to your brokerage by name, published on the ListWorx site and newsletter',
   'Logo on the ListWorx homepage',
-  'This is separate from Listing Studio — your agents can use both independently',
+  'This is separate from Listing Studio. Your agents can use both independently',
 ];
 
 const HOW_IT_WORKS = [
@@ -53,7 +53,7 @@ export default function BrokeragePartnerPage() {
                 Get your brokerage in front of homeowners who haven&apos;t chosen an agent yet
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-mkt-ink/70 md:text-xl">
-                ListWorx reaches homeowners directly — before they&apos;ve picked a realtor. Your
+                ListWorx reaches homeowners directly, before they&apos;ve picked a realtor. Your
                 brokerage can be the name they see first.
               </p>
             </Reveal>

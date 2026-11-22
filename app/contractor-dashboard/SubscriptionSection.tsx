@@ -50,7 +50,7 @@ const TIERS: Tier[] = [
     features: [
       'IronClad Verified status',
       'Profile on the ListWorx platform',
-      'Listed in referral rotation — standard priority',
+      'Listed in referral rotation, standard priority',
       'Contractor dashboard access',
       'Email notifications when you’re matched',
       'Verified reviews system',
@@ -73,10 +73,10 @@ const TIERS: Tier[] = [
     description: 'Better placement and enhanced visibility',
     features: [
       'Everything in Network Member, plus:',
-      'Priority placement — above all Network Members',
+      'Priority placement, above all Network Members',
       'Enhanced profile with additional photos and expanded bio',
       'IronClad Digital Badge Kit included (vehicle, digital, print)',
-      'AI Marketing Toolkit — social posts, follow-up emails, job templates',
+      'AI Marketing Toolkit, social posts, follow-up emails, job templates',
       'SMS + email notifications for every match',
       'Monthly performance report (referrals received, match rate)',
       'Quarterly profile boost',
@@ -96,8 +96,8 @@ const TIERS: Tier[] = [
     description: 'Maximum referral priority and premium benefits',
     features: [
       'Everything in Network Partner, plus:',
-      'Top of rotation — always above Partner and Member',
-      'Territory lock — maximum 2 Elite per trade per county',
+      'Top of rotation, always above Partner and Member',
+      'Territory lock, maximum 2 Elite per trade per county',
       'Monthly profile boost (not quarterly)',
       '2 social media posts per month featuring your work',
       'Annual featured contractor spotlight',
@@ -138,7 +138,7 @@ const FOUNDER_TIERS = [
     features: [
       'IronClad Verified status',
       'Profile on the ListWorx platform',
-      'Listed in referral rotation — standard priority',
+      'Listed in referral rotation, standard priority',
       'Contractor dashboard access',
       'Email notifications when you’re matched',
     ],
@@ -155,7 +155,7 @@ const FOUNDER_TIERS = [
       'Priority placement in referral matching',
       'Enhanced profile with logo in your listing',
       'IronClad Digital Badge Kit included',
-      'AI Marketing Toolkit — social posts, follow-up emails, job templates',
+      'AI Marketing Toolkit, social posts, follow-up emails, job templates',
       'Monthly performance report',
     ],
   },
@@ -170,7 +170,7 @@ const FOUNDER_TIERS = [
       'Everything in Network Partner',
       'Top-priority referral positioning',
       'Premium placement and Elite IronClad badge',
-      'Territory lock — max 2 per trade per county',
+      'Territory lock, max 2 per trade per county',
       'Monthly profile boost',
     ],
   },
@@ -555,7 +555,7 @@ export default function SubscriptionSection({
               Your application is currently under review. Once our team approves your application, you'll receive an email with instructions to sign in and choose your partnership plan.
             </p>
             <p className="text-amber-700 text-sm font-medium mt-3">
-              Typical review time: 24–48 hours.
+              Typical review time: 24 to 48 hours.
             </p>
           </div>
         </div>
@@ -897,7 +897,7 @@ export default function SubscriptionSection({
               </div>
               <h3 className="text-2xl font-bold text-white">Become a Founding Partner</h3>
               <p className="mt-1 text-sm text-zinc-300">
-                Your locked rate starts immediately — and it never goes up. Ever.
+                Your locked rate starts immediately, and it never goes up. Ever.
               </p>
             </div>
             <div className="flex flex-col items-center gap-3">
@@ -911,7 +911,7 @@ export default function SubscriptionSection({
 
           <div className="mb-4">
             <p className="mb-2 text-sm font-semibold text-white">
-              Choose your tier. This is the rate you'll pay every month — locked in for life.
+              Choose your tier. This is the rate you'll pay every month, locked in for life.
             </p>
             <div className="grid gap-3 md:grid-cols-3">
               {FOUNDER_TIERS.map((tier) => {
@@ -1003,7 +1003,7 @@ export default function SubscriptionSection({
           >
             {checkoutLoading === 'founder-activation'
               ? 'Loading checkout...'
-              : `Join the Network — ${FOUNDER_TIERS.find((t) => t.id === selectedFounderTier)?.name}`}
+              : `Join the Network, ${FOUNDER_TIERS.find((t) => t.id === selectedFounderTier)?.name}`}
           </Button>
 
           <p className="mt-3 text-center text-xs text-zinc-400">
@@ -1088,9 +1088,9 @@ export default function SubscriptionSection({
                       Starting checkout...
                     </>
                   ) : isAnnual ? (
-                    `Start Annual — $${tier.annualPrice}/yr`
+                    `Start Annual, $${tier.annualPrice}/yr`
                   ) : (
-                    `Start Monthly — $${tier.monthlyPrice}/mo`
+                    `Start Monthly, $${tier.monthlyPrice}/mo`
                   )}
                 </Button>
 
@@ -1104,7 +1104,7 @@ export default function SubscriptionSection({
                   {academyEnabled && (
                     <div className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-lw-text/80">ListWorx Academy access — powered by ACES</span>
+                      <span className="text-sm text-lw-text/80">ListWorx Academy access, powered by ACES</span>
                     </div>
                   )}
                   {tier.unavailableFeatures?.map((feature) => (

@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Pricing — Network Membership | ListWorx',
+  title: 'Pricing | ListWorx',
   description:
-    'Join the ListWorx contractor network as a Network Member, Partner, or Elite. Founding rates lock in for life — no per-referral charges, ever. Free for realtors and homeowners.',
+    'ListWorx pricing in one place. Free for homeowners and realtors. Contractor memberships at $0, $199, and $299 a month with no per-lead fees. Photo and video packages from $599.',
   path: '/pricing',
 });
 

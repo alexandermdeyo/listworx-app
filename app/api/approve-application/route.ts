@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
         emailError = err.message || 'Email send failed';
       }
     } else {
-      emailError = 'No email address found for contractor — approval saved but email not sent';
+      emailError = 'No email address found for contractor, approval saved but email not sent';
       console.warn('[approve-application] no email found for contractor:', contractorProfileId);
     }
 

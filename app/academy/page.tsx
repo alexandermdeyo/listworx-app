@@ -19,7 +19,7 @@ const COURSE_CATEGORIES = [
   {
     icon: GraduationCap,
     title: 'Licensing and Exam Prep',
-    description: 'State contractor license prep for all 50 states — powered by ACES, the national standard for contractor licensing and exam preparation.',
+    description: 'State contractor license prep for all 50 states, powered by ACES, the national standard for contractor licensing and exam preparation.',
     status: 'Available Now',
     poweredByAces: true,
   },
@@ -68,7 +68,7 @@ export default function AcademyPage() {
           </Reveal>
           <Reveal immediate delay={100}>
             <p className="text-lg md:text-xl text-mkt-ink/70 max-w-2xl mx-auto">
-              ListWorx isn&apos;t just a referral network. We&apos;re building something bigger — a platform where American tradespeople get the resources, credentials, and connections they need to build a business that lasts. ListWorx Academy is part of that commitment.
+              ListWorx isn&apos;t just a referral network. We&apos;re building something bigger, a platform where American tradespeople get the resources, credentials, and connections they need to build a business that lasts. ListWorx Academy is part of that commitment.
             </p>
           </Reveal>
         </div>
@@ -81,7 +81,7 @@ export default function AcademyPage() {
             <p className="text-xs font-bold uppercase tracking-widest text-lw-rust mb-6">Official Licensing Partner</p>
             <img src="/aces-logo.jpg" alt="American Contractors Exam Services" className="h-14 w-auto mx-auto mb-8 rounded-md bg-white p-1.5 border border-lw-rust/20" />
             <p className="text-lg text-lw-text/80 leading-relaxed max-w-2xl mx-auto mb-8">
-              Getting licensed is the foundation of a professional contracting career. American Contractors Exam Services has spent 25 years helping contractors pass their state licensing exams — across all 50 states, with a 95% pass rate and 60,000+ contractors served. We partnered with ACES because we believe your license isn&apos;t just a requirement. It&apos;s your credential. It&apos;s what separates you from the guy who just shows up with a truck.
+              Getting licensed is the foundation of a professional contracting career. American Contractors Exam Services has spent 25 years helping contractors pass their state licensing exams, across all 50 states, with a 95% pass rate and 60,000+ contractors served. We partnered with ACES because we believe your license isn&apos;t just a requirement. It&apos;s your credential. It&apos;s what separates you from the guy who just shows up with a truck.
               <br /><br />
               When you get licensed through ACES and IronClad certified through ListWorx, you don&apos;t chase work anymore. Work finds you.
             </p>

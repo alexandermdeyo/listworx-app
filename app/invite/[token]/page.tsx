@@ -238,7 +238,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
                 className="h-8 w-auto opacity-60"
               />
               <p className="text-xs text-zinc-600 tracking-wide">
-                ListWorx — Built in Gallatin, TN
+                ListWorx: Built in Gallatin, TN
               </p>
             </div>
 

@@ -743,7 +743,7 @@ export default function ApplicationForm({
             <div className="grid sm:grid-cols-2 gap-4">
               <FormField
                 label="License Number"
-                hint="Your state contractor license number — used to verify your credentials"
+                hint="Your state contractor license number, used to verify your credentials"
               >
                 <Input
                   value={form.license_number}
@@ -791,7 +791,7 @@ export default function ApplicationForm({
                       rel="noopener noreferrer"
                       className="text-xs text-lw-rust hover:underline truncate"
                     >
-                      License uploaded — click to view
+                      License uploaded. Click to view
                     </a>
                     <button
                       type="button"
@@ -818,7 +818,7 @@ export default function ApplicationForm({
                       )}
                       {uploadingDoc === 'license' ? 'Uploading...' : 'Upload License'}
                     </span>
-                    <span className="text-xs text-lw-text/40">PDF, JPG, or PNG — max 10MB</span>
+                    <span className="text-xs text-lw-text/40">PDF, JPG, or PNG, max 10MB</span>
                   </label>
                 )}
               </div>
@@ -837,7 +837,7 @@ export default function ApplicationForm({
                       rel="noopener noreferrer"
                       className="text-xs text-lw-rust hover:underline truncate"
                     >
-                      Insurance uploaded — click to view
+                      Insurance uploaded. Click to view
                     </a>
                     <button
                       type="button"
@@ -864,7 +864,7 @@ export default function ApplicationForm({
                       )}
                       {uploadingDoc === 'insurance' ? 'Uploading...' : 'Upload Insurance'}
                     </span>
-                    <span className="text-xs text-lw-text/40">PDF, JPG, or PNG — max 10MB</span>
+                    <span className="text-xs text-lw-text/40">PDF, JPG, or PNG, max 10MB</span>
                   </label>
                 )}
               </div>
@@ -995,7 +995,7 @@ export default function ApplicationForm({
                       {countySearch
                         ? 'No counties match your search.'
                         : countyLoadError
-                        ? 'Failed to load — use the retry button above.'
+                        ? 'Failed to load, use the retry button above.'
                         : 'No counties available for this state.'}
                     </p>
                   ) : (
@@ -1137,10 +1137,10 @@ export default function ApplicationForm({
             <SectionHeader
               icon={Star}
               title="Reviews & References"
-              description="Help us verify your reputation — at least your Google Reviews link is required"
+              description="Help us verify your reputation, at least your Google Reviews link is required"
             />
             <div className="space-y-4">
-              <FormField label="Google Reviews Link" required hint="Your Google Business review page — e.g. https://g.page/r/your-profile/review">
+              <FormField label="Google Reviews Link" required hint="Your Google Business review page, e.g. https://g.page/r/your-profile/review">
                 <Input
                   type="url"
                   value={form.google_review_url}

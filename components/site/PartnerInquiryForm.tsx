@@ -58,7 +58,7 @@ export default function PartnerInquiryForm({ kind }: { kind: Kind }) {
   if (status === 'success') {
     return (
       <div className="rounded-2xl border border-lw-rust/30 bg-lw-rust/[0.06] p-8 text-center">
-        <p className="text-lg font-bold text-mkt-ink">Thanks — we&apos;ve got it.</p>
+        <p className="text-lg font-bold text-mkt-ink">Thanks. We&apos;ve got it.</p>
         <p className="mt-2 text-mkt-ink/70">
           We&apos;ll review your details and reach out within a couple of business days.
         </p>

@@ -400,7 +400,7 @@ function RequestPageContent() {
 
           {contractors.length > 0 ? (
             <>
-              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-orange-50 p-4 text-sm text-mkt-ink/80">{contractors.length === 1 ? 'This contractor has' : `These ${contractors.length === 2 ? 'two' : 'three'} contractors have`} been vetted by ListWorx. Contact them directly — ListWorx does not manage scheduling or payments.</div>
+              <div className="mb-6 rounded-xl border border-lw-rust/30 bg-orange-50 p-4 text-sm text-mkt-ink/80">{contractors.length === 1 ? 'This contractor has' : `These ${contractors.length === 2 ? 'two' : 'three'} contractors have`} been vetted by ListWorx. Contact them directly: ListWorx does not manage scheduling or payments.</div>
               <div className="grid md:grid-cols-3 gap-6 mb-6">
               {contractors.map((contractor, index) => (
                 <Card key={contractor.id} className="bg-white border-zinc-200 text-mkt-ink shadow-sm p-6">
@@ -413,11 +413,6 @@ function RequestPageContent() {
                       {contractor.ironclad_certified === true && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs text-emerald-700">
                           <Shield className="h-3 w-3" /> IronClad
-                        </span>
-                      )}
-                      {(contractor.founder_status || contractor.founding_partner || contractor.founding_partner_badge) && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-1 text-xs text-amber-700">
-                          <Crown className="h-3 w-3" /> Founding Partner
                         </span>
                       )}
                     </div>
@@ -541,7 +536,7 @@ function RequestPageContent() {
           />
           <h1 className="text-3xl sm:text-5xl font-bold mb-5 break-words text-white">Request a Contractor Referral</h1>
           <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Tell us about your project and we&apos;ll match you with up to three approved network contractors — licensed and insured — usually in under 30 seconds. No bidding wars, no spam calls, no guessing who&apos;s legit. Review their profiles and reach out to the ones you like. It&apos;s free, with no obligation to hire anyone.
+            Tell us about your project and we&apos;ll match you with up to three approved network contractors, licensed and insured, usually in under 30 seconds. No bidding wars, no spam calls, no guessing who&apos;s legit. Review their profiles and reach out to the ones you like. It&apos;s free, with no obligation to hire anyone.
           </p>
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto text-left">
             <div className="flex items-start gap-3 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
@@ -562,7 +557,7 @@ function RequestPageContent() {
               <ShieldCheck className="h-5 w-5 text-lw-rust shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-semibold text-white">3. Choose With Confidence</p>
-                <p className="text-xs text-white/70">Every pro is IronClad Verified — no guesswork.</p>
+                <p className="text-xs text-white/70">Every pro is IronClad Verified, no guesswork.</p>
               </div>
             </div>
           </div>
@@ -663,7 +658,7 @@ function RequestPageContent() {
                     placeholder="Street address (optional)"
                   />
                   <p className="mt-1 text-xs text-mkt-ink/55">
-                    Optional — county and city are enough to get you matched. Add the address if
+                    Optional, county and city are enough to get you matched. Add the address if
                     you want the contractor to have it up front.
                   </p>
                 </div>
@@ -749,7 +744,7 @@ function RequestPageContent() {
                           'your county'}
                       </span>
                       . If the trade you need isn&apos;t here, we don&apos;t have a verified pro for
-                      it in your county yet — submit anyway with a description and we&apos;ll reach
+                      it in your county yet, submit anyway with a description and we&apos;ll reach
                       out if one comes into range.
                     </>
                   ) : (
@@ -759,7 +754,7 @@ function RequestPageContent() {
                         {counties.find((c) => c.id === formData.propertyCountyId)?.name ??
                           'your county'}
                       </span>
-                      . You&apos;re seeing every trade we handle — submit your request and we&apos;ll
+                      . You&apos;re seeing every trade we handle, submit your request and we&apos;ll
                       follow up as soon as there&apos;s a match in your area.
                     </>
                   )}

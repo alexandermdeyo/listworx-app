@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     // Honeypot: a real user never fills the hidden "company website" field.
     // Pretend it worked so the bot moves on, but create nothing.
     if (typeof honeypot === 'string' && honeypot.trim() !== '') {
-      console.warn('[job-request] honeypot tripped — dropping submission');
+      console.warn('[job-request] honeypot tripped, dropping submission');
       return NextResponse.json({ id: null, dropped: true }, { status: 200 });
     }
 
@@ -307,7 +307,7 @@ export async function POST(request: NextRequest) {
             body: `<p>We received your request for <strong>${esc(categoryNames.join(', ') || 'home services')}</strong> in ${esc(locationText)}.</p>
               <p>We’re hand-matching you with IronClad-verified pros for this one. You’ll hear from us within <strong>one business day</strong> with your options. You choose who to talk to. No spam and no bidding wars.</p>
               <p>Need it sooner? Just reply to this email or call <a href="tel:6153624996" style="color:#E85000;">615-362-4996</a>.</p>
-              <p>— Alex Deyo, Founder, ListWorx</p>`,
+              <p>Alex Deyo, Founder, ListWorx</p>`,
           }),
         }).catch((err) => console.error('[job-request] no-match confirmation email error:', err)),
       );
@@ -315,7 +315,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Always tell the admin.
     const alertTitle = flaggedSpam
-      ? '⚠️ Possible spam — held for your review (no contractors shown, emailed or counted)'
+      ? '⚠️ Possible spam, held for your review (no contractors shown, emailed or counted)'
       : referralRecordingFailed
         ? '🔴 New job request: matched pros could NOT be recorded (follow up)'
         : delivered.length === 0
