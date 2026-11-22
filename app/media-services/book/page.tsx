@@ -12,7 +12,9 @@ type Quote = { lines: Array<{ code: string; name: string; retailCents: number; d
 type DateSlots = { date: string; slots: Array<{ starts_at: string; label: string }> };
 
 const SERVICES = [...MEDIA_PACKAGES, ...MEDIA_SERVICES];
-const input = 'w-full rounded-md border border-mailer-border bg-mailer-ink px-3 py-2.5 text-white placeholder:text-white/30 focus:border-lw-rust focus:outline-none';
+// Matches the site-wide form style (white field, dark text) with light gray example text.
+const input = 'w-full rounded-md border border-zinc-300 px-3 py-2.5 text-base placeholder:text-zinc-400 focus:border-lw-rust focus:outline-none focus:ring-2 focus:ring-lw-rust/30';
+const label = 'mb-1.5 block text-sm font-semibold text-white';
 const fmtDate = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
 
 function VisitPicker({ service, addons, visit, value, onChange, after }: { service: string; addons: string[]; visit: number; value: string; onChange: (v: string) => void; after?: string }) {
@@ -94,11 +96,12 @@ function BookingForm() {
   }
 
   return (
-    <div className="container mx-auto grid max-w-6xl gap-8 px-4 lg:grid-cols-[1fr_360px]">
-      <div className="space-y-8">
-        <section className="rounded-2xl border border-mailer-border bg-mailer-card p-6">
+    <div className="container mx-auto grid max-w-6xl gap-8 px-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="min-w-0 space-y-8">
+        <section className="min-w-0 rounded-2xl border border-mailer-border bg-mailer-card p-6">
           <h2 className="text-lg font-bold">1. Service</h2>
-          <select className={`${input} mt-3`} value={service} onChange={(e) => { setService(e.target.value); setAppts(['', '']); }}>
+          <label htmlFor="service" className={`${label} mt-3`}>What would you like to book?</label>
+          <select id="service" className={input} value={service} onChange={(e) => { setService(e.target.value); setAppts(['', '']); }}>
             {SERVICES.map((s) => (
               <option key={s.code} value={s.code}>{s.name} · {formatUsd(s.priceCents)}</option>
             ))}
@@ -115,7 +118,7 @@ function BookingForm() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-mailer-border bg-mailer-card p-6">
+        <section className="min-w-0 rounded-2xl border border-mailer-border bg-mailer-card p-6">
           <h2 className="text-lg font-bold">2. Requested appointment</h2>
           <p className="mt-1 text-sm text-white/60">Times are Central. Your request is held while you check out and confirmed by us afterward.</p>
           <div className="mt-4 space-y-6">
@@ -136,20 +139,39 @@ function BookingForm() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-mailer-border bg-mailer-card p-6">
+        <section className="min-w-0 rounded-2xl border border-mailer-border bg-mailer-card p-6">
           <h2 className="text-lg font-bold">3. Your details</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <input className={input} placeholder="Your name *" value={form.name} onChange={set('name')} autoComplete="name" />
-            <input className={input} placeholder="Business name" value={form.business} onChange={set('business')} autoComplete="organization" />
-            <input className={input} placeholder="Email *" type="email" value={form.email} onChange={set('email')} autoComplete="email" />
-            <input className={input} placeholder="Phone *" type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel" />
-            <input className={`${input} sm:col-span-2`} placeholder="Project address *" value={form.address} onChange={set('address')} autoComplete="street-address" />
-            <textarea className={`${input} sm:col-span-2`} rows={4} placeholder="What should we capture? Access notes, people involved, anything we should know." value={form.notes} onChange={set('notes')} />
+          <p className="mt-1 text-sm text-white/55">Fields marked * are required.</p>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="bk-name" className={label}>Your name *</label>
+              <input id="bk-name" className={input} placeholder="e.g. Jane Smith" value={form.name} onChange={set('name')} autoComplete="name" />
+            </div>
+            <div>
+              <label htmlFor="bk-business" className={label}>Business name</label>
+              <input id="bk-business" className={input} placeholder="e.g. Smith Roofing" value={form.business} onChange={set('business')} autoComplete="organization" />
+            </div>
+            <div>
+              <label htmlFor="bk-email" className={label}>Email *</label>
+              <input id="bk-email" className={input} placeholder="you@example.com" type="email" value={form.email} onChange={set('email')} autoComplete="email" />
+            </div>
+            <div>
+              <label htmlFor="bk-phone" className={label}>Phone *</label>
+              <input id="bk-phone" className={input} placeholder="e.g. 615-555-0123" type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel" />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="bk-address" className={label}>Project address *</label>
+              <input id="bk-address" className={input} placeholder="Street, city, state" value={form.address} onChange={set('address')} autoComplete="street-address" />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="bk-notes" className={label}>Notes for the shoot</label>
+              <textarea id="bk-notes" className={input} rows={4} placeholder="What should we capture? Gate codes, who will be there, anything we should know." value={form.notes} onChange={set('notes')} />
+            </div>
           </div>
         </section>
       </div>
 
-      <aside className="h-fit rounded-2xl border border-lw-rust/60 bg-mailer-card p-6 lg:sticky lg:top-24">
+      <aside className="min-w-0 h-fit rounded-2xl border border-lw-rust/60 bg-mailer-card p-6 lg:sticky lg:top-24">
         <h2 className="text-lg font-bold">Order summary</h2>
         {quote ? (
           <>
@@ -184,7 +206,7 @@ function BookingForm() {
 
 export default function BookMediaPage() {
   return (
-    <div className="min-h-screen bg-mailer-black pb-20 text-white">
+    <div className="min-h-screen overflow-x-hidden bg-mailer-black pb-20 text-white">
       <Navigation />
       <div className="container mx-auto max-w-6xl px-4 pb-8 pt-28">
         <p className="lw-label mb-2">ListWorx Media Services</p>
