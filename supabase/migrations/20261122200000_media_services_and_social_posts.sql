@@ -224,6 +224,16 @@ alter table public.media_orders enable row level security;
 alter table public.media_appointments enable row level security;
 alter table public.social_post_requests enable row level security;
 
+-- Explicit table access: only the server (service_role) reads and writes these
+-- tables. Don't rely on project default privileges, which differ between the
+-- production project and preview branches.
+revoke all on public.media_schedule_settings, public.media_availability_rules, public.media_availability_exceptions,
+  public.media_orders, public.media_appointments, public.social_post_requests from anon, authenticated;
+grant select, insert, update, delete on public.media_schedule_settings, public.media_availability_rules, public.media_availability_exceptions,
+  public.media_orders, public.media_appointments, public.social_post_requests to service_role;
+revoke all on sequence public.media_order_number_seq from anon, authenticated;
+grant usage, select on sequence public.media_order_number_seq to service_role;
+
 revoke all on function public.reserve_media_appointments(uuid, jsonb, timestamptz) from public, anon, authenticated;
 revoke all on function public.mark_media_order_paid(text, text, text) from public, anon, authenticated;
 grant execute on function public.reserve_media_appointments(uuid, jsonb, timestamptz) to service_role;
