@@ -17,8 +17,14 @@ export const BRAND_PHOTOS = {
     alt: 'A homeowner couple reviewing contractor options with their realtor',
   },
   pathContractors: { src: '/images/brand/contractor-van.webp', alt: 'A ListWorx network contractor standing beside his work van' },
-  pathManualLibrary: null as PhotoSlot,
-  featuredManualCover: null as PhotoSlot,
+  pathManualLibrary: {
+    src: '/images/brand/playbook-cover-scene.webp',
+    alt: 'The ListWorx Contractor Business Playbook (coming soon)',
+  } as PhotoSlot,
+  featuredManualCover: {
+    src: '/images/brand/playbook-cover-book.webp',
+    alt: 'Cover of the ListWorx Contractor Business Playbook (coming soon)',
+  } as PhotoSlot,
   featuredManualScene: { src: '/images/brand/crew-painters-1.webp', alt: '' },
   contractorBridge: { src: '/images/brand/crew-painters-2.webp', alt: 'A smiling painting crew outside a finished home' },
   dashboardHero: { src: '/images/brand/contractor-van.webp', alt: '' },

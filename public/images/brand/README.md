@@ -8,8 +8,8 @@ Put the approved ChatGPT photo files here, then point the matching slot in
 | homeHero | home-hero.webp | 2400 x 1100 | Homepage hero, right side, fades into navy on the left |
 | pathHomeowners | path-homeowners.webp | 800 x 900 | Homepage card: Homeowners, Realtors & Property Managers |
 | pathContractors | path-contractors.webp | 800 x 900 | Homepage card: Contractors |
-| pathManualLibrary | path-manual-library.webp | 800 x 900 | Homepage card: Manual Library (Coming Soon) |
-| featuredManualCover | playbook-cover.webp | 900 x 1200 | Featured manual banner (only once the cover is final) |
+| pathManualLibrary | playbook-cover-scene.webp (in use) | 800 x 900 | Homepage card: Manual Library (Coming Soon) |
+| featuredManualCover | playbook-cover-book.webp (in use) | 900 x 1200 | Featured manual banner (only once the cover is final) |
 | dashboardHero | dashboard-hero.webp | 2000 x 700 | Contractor dashboard hero, right side |
 | quickReferrals | quick-referrals.webp | 900 x 500 | Dashboard shortcut: View Referrals |
 | quickFlyer | quick-flyer.webp | 900 x 500 | Dashboard shortcut: Build a Flyer |

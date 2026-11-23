@@ -133,12 +133,17 @@ export function BrandPathways() {
           href="/apply"
         />
         <div className="br-card group flex min-h-[210px] flex-col overflow-hidden sm:flex-row">
-          <div className="relative h-36 w-full shrink-0 overflow-hidden bg-brand-navy sm:h-auto sm:w-[48%]">
-            <Brushstroke variant="corner" className="absolute left-0 top-0 w-[110px]" />
-            <div className="absolute inset-x-4 bottom-4">
-              <img src="/brand/listworx-wordmark-dark.png" alt="" className="mb-2 h-3.5 w-auto" />
-              <p className="br-display text-xl leading-tight text-white">The Contractor Business Playbook</p>
-            </div>
+          <div className="relative h-44 w-full shrink-0 overflow-hidden bg-brand-navy sm:h-auto sm:w-[48%]">
+            {BRAND_PHOTOS.pathManualLibrary ? (
+              <img
+                src={BRAND_PHOTOS.pathManualLibrary.src}
+                alt={BRAND_PHOTOS.pathManualLibrary.alt}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover object-[48%_center] transition-transform duration-500 group-hover:scale-[1.03]"
+              />
+            ) : (
+              <Brushstroke variant="corner" className="absolute left-0 top-0 w-[110px]" />
+            )}
           </div>
           <div className="flex flex-1 flex-col px-4 py-4 md:px-5">
             <h3 className="br-display text-[25px] leading-[1.0] text-brand-ink xl:text-[28px]">Manual Library &amp; Business Tools</h3>
@@ -211,24 +216,29 @@ export function BrandFeaturedManual() {
   return (
     <section className="br-body relative isolate overflow-hidden border-b border-brand-line bg-gradient-to-r from-[#EEF1F5] via-white to-white">
       {scene && (
-        <div aria-hidden="true" className="absolute inset-y-0 right-0 -z-10 hidden w-[34%] xl:block">
+        <div aria-hidden="true" className="absolute inset-y-0 right-0 -z-10 hidden w-[30%] xl:block">
           <img src={scene.src} alt="" loading="lazy" className="h-full w-full object-cover object-[40%_30%]" />
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent" />
         </div>
       )}
-      <div className={`grid items-center gap-6 py-6 md:py-7 lg:grid-cols-[auto_1fr_auto] lg:gap-10 xl:pr-[30%] ${WIDE}`}>
-        <div className="relative mx-auto aspect-[3/4] w-36 overflow-hidden rounded-r-lg rounded-l-sm bg-brand-navy shadow-[16px_20px_34px_-18px_rgba(15,35,66,0.7)] md:w-44 lg:ml-[10%]">
-          <Brushstroke variant="corner" className="absolute left-0 top-0 w-[110px]" />
-          <div className="absolute inset-x-4 bottom-5">
-            <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="mb-2 h-4 w-auto" />
-            <p className="br-display text-xl leading-tight text-white">The Contractor Business Playbook</p>
+      <div className={`grid items-center gap-6 py-6 md:py-7 lg:grid-cols-[auto_minmax(440px,1fr)_auto] lg:gap-8 xl:pr-[24%] ${WIDE}`}>
+        {BRAND_PHOTOS.featuredManualCover ? (
+          <img
+            src={BRAND_PHOTOS.featuredManualCover.src}
+            alt={BRAND_PHOTOS.featuredManualCover.alt}
+            loading="lazy"
+            className="mx-auto w-48 rounded-xl object-cover shadow-[16px_20px_34px_-18px_rgba(15,35,66,0.6)] md:w-52 lg:ml-[4%]"
+          />
+        ) : (
+          <div className="relative mx-auto aspect-[3/4] w-36 overflow-hidden rounded-r-lg rounded-l-sm bg-brand-navy md:w-44 lg:ml-[10%]">
+            <Brushstroke variant="corner" className="absolute left-0 top-0 w-[110px]" />
           </div>
-        </div>
+        )}
         <div className="lg:border-r lg:border-brand-line lg:pr-10">
           <span className="br-eyebrow">Featured Manual · Coming Soon</span>
           <h2 className="br-display mt-2 text-4xl leading-[0.98] text-brand-ink md:text-[50px]">
             The Contractor
-            <span className="block">Business Playbook</span>
+            <span className="block whitespace-nowrap">Business Playbook</span>
           </h2>
           <p className="mt-2 max-w-md text-[18px] leading-snug text-brand-ink/85">
             A complete guide to starting, running, and growing a profitable contracting business. Being
@@ -240,7 +250,7 @@ export function BrandFeaturedManual() {
         </div>
         <ul className="space-y-2.5">
           {planned.map((p) => (
-            <li key={p} className="flex items-center gap-3 text-[19px] text-brand-ink">
+            <li key={p} className="flex items-center gap-3 text-[18px] text-brand-ink xl:whitespace-nowrap">
               <CircleCheck className="h-6 w-6 shrink-0 text-brand-orange" strokeWidth={2.6} />
               {p}
             </li>
