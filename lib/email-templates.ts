@@ -811,17 +811,19 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
     </tr>
   </table>`;
 
-  const greeting = firstName ? `Welcome to ListWorx, ${escapeHtml(firstName)}.` : 'Welcome to ListWorx.';
+  const greeting = firstName ? `Welcome to ListWorx, ${escapeHtml(firstName)}!` : 'Welcome to ListWorx!';
 
   const body = `
-      ${p(`Thank you for joining ListWorx${company ? ` with <strong style="color:${C.white};">${escapeHtml(company)}</strong>` : ''}. You're now part of a network of contractors who were checked before they got in, and who homeowners and realtors can count on to show up, tell the truth, and stand behind their work.`)}
-      ${p('That is what this network is built on: trust and integrity. Every contractor here was vetted, and we hold each other to it. I started ListWorx so the people who do things the right way get the work, and I am glad to have you with us.')}
-      ${p(`A couple of things to know. Joining is free, and there are never any per-lead fees. When a homeowner or realtor sends a request, it goes to no more than 3 vetted contractors, so you are never one name in a crowd.`)}
+      ${p(`I'm really glad you're here. Thank you for bringing ${company ? `<strong style="color:${C.white};">${escapeHtml(company)}</strong>` : 'your business'} into ListWorx.`)}
+      ${p("This network is built on trust and integrity: contractors who show up, do honest work, and treat people right. Every member was vetted before joining, so you're in good company, and homeowners and realtors know they can count on you.")}
+      ${p("And just so it's clear: joining is free, and there are never any per-lead fees. Each homeowner or realtor request goes to no more than 3 vetted contractors, so you get a real shot at the work instead of being one name on a long list.")}
+      ${p("If you ever have a question or an idea, just hit reply. It comes straight to me.")}
+      ${p('Glad to have you with us,', C.gray200)}
       <p style="font-family:${C.font};font-size:15px;color:${C.white};line-height:1.6;margin:0 0 4px;padding:0;font-weight:700;">Alex Deyo</p>
       ${small('Founder, ListWorx')}
 
       ${sectionLabel('Your Member Badge Kit')}
-      ${p('These are the official ListWorx files. Please use them as they are, without changing the colors or shape.')}
+      ${p("Here are your official ListWorx files, ready to use. Just keep them as they are (no recoloring or stretching) so they always look sharp.")}
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           ${imgTile('#FFFFFF', F.standards.path, F.standards.width, F.standards.height, 'IronClad Standards', 'IronClad Standards shield', F.standards.fullSize)}
@@ -852,13 +854,12 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
       ${cta('Open Your Dashboard &rarr;', dashboardUrl)}
       ${linkFallback(dashboardUrl)}
       ${divider('28px 0 20px')}
-      ${p(`Know another contractor who does honest work? Send them to <a href="${applyUrl}" style="color:${C.rust};text-decoration:none;font-weight:600;">listworx.co/apply</a>.`)}
-      ${small(`Questions? Just reply to this email or write to <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>.`)}
+      ${p(`Know another contractor who does great, honest work? We'd love to meet them. Send them to <a href="${applyUrl}" style="color:${C.rust};text-decoration:none;font-weight:600;">listworx.co/apply</a>.`)}
   `;
 
   const html = layout(
     greeting,
-    'Your member badge kit and a link for your website are below.',
+    "We're glad you're here. Your member badge kit is below.",
     body,
     'Your ListWorx badge kit and a link for your website are inside.',
     'contractor',
@@ -869,14 +870,17 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
   );
 
   const text = [
-    firstName ? `Welcome to ListWorx, ${firstName}.` : 'Welcome to ListWorx.',
+    firstName ? `Welcome to ListWorx, ${firstName}!` : 'Welcome to ListWorx!',
     '',
-    `Thank you for joining ListWorx${company ? ` with ${company}` : ''}. You're now part of a network of contractors who were checked before they got in, and who homeowners and realtors can count on to show up, tell the truth, and stand behind their work.`,
+    `I'm really glad you're here. Thank you for bringing ${company || 'your business'} into ListWorx.`,
     '',
-    'That is what this network is built on: trust and integrity. Every contractor here was vetted, and we hold each other to it. I started ListWorx so the people who do things the right way get the work, and I am glad to have you with us.',
+    "This network is built on trust and integrity: contractors who show up, do honest work, and treat people right. Every member was vetted before joining, so you're in good company, and homeowners and realtors know they can count on you.",
     '',
-    'Joining is free, and there are never any per-lead fees. Each homeowner or realtor request goes to no more than 3 vetted contractors.',
+    "And just so it's clear: joining is free, and there are never any per-lead fees. Each homeowner or realtor request goes to no more than 3 vetted contractors, so you get a real shot at the work instead of being one name on a long list.",
     '',
+    'If you ever have a question or an idea, just hit reply. It comes straight to me.',
+    '',
+    'Glad to have you with us,',
     'Alex Deyo',
     'Founder, ListWorx',
     '',
@@ -894,9 +898,7 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
     snippet.text,
     '',
     `Your dashboard: ${dashboardUrl}`,
-    `Know another contractor who does honest work? ${applyUrl}`,
-    '',
-    'Questions? Reply to this email or write to adeyo@listworx.co.',
+    `Know another contractor who does great, honest work? We'd love to meet them: ${applyUrl}`,
   ].join('\n');
 
   return { subject: BADGE_KIT_SUBJECT, html, text };

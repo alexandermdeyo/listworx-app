@@ -46,7 +46,7 @@ test('snippet links to the profile page, falling back to listworx.co, with a pla
 test('welcome copy: free, no per-lead fees, max 3 contractors, trust and integrity, dashboard and apply links', () => {
   const { subject, html, text } = contractorBadgeKitEmail({ ownerName: 'Pat Doe', companyName: 'Doe <Roofing>' });
   assert.equal(subject, BADGE_KIT_SUBJECT);
-  for (const s of ['free', 'per-lead fees', 'no more than 3', 'trust and integrity', 'Alex Deyo']) {
+  for (const s of ['free', 'per-lead fees', 'no more than 3', 'trust and integrity', 'Alex Deyo', 'hit reply']) {
     assert.ok(text.includes(s), s);
   }
   assert.ok(html.includes('https://listworx.co/contractor-dashboard') && html.includes('https://listworx.co/apply'));
