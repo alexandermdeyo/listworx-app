@@ -858,7 +858,7 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
 
   const html = layout(
     greeting,
-    'Thank you for joining a network built on trust and integrity. Your member badge kit is below.',
+    'Your member badge kit and a link for your website are below.',
     body,
     'Your ListWorx badge kit and a link for your website are inside.',
     'contractor',
