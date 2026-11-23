@@ -16,7 +16,7 @@ export const metadata = pageMetadata({
 
 const CATEGORY_PHOTO: Record<string, { src: string; alt: string; pos: string }> = {
   'Hiring guide': { src: '/images/library/handyman-tablet-consultation.webp', alt: 'A contractor walking a homeowner through an estimate on a tablet', pos: '50% 18%' },
-  'IronClad Standards': { src: '/images/library/inspector-explains-findings.webp', alt: 'A contractor reviewing findings with a homeowner', pos: '50% 20%' },
+  'IronClad Standards': { src: '/images/library/home-exterior-curb-appeal.webp', alt: 'A well-kept home with fresh landscaping', pos: '50% 45%' },
   'Realtor resource': { src: '/images/library/realtor-contractor-water-heater.webp', alt: 'A realtor and a contractor checking a water heater before listing', pos: '50% 15%' },
   'Business manual': { src: '/images/brand/playbook-cover-scene.webp', alt: 'The ListWorx Contractor Business Playbook', pos: '45% 35%' },
   'Marketing and photography': { src: '/images/library/media-camera-jobsite.webp', alt: 'A contractor photographing finished work on the jobsite', pos: '50% 40%' },
