@@ -158,7 +158,7 @@ export default function ContractorsPage() {
       <Navigation variant="light" />
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden bg-mailer-black py-16 md:py-28">
+      <section className="relative overflow-hidden bg-mailer-black py-12 md:py-20">
         <PhotoDark
           src="/images/redesign/contractor_roofers-team-hero.webp"
           srcMobile="/images/redesign/contractor_roofers-hero-mobile.webp"
@@ -237,7 +237,7 @@ export default function ContractorsPage() {
       </section>
 
       {/* ================= MEMBERSHIP TIERS (full breakdown up top) ================= */}
-      <section className="relative bg-mailer-black py-16 md:py-24">
+      <section className="relative bg-mailer-black py-12 md:py-16">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
         <div className="container mx-auto px-4">
           <Reveal className="mb-12 max-w-3xl">
@@ -265,7 +265,7 @@ export default function ContractorsPage() {
       </section>
 
       {/* ================= WHY LISTWORX (photo left · points right) ================= */}
-      <section className="overflow-hidden bg-mailer-ink py-16 md:py-24">
+      <section className="overflow-hidden bg-mailer-ink py-12 md:py-16">
         <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <Reveal className="min-w-0">
             <PhotoDark
@@ -349,7 +349,7 @@ export default function ContractorsPage() {
       </section>
 
       {/* ================= HOW IT WORKS (timeline left · photo right) ================= */}
-      <section id="how-it-works" className="overflow-hidden bg-mailer-black py-16 md:py-24">
+      <section id="how-it-works" className="overflow-hidden bg-mailer-black py-12 md:py-16">
         <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
           <div className="min-w-0">
             <Reveal className="mb-12">
@@ -387,8 +387,8 @@ export default function ContractorsPage() {
 
           <Reveal className="hidden min-w-0 lg:block lg:sticky lg:top-24">
             <PhotoDark
-              src="/images/redesign/contractor_home-inspector-FLAGGED-logo.webp"
-              alt="A verified contractor walking a client through a home system check"
+              src="/images/brand/home-hero-blueprints.webp"
+              alt="A contractor and crew lead reviewing blueprints on a jobsite"
               className="lw-photo-dark--contractor rounded-2xl lg:min-h-[620px]"
               bri={0.8}
               sat={0.58}
@@ -444,7 +444,7 @@ export default function ContractorsPage() {
       </section>
 
       {/* ================= WHY THE NETWORK MODEL WINS (photo band · cards) ================= */}
-      <section className="overflow-hidden bg-mailer-ink py-16 md:py-24">
+      <section className="overflow-hidden bg-mailer-ink py-12 md:py-16">
         <div className="container mx-auto px-4">
           <Reveal className="mb-10 max-w-3xl">
             <p className="lw-label mb-3">Why the network model wins</p>
@@ -506,7 +506,7 @@ export default function ContractorsPage() {
       </section>
 
       {/* ================= COMPARISON ================= */}
-      <section className="bg-mailer-black py-16 md:py-24">
+      <section className="bg-mailer-black py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-5xl">
             <Reveal className="mb-12 max-w-3xl">
@@ -579,7 +579,7 @@ export default function ContractorsPage() {
       />
 
       {/* ================= REQUIREMENTS (badge highlight · concept) ================= */}
-      <section className="bg-mailer-ink py-16 md:py-24">
+      <section className="bg-mailer-ink py-12 md:py-16">
         <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
           <Reveal className="flex min-w-0 flex-col items-start">
             <IroncladBadge variant="standards" reveal className="h-44 md:h-56" href="/ironclad" />
@@ -653,7 +653,7 @@ export default function ContractorsPage() {
       </section>
 
       {/* ================= GROW YOUR BRAND (media / content help) ================= */}
-      <section className="overflow-hidden bg-mailer-black py-16 md:py-24">
+      <section className="overflow-hidden bg-mailer-black py-12 md:py-16">
         <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-2 lg:items-center">
           <Reveal className="min-w-0">
             <p className="lw-label mb-3">More than referrals</p>
@@ -693,7 +693,7 @@ export default function ContractorsPage() {
       </section>
 
       {/* ================= WHO THIS IS FOR ================= */}
-      <section className="bg-mailer-ink py-16 md:py-24">
+      <section className="bg-mailer-ink py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-5xl">
             <Reveal className="mb-12 max-w-3xl">

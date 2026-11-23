@@ -9,6 +9,10 @@ import { Button } from '@/components/ui/button';
 import Navigation from '@/components/Navigation';
 import Link from 'next/link';
 import { Reveal } from '@/components/motion';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import Brushstroke from '@/components/brand/Brushstroke';
+import { LIB } from '@/lib/brand/photos';
+import IroncladBadge from '@/components/site/IroncladBadge';
 
 interface MediaItem {
   id: string;
@@ -143,14 +147,17 @@ export default function MediaPage() {
       <Navigation variant="light" />
 
       {/* Hero */}
-      <section className="py-20 md:py-28 border-b border-zinc-200">
-        <div className="container mx-auto px-4">
+      <section className="relative isolate overflow-hidden bg-brand-navy py-12 text-white md:py-16">
+        <HeroPhoto src={LIB.videoCrew.src} position="60% 40%" />
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
+        <div className="container relative mx-auto px-4">
           <Reveal immediate delay={0} as="div" className="max-w-2xl">
+            <IroncladBadge variant="standards" href="/ironclad" className="mb-4 h-20" />
             <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-4">ListWorx Media</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-mkt-ink mb-5 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-5 leading-tight">
               Videos & Content
             </h1>
-            <p className="text-mkt-ink/70 text-lg leading-relaxed max-w-xl">
+            <p className="text-white/85 text-lg leading-relaxed max-w-xl">
               Watch how ListWorx works, see what our partners are up to, and get insights into the IronClad Standards network.
             </p>
           </Reveal>

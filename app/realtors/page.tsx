@@ -125,7 +125,7 @@ export default function RealtorsPage() {
           aria-hidden="true"
           className="pointer-events-none absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-lw-rust/[0.07] blur-3xl"
         />
-        <div className="container relative mx-auto grid items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="container relative mx-auto grid items-center gap-12 px-4 py-12 md:py-16 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="max-w-2xl">
             <Reveal immediate delay={0}>
               <p className="lw-label-lg mb-3 !text-lw-rust">For real estate pros</p>
@@ -198,7 +198,7 @@ export default function RealtorsPage() {
       </section>
 
       {/* ================= NOT A DIRECTORY — copy left, points right ================= */}
-      <section className="container mx-auto px-4 py-20 md:py-28">
+      <section className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <Reveal>
             <p className="lw-label-lg mb-3 !text-lw-rust">The difference</p>
@@ -240,7 +240,7 @@ export default function RealtorsPage() {
       </section>
 
       {/* ================= HOW IT WORKS — numbered rows ================= */}
-      <section className="border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
+      <section className="border-y border-zinc-200 bg-lw-light-bg py-12 md:py-16">
         <div className="container mx-auto px-4">
           <Reveal className="mb-12 max-w-2xl">
             <p className="lw-label-lg mb-3 !text-lw-rust">How it works</p>
@@ -319,7 +319,7 @@ export default function RealtorsPage() {
       </section>
 
       {/* ================= LISTING MEDIA — magazine spread, two photos ================= */}
-      <section className="container mx-auto px-4 py-20 md:py-28">
+      <section className="container mx-auto px-4 py-12 md:py-16">
         <Reveal className="mb-12 max-w-2xl">
           <p className="lw-label-lg mb-3 !text-lw-rust">Listing media</p>
           <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">
@@ -382,7 +382,7 @@ export default function RealtorsPage() {
       </section>
 
       {/* ================= LISTING STUDIO — copy left, art right ================= */}
-      <section className="border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
+      <section className="border-y border-zinc-200 bg-lw-light-bg py-12 md:py-16">
         <div className="container mx-auto grid items-center gap-12 px-4 lg:grid-cols-2 lg:gap-16">
           <Reveal>
             <p className="lw-label-lg mb-3 !text-lw-rust">
@@ -441,7 +441,7 @@ export default function RealtorsPage() {
       </section>
 
       {/* ================= USE CASES ================= */}
-      <section className="container mx-auto px-4 py-20 md:py-28">
+      <section className="container mx-auto px-4 py-12 md:py-16">
         <Reveal className="mb-12 max-w-2xl">
           <p className="lw-label-lg mb-3 !text-lw-rust">Every stage of the deal</p>
           <h2 className="text-3xl font-bold tracking-tight text-mkt-ink md:text-5xl">

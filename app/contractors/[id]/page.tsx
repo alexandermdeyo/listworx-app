@@ -28,6 +28,7 @@ import {
   Video,
   Youtube,
 } from 'lucide-react';
+import IroncladBadge from '@/components/site/IroncladBadge';
 
 export const dynamic = 'force-dynamic';
 
@@ -390,7 +391,7 @@ export default async function ContractorProfilePage({ params }: { params: { id: 
             {isActiveIronClad(profile) && (
               <Reveal delay={140}>
                 <Card className="border-emerald-300 bg-emerald-50 p-6">
-                  <Shield className="mb-3 h-8 w-8 text-emerald-600" />
+                  <IroncladBadge variant="standards" href="/ironclad" className="mb-3 h-24" />
                   <h2 className="mb-3 text-xl font-bold text-mkt-ink">IronClad Standards</h2>
                   <p className="text-sm leading-6 text-mkt-ink/70">This contractor is a member of the ListWorx network and maintains IronClad Standards, including 24-hour response time, valid insurance, and professional conduct. IronClad certification is monitored continuously.</p>
                   <Link href="/ironclad" className="mt-4 inline-flex text-sm font-semibold text-emerald-700 hover:underline">Learn more about IronClad Standards</Link>

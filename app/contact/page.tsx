@@ -9,6 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, Send } from 'lucide-react';
 import { Reveal } from '@/components/motion';
 import Brushstroke from '@/components/brand/Brushstroke';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import { LIB } from '@/lib/brand/photos';
 
 const fieldClass =
   'w-full !border-mailer-border !bg-mailer-surface !text-white placeholder:!text-white/35 focus-visible:!bg-mailer-surface focus-visible:!text-white';
@@ -53,7 +55,8 @@ export default function ContactPage() {
       <Navigation variant="light" />
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden bg-mailer-black">
+      <section className="relative isolate overflow-hidden bg-mailer-black">
+        <HeroPhoto src={LIB.handshake.src} position="50% 30%" strength="strong" className="md:left-0" />
         <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="h-1 w-full bg-lw-rust" />
         <div className="container relative mx-auto max-w-3xl px-4 py-16 text-center md:py-24">
@@ -62,7 +65,7 @@ export default function ContactPage() {
             <h1 className="text-4xl font-bold tracking-tight text-white md:text-6xl">
               Get in touch with ListWorx.
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-white/65">
+            <p className="mx-auto mt-4 max-w-xl text-lg text-white/85">
               Questions about the network, your account, or a referral? Send a note and we&apos;ll
               get back to you within one business day.
             </p>
@@ -71,7 +74,7 @@ export default function ContactPage() {
       </section>
 
       {/* ================= FORM + INFO ================= */}
-      <section className="bg-mailer-ink py-16 md:py-24">
+      <section className="bg-mailer-ink py-12 md:py-16">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="grid gap-12 md:grid-cols-2">
             <Reveal>

@@ -4,6 +4,9 @@ import Navigation from '@/components/Navigation';
 import { pageMetadata } from '@/lib/seo';
 import { MEDIA_ADDONS, MEDIA_PACKAGES, MEDIA_SERVICES, formatUsd } from '@/lib/media/catalog';
 import Brushstroke from '@/components/brand/Brushstroke';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import PhotoStrip from '@/components/brand/PhotoStrip';
+import { LIB } from '@/lib/brand/photos';
 
 export const metadata = pageMetadata({
   title: 'ListWorx Media Services: Contractor and Real Estate Photography and Video',
@@ -24,7 +27,8 @@ export default function MediaServicesPage() {
     <div className="min-h-screen bg-mailer-black text-white">
       <Navigation />
 
-      <section className="relative overflow-hidden pb-16 pt-14 md:pb-24 md:pt-16">
+      <section className="relative isolate overflow-hidden bg-mailer-black pb-14 pt-12 md:pb-16 md:pt-16">
+        <HeroPhoto src={LIB.videoCrew.src} position="60% 40%" />
         <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
         <div className="container mx-auto max-w-5xl px-4">
@@ -52,7 +56,20 @@ export default function MediaServicesPage() {
         </div>
       </section>
 
-      <section className="bg-mailer-ink py-16 md:py-20">
+      <section className="bg-mailer-black pb-12 md:pb-14">
+        <div className="container mx-auto max-w-6xl px-4">
+          <PhotoStrip
+            photos={[
+              { ...LIB.photographer, caption: 'Real estate photography' },
+              { ...LIB.drone, caption: 'Drone photography' },
+              { ...LIB.paintCrew1, caption: 'Contractor branding' },
+              { ...LIB.kitchenDark, caption: 'Finished-project photos' },
+            ]}
+          />
+        </div>
+      </section>
+
+      <section className="bg-mailer-ink py-12 md:py-14">
         <div className="container mx-auto max-w-6xl px-4">
           <h2 className="text-3xl font-bold md:text-4xl">Contractor packages</h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -78,7 +95,7 @@ export default function MediaServicesPage() {
         </div>
       </section>
 
-      <section className="bg-mailer-black py-16 md:py-20">
+      <section className="bg-mailer-black py-12 md:py-14">
         <div className="container mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-2">
           <div>
             <h2 className="text-3xl font-bold">À la carte services</h2>
@@ -129,7 +146,7 @@ export default function MediaServicesPage() {
         </div>
       </section>
 
-      <section className="bg-mailer-ink py-16 md:py-20">
+      <section className="bg-mailer-ink py-12 md:py-14">
         <div className="container mx-auto max-w-6xl px-4">
           <h2 className="text-3xl font-bold">How booking works</h2>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

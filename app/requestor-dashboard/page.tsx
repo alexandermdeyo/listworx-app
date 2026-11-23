@@ -37,6 +37,8 @@ import {
   Sparkles,
   Wand2,
 } from 'lucide-react';
+import DashboardPhotoHero from '@/components/brand/DashboardPhotoHero';
+import { LIB } from '@/lib/brand/photos';
 
 type JobRequest = {
   id: string;
@@ -269,6 +271,13 @@ export default function RequestorDashboardPage() {
       hasNotifications={false}
     >
       <div className="p-6 max-w-5xl mx-auto">
+      <DashboardPhotoHero
+        eyebrow="Homeowner & Realtor Dashboard"
+        title="Find the Right Pro, Every Time"
+        body="Your requests, matched contractors, and trusted vendors, all in one place."
+        photo={LIB.realtorCouple.src}
+        position="50% 35%"
+      />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Barlow Condensed', Arial, sans-serif" }}>
@@ -460,7 +469,7 @@ export default function RequestorDashboardPage() {
                               </div>
                               {contractor?.ironclad_certified === true && (
                                 <div className="inline-flex items-center gap-1">
-                                  <ShieldCheck className="h-4 w-4 shrink-0" />
+                                  <img src="/optimized/Ironclad_Cert_Partner_Final_Logo.webp" alt="" className="h-6 w-auto shrink-0" />
                                   <span>IronClad Certified</span>
                                 </div>
                               )}

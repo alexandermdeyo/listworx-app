@@ -17,6 +17,9 @@ import {
 } from 'lucide-react';
 import { Reveal } from '@/components/motion';
 import Brushstroke from '@/components/brand/Brushstroke';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import { LIB } from '@/lib/brand/photos';
+import IroncladBadge from '@/components/site/IroncladBadge';
 
 export type FounderSelection = {
   tierId: string;
@@ -233,10 +236,12 @@ export default function ApplyPage() {
       <Navigation variant="light" />
 
       {/* ABOVE THE FOLD */}
-      <section className="overflow-hidden relative bg-mkt-navy py-16 md:py-16 text-center">
+      <section className="overflow-hidden relative isolate bg-mkt-navy py-14 md:py-16 text-center">
+        <HeroPhoto src={LIB.paintCrew2.src} position="50% 30%" strength="strong" className="md:left-0" />
         <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="container mx-auto px-4 max-w-2xl">
           <Reveal immediate delay={0}>
+            <IroncladBadge variant="standards" href="/ironclad" className="mx-auto mb-4 h-24 md:h-28" priority />
             <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-4">Contractor Applications</p>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">
               Join the ListWorx Network: Free

@@ -1,6 +1,7 @@
 import Navigation from '@/components/Navigation';
 import { Reveal } from '@/components/motion';
 import { pageMetadata } from '@/lib/seo';
+import IroncladBadge from '@/components/site/IroncladBadge';
 
 export const metadata = pageMetadata({
   title: 'Terms of Service | ListWorx',
@@ -53,7 +54,7 @@ export default function TermsPage() {
               Matching algorithm uses submitted data; we do not guarantee referrals, volume, or conversions.
             </p>
 
-            <h3 className="text-xl font-semibold text-mkt-ink mb-3 mt-6">IronClad Standards</h3>
+            <h3 className="text-xl font-semibold text-mkt-ink mb-3 mt-6 flex items-center gap-3"><IroncladBadge variant="standards" href="/ironclad" hover={false} className="h-12" />IronClad Standards</h3>
             <p className="text-mkt-ink/70">
               Contractors agree to 24h response, written estimates &gt;$500, professional conduct. Violations may result in suspension.
             </p>

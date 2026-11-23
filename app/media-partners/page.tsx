@@ -8,6 +8,9 @@ import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
 import { Button } from '@/components/ui/button';
 import MediaPartnerRequestButton from '@/components/site/MediaPartnerRequestButton';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import Brushstroke from '@/components/brand/Brushstroke';
+import { LIB } from '@/lib/brand/photos';
 
 interface MediaPartner {
   id: string;
@@ -49,18 +52,20 @@ export default function MediaPartnersPage() {
     <PageShell surface="marketing">
       <Navigation variant="light" />
 
-      <section className="border-b border-zinc-200 bg-white">
-        <div className="container mx-auto max-w-3xl px-4 py-16 text-center md:py-20">
+      <section className="relative isolate overflow-hidden bg-brand-navy text-white">
+        <HeroPhoto src={LIB.drone.src} position="55% 40%" strength="strong" className="md:left-0" />
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
+        <div className="container relative mx-auto max-w-3xl px-4 py-14 text-center md:py-16">
           <Reveal>
             <p className="lw-label-lg mb-3 !text-lw-rust">
               <span className="inline-flex items-center gap-2">
                 <Camera className="h-4 w-4" /> Listing media
               </span>
             </p>
-            <h1 className="text-4xl font-bold tracking-tight text-mkt-ink md:text-5xl">
+            <h1 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
               Vetted photographers, videographers, and drone operators.
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-mkt-ink/70">
+            <p className="mx-auto mt-4 max-w-xl text-lg text-white/85">
               Every media partner is in the ListWorx network. Send a request in-platform, no phone
               tag, and they confirm or decline.
             </p>

@@ -3,6 +3,11 @@ import { ArrowRight, CircleCheck as CheckCircle, Home, Camera, Megaphone } from 
 import Navigation from '@/components/Navigation';
 import MembershipComparison from '@/components/membership/MembershipComparison';
 import { MEDIA_PACKAGES, MEDIA_SERVICES, formatUsd } from '@/lib/media/catalog';
+import Brushstroke from '@/components/brand/Brushstroke';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import PhotoStrip from '@/components/brand/PhotoStrip';
+import IronCladCallout from '@/components/brand/IronCladCallout';
+import { LIB } from '@/lib/brand/photos';
 
 const FAQ = [
   {
@@ -28,16 +33,20 @@ export default function PricingPage() {
     <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
       <Navigation variant="light" />
 
-      <section className="mx-auto max-w-5xl px-6 pb-14 pt-28 md:pt-36">
+      <section className="relative isolate overflow-hidden bg-brand-navy text-white">
+        <HeroPhoto src={LIB.contractorVan.src} position="25% 35%" />
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
+        <div className="relative mx-auto max-w-6xl px-6 pb-14 pt-12 md:pb-16 md:pt-16">
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-lw-rust">Pricing</p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-6xl">Straightforward pricing. No per-lead fees.</h1>
-        <p className="mt-5 max-w-2xl text-lg text-mkt-ink/70">
+        <h1 className="mt-3 max-w-2xl text-4xl font-bold tracking-tight md:text-6xl">Straightforward pricing. No per-lead fees.</h1>
+        <p className="mt-5 max-w-xl text-lg text-white/85">
           Here&apos;s everything ListWorx charges for, all on one page. If you&apos;re a homeowner or a realtor looking for a contractor, it costs you
           nothing.
         </p>
+        </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 pb-16">
+      <section className="mx-auto max-w-5xl px-6 py-10 md:py-12">
         <div className="grid gap-5 md:grid-cols-3">
           {[
             { icon: Home, title: 'Homeowners and realtors', price: 'Free', body: 'Send a request and get up to three approved local contractors to choose from.', href: '/request', cta: 'Find a contractor' },
@@ -67,14 +76,29 @@ export default function PricingPage() {
           <MembershipComparison
             ctaFor={(id) => ({ href: '/apply', label: id === 'network' ? 'Join free' : id === 'growth' ? 'Apply for Growth' : 'Apply for Business Pro' })}
           />
+          <IronCladCallout
+            tone="dark"
+            className="mt-10"
+            title="Every plan, same IronClad Standards"
+            body="Network, Growth, and Business Pro members all agree to the IronClad Standards and are reviewed before approval. Paying more never buys referral placement, approval, or IronClad Certification."
+          />
         </div>
       </section>
 
-      <section id="media" className="mx-auto max-w-5xl scroll-mt-24 px-6 py-16 md:py-20">
+      <section id="media" className="mx-auto max-w-5xl scroll-mt-24 px-6 py-12 md:py-14">
         <h2 className="text-3xl font-bold md:text-4xl">ListWorx Media Services</h2>
         <p className="mt-3 max-w-2xl text-mkt-ink/70">
           Paid up front when you book. Growth members save 5% and Business Pro members save 10%, applied automatically when you&apos;re signed in.
         </p>
+        <PhotoStrip
+          className="mt-8"
+          photos={[
+            { ...LIB.videoCrew, caption: 'Branding and short-form video' },
+            { ...LIB.photographer, caption: 'Real estate photography' },
+            { ...LIB.drone, caption: 'Drone photography' },
+            { ...LIB.kitchenWhite, caption: 'Finished-project photos' },
+          ]}
+        />
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           <div className="rounded-2xl border border-mkt-ink/10 p-6">
             <p className="font-bold">Contractor packages</p>
@@ -120,7 +144,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 py-16 md:py-20">
+      <section className="mx-auto max-w-3xl px-6 py-12 md:py-14">
         <h2 className="text-2xl font-bold">Common questions</h2>
         <div className="mt-6 divide-y divide-mkt-ink/10">
           {FAQ.map((f) => (

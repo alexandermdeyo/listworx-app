@@ -8,6 +8,9 @@ import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { Reveal, RevealBadge } from '@/components/motion';
 import Brushstroke from '@/components/brand/Brushstroke';
+import PhotoStrip from '@/components/brand/PhotoStrip';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import { LIB } from '@/lib/brand/photos';
 
 const APPLY_HREF = '/contractor-portal?intent=apply';
 
@@ -74,10 +77,11 @@ export default function IronCladStandardsPage() {
       <Navigation variant="light" />
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden bg-mailer-black">
+      <section className="relative isolate overflow-hidden bg-mailer-black">
+        <HeroPhoto src={LIB.blueprints.src} position="60% 30%" strength="strong" className="md:left-0" />
         <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
-        <div className="relative container mx-auto px-4 py-20 md:py-28">
+        <div className="relative container mx-auto px-4 py-14 md:py-20">
           <div className="mx-auto max-w-3xl text-center">
             <RevealBadge className="mb-8 flex justify-center">
               <Image
@@ -160,7 +164,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= WHAT IRONCLAD VERIFIED MEANS ================= */}
-      <section className="bg-mailer-ink py-16 md:py-24">
+      <section className="bg-mailer-ink py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <div className="mb-12 text-center">
@@ -228,7 +232,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= VETTING PROCESS ================= */}
-      <section className="bg-mailer-black py-16 md:py-24">
+      <section className="bg-mailer-black py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <div className="mb-12">
@@ -239,6 +243,16 @@ export default function IronCladStandardsPage() {
                 each stage in sequence.
               </p>
             </div>
+
+            <PhotoStrip
+              className="mb-8"
+              photos={[
+                { ...LIB.roofers, caption: 'Roofing' },
+                { ...LIB.hvac, caption: 'HVAC' },
+                { ...LIB.painterWall, caption: 'Painting' },
+                { ...LIB.cleaningCrew, caption: 'Home cleaning' },
+              ]}
+            />
 
             <div className="overflow-hidden rounded-xl border border-mailer-border">
               {[
@@ -288,7 +302,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= PARTNER AGREEMENT ================= */}
-      <section className="bg-mailer-black py-16 md:py-24">
+      <section className="bg-mailer-black py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <div className="mb-10 text-center">
@@ -338,7 +352,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= ONGOING PERFORMANCE ================= */}
-      <section className="bg-mailer-ink py-16 md:py-24">
+      <section className="bg-mailer-ink py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <div className="mb-12">
@@ -384,7 +398,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= ACCOUNTABILITY ================= */}
-      <section className="bg-mailer-black py-16 md:py-24">
+      <section className="bg-mailer-black py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <div className="mb-12">
@@ -432,7 +446,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= ENFORCEMENT ================= */}
-      <section className="bg-mailer-ink py-16 md:py-24">
+      <section className="bg-mailer-ink py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <div className="mb-12">
@@ -499,7 +513,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= WHY IT MATTERS ================= */}
-      <section className="bg-mailer-black py-16 md:py-20">
+      <section className="bg-mailer-black py-12 md:py-14">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <div className="mb-10">
@@ -530,7 +544,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= APPROVAL IS EARNED ================= */}
-      <section className="border-t border-mailer-border bg-mailer-ink py-16 md:py-20">
+      <section className="border-t border-mailer-border bg-mailer-ink py-12 md:py-14">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="mb-3 text-2xl font-bold text-white md:text-3xl">Approval is earned, never bought.</h2>
@@ -547,7 +561,7 @@ export default function IronCladStandardsPage() {
       </section>
 
       {/* ================= BOTTOM CTA ================= */}
-      <section className="relative overflow-hidden bg-mailer-black py-20 md:py-28">
+      <section className="relative overflow-hidden bg-mailer-black py-12 md:py-16">
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
         <div className="relative container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">

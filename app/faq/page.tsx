@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/design-system';
 import { Reveal } from '@/components/motion';
 import { pageMetadata } from '@/lib/seo';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import IronCladCallout from '@/components/brand/IronCladCallout';
+import { LIB } from '@/lib/brand/photos';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 export const metadata = pageMetadata({
   title: 'FAQ: How ListWorx Referrals Work | ListWorx',
@@ -65,12 +69,19 @@ export default function FaqPage() {
   return (
     <PageShell surface="marketing">
       <Navigation variant="light" />
-      <section className="container mx-auto px-4 py-16 md:py-24">
+      <section className="relative isolate overflow-hidden bg-brand-navy text-white">
+        <HeroPhoto src={LIB.paintCrew2.src} position="50% 30%" />
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
+        <div className="container relative mx-auto px-4 py-12 md:py-16">
+          <p className="lw-label-lg mb-3">FAQ</p>
+          <h1 className="max-w-2xl text-4xl font-bold md:text-6xl">Frequently Asked Questions</h1>
+          <p className="mt-4 max-w-xl text-lg text-white/85">Everything you need to know about ListWorx, IronClad certification, memberships, and how referrals work.</p>
+        </div>
+      </section>
+
+      <section className="container mx-auto px-4 py-10 md:py-14">
         <div className="mx-auto max-w-4xl">
-          <Reveal as="div" className="mb-12 text-center">
-            <h1 className="mb-4 text-4xl md:text-6xl font-bold text-mkt-ink">Frequently Asked Questions</h1>
-            <p className="text-lg text-mkt-ink/70">Everything you need to know about ListWorx, IronClad certification, memberships, and how referrals work.</p>
-          </Reveal>
+          <IronCladCallout className="mb-10" />
           <Reveal as="div">
             <FaqGroup title="About ListWorx" faqs={generalFaqs} />
           </Reveal>

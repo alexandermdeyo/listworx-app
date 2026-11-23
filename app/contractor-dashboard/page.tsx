@@ -42,6 +42,7 @@ import {
   Zap,
   GraduationCap,
 } from 'lucide-react';
+import IroncladBadge from '@/components/site/IroncladBadge';
 
 type DashboardTab = 'overview' | 'profile' | 'documents' | 'academy' | 'settings';
 type Role =
@@ -468,7 +469,7 @@ export default function ContractorDashboard() {
           </div>
 
           <div className="mb-6 flex items-start gap-3 rounded-lg border border-lw-rust/30 bg-lw-rust/5 p-4">
-            <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-lw-rust" />
+            <IroncladBadge variant="standards" href="/ironclad" hover={false} className="h-14 flex-shrink-0" />
             <div>
               <p className="text-sm font-semibold text-gray-900">Complete Your Application</p>
               <p className="mt-0.5 text-sm text-gray-600">

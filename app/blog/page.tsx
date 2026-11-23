@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { getPublishedPosts, type BlogPostSummary as BlogPost } from '@/lib/blog';
 import { objectPosition } from '@/lib/content/hero-image';
 import Brushstroke from '@/components/brand/Brushstroke';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import { LIB } from '@/lib/brand/photos';
+import IronCladCallout from '@/components/brand/IronCladCallout';
 
 // Rendered on the server for every request so post titles and links are in the
 // HTML crawlers receive, with the same freshness as the previous browser fetch.
@@ -91,7 +94,8 @@ export default async function BlogPage() {
       <Navigation variant="light" />
 
       {/* Hero */}
-      <section className="overflow-hidden relative bg-mkt-ink py-14 md:py-16">
+      <section className="overflow-hidden relative isolate bg-mkt-ink py-14 md:py-16">
+        <HeroPhoto src={LIB.blueprints.src} position="65% 30%" />
         <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="container mx-auto px-4">
           <div className="max-w-2xl">
@@ -99,7 +103,7 @@ export default async function BlogPage() {
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-5 leading-tight">
               Insights & Updates
             </h1>
-            <p className="text-white/70 text-lg leading-relaxed max-w-xl">
+            <p className="text-white/85 text-lg leading-relaxed max-w-xl">
               Guides, contractor tips, market updates, and everything you need to know about the ListWorx IronClad network.
             </p>
           </div>
@@ -152,6 +156,7 @@ export default async function BlogPage() {
           <p className="text-mkt-ink/70 text-sm mb-6 max-w-md mx-auto">
             Join the ListWorx IronClad network as a contractor or submit a free request.
           </p>
+          <IronCladCallout className="mx-auto mb-8 max-w-3xl text-left" />
           <div className="flex gap-3 justify-center flex-wrap">
             <Link href="/apply">
               <Button className="bg-lw-rust hover:bg-lw-rust-hover text-white px-6">Apply as Contractor</Button>

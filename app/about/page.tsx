@@ -6,6 +6,9 @@ import { ArrowRight, Shield, Users, TrendingUp, Camera, BookOpen, Heart } from '
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/motion';
 import Brushstroke from '@/components/brand/Brushstroke';
+import IroncladBadge from '@/components/site/IroncladBadge';
+import PhotoStrip from '@/components/brand/PhotoStrip';
+import { LIB } from '@/lib/brand/photos';
 
 const STATEMENTS = [
   {
@@ -113,7 +116,7 @@ export default function AboutPage() {
       </section>
 
       {/* PURPOSE, MISSION, VISION */}
-      <section className="py-20 md:py-28">
+      <section className="py-12 md:py-16">
         <div className="mx-auto max-w-6xl px-6">
           <Reveal as="div" className="mx-auto mb-12 max-w-2xl text-center">
             <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-lw-rust">Why We Exist</p>
@@ -132,8 +135,22 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* THE PEOPLE WE SERVE */}
+      <section className="pb-12 md:pb-14">
+        <div className="mx-auto max-w-6xl px-6">
+          <PhotoStrip
+            photos={[
+              { ...LIB.realtorCouple, caption: 'Homeowners and realtors' },
+              { ...LIB.paintCrew2, caption: 'Contractors and crews' },
+              { ...LIB.roofers, caption: 'Real work, done right' },
+              { ...LIB.houseDusk, caption: 'Homes worth caring for' },
+            ]}
+          />
+        </div>
+      </section>
+
       {/* FOUNDER STORY */}
-      <section className="bg-mkt-ink/[0.03] py-20 md:py-28">
+      <section className="bg-mkt-ink/[0.03] py-12 md:py-16">
         <div className="mx-auto px-6" style={{ maxWidth: '760px' }}>
           <Reveal as="div">
             <p className="mb-5 text-sm font-semibold uppercase tracking-widest text-lw-rust">The Founder</p>
@@ -200,9 +217,10 @@ export default function AboutPage() {
       </section>
 
       {/* STANDARDS */}
-      <section className="py-20 md:py-28">
+      <section className="py-12 md:py-16">
         <div className="mx-auto px-6" style={{ maxWidth: '760px' }}>
           <Reveal as="div">
+            <IroncladBadge variant="standards" href="/ironclad" reveal className="mb-5 h-28 md:h-32" />
             <p className="mb-5 text-sm font-semibold uppercase tracking-widest text-lw-rust">The Standard</p>
             <h2 className="mb-8 text-3xl font-bold leading-tight text-mkt-ink md:text-4xl">A better system. Real standards.</h2>
             <div className="space-y-5 text-lg leading-[1.85] text-mkt-ink/75">
@@ -234,7 +252,7 @@ export default function AboutPage() {
       </section>
 
       {/* WHAT WE OFFER */}
-      <section className="bg-mkt-navy py-20 md:py-28">
+      <section className="bg-mkt-navy py-12 md:py-16">
         <div className="mx-auto max-w-6xl px-6">
           <Reveal as="div" className="mx-auto mb-14 max-w-2xl text-center">
             <p className="mb-5 text-sm font-semibold uppercase tracking-widest text-lw-rust">What ListWorx Offers Today</p>
@@ -258,7 +276,7 @@ export default function AboutPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-24 md:py-32">
+      <section className="py-14 md:py-16">
         <div className="mx-auto px-6 text-center" style={{ maxWidth: '680px' }}>
           <Reveal as="div">
             <h2 className="mb-6 text-3xl font-bold leading-tight tracking-tight text-mkt-ink md:text-5xl">Want to be part of it?</h2>

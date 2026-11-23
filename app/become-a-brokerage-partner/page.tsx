@@ -40,7 +40,7 @@ export default function BrokeragePartnerPage() {
           aria-hidden="true"
           className="pointer-events-none absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-lw-rust/[0.07] blur-3xl"
         />
-        <div className="container relative mx-auto grid items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="container relative mx-auto grid items-center gap-12 px-4 py-12 md:py-16 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="max-w-2xl">
             <Reveal immediate delay={0}>
               <p className="lw-label-lg mb-3 !text-lw-rust">
@@ -83,7 +83,7 @@ export default function BrokeragePartnerPage() {
       </section>
 
       {/* ================= WHAT YOU GET ================= */}
-      <section className="container mx-auto px-4 py-20 md:py-28">
+      <section className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           <Reveal>
             <p className="lw-label-lg mb-3 !text-lw-rust">What you get</p>
@@ -112,7 +112,7 @@ export default function BrokeragePartnerPage() {
       </section>
 
       {/* ================= HOW IT WORKS ================= */}
-      <section className="border-y border-zinc-200 bg-lw-light-bg py-20 md:py-28">
+      <section className="border-y border-zinc-200 bg-lw-light-bg py-12 md:py-16">
         <div className="container mx-auto px-4">
           <Reveal className="mb-12 max-w-2xl">
             <p className="lw-label-lg mb-3 !text-lw-rust">How it works</p>
@@ -136,7 +136,7 @@ export default function BrokeragePartnerPage() {
       <HomepageTrustBars />
 
       {/* ================= INQUIRY FORM ================= */}
-      <section id="inquire" className="container mx-auto scroll-mt-24 px-4 py-20 md:py-28">
+      <section id="inquire" className="container mx-auto scroll-mt-24 px-4 py-12 md:py-16">
         <div className="mx-auto max-w-2xl">
           <Reveal className="mb-8">
             <p className="lw-label-lg mb-3 !text-lw-rust">Start the conversation</p>

@@ -1,6 +1,10 @@
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import { pageMetadata } from '@/lib/seo';
+import HeroPhoto from '@/components/brand/HeroPhoto';
+import IronCladCallout from '@/components/brand/IronCladCallout';
+import { LIB } from '@/lib/brand/photos';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 export const metadata = pageMetadata({
   title: 'Faith and Purpose | ListWorx',
@@ -12,9 +16,15 @@ export default function FaithAndPurposePage() {
   return (
     <div className="min-h-screen bg-white text-mkt-ink mkt-scope">
       <Navigation variant="light" />
-      <article className="mx-auto max-w-3xl px-6 pb-24 pt-28 md:pt-36">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-lw-rust">Faith and Purpose</p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">A Christian-owned business that serves everyone.</h1>
+      <section className="relative isolate overflow-hidden bg-brand-navy text-white">
+        <HeroPhoto src={LIB.paintCrew1.src} position="45% 30%" />
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
+        <div className="relative mx-auto max-w-6xl px-6 py-12 md:py-16">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-lw-rust">Faith and Purpose</p>
+          <h1 className="mt-3 max-w-xl text-4xl font-bold tracking-tight md:text-5xl">A Christian-owned business that serves everyone.</h1>
+        </div>
+      </section>
+      <article className="mx-auto max-w-3xl px-6 pb-20 pt-4 md:pt-6">
 
         <div className="mt-10 space-y-5 text-lg leading-relaxed text-mkt-ink/85">
           <p>ListWorx is a Christian-owned business, and we&apos;ll be straight with you about what that means.</p>
@@ -42,6 +52,10 @@ export default function FaithAndPurposePage() {
             standards like licensing, insurance documents, and their agreement to the IronClad Standards. Faith never affects contractor eligibility,
             referral placement, or certification.
           </p>
+          <IronCladCallout
+            title="Held to the same standard"
+            body="Every contractor is reviewed on professional standards, including licensing, insurance documents, and agreement to the IronClad Standards. Faith never affects eligibility, referral placement, or certification."
+          />
           <p>We&apos;d rather you see our faith in how we treat you than read about it on a web page. If we ever fall short of that, tell us at adeyo@listworx.co.</p>
         </div>
 
