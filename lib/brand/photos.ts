@@ -10,15 +10,18 @@
 export type PhotoSlot = { src: string; alt: string } | null;
 
 export const BRAND_PHOTOS = {
-  homeHero: { src: '/images/redesign/contractor_roofers-team-hero.webp', alt: '' },
+  homeHero: { src: '/images/brand/home-hero-blueprints.webp', alt: '' },
+  homeHeroMobile: { src: '/images/brand/home-hero-blueprints-mobile.webp', alt: '' },
   pathHomeowners: {
     src: '/images/redesign/realtor_couple-consultation-laptop.webp',
     alt: 'A homeowner couple reviewing contractor options with their realtor',
   },
-  pathContractors: { src: '/images/redesign/contractor_hvac-crop.webp', alt: 'An HVAC technician servicing an outdoor unit' },
+  pathContractors: { src: '/images/brand/contractor-van.webp', alt: 'A ListWorx network contractor standing beside his work van' },
   pathManualLibrary: null as PhotoSlot,
   featuredManualCover: null as PhotoSlot,
-  dashboardHero: { src: '/images/redesign/contractor_painter-wall-crop.webp', alt: '' },
+  featuredManualScene: { src: '/images/brand/crew-painters-1.webp', alt: '' },
+  contractorBridge: { src: '/images/brand/crew-painters-2.webp', alt: 'A smiling painting crew outside a finished home' },
+  dashboardHero: { src: '/images/brand/contractor-van.webp', alt: '' },
   quickReferrals: { src: '/images/redesign/results_house-exterior-dusk.webp', alt: '' },
   quickFlyer: { src: '/images/redesign/contractor_cleaning-crew.webp', alt: '' },
   quickLearning: { src: '/images/redesign/about_contractor-realtor-handshake.webp', alt: '' },

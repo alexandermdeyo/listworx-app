@@ -38,8 +38,8 @@ export function BrandDashboardHero() {
         src={BRAND_PHOTOS.dashboardHero.src}
         side="right"
         priority
-        className="md:left-[45%]"
-        imgClassName="object-[70%_30%]"
+        className="md:left-[40%]"
+        imgClassName="object-[35%_25%] brightness-110"
       />
       <div className="relative z-10 px-5 py-6 md:px-8 md:py-8">
         <p className="text-lg font-medium text-white/90">Contractor Dashboard</p>

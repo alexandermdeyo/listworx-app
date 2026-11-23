@@ -105,7 +105,7 @@ export default function BrandNavBar({
   dashboardHref,
   academyEnabled,
   onSignOut,
-  tagline = 'IronClad Contractors · Trusted by Realtors · Chosen by Homeowners',
+  tagline = 'IronClad Contractors – Trusted by Realtors – Chosen by Homeowners',
 }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
@@ -113,10 +113,10 @@ export default function BrandNavBar({
 
   return (
     <div className="border-b border-white/10 bg-brand-navy-deep text-white">
-      <div className="container mx-auto flex h-[76px] items-center justify-between gap-4 px-4">
+      <div className="mx-auto flex h-[76px] w-full max-w-[1600px] items-center justify-between gap-4 px-4 md:px-6">
         <Link href="/" aria-label="ListWorx home" className="flex shrink-0 flex-col justify-center">
-          <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="h-6 w-auto md:h-7" />
-          <span className="br-nav-font mt-1 hidden whitespace-nowrap text-[12px] leading-none text-white/80 2xl:block">{tagline}</span>
+          <img src="/brand/listworx-wordmark-dark.png" alt="ListWorx" className="h-6 w-auto md:h-7 2xl:h-8" />
+          <span className="br-nav-font mt-1 hidden whitespace-nowrap text-[11px] leading-none text-white/85 xl:block 2xl:text-[13px]">{tagline}</span>
         </Link>
 
         <nav aria-label="Main" className="br-nav-font hidden items-center xl:flex">
@@ -131,7 +131,7 @@ export default function BrandNavBar({
                 aria-expanded={openGroup === g.label}
                 onClick={() => setOpenGroup((cur) => (cur === g.label ? null : g.label))}
                 onMouseEnter={() => setOpenGroup(g.label)}
-                className="flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-2 text-[15px] font-medium text-white/90 hover:text-white 2xl:px-3 2xl:text-[17px]"
+                className="flex items-center gap-1 whitespace-nowrap rounded-md px-1.5 py-2 text-[16px] font-medium text-white hover:text-brand-orange 2xl:px-2.5 2xl:text-[18px]"
               >
                 {g.label}
                 <ChevronDown className="h-4 w-4 opacity-80" />
@@ -188,7 +188,7 @@ export default function BrandNavBar({
 
       {mobileOpen && (
         <div className="border-t border-white/10 bg-brand-navy-deep xl:hidden">
-          <nav aria-label="Mobile" className="container mx-auto space-y-4 px-4 py-5">
+          <nav aria-label="Mobile" className="mx-auto w-full max-w-[1600px] space-y-4 px-4 md:px-6 py-5">
             {groups.map((g) => (
               <div key={g.label}>
                 <p className="br-nav-font mb-1 text-sm font-semibold uppercase tracking-wider text-brand-orange">{g.label}</p>

@@ -15,3 +15,9 @@ Put the approved ChatGPT photo files here, then point the matching slot in
 | quickFlyer | quick-flyer.webp | 900 x 500 | Dashboard shortcut: Build a Flyer |
 | quickLearning | quick-learning.webp | 900 x 500 | Dashboard shortcut: Learning Center |
 | quickMedia | quick-media.webp | 900 x 500 | Dashboard shortcut: Request Media Services |
+
+## In use now (approved set, 2026-11-22)
+- home-hero-blueprints.webp (+ -mobile) → homeHero
+- contractor-van.webp → pathContractors, dashboardHero
+- crew-painters-1.webp → featuredManualScene
+- crew-painters-2.webp → contractorBridge

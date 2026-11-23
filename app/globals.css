@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow+Semi+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -271,8 +271,11 @@ html {
    * Deep navy + vibrant orange, Montserrat headings, Barlow Condensed nav.
    * ------------------------------------------------------------- */
   .br-display {
-    font-family: var(--font-display);
-    @apply font-extrabold tracking-tight;
+    font-family: 'Barlow Semi Condensed', 'Barlow', Arial, sans-serif;
+    @apply font-extrabold tracking-[-0.005em];
+  }
+  .br-body {
+    font-family: 'Barlow', Arial, sans-serif;
   }
   .br-nav-font {
     font-family: 'Barlow Condensed', 'Barlow', Arial, sans-serif;

@@ -24,6 +24,7 @@ import HolidayBar from '@/components/site/HolidayBar';
 import ContractorRecruitBar from '@/components/site/ContractorRecruitBar';
 import { pageMetadata, homepageStructuredData } from '@/lib/seo';
 import JsonLd from '@/components/seo/JsonLd';
+import { BRAND_PHOTOS } from '@/lib/brand/photos';
 
 export const metadata = pageMetadata({
   title: 'ListWorx | Vetted Home Service Contractor Referral Network',
@@ -112,16 +113,16 @@ export default function LandingPage() {
       <JsonLd data={homepageStructuredData} />
       <Navigation variant="navy" />
 
-      <HolidayBar />
-
-      {/* BRAND REDESIGN: navy hero, pathways, featured manual (Coming Soon) */}
+      {/* BRAND REDESIGN: laid out to match the approved homepage mockup */}
       <BrandHomeHero />
       <BrandPathways />
+      <BrandFeaturedManual />
+
+      {/* seasonal banner (self-hides out of season) */}
+      <HolidayBar />
 
       {/* Homeowner request entry point (JobRequestWidget), unchanged logic */}
       <HomeownerHero variant="section" />
-
-      <BrandFeaturedManual />
       <ContractorRecruitBar />
 
       {/* ============================================================= */}
@@ -518,11 +519,11 @@ export default function LandingPage() {
       {/* ============================================================= */}
       <section className="relative">
         <PhotoDark
-          src="/images/redesign/contractor_roofers-team-hero.webp"
-          alt="A roofing crew working on a house in Middle Tennessee"
-          className="lw-photo-dark--contractor min-h-[560px] md:min-h-[620px]"
+          src={BRAND_PHOTOS.contractorBridge.src}
+          alt={BRAND_PHOTOS.contractorBridge.alt}
+          className="lw-photo-dark--contractor min-h-[440px] md:min-h-[480px]"
           bri={0.98}
-          objectPosition="center 60%"
+          objectPosition="center 30%"
         >
           <div className="lw-photo-dark__content container mx-auto flex min-h-[440px] flex-col justify-end px-4 py-10 md:min-h-[480px] md:py-12">
             <Reveal className="max-w-2xl">
