@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, Send } from 'lucide-react';
 import { Reveal } from '@/components/motion';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 const fieldClass =
   'w-full !border-mailer-border !bg-mailer-surface !text-white placeholder:!text-white/35 focus-visible:!bg-mailer-surface focus-visible:!text-white';
@@ -53,6 +54,7 @@ export default function ContactPage() {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-mailer-black">
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="h-1 w-full bg-lw-rust" />
         <div className="container relative mx-auto max-w-3xl px-4 py-16 text-center md:py-24">
           <Reveal>

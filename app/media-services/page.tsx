@@ -3,6 +3,7 @@ import { ArrowRight, Camera, CircleCheck as CheckCircle, Clock, CreditCard, Cale
 import Navigation from '@/components/Navigation';
 import { pageMetadata } from '@/lib/seo';
 import { MEDIA_ADDONS, MEDIA_PACKAGES, MEDIA_SERVICES, formatUsd } from '@/lib/media/catalog';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 export const metadata = pageMetadata({
   title: 'ListWorx Media Services: Contractor and Real Estate Photography and Video',
@@ -23,7 +24,8 @@ export default function MediaServicesPage() {
     <div className="min-h-screen bg-mailer-black text-white">
       <Navigation />
 
-      <section className="relative overflow-hidden pb-16 pt-28 md:pb-24 md:pt-36">
+      <section className="relative overflow-hidden pb-16 pt-14 md:pb-24 md:pt-16">
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
         <div className="container mx-auto max-w-5xl px-4">
           <p className="lw-label mb-3">ListWorx Media Services</p>

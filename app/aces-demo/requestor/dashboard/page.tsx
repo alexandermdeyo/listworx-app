@@ -104,7 +104,7 @@ export default function RequestorDemoDashboard() {
                 <p className="text-sm text-gray-500 mt-1">Your clients trust you. We help protect that trust.</p>
               </div>
               <Link href="/aces-demo/requestor">
-                <Button className="text-white font-semibold" style={{ backgroundColor: '#E8621A' }}>
+                <Button className="text-white font-semibold" style={{ backgroundColor: '#F26A21' }}>
                   <Plus className="h-4 w-4 mr-2" />
                   New Request
                 </Button>
@@ -128,14 +128,14 @@ export default function RequestorDemoDashboard() {
             <div className="mb-6 rounded-2xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#FFF3ED' }}>
-                  <Sparkles className="h-6 w-6" style={{ color: '#E8621A' }} />
+                  <Sparkles className="h-6 w-6" style={{ color: '#F26A21' }} />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">Listing Studio</h3>
                   <p className="text-sm text-gray-500 mt-0.5">Generate captions, emails, and property descriptions for any listing.</p>
                 </div>
               </div>
-              <Button onClick={showDemoToast} className="text-white font-semibold w-full sm:w-auto" style={{ backgroundColor: '#E8621A' }}>
+              <Button onClick={showDemoToast} className="text-white font-semibold w-full sm:w-auto" style={{ backgroundColor: '#F26A21' }}>
                 <Sparkles className="h-4 w-4 mr-2" />
                 Open Listing Studio
               </Button>

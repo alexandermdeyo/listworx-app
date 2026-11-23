@@ -100,7 +100,7 @@ const EMPTY_FORM: BrandKitForm = {
   cover_photo_url:    '',
   personal_logo_url:  '',
   brokerage_logo_url: '',
-  primary_color:      '#E8621A',
+  primary_color:      '#F26A21',
   secondary_color:    '#1a1a1a',
   instagram_handle:   '',
   facebook_url:       '',
@@ -138,7 +138,7 @@ function ListingThumb({ photos }: { photos: ListingRow['listing_photos'] }) {
 
   if (!photo || !src) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-zinc-800">
+      <div className="w-full h-full flex items-center justify-center bg-brand-navy-soft">
         <Camera className="h-5 w-5 text-zinc-600" />
       </div>
     );
@@ -185,8 +185,8 @@ function ImageUploadArea({
   }
 
   const wrapClass = circle
-    ? `relative overflow-hidden rounded-full border-2 border-dashed border-zinc-600 bg-zinc-800 ${aspect} flex items-center justify-center cursor-pointer hover:border-lw-rust transition`
-    : `relative overflow-hidden rounded-xl border-2 border-dashed border-zinc-600 bg-zinc-800 ${aspect} flex items-center justify-center cursor-pointer hover:border-lw-rust transition`;
+    ? `relative overflow-hidden rounded-full border-2 border-dashed border-zinc-600 bg-brand-navy-soft ${aspect} flex items-center justify-center cursor-pointer hover:border-lw-rust transition`
+    : `relative overflow-hidden rounded-xl border-2 border-dashed border-zinc-600 bg-brand-navy-soft ${aspect} flex items-center justify-center cursor-pointer hover:border-lw-rust transition`;
 
   return (
     <div>
@@ -230,8 +230,8 @@ function ImageUploadArea({
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-800">
+    <div className="rounded-2xl bg-brand-navy border border-lw-dark-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-lw-dark-border">
         <h3 className="text-white font-semibold text-base">{title}</h3>
       </div>
       <div className="p-6">{children}</div>
@@ -262,7 +262,7 @@ function Field({
 }
 
 const inputCls =
-  'w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-lw-rust transition';
+  'w-full rounded-lg border border-lw-dark-border bg-brand-navy-soft px-3 py-2 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-lw-rust transition';
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -306,7 +306,7 @@ export default function ProfilePage() {
           cover_photo_url:    bk.cover_photo_url    || '',
           personal_logo_url:  bk.personal_logo_url  || '',
           brokerage_logo_url: bk.brokerage_logo_url || '',
-          primary_color:      bk.primary_color      || '#E8621A',
+          primary_color:      bk.primary_color      || '#F26A21',
           secondary_color:    bk.secondary_color    || '#1a1a1a',
           instagram_handle:   bk.instagram_handle   || '',
           facebook_url:       bk.facebook_url       || '',
@@ -634,22 +634,22 @@ export default function ProfilePage() {
               <Field label="Primary Color">
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-10 h-10 rounded-lg border border-zinc-700 shrink-0"
-                    style={{ backgroundColor: form.primary_color || '#E8621A' }}
+                    className="w-10 h-10 rounded-lg border border-lw-dark-border shrink-0"
+                    style={{ backgroundColor: form.primary_color || '#F26A21' }}
                   />
                   <input
                     className={inputCls}
                     type="text"
-                    placeholder="#E8621A"
+                    placeholder="#F26A21"
                     value={form.primary_color}
                     onChange={(e) => set('primary_color', e.target.value)}
                     maxLength={9}
                   />
                   <input
                     type="color"
-                    value={form.primary_color || '#E8621A'}
+                    value={form.primary_color || '#F26A21'}
                     onChange={(e) => set('primary_color', e.target.value)}
-                    className="w-10 h-10 rounded cursor-pointer border border-zinc-700 bg-transparent shrink-0"
+                    className="w-10 h-10 rounded cursor-pointer border border-lw-dark-border bg-transparent shrink-0"
                     title="Pick primary color"
                   />
                 </div>
@@ -657,7 +657,7 @@ export default function ProfilePage() {
               <Field label="Secondary Color">
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-10 h-10 rounded-lg border border-zinc-700 shrink-0"
+                    className="w-10 h-10 rounded-lg border border-lw-dark-border shrink-0"
                     style={{ backgroundColor: form.secondary_color || '#1a1a1a' }}
                   />
                   <input
@@ -672,7 +672,7 @@ export default function ProfilePage() {
                     type="color"
                     value={form.secondary_color || '#1a1a1a'}
                     onChange={(e) => set('secondary_color', e.target.value)}
-                    className="w-10 h-10 rounded cursor-pointer border border-zinc-700 bg-transparent shrink-0"
+                    className="w-10 h-10 rounded cursor-pointer border border-lw-dark-border bg-transparent shrink-0"
                     title="Pick secondary color"
                   />
                 </div>
@@ -758,10 +758,10 @@ export default function ProfilePage() {
               {listings.map((listing) => (
                 <div
                   key={listing.id}
-                  className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/40 p-3"
+                  className="flex items-center gap-3 rounded-xl border border-lw-dark-border bg-brand-navy-soft/40 p-3"
                 >
                   {/* Thumbnail */}
-                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-zinc-800 shrink-0">
+                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-brand-navy-soft shrink-0">
                     <ListingThumb photos={listing.listing_photos} />
                   </div>
                   {/* Info */}
@@ -801,7 +801,7 @@ export default function ProfilePage() {
           </p>
 
           {/* Upload button */}
-          <label className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-zinc-600 bg-zinc-800 hover:border-lw-rust px-4 py-2.5 text-sm text-zinc-400 hover:text-white transition mb-5">
+          <label className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-zinc-600 bg-brand-navy-soft hover:border-lw-rust px-4 py-2.5 text-sm text-zinc-400 hover:text-white transition mb-5">
             {showUploading ? (
               <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
             ) : (
@@ -827,7 +827,7 @@ export default function ProfilePage() {
               {showcase.map((post, idx) => (
                 <div key={post.id} className="group relative flex flex-col gap-2">
                   {/* Image or video */}
-                  <div className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800">
+                  <div className="relative aspect-square rounded-xl overflow-hidden bg-brand-navy-soft">
                     {post.media_type === 'video' ? (
                       <video
                         src={post.image_url}
@@ -871,7 +871,7 @@ export default function ProfilePage() {
                   </div>
                   {/* Caption */}
                   <input
-                    className="w-full rounded-md border border-zinc-700 bg-zinc-800 px-2 py-1 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-lw-rust transition"
+                    className="w-full rounded-md border border-lw-dark-border bg-brand-navy-soft px-2 py-1 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-lw-rust transition"
                     placeholder="Caption (optional)"
                     value={post.caption}
                     onChange={(e) => handleCaptionChange(post.id, e.target.value)}
@@ -892,7 +892,7 @@ export default function ProfilePage() {
             onClick={handleSave}
             disabled={saving}
             className="ml-auto font-bold text-white px-8"
-            style={{ backgroundColor: '#E8621A' }}
+            style={{ backgroundColor: '#F26A21' }}
           >
             {saving ? (
               <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...</>

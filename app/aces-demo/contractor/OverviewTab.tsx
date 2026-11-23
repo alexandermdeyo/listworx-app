@@ -68,7 +68,7 @@ export default function OverviewTab({ tier }: { tier: DemoTierId }) {
           <h2 className="text-xl font-bold text-gray-900">{tierConfig.name}</h2>
           <p className="text-sm text-gray-500 mt-0.5">{ACES_PARTNER.company_name} — Founding Partner</p>
         </div>
-        <span className="px-4 py-1.5 text-sm font-bold rounded-full text-white self-start" style={{ backgroundColor: '#E8621A' }}>
+        <span className="px-4 py-1.5 text-sm font-bold rounded-full text-white self-start" style={{ backgroundColor: '#F26A21' }}>
           {tierConfig.badge || tierConfig.name.replace(' Partner', '')}
         </span>
       </div>

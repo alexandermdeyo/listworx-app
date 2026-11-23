@@ -281,7 +281,7 @@ export default function RequestorDashboardPage() {
 
         <div className="flex items-center gap-3">
           <Link href="/request">
-            <Button className="text-white font-semibold" style={{ backgroundColor: '#E8621A' }}>
+            <Button className="text-white font-semibold" style={{ backgroundColor: '#F26A21' }}>
               <Plus className="h-4 w-4 mr-2" />
               New Request
             </Button>
@@ -315,7 +315,7 @@ export default function RequestorDashboardPage() {
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white shadow-sm p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#FFF3ED' }}>
-              <Wand2 className="h-6 w-6" style={{ color: '#E8621A' }} />
+              <Wand2 className="h-6 w-6" style={{ color: '#F26A21' }} />
             </div>
             <div>
               <h3 className="text-lg font-bold text-gray-900">Listing Studio</h3>
@@ -327,7 +327,7 @@ export default function RequestorDashboardPage() {
             </div>
           </div>
           <Link href="/requestor-dashboard/listing-studio" className="shrink-0">
-            <Button className="text-white font-semibold w-full sm:w-auto" style={{ backgroundColor: '#E8621A' }}>
+            <Button className="text-white font-semibold w-full sm:w-auto" style={{ backgroundColor: '#F26A21' }}>
               <Sparkles className="h-4 w-4 mr-2" />
               Open Listing Studio
             </Button>
@@ -530,7 +530,7 @@ export default function RequestorDashboardPage() {
                                   <Button
                                     onClick={() => handleSelectContractor(referral.id)}
                                     disabled={selectingReferral.has(referral.id)}
-                                    className="w-full bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600"
+                                    className="w-full bg-brand-navy-soft hover:bg-zinc-700 text-white border border-zinc-600"
                                   >
                                     {selectingReferral.has(referral.id) ? (
                                       <>

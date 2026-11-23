@@ -76,7 +76,7 @@ export default function PhotoPicker({
                 <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {photos.map((p) => (
                     <li key={p.id}>
-                      <button type="button" onClick={() => setPreview(p)} className={`block w-full overflow-hidden rounded-md border text-left ${preview?.id === p.id ? 'border-[#E8621A] ring-2 ring-[#E8621A]/40' : 'border-gray-300'}`}>
+                      <button type="button" onClick={() => setPreview(p)} className={`block w-full overflow-hidden rounded-md border text-left ${preview?.id === p.id ? 'border-[#F26A21] ring-2 ring-[#F26A21]/40' : 'border-gray-300'}`}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={p.public_url || ''} alt={p.alt_text || ''} loading="lazy" className="aspect-[4/3] w-full object-cover" style={{ objectPosition: `${p.focus_x ?? 50}% ${p.focus_y ?? 30}%` }} />
                         <span className="block truncate px-2 py-1 text-xs">{p.title || p.original_filename}</span>
@@ -98,7 +98,7 @@ export default function PhotoPicker({
                   <p className="rounded-md border border-amber-300 bg-amber-50 px-2 py-1 text-sm text-amber-950">Narrower than {FEATURED_MIN_WIDTH}px: may look soft as a featured photo.</p>
                 )}
                 <div className="flex gap-2">
-                  <button type="button" onClick={() => { if (preview.public_url) { onSelect(preview as LibraryPhoto & { public_url: string }); onClose(); } }} className="rounded-md px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: '#E8621A' }} data-testid="picker-use">
+                  <button type="button" onClick={() => { if (preview.public_url) { onSelect(preview as LibraryPhoto & { public_url: string }); onClose(); } }} className="rounded-md px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: '#F26A21' }} data-testid="picker-use">
                     Use this photo
                   </button>
                   <SecondaryButton type="button" onClick={() => setPreview(null)}>Back</SecondaryButton>

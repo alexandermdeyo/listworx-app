@@ -49,7 +49,7 @@ export default function SubscriptionTab({
               }`}
             >
               {isCurrent && (
-                <span className="self-start mb-3 text-xs font-bold px-2.5 py-1 rounded-full text-white" style={{ backgroundColor: '#E8621A' }}>
+                <span className="self-start mb-3 text-xs font-bold px-2.5 py-1 rounded-full text-white" style={{ backgroundColor: '#F26A21' }}>
                   Current Plan
                 </span>
               )}

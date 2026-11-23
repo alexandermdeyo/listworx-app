@@ -93,7 +93,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <main className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center px-4 py-16">
+    <main className="min-h-screen bg-brand-navy-deep flex flex-col items-center justify-center px-4 py-16">
 
       {/* ListWorx logo */}
       <div className="mb-10">
@@ -112,7 +112,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
       {/* ── Error states ─────────────────────────────────────────────────── */}
       {(pageState === 'invalid' || pageState === 'used' || pageState === 'expired') && (
         <div className="w-full max-w-sm">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center shadow-xl">
+          <div className="rounded-2xl border border-lw-dark-border bg-brand-navy p-8 text-center shadow-xl">
             <AlertCircle className="h-11 w-11 text-zinc-600 mx-auto mb-4" />
             <h1 className="text-lg font-bold text-white mb-2">
               {pageState === 'expired' ? 'Invitation Expired' : 'Invitation Not Available'}
@@ -129,7 +129,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
       {/* ── Declined ─────────────────────────────────────────────────────── */}
       {pageState === 'declined' && (
         <div className="w-full max-w-sm">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center shadow-xl">
+          <div className="rounded-2xl border border-lw-dark-border bg-brand-navy p-8 text-center shadow-xl">
             <CheckCircle2 className="h-11 w-11 text-zinc-500 mx-auto mb-4" />
             <h1 className="text-lg font-bold text-white mb-2">Got it. No hard feelings.</h1>
             <p className="text-sm text-zinc-400 leading-relaxed">
@@ -142,7 +142,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
       {/* ── Valid invitation ──────────────────────────────────────────────── */}
       {pageState === 'valid' && invitation && (
         <div className="w-full max-w-lg">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 overflow-hidden shadow-2xl">
+          <div className="rounded-2xl border border-lw-dark-border bg-brand-navy overflow-hidden shadow-2xl">
 
             {/* Orange accent bar */}
             <div className="h-1.5 bg-[#E85000]" />
@@ -178,7 +178,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
               </p>
 
               {/* What is ListWorx */}
-              <div className="rounded-xl border border-zinc-700 bg-zinc-800/60 p-4 mb-6">
+              <div className="rounded-xl border border-lw-dark-border bg-brand-navy-soft/60 p-4 mb-6">
                 <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400 mb-2">
                   What is ListWorx?
                 </p>
@@ -230,7 +230,7 @@ export default function InvitePage({ params }: { params: { token: string } }) {
             </div>
 
             {/* Footer */}
-            <div className="border-t border-zinc-800 bg-zinc-950 px-8 py-5 flex items-center justify-between">
+            <div className="border-t border-lw-dark-border bg-brand-navy-deep px-8 py-5 flex items-center justify-between">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/Ironclad_Standards_Logo.png"

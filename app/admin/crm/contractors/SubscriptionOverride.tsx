@@ -318,7 +318,7 @@ export default function SubscriptionOverride({
               onClick={() => handleSubmit('override')}
               disabled={submitting || !adminNote.trim()}
               className="text-white text-sm"
-              style={{ backgroundColor: '#E8621A' }}
+              style={{ backgroundColor: '#F26A21' }}
               size="sm"
             >
               {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}

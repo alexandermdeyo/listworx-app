@@ -61,26 +61,27 @@ const config: Config = {
           '5': 'hsl(var(--chart-5))',
         },
         lw: {
-          rust: '#C65A1E',
-          'rust-hover': '#a84d18',
-          orange: '#E8621A',
-          'orange-hover': '#cf5516',
+          // Brand rollout: rust/orange unified to the vibrant brand orange
+          rust: '#F26A21',
+          'rust-hover': '#D9581A',
+          orange: '#F26A21',
+          'orange-hover': '#D9581A',
           gray: '#4A4A4A',
-          sidebar: '#181818',
-          dark: '#1F1F1F',
-          'dark-surface': '#242424',
-          'dark-card': '#292929',
-          'dark-border': '#3A3A3A',
+          // Brand rollout: dark surfaces are now the navy family
+          sidebar: '#0F2342',
+          dark: '#0A1830',
+          'dark-surface': '#0F2342',
+          'dark-card': '#1B3358',
+          'dark-border': '#2A4166',
           surface: '#F5F5F5',
           'surface-card': '#FFFFFF',
           'border-light': '#E8E8E8',
           text: '#1F1F1F',
           light: '#FFFFFF',
-          'light-bg': '#F5F5F5',
+          'light-bg': '#F3F5F8',
           'secondary-text': '#B0B0B0',
         },
-        // Brand redesign system (navy + vibrant orange). Opt-in; existing
-        // lw/mkt/mailer tokens are untouched.
+        // Brand redesign system (navy + vibrant orange).
         brand: {
           navy: '#0F2342',
           'navy-deep': '#0A1830',
@@ -93,19 +94,20 @@ const config: Config = {
         },
         mkt: {
           bg: '#FFFFFF',
-          ink: '#3F4041',
-          navy: '#010333',
+          ink: '#152235',
+          navy: '#0F2342',
         },
         // Mailer-kit dark system — warm near-blacks for contractor-facing /
         // general dark pages. Distinct from the bluish mkt.navy on purpose.
         mailer: {
-          black: '#0A0806',
-          ink: '#12100E',
-          surface: '#1A1613',
-          card: '#221D19',
-          border: '#332B25',
+          // Brand rollout: mailer darks remapped to navy
+          black: '#0A1830',
+          ink: '#0F2342',
+          surface: '#13294D',
+          card: '#1B3358',
+          border: '#2A4166',
           bone: '#F4F1EC',
-          orange: '#E8621A',
+          orange: '#F26A21',
         },
       },
       keyframes: {

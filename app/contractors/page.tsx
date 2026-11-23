@@ -32,6 +32,7 @@ import IroncladBadge from '@/components/site/IroncladBadge';
 import { useAcademyEnabled } from '@/lib/useAcademyEnabled';
 import MembershipComparison from '@/components/membership/MembershipComparison';
 import FaqSection from '@/components/site/FaqSection';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 const CONTRACTOR_FAQS = [
   {
@@ -113,7 +114,8 @@ function JoinCta({
 }) {
   if (variant === 'inline') {
     return (
-      <section className="bg-mailer-black">
+      <section className="overflow-hidden relative bg-mailer-black">
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="container mx-auto px-4">
           <Reveal className="flex flex-col items-start gap-4 border-t border-mailer-border py-8 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-lg font-semibold text-white">{headline}</p>

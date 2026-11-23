@@ -27,7 +27,7 @@ interface DemoDashboardShellProps {
 }
 
 // Visual clone of components/DashboardLayout.tsx — same sidebar color (#181818),
-// same orange accent (#E8621A), same white content area. No Supabase, no auth,
+// same orange accent (#F26A21), same white content area. No Supabase, no auth,
 // no inactivity timers: this is a static demo shell only.
 export default function DemoDashboardShell({
   userName,
@@ -80,7 +80,7 @@ export default function DemoDashboardShell({
             {tierBadge && (
               <span
                 className="inline-block px-2 py-0.5 text-xs font-semibold rounded-sm text-white mt-0.5"
-                style={{ backgroundColor: '#E8621A' }}
+                style={{ backgroundColor: '#F26A21' }}
               >
                 {tierBadge}
               </span>
@@ -100,7 +100,7 @@ export default function DemoDashboardShell({
                 ? 'text-white font-medium'
                 : 'text-white/60 hover:text-white'
             }`;
-            const activeBg = isActive && !item.disabled ? { backgroundColor: '#E8621A' } : {};
+            const activeBg = isActive && !item.disabled ? { backgroundColor: '#F26A21' } : {};
 
             return (
               <button
@@ -115,7 +115,7 @@ export default function DemoDashboardShell({
                 {item.badgeLabel && (
                   <span
                     className="text-xs font-semibold px-1.5 py-0.5 rounded-sm text-white"
-                    style={{ backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : '#E8621A' }}
+                    style={{ backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : '#F26A21' }}
                   >
                     {item.badgeLabel}
                   </span>
@@ -146,7 +146,7 @@ export default function DemoDashboardShell({
           </h1>
           <div className="flex items-center gap-3">
             {tierBadge && (
-              <span className="px-3 py-1 text-xs font-bold rounded-full text-white" style={{ backgroundColor: '#E8621A' }}>
+              <span className="px-3 py-1 text-xs font-bold rounded-full text-white" style={{ backgroundColor: '#F26A21' }}>
                 {tierBadge}
               </span>
             )}

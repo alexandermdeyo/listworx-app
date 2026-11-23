@@ -38,7 +38,7 @@ export default function HolidayBar() {
       </p>
 
       {/* gold + rust trim along the bottom edge */}
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-[#b8892f] via-[#E8621A] to-[#b8892f]" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-[#b8892f] via-[#F26A21] to-[#b8892f]" />
     </section>
   );
 }

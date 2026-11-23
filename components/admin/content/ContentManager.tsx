@@ -16,7 +16,7 @@ import {
   type ContentAction, type ContentStatus,
 } from '@/lib/content/workflow';
 
-const RUST = '#E8621A';
+const RUST = '#F26A21';
 
 type Article = {
   id: string;
@@ -58,7 +58,7 @@ const STATUS_STYLES: Record<ContentStatus, string> = {
 
 // "!" is needed: the site-wide input rule in globals.css sets a pale border (#d4d4d8) with
 // higher specificity than a utility class. Scoped to this editor only.
-const inputCls = 'w-full rounded-md border !border-gray-500 bg-white px-3 py-2 text-[15px] text-gray-900 placeholder:text-gray-500 focus:!border-[#E8621A] focus:outline-none focus:ring-2 focus:ring-[#E8621A]/30';
+const inputCls = 'w-full rounded-md border !border-gray-500 bg-white px-3 py-2 text-[15px] text-gray-900 placeholder:text-gray-500 focus:!border-[#F26A21] focus:outline-none focus:ring-2 focus:ring-[#F26A21]/30';
 const labelCls = 'block text-sm font-semibold text-gray-900 mb-1';
 const helpCls = 'mt-1 text-xs text-gray-600';
 

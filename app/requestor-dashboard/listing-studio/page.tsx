@@ -123,15 +123,15 @@ function SampleOutputSection() {
   }
 
   return (
-    <div className="mt-8 rounded-2xl border border-zinc-700 bg-zinc-900 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-800">
+    <div className="mt-8 rounded-2xl border border-lw-dark-border bg-brand-navy overflow-hidden">
+      <div className="px-6 py-4 border-b border-lw-dark-border">
         <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-1">Real Output. Real Listing.</p>
         <h3 className="text-lg font-bold text-white">See What ListWorx Generates</h3>
         <p className="text-sm text-zinc-400 mt-1">Here's a real sample for a Nashville listing, generated in seconds.</p>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 overflow-x-auto p-3 pb-0 border-b border-zinc-800">
+      <div className="flex gap-1 overflow-x-auto p-3 pb-0 border-b border-lw-dark-border">
         {SAMPLE_TABS.map((tab) => (
           <button
             key={tab.id}
@@ -158,7 +158,7 @@ function SampleOutputSection() {
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all border ${
               copiedTab === activeTab
                 ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border-zinc-700'
+                : 'bg-brand-navy-soft text-zinc-300 hover:bg-zinc-700 border-lw-dark-border'
             }`}
           >
             {copiedTab === activeTab ? (

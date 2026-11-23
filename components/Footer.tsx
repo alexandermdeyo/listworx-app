@@ -60,7 +60,8 @@ function getContent(content: PublicContent, key: string, fallback = '') {
 
 export default function Footer() {
   const pathname = usePathname();
-  const light = isMarketingPath(pathname || '');
+  // Brand rollout: footer is navy on every page.
+  const light = false && isMarketingPath(pathname || '');
   const [content, setContent] = useState({} as PublicContent);
 
   useEffect(() => {
@@ -78,7 +79,7 @@ export default function Footer() {
     .filter(item => item.url.length > 0);
 
   return (
-    <footer className={cn(light ? 'bg-white text-mkt-ink/80' : 'bg-lw-dark text-zinc-400')}>
+    <footer className={cn(light ? 'bg-white text-mkt-ink/80' : 'bg-brand-navy-deep text-white/70')}>
       <div className="container mx-auto px-4 pt-14 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
           <div className="md:col-span-4">

@@ -923,8 +923,8 @@ export default function SubscriptionSection({
                     onClick={() => setSelectedFounderTier(tier.id as 'basic' | 'preferred' | 'elite')}
                     className={`rounded-lg border-2 p-4 text-left transition ${
                       isSelected
-                        ? 'border-lw-rust bg-zinc-900/80 shadow-md'
-                        : 'border-zinc-700 bg-zinc-900/40 hover:border-lw-rust/60'
+                        ? 'border-lw-rust bg-brand-navy/80 shadow-md'
+                        : 'border-lw-dark-border bg-brand-navy/40 hover:border-lw-rust/60'
                     }`}
                   >
                     <div className="font-bold text-white">{tier.name}</div>
@@ -945,7 +945,7 @@ export default function SubscriptionSection({
 
           {/* Customize Your Founder Kit */}
           {bundleableAddons.length > 0 && (
-            <div className="mt-6 border-t border-zinc-700 pt-6">
+            <div className="mt-6 border-t border-lw-dark-border pt-6">
               <div className="mb-4">
                 <h4 className="text-lg font-bold text-white">Customize Your Founder Kit (optional)</h4>
                 <p className="text-sm text-zinc-400">
@@ -964,15 +964,15 @@ export default function SubscriptionSection({
                       key={addon.id}
                       className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition ${
                         isChecked
-                          ? 'border-lw-rust bg-zinc-900/80'
-                          : 'border-zinc-700 bg-zinc-900/40 hover:border-lw-rust/60'
+                          ? 'border-lw-rust bg-brand-navy/80'
+                          : 'border-lw-dark-border bg-brand-navy/40 hover:border-lw-rust/60'
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => toggleAddon(addon.id)}
-                        className="mt-1 h-5 w-5 rounded border-zinc-600 bg-zinc-900 text-lw-rust focus:ring-lw-rust focus:ring-2"
+                        className="mt-1 h-5 w-5 rounded border-zinc-600 bg-brand-navy text-lw-rust focus:ring-lw-rust focus:ring-2"
                       />
                       <div className="flex-1">
                         <div className="flex items-baseline justify-between gap-3">
@@ -986,7 +986,7 @@ export default function SubscriptionSection({
                 })}
               </div>
               {addonsTotalCents > 0 && (
-                <div className="mt-4 rounded-lg border border-lw-rust/40 bg-zinc-900/60 p-3 text-center">
+                <div className="mt-4 rounded-lg border border-lw-rust/40 bg-brand-navy/60 p-3 text-center">
                   <p className="text-sm text-zinc-300">
                     ${founderTotalCents} in one-time add-ons, billed with your first payment
                   </p>

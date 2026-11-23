@@ -136,7 +136,7 @@ export default async function RealtorProfilePage({
               <Link
                 href="/requestor-dashboard"
                 className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-white font-semibold text-sm"
-                style={{ backgroundColor: '#E8621A' }}
+                style={{ backgroundColor: '#F26A21' }}
               >
                 Back to Your Dashboard
               </Link>
@@ -213,7 +213,7 @@ export default async function RealtorProfilePage({
           <div className="text-center max-w-md">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
             <p className="text-gray-500 text-sm mb-6">We couldn't load this profile. Please try again.</p>
-            <Link href="/requestor-dashboard" className="text-sm font-semibold" style={{ color: '#E8621A' }}>
+            <Link href="/requestor-dashboard" className="text-sm font-semibold" style={{ color: '#F26A21' }}>
               Back to Your Dashboard
             </Link>
           </div>
@@ -225,7 +225,7 @@ export default async function RealtorProfilePage({
   if (!kit) return null;
 
   // ── Derived ──────────────────────────────────────────────────────────────────
-  const accentColor    = kit.primary_color || '#E8621A';
+  const accentColor    = kit.primary_color || '#F26A21';
   const contactEmail   = kit.email || '';
   const mailtoSubject  = `Inquiry from ListWorx, ${kit.display_name || 'Realtor'}`;
   const hasSocialLinks = kit.phone || kit.email || kit.website || kit.instagram_handle
@@ -247,7 +247,7 @@ export default async function RealtorProfilePage({
 
       {/* ── Cover photo ───────────────────────────────────────────────────── */}
       <div
-        className="relative w-full h-56 md:h-80 bg-zinc-800"
+        className="relative w-full h-56 md:h-80 bg-brand-navy-soft"
         style={kit.cover_photo_url
           ? { backgroundImage: `url(${kit.cover_photo_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
           : {}}
@@ -372,9 +372,9 @@ export default async function RealtorProfilePage({
               {listings.map((listing) => (
                 <div
                   key={listing.id}
-                  className="rounded-2xl border border-zinc-200 bg-zinc-900 overflow-hidden flex flex-col shadow-sm hover:shadow-md transition"
+                  className="rounded-2xl border border-zinc-200 bg-brand-navy overflow-hidden flex flex-col shadow-sm hover:shadow-md transition"
                 >
-                  <div className="relative w-full aspect-[4/3] bg-zinc-800">
+                  <div className="relative w-full aspect-[4/3] bg-brand-navy-soft">
                     {listing.photoUrl ? (
                       <img src={listing.photoUrl} alt={listing.address} className="w-full h-full object-cover" />
                     ) : (
@@ -463,14 +463,14 @@ export default async function RealtorProfilePage({
       </div>
 
       {/* ── Sticky preview banner ─────────────────────────────────────────── */}
-      <div className="sticky bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-3 bg-zinc-900/95 backdrop-blur-sm px-6 py-3 border-t border-zinc-700">
+      <div className="sticky bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-3 bg-brand-navy/95 backdrop-blur-sm px-6 py-3 border-t border-lw-dark-border">
         <p className="text-sm text-zinc-300">
           This is how clients see your profile.
         </p>
         <Link
           href="/requestor-dashboard/profile"
           className="shrink-0 inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
-          style={{ backgroundColor: '#E8621A' }}
+          style={{ backgroundColor: '#F26A21' }}
         >
           Edit My Profile →
         </Link>

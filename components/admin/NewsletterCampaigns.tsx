@@ -184,7 +184,7 @@ export default function NewsletterCampaigns({ activeCount }: { activeCount: numb
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <div className="flex gap-2">
-          <Button onClick={save} disabled={saving} className="text-white" style={{ backgroundColor: '#E8621A' }}>
+          <Button onClick={save} disabled={saving} className="text-white" style={{ backgroundColor: '#F26A21' }}>
             {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null} Save draft
           </Button>
           <Button variant="outline" onClick={() => { setEditing(null); setError(''); }}>Cancel</Button>
@@ -200,7 +200,7 @@ export default function NewsletterCampaigns({ activeCount }: { activeCount: numb
           <h2 className="text-xl font-bold text-gray-900">Newsletters</h2>
           <p className="text-sm text-gray-500">Write a draft, send yourself a test, then send to {activeCount} active subscriber{activeCount !== 1 ? 's' : ''}.</p>
         </div>
-        <Button onClick={() => { setPreview(false); setEditing({ subject: '', preview_text: '', body_html: '' }); }} className="text-white" style={{ backgroundColor: '#E8621A' }}>
+        <Button onClick={() => { setPreview(false); setEditing({ subject: '', preview_text: '', body_html: '' }); }} className="text-white" style={{ backgroundColor: '#F26A21' }}>
           <Plus className="h-4 w-4 mr-1" /> New newsletter
         </Button>
       </div>
@@ -234,7 +234,7 @@ export default function NewsletterCampaigns({ activeCount }: { activeCount: numb
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button onClick={() => { setPreview(false); setEditing(c); }} className="p-2 text-gray-400 hover:text-gray-800" title="Edit"><Pencil className="h-4 w-4" /></button>
                   <Button variant="outline" size="sm" disabled={busy === c.id} onClick={() => test(c)}>Test</Button>
-                  <Button size="sm" disabled={busy === c.id || activeCount === 0 || !broadcastsEnabled} onClick={() => send(c)} className="text-white" style={{ backgroundColor: '#E8621A' }}>
+                  <Button size="sm" disabled={busy === c.id || activeCount === 0 || !broadcastsEnabled} onClick={() => send(c)} className="text-white" style={{ backgroundColor: '#F26A21' }}>
                     {busy === c.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5 mr-1" />} Send
                   </Button>
                   <button onClick={() => remove(c)} className="p-2 text-gray-300 hover:text-red-500" title="Delete"><Trash2 className="h-4 w-4" /></button>

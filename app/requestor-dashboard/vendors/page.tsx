@@ -381,7 +381,7 @@ export default function VendorsPage() {
         </div>
 
         {/* ── Add Vendor Form ─────────────────────────────────────────────── */}
-        <div className="rounded-lg border border-zinc-700 bg-zinc-900 p-6 mb-6">
+        <div className="rounded-lg border border-lw-dark-border bg-brand-navy p-6 mb-6">
           <div className="flex items-center gap-2 mb-5">
             <UserPlus className="h-5 w-5 text-lw-rust" />
             <h3 className="text-base font-semibold text-white">Add a Vendor</h3>
@@ -515,7 +515,7 @@ export default function VendorsPage() {
               onClick={() => handleSubmit(true)}
               disabled={saving}
               className="text-white font-semibold"
-              style={{ backgroundColor: '#E8621A' }}
+              style={{ backgroundColor: '#F26A21' }}
             >
               {saving ? (
                 <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Sending...</>
@@ -542,12 +542,12 @@ export default function VendorsPage() {
           )}
 
           {loadingVendors ? (
-            <div className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-10 flex items-center justify-center text-zinc-500">
+            <div className="rounded-lg border border-lw-dark-border bg-brand-navy-soft/50 p-10 flex items-center justify-center text-zinc-500">
               <Loader2 className="h-5 w-5 animate-spin mr-2" />
               Loading vendors...
             </div>
           ) : vendors.length === 0 ? (
-            <div className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-12 text-center">
+            <div className="rounded-lg border border-lw-dark-border bg-brand-navy-soft/50 p-12 text-center">
               <Users className="h-10 w-10 text-zinc-600 mx-auto mb-3" />
               <p className="text-zinc-400 font-medium mb-1">No vendors yet.</p>
               <p className="text-sm text-zinc-500">
@@ -555,10 +555,10 @@ export default function VendorsPage() {
               </p>
             </div>
           ) : (
-            <div className="rounded-lg border border-zinc-700 bg-zinc-900 overflow-hidden">
+            <div className="rounded-lg border border-lw-dark-border bg-brand-navy overflow-hidden">
 
               {/* Table header */}
-              <div className="hidden md:grid grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-2.5 bg-zinc-800 border-b border-zinc-700">
+              <div className="hidden md:grid grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-2.5 bg-brand-navy-soft border-b border-lw-dark-border">
                 <button
                   onClick={() => handleSort('name')}
                   className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-zinc-400 hover:text-zinc-300 text-left"
@@ -604,7 +604,7 @@ export default function VendorsPage() {
                       onClick={() =>
                         setExpandedVendorId(isExpanded ? null : vendor.id)
                       }
-                      className="grid grid-cols-1 md:grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-3.5 bg-zinc-900 border-b border-zinc-800 hover:bg-zinc-800/50 cursor-pointer transition-colors"
+                      className="grid grid-cols-1 md:grid-cols-[minmax(0,1.5fr)_110px_minmax(0,1fr)_120px_120px_160px] gap-3 px-4 py-3.5 bg-brand-navy border-b border-lw-dark-border hover:bg-brand-navy-soft/50 cursor-pointer transition-colors"
                     >
                       {/* Name + business */}
                       <div className="min-w-0">
@@ -666,7 +666,7 @@ export default function VendorsPage() {
                             onClick={(e) => handleResendInvite(e, vendor)}
                             disabled={resending[vendor.id]}
                             className="text-white text-xs h-7 px-2.5"
-                            style={{ backgroundColor: '#E8621A' }}
+                            style={{ backgroundColor: '#F26A21' }}
                           >
                             {resending[vendor.id] ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -712,7 +712,7 @@ export default function VendorsPage() {
 
                     {/* Expanded detail panel */}
                     {isExpanded && (
-                      <div className="px-4 py-3 bg-zinc-800 border-t border-zinc-700 grid md:grid-cols-2 gap-4">
+                      <div className="px-4 py-3 bg-brand-navy-soft border-t border-lw-dark-border grid md:grid-cols-2 gap-4">
                         <div>
                           <p className="text-xs font-medium uppercase tracking-wider text-zinc-400 mb-1">
                             Notes

@@ -58,7 +58,7 @@ export default function ContractorProfileModal({
           {contractor.tier && (
             <span
               className="text-xs font-bold px-2.5 py-1 rounded-full text-white"
-              style={{ backgroundColor: '#E8621A' }}
+              style={{ backgroundColor: '#F26A21' }}
             >
               {TIER_LABELS[contractor.tier]}
             </span>

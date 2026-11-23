@@ -309,7 +309,7 @@ function FreePlanCards() {
   }
 
   return (
-    <div className="rounded-2xl bg-zinc-950 border border-zinc-800 p-6 md:p-8">
+    <div className="rounded-2xl bg-brand-navy-deep border border-lw-dark-border p-6 md:p-8">
       {/* Section header */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 rounded-full border border-lw-rust/30 bg-lw-rust/10 px-4 py-1.5 text-sm font-semibold text-lw-rust mb-4">
@@ -326,7 +326,7 @@ function FreePlanCards() {
 
       {/* Monthly / Annual toggle */}
       <div className="flex justify-center mb-8">
-        <div className="inline-flex items-center rounded-full bg-zinc-900 border border-zinc-700 p-1">
+        <div className="inline-flex items-center rounded-full bg-brand-navy border border-lw-dark-border p-1">
           <button
             onClick={() => setPeriod('monthly')}
             className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${
@@ -371,7 +371,7 @@ function FreePlanCards() {
               className={`relative rounded-xl p-6 flex flex-col transition-all ${
                 tier.highlight
                   ? 'bg-white text-zinc-900 shadow-xl ring-2 ring-lw-rust'
-                  : 'bg-zinc-900 border border-zinc-700 text-white'
+                  : 'bg-brand-navy border border-lw-dark-border text-white'
               }`}
             >
               {/* Most popular badge */}
@@ -434,7 +434,7 @@ function FreePlanCards() {
                 className={`w-full font-semibold ${
                   tier.highlight
                     ? 'bg-lw-rust hover:bg-lw-rust-hover text-white'
-                    : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600'
+                    : 'bg-brand-navy-soft hover:bg-zinc-700 text-white border border-zinc-600'
                 }`}
               >
                 {isLoading ? (

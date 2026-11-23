@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { Reveal, RevealBadge } from '@/components/motion';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 const APPLY_HREF = '/contractor-portal?intent=apply';
 
@@ -74,6 +75,7 @@ export default function IronCladStandardsPage() {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-mailer-black">
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="absolute left-0 top-0 h-1 w-full bg-lw-rust" />
         <div className="relative container mx-auto px-4 py-20 md:py-28">
           <div className="mx-auto max-w-3xl text-center">

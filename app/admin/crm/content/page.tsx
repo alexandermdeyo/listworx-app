@@ -52,7 +52,7 @@ export default function ContentAdminPage() {
         <div className="max-w-md text-center p-8 rounded-xl border border-gray-200">
           <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2 text-gray-900">Access Denied</h2>
-          <Button onClick={handleSignOut} className="mt-4 text-white" style={{ backgroundColor: '#E8621A' }}>Sign Out</Button>
+          <Button onClick={handleSignOut} className="mt-4 text-white" style={{ backgroundColor: '#F26A21' }}>Sign Out</Button>
         </div>
       </div>
     );

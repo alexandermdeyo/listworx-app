@@ -219,14 +219,14 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
           <div><label className={labelCls} htmlFor="ph-rights-notes">Rights notes (licence, credit line)</label><input id="ph-rights-notes" className={inputCls} value={form.rights_notes} onChange={(e) => set('rights_notes', e.target.value)} /></div>
         </div>
         <label className="flex items-start gap-2 text-sm">
-          <input type="checkbox" className="mt-1 h-4 w-4 accent-[#E8621A]" checked={form.is_ai_generated} onChange={(e) => set('is_ai_generated', e.target.checked)} />
+          <input type="checkbox" className="mt-1 h-4 w-4 accent-[#F26A21]" checked={form.is_ai_generated} onChange={(e) => set('is_ai_generated', e.target.checked)} />
           <span><strong>AI-generated.</strong> Requires the three-point review before approval. Changing this (or the rights) on an approved photo sends it back to review.</span>
         </label>
         <div>
           <p className={labelCls}>Intended use</p>
           <div className="flex flex-wrap gap-x-5 gap-y-1">
             {PHOTO_USES.map((u) => (
-              <label key={u} className="flex items-center gap-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-[#E8621A]" checked={form.intended_uses.includes(u)} onChange={() => toggle('intended_uses', u)} />{PHOTO_USE_LABELS[u]}</label>
+              <label key={u} className="flex items-center gap-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-[#F26A21]" checked={form.intended_uses.includes(u)} onChange={() => toggle('intended_uses', u)} />{PHOTO_USE_LABELS[u]}</label>
             ))}
           </div>
         </div>
@@ -234,7 +234,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
           <p className={labelCls}>Problems you can see (mark by eye)</p>
           <div className="flex flex-wrap gap-x-5 gap-y-1">
             {MANUAL_FLAGS.map((f) => (
-              <label key={f} className="flex items-center gap-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-[#E8621A]" checked={form.quality_flags.includes(f)} onChange={() => toggle('quality_flags', f)} />{MANUAL_FLAG_LABELS[f]}</label>
+              <label key={f} className="flex items-center gap-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-[#F26A21]" checked={form.quality_flags.includes(f)} onChange={() => toggle('quality_flags', f)} />{MANUAL_FLAG_LABELS[f]}</label>
             ))}
           </div>
         </div>
@@ -278,7 +278,7 @@ export default function PhotoDetail({ id, onClose, onChanged, onOpen }: { id: st
               <p className="mb-1 text-xs text-purple-900">Not needed to reject.</p>
               {AI_CHECKLIST.map((c) => (
                 <label key={c.key} className="flex items-start gap-2 text-sm text-purple-950">
-                  <input type="checkbox" className="mt-1 h-4 w-4 accent-[#E8621A]" checked={!!checklist[c.key]} onChange={(e) => setChecklist((x) => ({ ...x, [c.key]: e.target.checked }))} />{c.label}
+                  <input type="checkbox" className="mt-1 h-4 w-4 accent-[#F26A21]" checked={!!checklist[c.key]} onChange={(e) => setChecklist((x) => ({ ...x, [c.key]: e.target.checked }))} />{c.label}
                 </label>
               ))}
             </div>

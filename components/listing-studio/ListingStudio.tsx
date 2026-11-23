@@ -226,7 +226,7 @@ function FormField({
 }
 
 const inputClass =
-  'w-full rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-500 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust transition';
+  'w-full rounded-lg bg-brand-navy-soft border border-lw-dark-border text-white placeholder-zinc-500 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-lw-rust/50 focus:border-lw-rust transition';
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -622,7 +622,7 @@ export function ListingStudio({
     : 'Generating your content...';
 
   return (
-    <div className="rounded-2xl bg-zinc-950 border border-zinc-800 overflow-hidden">
+    <div className="rounded-2xl bg-brand-navy-deep border border-lw-dark-border overflow-hidden">
 
       {/* ── SECTION A — List view ─────────────────────────────────────────── */}
       {view === 'list' && (
@@ -655,8 +655,8 @@ export function ListingStudio({
 
           {/* Listing cards */}
           {listings.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-zinc-700 p-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center mx-auto mb-4">
+            <div className="rounded-xl border border-dashed border-lw-dark-border p-12 text-center">
+              <div className="w-16 h-16 rounded-full bg-brand-navy-soft border border-lw-dark-border flex items-center justify-center mx-auto mb-4">
                 <Camera className="h-8 w-8 text-zinc-600" />
               </div>
               <p className="text-zinc-300 font-semibold text-base mb-1.5">No listings yet</p>
@@ -677,10 +677,10 @@ export function ListingStudio({
                 return (
                   <div
                     key={listing.id}
-                    className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden flex flex-col"
+                    className="rounded-xl border border-lw-dark-border bg-brand-navy overflow-hidden flex flex-col"
                   >
                     {/* Photo */}
-                    <div className="relative w-full aspect-[4/3] bg-zinc-800">
+                    <div className="relative w-full aspect-[4/3] bg-brand-navy-soft">
                       {primaryPhoto ? (
                         <PhotoThumbnail path={primaryPhoto.storage_path} />
                       ) : (
@@ -718,7 +718,7 @@ export function ListingStudio({
                               size="sm"
                               variant="outline"
                               onClick={() => handleGenerateForExisting(listing)}
-                              className="border-zinc-700 text-zinc-400 hover:bg-zinc-800 text-xs px-2.5"
+                              className="border-lw-dark-border text-zinc-400 hover:bg-brand-navy-soft text-xs px-2.5"
                               title="Regenerate"
                             >
                               <RefreshCw className="h-3.5 w-3.5" />
@@ -769,7 +769,7 @@ export function ListingStudio({
 
           {/* Loading overlay */}
           {(isCompressing || isSubmitting || isGenerating) && (
-            <div className="rounded-xl border border-zinc-700 bg-zinc-900 p-10 text-center mb-6">
+            <div className="rounded-xl border border-lw-dark-border bg-brand-navy p-10 text-center mb-6">
               <Loader2 className="h-8 w-8 text-lw-rust animate-spin mx-auto mb-4" />
               <p className="text-white font-semibold mb-1">{loadingLabel}</p>
               {isGenerating && (
@@ -803,10 +803,10 @@ export function ListingStudio({
                     className={`
                       relative rounded-xl border-2 border-dashed transition-all cursor-pointer
                       ${photos.length >= MAX_PHOTOS
-                        ? 'border-zinc-700 cursor-not-allowed opacity-60'
+                        ? 'border-lw-dark-border cursor-not-allowed opacity-60'
                         : isDraggingOver
                         ? 'border-lw-rust bg-lw-rust/5'
-                        : 'border-zinc-700 hover:border-zinc-500 hover:bg-zinc-900/60'
+                        : 'border-lw-dark-border hover:border-zinc-500 hover:bg-brand-navy/60'
                       }
                       ${photoPreviews.length === 0 ? 'p-10' : 'p-4'}
                     `}
@@ -842,7 +842,7 @@ export function ListingStudio({
                                 relative aspect-square rounded-lg overflow-hidden border-2 transition-all
                                 ${i === primaryPhotoIndex
                                   ? 'border-lw-rust ring-1 ring-lw-rust/40'
-                                  : 'border-zinc-700'
+                                  : 'border-lw-dark-border'
                                 }
                               `}
                               onClick={(e) => e.stopPropagation()}
@@ -892,7 +892,7 @@ export function ListingStudio({
                             <button
                               type="button"
                               onClick={() => photoInputRef.current?.click()}
-                              className="aspect-square rounded-lg border-2 border-dashed border-zinc-700 hover:border-zinc-500 flex items-center justify-center transition"
+                              className="aspect-square rounded-lg border-2 border-dashed border-lw-dark-border hover:border-zinc-500 flex items-center justify-center transition"
                             >
                               <Plus className="h-5 w-5 text-zinc-600" />
                             </button>
@@ -1241,7 +1241,7 @@ export function ListingStudio({
                     <div className="flex items-center gap-3">
                       <input
                         type="color"
-                        className="h-10 w-16 rounded-lg border border-zinc-700 bg-zinc-800 cursor-pointer p-1"
+                        className="h-10 w-16 rounded-lg border border-lw-dark-border bg-brand-navy-soft cursor-pointer p-1"
                         {...field('brand_color')}
                       />
                       <span className="text-zinc-400 text-sm font-mono">
@@ -1258,7 +1258,7 @@ export function ListingStudio({
                   type="button"
                   variant="outline"
                   onClick={handleBackToList}
-                  className="border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                  className="border-lw-dark-border text-zinc-400 hover:bg-brand-navy-soft hover:text-white"
                 >
                   Cancel
                 </Button>
@@ -1298,7 +1298,7 @@ export function ListingStudio({
               size="sm"
               onClick={handleRegenerate}
               disabled={isGenerating || remainingPackages <= 0}
-              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 shrink-0"
+              className="border-lw-dark-border text-zinc-300 hover:bg-brand-navy-soft shrink-0"
             >
               {isGenerating ? (
                 <>
@@ -1373,7 +1373,7 @@ export function ListingStudio({
                 return (
                   <div
                     key={key}
-                    className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 flex flex-col gap-3"
+                    className="rounded-xl border border-lw-dark-border bg-brand-navy p-4 flex flex-col gap-3"
                   >
                     {/* Card header */}
                     <div className="flex items-center gap-2">
@@ -1387,13 +1387,13 @@ export function ListingStudio({
                     <div className="flex-1">
                       {isEmail ? (
                         <div className="space-y-2">
-                          <div className="rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2">
+                          <div className="rounded-md bg-brand-navy-soft border border-lw-dark-border px-3 py-2">
                             <p className="text-xs text-zinc-500 mb-0.5">Subject</p>
                             <p className="text-sm text-white">
                               {generatedContent.email_subject || '—'}
                             </p>
                           </div>
-                          <div className="rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2">
+                          <div className="rounded-md bg-brand-navy-soft border border-lw-dark-border px-3 py-2">
                             <p className="text-xs text-zinc-500 mb-0.5">Body</p>
                             <p className="text-sm text-zinc-300 whitespace-pre-line leading-relaxed">
                               {generatedContent.email_body || '—'}
@@ -1408,12 +1408,12 @@ export function ListingStudio({
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2 pt-1 border-t border-zinc-800">
+                    <div className="flex items-center gap-2 pt-1 border-t border-lw-dark-border">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleCopy(key, displayText)}
-                        className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 text-xs h-8"
+                        className="border-lw-dark-border text-zinc-300 hover:bg-brand-navy-soft text-xs h-8"
                       >
                         {isCopied ? (
                           <>
@@ -1432,7 +1432,7 @@ export function ListingStudio({
                         variant="outline"
                         onClick={handleRegenerate}
                         disabled={isGenerating || remainingPackages <= 0}
-                        className="border-zinc-700 text-zinc-400 hover:bg-zinc-800 text-xs h-8"
+                        className="border-lw-dark-border text-zinc-400 hover:bg-brand-navy-soft text-xs h-8"
                       >
                         <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
                         Regenerate
@@ -1444,7 +1444,7 @@ export function ListingStudio({
           </div>
 
           {/* Usage summary */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 px-4 py-3 flex items-center gap-2">
+          <div className="rounded-xl border border-lw-dark-border bg-brand-navy/50 px-4 py-3 flex items-center gap-2">
             <Zap className="h-4 w-4 text-lw-rust shrink-0" />
             <p className="text-sm text-zinc-400">
               <span className="font-semibold text-white">{remainingPackages}</span>
@@ -1478,7 +1478,7 @@ function PhotoThumbnail({ path }: { path: string }) {
 
   if (!src) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-zinc-800">
+      <div className="w-full h-full flex items-center justify-center bg-brand-navy-soft">
         <Camera className="h-8 w-8 text-zinc-600" />
       </div>
     );

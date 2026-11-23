@@ -27,7 +27,7 @@ interface DashboardLayoutProps {
   activeNavId: string;
   onLogout: () => void;
   hasNotifications?: boolean;
-  /** 'brand' = navy redesign theme (opt-in). Default keeps the current look. */
+  /** 'brand' = navy redesign theme (default, site-wide). 'default' = legacy charcoal look. */
   theme?: 'default' | 'brand';
   children: ReactNode;
 }
@@ -45,7 +45,7 @@ export default function DashboardLayout({
   onLogout,
   hasNotifications = false,
   children,
-  theme = 'default',
+  theme = 'brand',
 }: DashboardLayoutProps) {
   const brand = theme === 'brand';
   const router                      = useRouter();
@@ -193,7 +193,7 @@ export default function DashboardLayout({
             {tierBadge && (
               <span
                 className="inline-block px-2 py-0.5 text-xs font-semibold rounded-sm text-white mt-0.5"
-                style={{ backgroundColor: '#E8621A' }}
+                style={{ backgroundColor: '#F26A21' }}
               >
                 {tierBadge}
               </span>
@@ -227,15 +227,18 @@ export default function DashboardLayout({
                 {item.badge != null && item.badge > 0 && (
                   <span
                     className="flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold text-white"
-                    style={{ backgroundColor: '#E8621A' }}
+                    style={{ backgroundColor: '#F26A21' }}
                   >
                     {item.badge}
                   </span>
                 )}
+                {brand && item.disabled && !item.badgeLabel && (
+                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/60">Soon</span>
+                )}
                 {item.badgeLabel && (
                   <span
                     className="text-xs font-semibold px-1.5 py-0.5 rounded-sm text-white"
-                    style={{ backgroundColor: '#E8621A' }}
+                    style={{ backgroundColor: '#F26A21' }}
                   >
                     {item.badgeLabel}
                   </span>
@@ -246,7 +249,7 @@ export default function DashboardLayout({
             const baseClass = brand
               ? `flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[15px] transition-colors ${
                   item.disabled
-                    ? 'text-white/35 cursor-not-allowed'
+                    ? 'text-white/40 cursor-not-allowed'
                     : isActive
                     ? 'bg-brand-orange text-white font-semibold shadow-[0_8px_18px_-10px_rgba(242,106,33,0.9)]'
                     : 'text-white/80 hover:bg-white/10 hover:text-white'
@@ -260,7 +263,7 @@ export default function DashboardLayout({
                 }`;
 
             const activeBg = isActive && !brand
-              ? { backgroundColor: '#E8621A' }
+              ? { backgroundColor: '#F26A21' }
               : {};
 
             if (item.href && !item.disabled) {
@@ -321,7 +324,7 @@ export default function DashboardLayout({
             {tierBadge && (
               <span
                 className="px-3 py-1 text-xs font-bold rounded-full text-white"
-                style={{ backgroundColor: '#E8621A' }}
+                style={{ backgroundColor: '#F26A21' }}
               >
                 {tierBadge}
               </span>
@@ -331,7 +334,7 @@ export default function DashboardLayout({
               {hasNotifications && (
                 <span
                   className="absolute right-1 top-1 h-2 w-2 rounded-full"
-                  style={{ backgroundColor: '#E8621A' }}
+                  style={{ backgroundColor: '#F26A21' }}
                 />
               )}
             </button>

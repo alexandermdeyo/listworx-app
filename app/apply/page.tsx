@@ -16,6 +16,7 @@ import {
   Shield,
 } from 'lucide-react';
 import { Reveal } from '@/components/motion';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 export type FounderSelection = {
   tierId: string;
@@ -232,7 +233,8 @@ export default function ApplyPage() {
       <Navigation variant="light" />
 
       {/* ABOVE THE FOLD */}
-      <section className="bg-mkt-navy py-16 md:py-24 text-center">
+      <section className="overflow-hidden relative bg-mkt-navy py-16 md:py-16 text-center">
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="container mx-auto px-4 max-w-2xl">
           <Reveal immediate delay={0}>
             <p className="text-lw-rust text-sm font-semibold uppercase tracking-widest mb-4">Contractor Applications</p>

@@ -32,13 +32,13 @@ export default function AddonDetailPage() {
   const addon = ADDON_LIST.find(a => a.id === addonId);
 
   if (loading) return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-[#E8621A]" />
+    <div className="min-h-screen bg-brand-navy-deep flex items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin text-[#F26A21]" />
     </div>
   );
 
   if (!addon) return (
-    <div className="min-h-screen bg-zinc-950 py-16 px-4">
+    <div className="min-h-screen bg-brand-navy-deep py-16 px-4">
       <div className="max-w-lg mx-auto">
         <button onClick={() => router.push('/contractor-dashboard')} className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors mb-8">
           <ArrowLeft className="h-4 w-4" /> Back to Dashboard
@@ -60,7 +60,7 @@ export default function AddonDetailPage() {
   const priceLabel = addon.type === 'monthly' ? `$${price}/month` : `$${price} one-time`;
 
   return (
-    <div className="min-h-screen bg-zinc-950 py-10 px-4">
+    <div className="min-h-screen bg-brand-navy-deep py-10 px-4">
       <div className="max-w-2xl mx-auto">
         <button onClick={() => router.push('/contractor-dashboard')} className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors mb-8">
           <ArrowLeft className="h-4 w-4" /> Back to Dashboard
@@ -69,7 +69,7 @@ export default function AddonDetailPage() {
         <div className="space-y-6">
           <div>
             <h1 className="text-2xl font-bold text-white mb-1">{addon.name}</h1>
-            <p className="text-[#E8621A] font-semibold text-lg">{priceLabel}</p>
+            <p className="text-[#F26A21] font-semibold text-lg">{priceLabel}</p>
           </div>
 
           {isIncluded && (
@@ -79,7 +79,7 @@ export default function AddonDetailPage() {
             </div>
           )}
 
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 space-y-4">
+          <div className="rounded-xl border border-lw-dark-border bg-brand-navy p-6 space-y-4">
             <div>
               <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 mb-2">What you get</h2>
               <p className="text-zinc-300 leading-relaxed">{addon.description}</p>
@@ -102,7 +102,7 @@ export default function AddonDetailPage() {
           {!isIncluded && (
             <Button
               onClick={() => router.push(`/contractor-dashboard?openAddon=${addonId}`)}
-              className="w-full bg-[#E8621A] hover:bg-[#d45516] text-white py-3 text-base"
+              className="w-full bg-[#F26A21] hover:bg-[#d45516] text-white py-3 text-base"
             >
               {addon.type === 'monthly' ? 'Subscribe' : 'Purchase'}, {priceLabel}
             </Button>

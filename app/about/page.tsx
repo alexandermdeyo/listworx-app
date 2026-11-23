@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, Shield, Users, TrendingUp, Camera, BookOpen, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/motion';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 const STATEMENTS = [
   {
@@ -65,7 +66,8 @@ export default function AboutPage() {
       <Navigation variant="light" />
 
       {/* HERO */}
-      <section className="bg-mailer-black pt-24 text-white md:pt-28">
+      <section className="overflow-hidden relative bg-mailer-black pt-12 text-white md:pt-14">
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 pb-16 md:grid-cols-2 md:gap-14 md:pb-20">
           <div>
             <Reveal immediate delay={0}>

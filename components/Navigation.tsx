@@ -152,7 +152,9 @@ export default function Navigation({ variant = 'dark' }: { variant?: 'dark' | 'l
     window.location.replace('/');
   };
 
-  if (variant === 'navy') {
+  // Brand rollout: every page uses the navy header. The `variant` prop is kept
+  // so existing call sites compile; the old light/dark markup below is unused.
+  if (variant === 'navy' || variant === 'light' || variant === 'dark') {
     return (
       <header className="sticky top-0 z-40">
         <America250Strip variant="dark" />

@@ -20,7 +20,7 @@ export default function TierSwitcher({
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-colors ${
               isActive ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-900'
             }`}
-            style={isActive ? { backgroundColor: '#E8621A' } : {}}
+            style={isActive ? { backgroundColor: '#F26A21' } : {}}
           >
             {t.name.replace(' Partner', '')}
           </button>

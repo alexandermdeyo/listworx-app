@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation';
 import Link from 'next/link';
 import { getPublishedPosts, type BlogPostSummary as BlogPost } from '@/lib/blog';
 import { objectPosition } from '@/lib/content/hero-image';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 // Rendered on the server for every request so post titles and links are in the
 // HTML crawlers receive, with the same freshness as the previous browser fetch.
@@ -90,7 +91,8 @@ export default async function BlogPage() {
       <Navigation variant="light" />
 
       {/* Hero */}
-      <section className="bg-mkt-ink py-20 md:py-28">
+      <section className="overflow-hidden relative bg-mkt-ink py-14 md:py-16">
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="container mx-auto px-4">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-lw-rust mb-4">ListWorx Blog</p>

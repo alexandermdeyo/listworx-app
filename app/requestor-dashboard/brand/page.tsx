@@ -76,7 +76,7 @@ const EMPTY_FORM: BrandForm = {
   phone:              '',
   email:              '',
   website:            '',
-  primary_color:      '#E8621A',
+  primary_color:      '#F26A21',
   secondary_color:    '#1a1a1a',
   accent_color:       '#ffffff',
   headshot_url:       '',
@@ -92,7 +92,7 @@ const EMPTY_FORM: BrandForm = {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-lw-rust transition';
+  'w-full rounded-lg border border-lw-dark-border bg-brand-navy-soft px-3 py-2 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-lw-rust transition';
 
 function Field({
   label,
@@ -116,8 +116,8 @@ function Field({
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-800">
+    <div className="rounded-2xl bg-brand-navy border border-lw-dark-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-lw-dark-border">
         <h3 className="text-white font-semibold text-base">{title}</h3>
       </div>
       <div className="p-6">{children}</div>
@@ -139,8 +139,8 @@ function ColorPicker({
       <span className="text-xs text-zinc-400 font-medium uppercase tracking-wider">{label}</span>
       <div className="flex items-center gap-2">
         <div
-          className="w-10 h-10 rounded-lg border border-zinc-700 shrink-0"
-          style={{ backgroundColor: value || '#E8621A' }}
+          className="w-10 h-10 rounded-lg border border-lw-dark-border shrink-0"
+          style={{ backgroundColor: value || '#F26A21' }}
         />
         <input
           type="text"
@@ -148,13 +148,13 @@ function ColorPicker({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           maxLength={9}
-          placeholder="#E8621A"
+          placeholder="#F26A21"
         />
         <input
           type="color"
-          value={value || '#E8621A'}
+          value={value || '#F26A21'}
           onChange={(e) => onChange(e.target.value)}
-          className="w-10 h-10 rounded cursor-pointer border border-zinc-700 bg-transparent shrink-0 p-0.5"
+          className="w-10 h-10 rounded cursor-pointer border border-lw-dark-border bg-transparent shrink-0 p-0.5"
           title={`Pick ${label.toLowerCase()}`}
         />
       </div>
@@ -199,7 +199,7 @@ function ImageUpload({
   }
 
   const wrapClass = [
-    'relative overflow-hidden border-2 border-dashed border-zinc-600 bg-zinc-800 flex items-center justify-center cursor-pointer hover:border-lw-rust transition',
+    'relative overflow-hidden border-2 border-dashed border-zinc-600 bg-brand-navy-soft flex items-center justify-center cursor-pointer hover:border-lw-rust transition',
     circle ? 'rounded-full' : 'rounded-xl',
     aspect,
   ].join(' ');
@@ -273,7 +273,7 @@ export default function BrandKitPage() {
           phone:              bk.phone               || '',
           email:              bk.email               || '',
           website:            bk.website             || '',
-          primary_color:      bk.primary_color       || '#E8621A',
+          primary_color:      bk.primary_color       || '#F26A21',
           secondary_color:    bk.secondary_color     || '#1a1a1a',
           accent_color:       bk.accent_color        || '#ffffff',
           headshot_url:       bk.headshot_url         || '',
@@ -612,7 +612,7 @@ export default function BrandKitPage() {
             onClick={handleSave}
             disabled={saving}
             className="ml-auto font-bold text-white px-8"
-            style={{ backgroundColor: '#E8621A' }}
+            style={{ backgroundColor: '#F26A21' }}
           >
             {saving ? (
               <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...</>

@@ -3,10 +3,10 @@
 import { useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase-browser';
 
-export const RUST = '#E8621A';
+export const RUST = '#F26A21';
 // "!" because the site-wide input rule in globals.css sets a pale border with higher specificity.
 export const inputCls =
-  'w-full rounded-md border !border-gray-500 bg-white px-3 py-2 text-[15px] text-gray-900 placeholder:text-gray-500 focus:!border-[#E8621A] focus:outline-none focus:ring-2 focus:ring-[#E8621A]/30';
+  'w-full rounded-md border !border-gray-500 bg-white px-3 py-2 text-[15px] text-gray-900 placeholder:text-gray-500 focus:!border-[#F26A21] focus:outline-none focus:ring-2 focus:ring-[#F26A21]/30';
 export const labelCls = 'block text-sm font-semibold text-gray-900 mb-1';
 export const helpCls = 'mt-1 text-xs text-gray-600';
 

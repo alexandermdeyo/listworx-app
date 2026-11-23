@@ -138,7 +138,7 @@ export default function RequestorDemoPage() {
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-xs uppercase tracking-wider text-muted-foreground">Referral {index + 1}</div>
                     {contractor.tier && (
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: '#E8621A' }}>
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: '#F26A21' }}>
                         {TIER_BADGE_LABEL[contractor.tier]}
                       </span>
                     )}
@@ -190,7 +190,7 @@ export default function RequestorDemoPage() {
 
           <div className="flex justify-center gap-4">
             <Link href="/aces-demo/requestor/dashboard">
-              <Button className="text-white font-semibold" style={{ backgroundColor: '#E8621A' }}>
+              <Button className="text-white font-semibold" style={{ backgroundColor: '#F26A21' }}>
                 Go to My Dashboard
               </Button>
             </Link>

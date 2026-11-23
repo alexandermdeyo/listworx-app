@@ -75,7 +75,7 @@ export default function OverviewTab() {
                 cursor={{ fill: 'rgba(232,98,26,0.08)' }}
                 contentStyle={{ borderRadius: 8, borderColor: '#e5e7eb', fontSize: 13 }}
               />
-              <Bar dataKey="count" name="Referrals" fill="#E8621A" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" name="Referrals" fill="#F26A21" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

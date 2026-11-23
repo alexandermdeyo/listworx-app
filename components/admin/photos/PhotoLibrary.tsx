@@ -115,7 +115,7 @@ export default function PhotoLibrary() {
             type="button"
             onClick={() => { setStatus(value); setArchived(false); }}
             className={`rounded-full border px-3 py-1.5 text-sm font-semibold ${status === value && !archived ? 'border-transparent text-white' : 'border-gray-400 bg-white text-gray-900 hover:bg-gray-50'}`}
-            style={status === value && !archived ? { backgroundColor: '#E8621A' } : undefined}
+            style={status === value && !archived ? { backgroundColor: '#F26A21' } : undefined}
           >
             {label}
           </button>
@@ -161,7 +161,7 @@ export default function PhotoLibrary() {
             const dup = (p.duplicates?.exact.length || 0) + (p.duplicates?.similar.length || 0) > 0;
             return (
               <li key={p.id}>
-                <button type="button" onClick={() => setOpenId(p.id)} className="group block w-full overflow-hidden rounded-lg border border-gray-300 bg-white text-left hover:border-[#E8621A]">
+                <button type="button" onClick={() => setOpenId(p.id)} className="group block w-full overflow-hidden rounded-lg border border-gray-300 bg-white text-left hover:border-[#F26A21]">
                   <div className="relative aspect-[4/3] bg-gray-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.preview_url || ''} alt={p.alt_text || ''} loading="lazy" className="h-full w-full object-cover" style={{ objectPosition: `${p.focus_x ?? 50}% ${p.focus_y ?? 30}%` }} />

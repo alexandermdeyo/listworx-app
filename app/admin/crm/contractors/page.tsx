@@ -541,7 +541,7 @@ export default function ContractorsPage() {
         <div className="max-w-md text-center p-8 rounded-xl border border-gray-200">
           <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2 text-gray-900">Access Denied</h2>
-          <Button onClick={handleSignOut} className="mt-4 text-white" style={{ backgroundColor: '#E8621A' }}>Sign Out</Button>
+          <Button onClick={handleSignOut} className="mt-4 text-white" style={{ backgroundColor: '#F26A21' }}>Sign Out</Button>
         </div>
       </div>
     );
@@ -1156,7 +1156,7 @@ export default function ContractorsPage() {
               <label className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2 block">Notes</label>
               <Textarea value={purchaseNotes} onChange={e => setPurchaseNotes(e.target.value)} rows={3} className="bg-white border-gray-300 text-gray-900" />
             </div>
-            <Button onClick={addPurchase} disabled={!!processing} className="w-full text-white" style={{ backgroundColor: '#E8621A' }}>
+            <Button onClick={addPurchase} disabled={!!processing} className="w-full text-white" style={{ backgroundColor: '#F26A21' }}>
               {processing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
               Add Purchase
             </Button>
@@ -1177,7 +1177,7 @@ export default function ContractorsPage() {
               placeholder="Internal notes about this contractor (not visible to them)..."
               className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
             />
-            <Button onClick={saveAdminNotes} disabled={savingNotes} className="w-full text-white" style={{ backgroundColor: '#E8621A' }}>
+            <Button onClick={saveAdminNotes} disabled={savingNotes} className="w-full text-white" style={{ backgroundColor: '#F26A21' }}>
               {savingNotes ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
               Save Notes
             </Button>

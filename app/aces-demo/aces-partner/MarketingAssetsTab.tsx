@@ -16,7 +16,7 @@ function AssetPreview({ type }: { type: DemoAcesMarketingAsset['type'] }) {
   if (type === 'flyer') {
     return (
       <div className="aspect-[4/3] rounded-lg overflow-hidden border border-gray-200 flex flex-col">
-        <div className="flex-1" style={{ background: 'linear-gradient(135deg, #E8621A 0%, #1F2A44 100%)' }} />
+        <div className="flex-1" style={{ background: 'linear-gradient(135deg, #F26A21 0%, #1F2A44 100%)' }} />
         <div className="bg-white px-3 py-2 text-center">
           <p className="text-[10px] font-bold text-gray-900">ACES × ListWorx</p>
         </div>

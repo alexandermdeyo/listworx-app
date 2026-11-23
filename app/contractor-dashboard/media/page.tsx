@@ -141,8 +141,8 @@ export default function ContractorMediaPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
-        <Loader2 className="h-8 w-8 animate-spin text-[#E8621A]" />
+      <div className="flex min-h-screen items-center justify-center bg-brand-navy-deep">
+        <Loader2 className="h-8 w-8 animate-spin text-[#F26A21]" />
       </div>
     );
   }
@@ -156,7 +156,7 @@ export default function ContractorMediaPage() {
           ? 'border-sky-800/40 bg-sky-950/30 text-sky-400'
           : s === 'completed'
           ? 'border-emerald-800/40 bg-emerald-950/30 text-emerald-400'
-          : 'border-zinc-700 bg-zinc-800/60 text-zinc-400'
+          : 'border-lw-dark-border bg-brand-navy-soft/60 text-zinc-400'
       }`}
     >
       {s}
@@ -164,7 +164,7 @@ export default function ContractorMediaPage() {
   );
 
   return (
-    <div className="min-h-screen bg-zinc-950 px-4 py-10">
+    <div className="min-h-screen bg-brand-navy-deep px-4 py-10">
       <div className="mx-auto max-w-3xl">
         <Link
           href="/contractor-dashboard"
@@ -174,7 +174,7 @@ export default function ContractorMediaPage() {
         </Link>
 
         <div className="mb-8 flex items-center gap-3">
-          <Camera className="h-6 w-6 text-[#E8621A]" />
+          <Camera className="h-6 w-6 text-[#F26A21]" />
           <h1 className="text-2xl font-bold text-white">Listing Media</h1>
         </div>
 
@@ -186,9 +186,9 @@ export default function ContractorMediaPage() {
 
         {/* Elite quarterly session */}
         {isElite && (
-          <section className="mb-8 rounded-2xl border border-[#E8621A]/30 bg-[#E8621A]/[0.06] p-6">
+          <section className="mb-8 rounded-2xl border border-[#F26A21]/30 bg-[#F26A21]/[0.06] p-6">
             <div className="flex items-center gap-2">
-              <CalendarClock className="h-5 w-5 text-[#E8621A]" />
+              <CalendarClock className="h-5 w-5 text-[#F26A21]" />
               <h2 className="text-lg font-bold text-white">
                 Your {currentQuarter()} content session
               </h2>
@@ -215,7 +215,7 @@ export default function ContractorMediaPage() {
                 <select
                   value={quarterlyPick}
                   onChange={(e) => setQuarterlyPick(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white"
+                  className="w-full rounded-lg border border-lw-dark-border bg-brand-navy px-3 py-2 text-sm text-white"
                 >
                   <option value="">Choose a media partner…</option>
                   {partners.map((p) => (
@@ -228,12 +228,12 @@ export default function ContractorMediaPage() {
                   value={quarterlyNotes}
                   onChange={(e) => setQuarterlyNotes(e.target.value)}
                   placeholder="What do you want out of the session? (optional)"
-                  className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-500"
+                  className="border-lw-dark-border bg-brand-navy text-white placeholder:text-zinc-500"
                 />
                 <Button
                   onClick={claimQuarterly}
                   disabled={!quarterlyPick || busy === 'claim'}
-                  className="bg-[#E8621A] text-white hover:bg-[#d45516]"
+                  className="bg-[#F26A21] text-white hover:bg-[#d45516]"
                 >
                   {busy === 'claim' ? 'Booking…' : `Claim my ${currentQuarter()} session`}
                 </Button>
@@ -249,13 +249,13 @@ export default function ContractorMediaPage() {
               Requests to you ({incoming.length})
             </h2>
             {incoming.length === 0 ? (
-              <p className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 text-sm text-zinc-500">
+              <p className="rounded-xl border border-lw-dark-border bg-brand-navy/50 p-6 text-sm text-zinc-500">
                 No booking requests yet.
               </p>
             ) : (
               <div className="space-y-3">
                 {incoming.map((b) => (
-                  <div key={b.id} className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+                  <div key={b.id} className="rounded-xl border border-lw-dark-border bg-brand-navy/60 p-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <StatusPill s={b.status} />
                       <span className="text-xs text-zinc-500">{SOURCE_LABEL[b.source] || b.source}</span>
@@ -295,7 +295,7 @@ export default function ContractorMediaPage() {
                           variant="outline"
                           onClick={() => act(b.id, 'decline', { reason: 'Not available' })}
                           disabled={busy === b.id + 'decline'}
-                          className="border-zinc-700 text-zinc-300"
+                          className="border-lw-dark-border text-zinc-300"
                         >
                           <XCircle className="mr-1.5 h-4 w-4" /> Decline
                         </Button>
@@ -313,7 +313,7 @@ export default function ContractorMediaPage() {
                             onChange={(e) =>
                               setJobValueDraft((d) => ({ ...d, [b.id]: e.target.value }))
                             }
-                            className="h-9 w-40 border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-500"
+                            className="h-9 w-40 border-lw-dark-border bg-brand-navy text-white placeholder:text-zinc-500"
                           />
                         )}
                         <Button
@@ -330,7 +330,7 @@ export default function ContractorMediaPage() {
                             busy === b.id + 'complete' ||
                             (b.source === 'dashboard' && !Number(jobValueDraft[b.id]))
                           }
-                          className="bg-[#E8621A] text-white hover:bg-[#d45516]"
+                          className="bg-[#F26A21] text-white hover:bg-[#d45516]"
                         >
                           Mark complete
                         </Button>
@@ -349,12 +349,12 @@ export default function ContractorMediaPage() {
             <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
               Media partners you&apos;ve booked
             </h2>
-            <Link href="/media-partners" className="text-sm text-[#E8621A] hover:underline">
+            <Link href="/media-partners" className="text-sm text-[#F26A21] hover:underline">
               Browse media partners →
             </Link>
           </div>
           {mine.filter((b) => b.source !== 'elite_quarterly').length === 0 ? (
-            <p className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 text-sm text-zinc-500">
+            <p className="rounded-xl border border-lw-dark-border bg-brand-navy/50 p-6 text-sm text-zinc-500">
               You haven&apos;t booked any media partners yet.
             </p>
           ) : (
@@ -364,7 +364,7 @@ export default function ContractorMediaPage() {
                 .map((b) => (
                   <div
                     key={b.id}
-                    className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4"
+                    className="flex items-center gap-3 rounded-xl border border-lw-dark-border bg-brand-navy/60 p-4"
                   >
                     <StatusPill s={b.status} />
                     <span className="flex-1 truncate text-sm text-zinc-300">

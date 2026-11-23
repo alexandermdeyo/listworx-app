@@ -59,7 +59,7 @@ export default function TrainingCenterTab() {
                 <p className="text-xs font-bold uppercase tracking-wide text-lw-rust mt-0.5">{fp.label}</p>
               </div>
             </div>
-            <span className="text-xs font-bold px-3 py-1 rounded-full text-white" style={{ backgroundColor: '#E8621A' }}>
+            <span className="text-xs font-bold px-3 py-1 rounded-full text-white" style={{ backgroundColor: '#F26A21' }}>
               {fp.poweredByBadge}
             </span>
           </div>

@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import Brushstroke from '@/components/brand/Brushstroke';
 
 interface StateItem {
   id: string;
@@ -514,7 +515,8 @@ function RequestPageContent() {
           </Link>
         </div>
       )}
-      <section className="relative overflow-hidden flex items-center min-h-[85vh] md:min-h-[720px] py-20">
+      <section className="relative overflow-hidden flex items-center min-h-[70vh] md:min-h-[600px] py-14">
+        <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <img
           src="/optimized/painter-fireplace.webp"
           alt=""

@@ -263,7 +263,7 @@ export default function ProfileTab({ profile, onProfileUpdated, onUserEmailUpdat
                     size="sm"
                     disabled={savingProfile}
                     className="gap-1.5 text-white"
-                    style={{ backgroundColor: '#E8621A' }}
+                    style={{ backgroundColor: '#F26A21' }}
                   >
                     {savingProfile ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />

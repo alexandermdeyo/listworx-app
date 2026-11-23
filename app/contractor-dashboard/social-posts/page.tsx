@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { authFetch } from '@/lib/auth-fetch';
 
-const input = 'w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-[#C65A1E] focus:outline-none';
+const input = 'w-full rounded-md border border-lw-dark-border bg-brand-navy px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-[#C65A1E] focus:outline-none';
 const LABEL: Record<string, string> = { requested: 'Requested', in_progress: 'In progress', delivered: 'Ready', revision_requested: 'Revision requested', completed: 'Completed', canceled: 'Canceled' };
 
 export default function SocialPostsPage() {
@@ -37,7 +37,7 @@ export default function SocialPostsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 px-4 py-10 text-white">
+    <div className="min-h-screen bg-brand-navy-deep px-4 py-10 text-white">
       <div className="mx-auto max-w-3xl">
         <Link href="/contractor-dashboard" className="text-sm text-zinc-400 hover:text-white">← Dashboard</Link>
         <h1 className="mt-2 text-2xl font-bold">Custom branded social posts</h1>
@@ -50,14 +50,14 @@ export default function SocialPostsPage() {
         {!data && !error && <Loader2 className="mt-6 h-6 w-6 animate-spin text-[#C65A1E]" />}
 
         {data && data.allowance === 0 && (
-          <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-5 text-sm">
+          <div className="mt-6 rounded-xl border border-lw-dark-border bg-brand-navy p-5 text-sm">
             <p>Custom social posts are included with <strong>Business Pro</strong>.</p>
             <Link href="/contractor-dashboard" className="mt-3 inline-block rounded-md bg-[#C65A1E] px-4 py-2 font-semibold">See membership options</Link>
           </div>
         )}
 
         {data && data.allowance > 0 && (
-          <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+          <div className="mt-6 rounded-xl border border-lw-dark-border bg-brand-navy p-5">
             <p className="text-sm text-zinc-300"><strong>{data.remaining}</strong> of {data.allowance} posts left this month.</p>
             {data.remaining > 0 ? (
               <div className="mt-4 space-y-3">
@@ -76,7 +76,7 @@ export default function SocialPostsPage() {
           <div className="mt-8 space-y-3">
             <h2 className="font-bold">Your requests</h2>
             {data.requests.map((r: any) => (
-              <div key={r.id} className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-sm">
+              <div key={r.id} className="rounded-xl border border-lw-dark-border bg-brand-navy p-4 text-sm">
                 <div className="flex justify-between gap-3">
                   <p className="font-semibold">{r.topic}</p>
                   <span className="text-zinc-400">{r.period_month.slice(0, 7)} · {LABEL[r.status] || r.status}</span>
@@ -86,7 +86,7 @@ export default function SocialPostsPage() {
                 {r.status === 'delivered' && !r.revision_used && (
                   <div className="mt-3 flex gap-2">
                     <input className={input} placeholder="What should we change? (one revision)" value={revision[r.id] || ''} onChange={(e) => setRevision({ ...revision, [r.id]: e.target.value })} />
-                    <button disabled={busy || !revision[r.id]} onClick={() => submit({ action: 'revision', id: r.id, notes: revision[r.id] })} className="whitespace-nowrap rounded-md border border-zinc-700 px-3 text-sm disabled:opacity-40">Request revision</button>
+                    <button disabled={busy || !revision[r.id]} onClick={() => submit({ action: 'revision', id: r.id, notes: revision[r.id] })} className="whitespace-nowrap rounded-md border border-lw-dark-border px-3 text-sm disabled:opacity-40">Request revision</button>
                   </div>
                 )}
               </div>

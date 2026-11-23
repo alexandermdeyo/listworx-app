@@ -111,7 +111,7 @@ export default function NewsletterAdminPage() {
         <div className="max-w-md text-center p-8 rounded-xl border border-gray-200">
           <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2 text-gray-900">Access Denied</h2>
-          <Button onClick={handleSignOut} className="mt-4 text-white" style={{ backgroundColor: '#E8621A' }}>Sign Out</Button>
+          <Button onClick={handleSignOut} className="mt-4 text-white" style={{ backgroundColor: '#F26A21' }}>Sign Out</Button>
         </div>
       </div>
     );
@@ -142,7 +142,7 @@ export default function NewsletterAdminPage() {
             <h1 className="text-2xl font-bold text-gray-900">Subscribers</h1>
             <p className="text-sm text-gray-500 mt-1">{subscribers.length} total subscriber{subscribers.length !== 1 ? 's' : ''}</p>
           </div>
-          <Button onClick={exportCSV} className="text-white" style={{ backgroundColor: '#E8621A' }}>
+          <Button onClick={exportCSV} className="text-white" style={{ backgroundColor: '#F26A21' }}>
             Export CSV
           </Button>
         </div>

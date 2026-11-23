@@ -126,26 +126,26 @@ export default function AIToolkitPage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-[#E8621A]" />
+    <div className="min-h-screen bg-brand-navy-deep flex items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin text-[#F26A21]" />
     </div>
   );
 
   if (!contractorHasAiToolkit(profile)) {
     return (
-      <div className="min-h-screen bg-zinc-950 py-10 px-4">
-        <div className="mx-auto max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center">
-          <Zap className="mx-auto mb-4 h-8 w-8 text-[#E8621A]" />
+      <div className="min-h-screen bg-brand-navy-deep py-10 px-4">
+        <div className="mx-auto max-w-lg rounded-2xl border border-lw-dark-border bg-brand-navy p-8 text-center">
+          <Zap className="mx-auto mb-4 h-8 w-8 text-[#F26A21]" />
           <h1 className="text-xl font-bold text-white">The AI Marketing Toolkit isn&apos;t on your current plan</h1>
           <p className="mt-3 text-sm text-zinc-400">
             Generate social posts, estimate follow-up emails, and job description templates. See the
             Growth and Business Pro membership options, or contact adeyo@listworx.co to change your plan.
           </p>
           <div className="mt-6 flex justify-center gap-3">
-            <Button onClick={() => router.push('/billing')} className="bg-[#E8621A] text-white hover:bg-[#cf5516]">
+            <Button onClick={() => router.push('/billing')} className="bg-[#F26A21] text-white hover:bg-[#cf5516]">
               View membership options
             </Button>
-            <Button variant="outline" onClick={() => router.push('/contractor-dashboard')} className="border-zinc-700 text-zinc-300">
+            <Button variant="outline" onClick={() => router.push('/contractor-dashboard')} className="border-lw-dark-border text-zinc-300">
               Back to dashboard
             </Button>
           </div>
@@ -155,11 +155,11 @@ export default function AIToolkitPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 py-10 px-4">
+    <div className="min-h-screen bg-brand-navy-deep py-10 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <Zap className="h-6 w-6 text-[#E8621A]" />
+            <Zap className="h-6 w-6 text-[#F26A21]" />
             <h1 className="text-2xl font-bold text-white">AI Marketing Toolkit</h1>
           </div>
           <p className="text-zinc-400">Generate professional marketing content for your business in seconds. Built specifically for contractors.</p>
@@ -173,7 +173,7 @@ export default function AIToolkitPage() {
             const inp = inputs[tool.id] || {};
 
             return (
-              <div key={tool.id} className={`rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden ${isOpen ? 'sm:col-span-2' : ''}`}>
+              <div key={tool.id} className={`rounded-xl border border-lw-dark-border bg-brand-navy overflow-hidden ${isOpen ? 'sm:col-span-2' : ''}`}>
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -182,7 +182,7 @@ export default function AIToolkitPage() {
                     </div>
                     <button
                       onClick={() => setOpenTool(isOpen ? null : tool.id)}
-                      className="shrink-0 flex items-center gap-1 text-sm text-[#E8621A] hover:text-orange-400 transition-colors"
+                      className="shrink-0 flex items-center gap-1 text-sm text-[#F26A21] hover:text-orange-400 transition-colors"
                     >
                       {isOpen ? <><ChevronUp className="h-4 w-4" /> Close</> : <><ChevronDown className="h-4 w-4" /> Open Tool</>}
                     </button>
@@ -198,7 +198,7 @@ export default function AIToolkitPage() {
                         <div className="space-y-1">
                           <Label className="text-zinc-300 text-sm">Tone</Label>
                           <select value={inp.tone || 'Professional'} onChange={e => setField(tool.id, 'tone', e.target.value)}
-                            className="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#E8621A]">
+                            className="w-full rounded-lg bg-brand-navy-soft border border-lw-dark-border px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#F26A21]">
                             <option>Professional</option><option>Casual</option><option>Conversational</option>
                           </select>
                         </div>
@@ -206,7 +206,7 @@ export default function AIToolkitPage() {
                         <GenerateButton tool={tool.id} generating={generating} onClick={() => generate(tool.id)} label="Generate 3 Captions" />
                         {err && <p className="text-sm text-red-400">{err}</p>}
                         {Array.isArray(result) && result.map((caption, i) => (
-                          <div key={i} className="rounded-lg bg-zinc-800 p-4 space-y-2">
+                          <div key={i} className="rounded-lg bg-brand-navy-soft p-4 space-y-2">
                             <p className="text-sm text-zinc-200 whitespace-pre-wrap">{caption}</p>
                             <div className="flex gap-4">
                               <CopyButton text={caption} />
@@ -245,7 +245,7 @@ export default function AIToolkitPage() {
                             {['text', 'email'].map(opt => (
                               <label key={opt} className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
                                 <input type="radio" value={opt} checked={(inp.contact_preference || 'text') === opt}
-                                  onChange={() => setField(tool.id, 'contact_preference', opt)} className="accent-[#E8621A]" />
+                                  onChange={() => setField(tool.id, 'contact_preference', opt)} className="accent-[#F26A21]" />
                                 {opt.charAt(0).toUpperCase() + opt.slice(1)}
                               </label>
                             ))}
@@ -265,7 +265,7 @@ export default function AIToolkitPage() {
                         <GenerateButton tool={tool.id} generating={generating} onClick={() => generate(tool.id)} label="Generate Review Request" />
                         {err && <p className="text-sm text-red-400">{err}</p>}
                         {typeof result === 'string' && result && (
-                          <div className="rounded-lg bg-zinc-800 p-4 space-y-2">
+                          <div className="rounded-lg bg-brand-navy-soft p-4 space-y-2">
                             <p className="text-sm text-zinc-200 whitespace-pre-wrap">{result}</p>
                             <div className="flex items-center justify-between">
                               <CopyButton text={result} />
@@ -304,7 +304,7 @@ function Field({ label, value, onChange }: { label: string; value: string; onCha
     <div className="space-y-1">
       <Label className="text-zinc-300 text-sm">{label}</Label>
       <Input value={value} onChange={e => onChange(e.target.value)}
-        className="bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:ring-[#E8621A]" />
+        className="bg-brand-navy-soft border-lw-dark-border text-white placeholder-zinc-500 focus:ring-[#F26A21]" />
     </div>
   );
 }
@@ -314,7 +314,7 @@ function TextareaField({ label, value, onChange }: { label: string; value: strin
     <div className="space-y-1">
       <Label className="text-zinc-300 text-sm">{label}</Label>
       <Textarea value={value} onChange={e => onChange(e.target.value)} rows={3}
-        className="bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:ring-[#E8621A]" />
+        className="bg-brand-navy-soft border-lw-dark-border text-white placeholder-zinc-500 focus:ring-[#F26A21]" />
     </div>
   );
 }
@@ -322,7 +322,7 @@ function TextareaField({ label, value, onChange }: { label: string; value: strin
 function GenerateButton({ tool, generating, onClick, label }: { tool: string; generating: string | null; onClick: () => void; label: string }) {
   const isLoading = generating === tool;
   return (
-    <Button onClick={onClick} disabled={!!generating} className="bg-[#E8621A] hover:bg-[#d45516] text-white w-full">
+    <Button onClick={onClick} disabled={!!generating} className="bg-[#F26A21] hover:bg-[#d45516] text-white w-full">
       {isLoading ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Generating…</> : label}
     </Button>
   );
@@ -333,7 +333,7 @@ function EditableResult({ tool, value, onChange }: { tool: string; value: string
   return (
     <div className="space-y-2">
       <Textarea value={value} onChange={e => onChange(e.target.value)} rows={6}
-        className="bg-zinc-800 border-zinc-700 text-white text-sm" />
+        className="bg-brand-navy-soft border-lw-dark-border text-white text-sm" />
       <CopyButton text={value} />
     </div>
   );

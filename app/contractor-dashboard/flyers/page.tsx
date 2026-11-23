@@ -96,17 +96,17 @@ export default function FlyerBuilderPage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-[#E8621A]" />
+    <div className="min-h-screen bg-brand-navy-deep flex items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin text-[#F26A21]" />
     </div>
   );
 
   if (!hasAccess) return (
-    <div className="min-h-screen bg-zinc-950 py-16 px-4">
+    <div className="min-h-screen bg-brand-navy-deep py-16 px-4">
       <div className="max-w-md mx-auto text-center">
         <h1 className="text-2xl font-bold text-white mb-3">Marketing Flyer Builder</h1>
         <p className="text-zinc-400 mb-6">The full Flyer Builder is included with Business Pro. Upgrade from your dashboard&apos;s Subscription page, or contact adeyo@listworx.co with questions.</p>
-        <Button onClick={() => router.push('/contractor-dashboard')} className="bg-[#E8621A] hover:bg-[#d45516] text-white">
+        <Button onClick={() => router.push('/contractor-dashboard')} className="bg-[#F26A21] hover:bg-[#d45516] text-white">
           Back to Dashboard
         </Button>
       </div>
@@ -123,7 +123,7 @@ export default function FlyerBuilderPage() {
         }
       `}</style>
 
-      <div className="min-h-screen bg-zinc-950 py-10 px-4">
+      <div className="min-h-screen bg-brand-navy-deep py-10 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-white">Marketing Flyer Builder</h1>
@@ -133,10 +133,10 @@ export default function FlyerBuilderPage() {
           {!selectedTemplate ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {TEMPLATES.map(t => (
-                <div key={t.id} className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 flex flex-col gap-3">
+                <div key={t.id} className="rounded-xl border border-lw-dark-border bg-brand-navy p-5 flex flex-col gap-3">
                   <h3 className="font-semibold text-white">{t.name}</h3>
                   <p className="text-sm text-zinc-400 flex-1">{t.description}</p>
-                  <Button onClick={() => setSelectedTemplate(t.id)} className="bg-[#E8621A] hover:bg-[#d45516] text-white w-full">
+                  <Button onClick={() => setSelectedTemplate(t.id)} className="bg-[#F26A21] hover:bg-[#d45516] text-white w-full">
                     Use This Template
                   </Button>
                 </div>
@@ -166,7 +166,7 @@ export default function FlyerBuilderPage() {
                     <div key={key} className="space-y-1">
                       <Label className="text-zinc-300 text-sm">{label}</Label>
                       <Input value={fields[key] || ''} onChange={e => setField(key, e.target.value)}
-                        className="bg-zinc-800 border-zinc-700 text-white" />
+                        className="bg-brand-navy-soft border-lw-dark-border text-white" />
                     </div>
                   ))}
                   <div className="space-y-1">
@@ -230,7 +230,7 @@ export default function FlyerBuilderPage() {
                   </>}
                 </div>
 
-                <Button onClick={() => window.print()} className="w-full bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700">
+                <Button onClick={() => window.print()} className="w-full bg-brand-navy-soft hover:bg-zinc-700 text-white border border-lw-dark-border">
                   <Printer className="h-4 w-4 mr-2" /> Download PDF
                 </Button>
               </div>
@@ -260,10 +260,10 @@ function TF({ label, k, fields, setField, multi }: { label: string; k: string; f
       <Label className="text-zinc-300 text-sm">{label}</Label>
       {multi ? (
         <Textarea value={fields[k] || ''} onChange={e => setField(k, e.target.value)} rows={3}
-          className="bg-zinc-800 border-zinc-700 text-white" />
+          className="bg-brand-navy-soft border-lw-dark-border text-white" />
       ) : (
         <Input value={fields[k] || ''} onChange={e => setField(k, e.target.value)}
-          className="bg-zinc-800 border-zinc-700 text-white" />
+          className="bg-brand-navy-soft border-lw-dark-border text-white" />
       )}
     </div>
   );
@@ -280,7 +280,7 @@ function FlyerPreview({ template, fields, beforePhotoUrl, afterPhotoUrl, profile
         {fields.logo_url && <img src={fields.logo_url} alt="logo" style={{ height: 48, width: 48, objectFit: 'contain', borderRadius: 4 }} />}
         <div>
           <div style={{ fontSize: 20, fontWeight: 700 }}>{fields.business_name || 'Your Business Name'}</div>
-          {fields.tagline && <div style={{ fontSize: 13, color: '#E8621A', marginTop: 2 }}>{fields.tagline}</div>}
+          {fields.tagline && <div style={{ fontSize: 13, color: '#F26A21', marginTop: 2 }}>{fields.tagline}</div>}
         </div>
       </div>
 
@@ -288,10 +288,10 @@ function FlyerPreview({ template, fields, beforePhotoUrl, afterPhotoUrl, profile
       <div style={{ padding: '24px', flex: 1 }}>
         {template === 'service_announcement' && (
           <>
-            <div style={{ color: '#E8621A', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Now Offering</div>
+            <div style={{ color: '#F26A21', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Now Offering</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: '#1a1a1a', marginBottom: 12 }}>{fields.service_description || 'Your Service Here'}</div>
             <div style={{ fontSize: 13, color: '#4b5563', marginBottom: 16 }}>Serving {fields.service_area || 'your area'}</div>
-            {fields.cta_text && <div style={{ background: '#E8621A', color: 'white', padding: '10px 20px', display: 'inline-block', borderRadius: 6, fontSize: 14, fontWeight: 600 }}>{fields.cta_text}</div>}
+            {fields.cta_text && <div style={{ background: '#F26A21', color: 'white', padding: '10px 20px', display: 'inline-block', borderRadius: 6, fontSize: 14, fontWeight: 600 }}>{fields.cta_text}</div>}
           </>
         )}
         {template === 'before_after' && (
@@ -320,7 +320,7 @@ function FlyerPreview({ template, fields, beforePhotoUrl, afterPhotoUrl, profile
         )}
         {template === 'job_completion' && (
           <>
-            <div style={{ color: '#E8621A', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Job Complete</div>
+            <div style={{ color: '#F26A21', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Job Complete</div>
             <div style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', marginBottom: 6 }}>{fields.job_type || 'Job Description'}</div>
             {fields.customer_name && <div style={{ fontSize: 13, color: '#4b5563', marginBottom: 4 }}>For: {fields.customer_name}</div>}
             {fields.completion_date && <div style={{ fontSize: 13, color: '#4b5563', marginBottom: 12 }}>Completed: {fields.completion_date}</div>}
@@ -341,7 +341,7 @@ function FlyerPreview({ template, fields, beforePhotoUrl, afterPhotoUrl, profile
             <div style={{ fontSize: 15, fontWeight: 700, color: '#1a1a1a', marginBottom: 8 }}>Know someone who needs a contractor?</div>
             <div style={{ fontSize: 13, color: '#374151', marginBottom: 16, lineHeight: 1.6 }}>{fields.pitch || 'Your referral pitch here.'}</div>
             {fields.offer_text && (
-              <div style={{ background: '#E8621A', color: 'white', padding: '10px 20px', display: 'inline-block', borderRadius: 6, fontSize: 14, fontWeight: 600 }}>
+              <div style={{ background: '#F26A21', color: 'white', padding: '10px 20px', display: 'inline-block', borderRadius: 6, fontSize: 14, fontWeight: 600 }}>
                 {fields.offer_text}
               </div>
             )}
@@ -358,7 +358,7 @@ function FlyerPreview({ template, fields, beforePhotoUrl, afterPhotoUrl, profile
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
           <span style={{ fontSize: 10, color: '#9ca3af' }}>Vetted by ListWorx</span>
-          {isIronClad && <span style={{ fontSize: 10, fontWeight: 700, color: '#E8621A' }}>⬡ IronClad Certified</span>}
+          {isIronClad && <span style={{ fontSize: 10, fontWeight: 700, color: '#F26A21' }}>⬡ IronClad Certified</span>}
         </div>
       </div>
     </div>

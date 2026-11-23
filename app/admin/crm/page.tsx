@@ -209,7 +209,7 @@ export default function AdminCRMPage() {
           <p className="text-gray-500 mb-6">Admin privileges required.</p>
           <div className="flex gap-3">
             <Button onClick={() => router.push('/')} variant="outline" className="flex-1">Go Home</Button>
-            <Button onClick={handleSignOut} className="flex-1 text-white" style={{ backgroundColor: '#E8621A' }}>Sign Out</Button>
+            <Button onClick={handleSignOut} className="flex-1 text-white" style={{ backgroundColor: '#F26A21' }}>Sign Out</Button>
           </div>
         </div>
       </div>

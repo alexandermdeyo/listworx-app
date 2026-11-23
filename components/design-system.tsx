@@ -11,7 +11,7 @@ export function PageShell({ children, surface = 'dark', className }: { children:
       : surface === 'light'
       ? 'bg-lw-light-bg text-lw-dark'
       : surface === 'ironclad'
-      ? 'bg-black text-zinc-100'
+      ? 'bg-brand-navy-deep text-zinc-100'
       : 'bg-lw-dark text-lw-light';
 
   return <div className={cn('min-h-screen', surfaceClasses, className)}>{children}</div>;

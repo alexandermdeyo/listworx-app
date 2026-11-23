@@ -160,7 +160,7 @@ export default function MarketingSection({
             eligible: false,
             previewOnly: true,
             badge: 'Temporarily unavailable',
-            badgeColor: 'bg-zinc-800 text-zinc-400 border-zinc-700',
+            badgeColor: 'bg-brand-navy-soft text-zinc-400 border-lw-dark-border',
             actionLabel: 'Temporarily unavailable',
           }
         : o
@@ -200,10 +200,10 @@ export default function MarketingSection({
           return (
             <div
               key={opportunity.id}
-              className={`relative rounded-xl border bg-zinc-900/60 p-5 text-white flex flex-col transition-all shadow-sm ${
+              className={`relative rounded-xl border bg-brand-navy/60 p-5 text-white flex flex-col transition-all shadow-sm ${
                 opportunity.previewOnly
-                  ? 'border-zinc-700 opacity-60'
-                  : 'border-zinc-700 hover:border-lw-rust/50 hover:shadow-md'
+                  ? 'border-lw-dark-border opacity-60'
+                  : 'border-lw-dark-border hover:border-lw-rust/50 hover:shadow-md'
               }`}
             >
               {opportunity.previewOnly && (
@@ -215,7 +215,7 @@ export default function MarketingSection({
               )}
 
               <div className="flex items-start gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-zinc-800 border border-zinc-700 flex-shrink-0">
+                <div className="p-2 rounded-lg bg-brand-navy-soft border border-lw-dark-border flex-shrink-0">
                   <Icon className="h-4 w-4 text-zinc-400" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -255,7 +255,7 @@ export default function MarketingSection({
                 <Button
                   size="sm"
                   disabled
-                  className="w-full bg-zinc-800 text-zinc-400 border border-zinc-700 text-xs cursor-not-allowed"
+                  className="w-full bg-brand-navy-soft text-zinc-400 border border-lw-dark-border text-xs cursor-not-allowed"
                 >
                   <Lock className="h-3 w-3 mr-1.5" />
                   {opportunity.actionLabel}

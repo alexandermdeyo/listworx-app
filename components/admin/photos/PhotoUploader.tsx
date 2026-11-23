@@ -126,7 +126,7 @@ export default function PhotoUploader({ onDone }: { onDone: () => void }) {
         </div>
       </div>
       <label className="flex items-start gap-2 text-sm">
-        <input type="checkbox" className="mt-1 h-4 w-4 accent-[#E8621A]" checked={isAi} onChange={(e) => setIsAi(e.target.checked)} disabled={busy} />
+        <input type="checkbox" className="mt-1 h-4 w-4 accent-[#F26A21]" checked={isAi} onChange={(e) => setIsAi(e.target.checked)} disabled={busy} />
         <span><strong>These photos are AI-generated.</strong> They will need your three-point review before they can be approved.</span>
       </label>
 

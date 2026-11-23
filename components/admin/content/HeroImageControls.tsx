@@ -85,7 +85,7 @@ export default function HeroImageControls({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={src} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
             <span
-              className="pointer-events-none absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_2px_#E8621A]"
+              className="pointer-events-none absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_2px_#F26A21]"
               style={{ left: `${focus.x}%`, top: `${focus.y}%` }}
               data-testid="focus-marker"
             >
@@ -114,13 +114,13 @@ export default function HeroImageControls({
             <label className="mb-1 block text-xs font-semibold text-gray-800" htmlFor="hero-x">Left ↔ right: {focus.x}%</label>
             <input id="hero-x" type="range" min={0} max={100} disabled={disabled} value={focus.x}
               onChange={(e) => onChange({ featured_image_focus_x: Number(e.target.value), featured_image_focus_y: focus.y })}
-              className="w-full accent-[#E8621A]" />
+              className="w-full accent-[#F26A21]" />
           </div>
           <div>
             <label className="mb-1 block text-xs font-semibold text-gray-800" htmlFor="hero-y">Top ↕ bottom: {focus.y}%</label>
             <input id="hero-y" type="range" min={0} max={100} disabled={disabled} value={focus.y}
               onChange={(e) => onChange({ featured_image_focus_x: focus.x, featured_image_focus_y: Number(e.target.value) })}
-              className="w-full accent-[#E8621A]" />
+              className="w-full accent-[#F26A21]" />
           </div>
           <button
             type="button"
