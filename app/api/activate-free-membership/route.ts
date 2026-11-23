@@ -3,6 +3,7 @@ import { createClient as createServerClient } from '@/lib/supabase-server';
 import { createSupabaseAdminClient } from '@/lib/supabase-admin';
 import { PARTNER_STATUS } from '@/lib/partner-status';
 import { canActivateFree, buildSubscriptionRow } from '@/lib/billing/subscription-record';
+import { sendBadgeKitEmailOnce } from '@/lib/server/badge-kit-email';
 
 const NETWORK_TIER_NAME = 'Network';
 
@@ -118,6 +119,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[activate-free-membership] contractor ${profile.id} activated on Network (free)`);
+
+    // Approved contractor just joined: send the welcome + member badge kit once.
+    await sendBadgeKitEmailOnce(admin, profile.id);
 
     return NextResponse.json({ ok: true, status: 'activated' });
   } catch (error: any) {

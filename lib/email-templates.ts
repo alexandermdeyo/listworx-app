@@ -159,7 +159,8 @@ function layout(
   subline: string,
   body: string,
   preheader = '',
-  footerVariant: 'contractor' | 'requestor' | 'admin' = 'contractor'
+  footerVariant: 'contractor' | 'requestor' | 'admin' = 'contractor',
+  logoSrc = `${BASE_URL}/brand/listworx-wordmark-light.png`
 ): string {
   const footerLinks =
     footerVariant === 'contractor'
@@ -204,7 +205,7 @@ function layout(
           <!-- LOGO BAR -->
           <tr>
             <td style="padding:0 0 20px;">
-              <img src="${BASE_URL}/brand/listworx-wordmark-light.png" alt="ListWorx" width="140" height="auto" style="display:block;border:0;height:auto;max-width:140px;" />
+              <img src="${logoSrc}" alt="ListWorx" width="140" height="auto" style="display:block;border:0;height:auto;max-width:140px;" />
             </td>
           </tr>
 
@@ -714,3 +715,189 @@ export const realtorEmails = {
     text: `How Was Your Experience?\n\nHi ${realtorName},\n\nWe hope the work at ${propertyAddress} with ${companyName} went well.\n\nYour feedback helps us maintain IronClad Standards:\n${BASE_URL}/feedback/${jobRequestId}\n\nIf something went wrong, contact adeyo@listworx.co immediately.\n\nThe ListWorx Team`,
   }),
 };
+
+
+/* ============================================================
+   MEMBER BADGE KIT (sent once, when an approved contractor joins)
+   ============================================================ */
+
+/** Where badge-kit images are hosted. Always listworx.co in real sends so the
+ *  images keep working when the email is forwarded and when contractors paste
+ *  the snippet on their own sites. */
+export const BADGE_KIT_ASSET_BASE = 'https://listworx.co';
+export const LISTWORX_SITE = 'https://listworx.co';
+
+/** Email-sized copies (scaled down only) of the site's real brand files. */
+export const BADGE_KIT_FILES = {
+  standards: { path: '/brand/badge-kit/ironclad-standards-240.png', fullSize: '/Ironclad_Standards_Logo.png', width: 120, height: 120 },
+  certified: { path: '/brand/badge-kit/ironclad-certified-partner-240.png', fullSize: '/Ironclad_Cert_Partner_Final_Logo.png', width: 120, height: 115 },
+  wordmarkForDark: { path: '/brand/badge-kit/listworx-wordmark-for-dark-backgrounds-560.png', fullSize: '/brand/listworx-wordmark-dark.png', width: 240, height: 28 },
+  wordmarkForLight: { path: '/brand/badge-kit/listworx-wordmark-for-light-backgrounds-560.png', fullSize: '/brand/listworx-wordmark-light.png', width: 240, height: 28 },
+} as const;
+
+export const BADGE_KIT_SUBJECT = 'Welcome to ListWorx: your member badge kit is inside';
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+export type BadgeKitInput = {
+  ownerName?: string | null;
+  companyName?: string | null;
+  /** Public ListWorx profile page, or null if it isn't live yet. */
+  profileUrl?: string | null;
+  /** True only when an admin has marked the contractor IronClad Certified. */
+  certified?: boolean;
+  /** Override only for previews on the test site; real sends use listworx.co. */
+  assetBase?: string;
+};
+
+/** The HTML a contractor pastes on their own site. Exported so tests and the
+ *  dashboard can reuse exactly what the email shows. */
+export function badgeKitSnippet({ profileUrl, certified }: Pick<BadgeKitInput, 'profileUrl' | 'certified'>) {
+  const href = profileUrl || LISTWORX_SITE;
+  const badge = certified ? BADGE_KIT_FILES.certified : BADGE_KIT_FILES.standards;
+  const alt = certified
+    ? 'IronClad Certified Partner, ListWorx contractor network'
+    : 'Member of the ListWorx contractor network, IronClad Standards';
+  const html =
+    `<a href="${href}" target="_blank" rel="noopener" title="ListWorx contractor network">` +
+    `<img src="${BADGE_KIT_ASSET_BASE}${badge.path}" alt="${alt}" width="${badge.width}" height="${badge.height}" style="border:0;">` +
+    `</a>`;
+  const text = certified
+    ? `IronClad Certified Partner in the ListWorx contractor network: ${href}`
+    : `Proud member of the ListWorx contractor network: ${href}`;
+  return { href, html, text };
+}
+
+export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
+  const asset = (input.assetBase || BADGE_KIT_ASSET_BASE).replace(/\/$/, '');
+  const firstName = (input.ownerName || '').trim().split(/\s+/)[0] || '';
+  const company = (input.companyName || '').trim();
+  const certified = input.certified === true;
+  const snippet = badgeKitSnippet({ profileUrl: input.profileUrl, certified });
+  const dashboardUrl = `${LISTWORX_SITE}/contractor-dashboard`;
+  const applyUrl = `${LISTWORX_SITE}/apply`;
+  const F = BADGE_KIT_FILES;
+
+  const imgTile = (bg: string, src: string, w: number, h: number, alt: string, label: string, fullSize: string) => `
+    <td class="kit-tile" valign="top" style="padding:6px;width:50%;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td align="center" style="background-color:${bg};border:1px solid ${C.border};border-radius:10px;padding:22px 12px;height:130px;">
+            <img src="${asset}${src}" alt="${alt}" width="${w}" height="${h}" style="display:block;border:0;width:${w}px;max-width:100%;height:auto;" />
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 2px 0;">
+            <p style="font-family:${C.font};font-size:12px;color:${C.gray200};margin:0;line-height:1.5;">${label}<br>
+              <a href="${asset}${fullSize}" style="color:${C.rust};text-decoration:none;font-weight:600;">Full-size file</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>`;
+
+  const codeBox = (code: string) => `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:10px 0 18px;">
+    <tr>
+      <td style="background-color:#0A0A0A;border:1px solid ${C.border};border-radius:8px;padding:16px 18px;">
+        <p style="font-family:Menlo,Consolas,'Courier New',monospace;font-size:12px;line-height:1.6;color:#F5D0B5;margin:0;word-break:break-all;">${escapeHtml(code)}</p>
+      </td>
+    </tr>
+  </table>`;
+
+  const greeting = firstName ? `Welcome to ListWorx, ${escapeHtml(firstName)}.` : 'Welcome to ListWorx.';
+
+  const body = `
+      ${p(`Thank you for joining ListWorx${company ? ` with <strong style="color:${C.white};">${escapeHtml(company)}</strong>` : ''}. You're now part of a network of contractors who were checked before they got in, and who homeowners and realtors can count on to show up, tell the truth, and stand behind their work.`)}
+      ${p('That is what this network is built on: trust and integrity. Every contractor here was vetted, and we hold each other to it. I started ListWorx so the people who do things the right way get the work, and I am glad to have you with us.')}
+      ${p(`A couple of things to know. Joining is free, and there are never any per-lead fees. When a homeowner or realtor sends a request, it goes to no more than 3 vetted contractors, so you are never one name in a crowd.`)}
+      <p style="font-family:${C.font};font-size:15px;color:${C.white};line-height:1.6;margin:0 0 4px;padding:0;font-weight:700;">Alex Deyo</p>
+      ${small('Founder, ListWorx')}
+
+      ${sectionLabel('Your Member Badge Kit')}
+      ${p('These are the official ListWorx files. Please use them as they are, without changing the colors or shape.')}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          ${imgTile('#FFFFFF', F.standards.path, F.standards.width, F.standards.height, 'IronClad Standards', 'IronClad Standards shield', F.standards.fullSize)}
+          ${certified
+            ? imgTile('#FFFFFF', F.certified.path, F.certified.width, F.certified.height, 'IronClad Certified Partner', 'IronClad Certified Partner badge', F.certified.fullSize)
+            : imgTile('#0E0E0E', F.wordmarkForDark.path, F.wordmarkForDark.width, F.wordmarkForDark.height, 'ListWorx', 'ListWorx logo for dark backgrounds', F.wordmarkForDark.fullSize)}
+        </tr>
+        <tr>
+          ${certified
+            ? imgTile('#0E0E0E', F.wordmarkForDark.path, F.wordmarkForDark.width, F.wordmarkForDark.height, 'ListWorx', 'ListWorx logo for dark backgrounds', F.wordmarkForDark.fullSize)
+            : ''}
+          ${imgTile('#FFFFFF', F.wordmarkForLight.path, F.wordmarkForLight.width, F.wordmarkForLight.height, 'ListWorx', 'ListWorx logo for light backgrounds', F.wordmarkForLight.fullSize)}
+          ${certified ? '' : '<td class="kit-tile" style="width:50%;"></td>'}
+        </tr>
+      </table>
+
+      ${sectionLabel('Add the Badge to Your Website')}
+      ${p('Copy the code below and paste it into the footer of your website, or on your About page. Most website builders (Wix, Squarespace, GoDaddy, WordPress) have an "HTML" or "Embed code" block for this. The badge links back to ListWorx, which shows homeowners you have been vetted, and every link like this helps ListWorx, and the contractors in it, show up higher on Google.')}
+      <p style="font-family:${C.font};font-size:13px;font-weight:700;color:${C.white};margin:18px 0 0;">Website code (HTML)</p>
+      ${codeBox(snippet.html)}
+      <p style="font-family:${C.font};font-size:13px;font-weight:700;color:${C.white};margin:0;">No HTML option? Paste this text instead</p>
+      ${codeBox(snippet.text)}
+      ${input.profileUrl
+        ? small(`The badge links to your ListWorx profile: <a href="${snippet.href}" style="color:${C.rust};text-decoration:none;">${snippet.href}</a>`)
+        : small(`Your public ListWorx profile page isn't live yet, so for now the badge links to listworx.co. Once your profile is live, replace https://listworx.co in the code with your profile address so homeowners land right on your page.`)}
+
+      ${sectionLabel('Next Steps')}
+      ${cta('Open Your Dashboard &rarr;', dashboardUrl)}
+      ${linkFallback(dashboardUrl)}
+      ${divider('28px 0 20px')}
+      ${p(`Know another contractor who does honest work? Send them to <a href="${applyUrl}" style="color:${C.rust};text-decoration:none;font-weight:600;">listworx.co/apply</a>.`)}
+      ${small(`Questions? Just reply to this email or write to <a href="mailto:adeyo@listworx.co" style="color:${C.rust};text-decoration:none;">adeyo@listworx.co</a>.`)}
+  `;
+
+  const html = layout(
+    greeting,
+    'Thank you for joining a network built on trust and integrity. Your member badge kit is below.',
+    body,
+    'Your ListWorx badge kit and a link for your website are inside.',
+    'contractor',
+    `${asset}${F.wordmarkForDark.path}`
+  ).replace(
+    'h1.hero-title{font-size:24px!important;}',
+    'h1.hero-title{font-size:24px!important;}\n      .kit-tile{display:block!important;width:100%!important;}'
+  );
+
+  const text = [
+    firstName ? `Welcome to ListWorx, ${firstName}.` : 'Welcome to ListWorx.',
+    '',
+    `Thank you for joining ListWorx${company ? ` with ${company}` : ''}. You're now part of a network of contractors who were checked before they got in, and who homeowners and realtors can count on to show up, tell the truth, and stand behind their work.`,
+    '',
+    'That is what this network is built on: trust and integrity. Every contractor here was vetted, and we hold each other to it. I started ListWorx so the people who do things the right way get the work, and I am glad to have you with us.',
+    '',
+    'Joining is free, and there are never any per-lead fees. Each homeowner or realtor request goes to no more than 3 vetted contractors.',
+    '',
+    'Alex Deyo',
+    'Founder, ListWorx',
+    '',
+    'YOUR MEMBER BADGE KIT',
+    `IronClad Standards shield: ${asset}${F.standards.fullSize}`,
+    ...(certified ? [`IronClad Certified Partner badge: ${asset}${F.certified.fullSize}`] : []),
+    `ListWorx logo for dark backgrounds: ${asset}${F.wordmarkForDark.fullSize}`,
+    `ListWorx logo for light backgrounds: ${asset}${F.wordmarkForLight.fullSize}`,
+    '',
+    'ADD THE BADGE TO YOUR WEBSITE',
+    'Paste this code in your website footer or About page (use an "HTML" or "Embed code" block):',
+    snippet.html,
+    '',
+    'No HTML option? Paste this text instead:',
+    snippet.text,
+    '',
+    `Your dashboard: ${dashboardUrl}`,
+    `Know another contractor who does honest work? ${applyUrl}`,
+    '',
+    'Questions? Reply to this email or write to adeyo@listworx.co.',
+  ].join('\n');
+
+  return { subject: BADGE_KIT_SUBJECT, html, text };
+}

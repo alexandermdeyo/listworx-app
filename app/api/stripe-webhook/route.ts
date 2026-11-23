@@ -17,6 +17,7 @@ import {
   scheduledCancellation,
   subscriptionPeriod,
 } from '@/lib/billing/subscription-record';
+import { sendBadgeKitEmailOnce } from '@/lib/server/badge-kit-email';
 import { handleMediaCheckoutCompleted, handleMediaCheckoutExpired, isMediaSession } from '@/lib/server/media-webhook';
 
 function getStripe() {
@@ -227,6 +228,7 @@ async function handleCheckoutCompleted(session: any) {
     } else {
       console.log(`[stripe-webhook] contractor ${contractorId} partner_status → active`);
       await sendSubscriptionActivatedWelcomeEmail(contractorId, tierName);
+      await sendBadgeKitEmailOnce(getSupabase(), contractorId);
     }
   } else if (activation.notifyAdmin) {
     await notifyAdminOfUnapprovedPayment(contractorId, profileData?.partner_status, 'subscription checkout');
@@ -764,6 +766,7 @@ async function handleSubscriptionUpdated(subscription: any) {
         console.log(`[stripe-webhook] contractor ${contractorId} partner_status → active (via subscription.updated)`);
         const tierName = subscription.metadata?.tierName;
         await sendSubscriptionActivatedWelcomeEmail(contractorId, tierName);
+        await sendBadgeKitEmailOnce(getSupabase(), contractorId);
       }
     } else if (activation.notifyAdmin && subscription.metadata?.isFounderActivation !== 'true') {
       // Founder checkouts already notified the admin from checkout.session.completed.
