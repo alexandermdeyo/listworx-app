@@ -269,8 +269,8 @@ export default function ContractorsPage() {
         <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <Reveal className="min-w-0">
             <PhotoDark
-              src="/images/redesign/contractor_hvac-crop.webp"
-              alt="An IronClad-verified HVAC technician on a service call"
+              src="/images/library/hvac-mentor-team.webp"
+              alt="An experienced HVAC tech training a younger tech on a service call"
               className="lw-photo-dark--contractor min-h-[440px] rounded-2xl lg:min-h-[560px]"
               angle="to bottom"
               a1={0.65}
@@ -455,8 +455,8 @@ export default function ContractorsPage() {
 
           <Reveal className="mb-10">
             <PhotoDark
-              src="/images/redesign/contractor_painter-wall-crop.webp"
-              alt="An IronClad-verified painter rolling a fresh coat onto a wall"
+              src="/images/library/painter-interior-a.webp"
+              alt="A painter rolling a fresh coat onto a wall"
               className="lw-photo-dark--contractor aspect-[16/7] w-full rounded-2xl"
               bri={0.83}
               sat={0.58}

@@ -187,8 +187,8 @@ export default function RealtorsPage() {
           <Reveal immediate delay={200} className="relative hidden lg:block">
             <div className="lw-figure-zoom relative ml-auto w-full max-w-[560px] overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_40px_80px_-40px_rgba(31,31,31,0.5)]">
               <img
-                src="/images/redesign/realtor_couple-consultation-laptop.webp"
-                alt="A real estate agent reviewing contractor options with clients at a kitchen table"
+                src="/images/library/realtor-home-tour-couple-a.webp"
+                alt="A real estate agent walking clients through a home"
                 className="block h-full w-full object-cover"
                 loading="eager"
               />
@@ -344,8 +344,8 @@ export default function RealtorsPage() {
         <Reveal className="grid items-center gap-10 md:grid-cols-2 lg:gap-16">
           <div className="lw-figure-zoom aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm">
             <img
-              src="/images/redesign/realtor_photographer-listing-shoot.webp"
-              alt="A real estate photographer shooting a living room for a listing"
+              src="/images/library/real-estate-media-filming.webp"
+              alt="A videographer filming a realtor inside a listing"
               className="h-full w-full object-cover"
               loading="lazy"
             />
@@ -372,7 +372,7 @@ export default function RealtorsPage() {
           </div>
           <div className="lw-figure-zoom order-1 aspect-[4/3] overflow-hidden rounded-2xl border border-zinc-200 shadow-sm md:order-2">
             <img
-              src="/images/redesign/realtor_drone-operator-listing-shoot.webp"
+              src="/images/library/drone-lake-home-shoot.webp"
               alt="A drone operator capturing aerial footage of a property for a listing"
               className="h-full w-full object-cover"
               loading="lazy"

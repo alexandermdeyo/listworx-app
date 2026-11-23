@@ -140,10 +140,10 @@ export default function AboutPage() {
         <div className="mx-auto max-w-6xl px-6">
           <PhotoStrip
             photos={[
-              { ...LIB.realtorCouple, caption: 'Homeowners and realtors' },
+              { ...LIB.homeownerTour, caption: 'Homeowners and realtors' },
               { ...LIB.paintCrew2, caption: 'Contractors and crews' },
-              { ...LIB.roofers, caption: 'Real work, done right' },
-              { ...LIB.houseDusk, caption: 'Homes worth caring for' },
+              { ...LIB.hvacMentor, caption: 'Skills passed down' },
+              { ...LIB.homeExterior, caption: 'Homes worth caring for' },
             ]}
           />
         </div>

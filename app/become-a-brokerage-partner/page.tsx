@@ -72,7 +72,7 @@ export default function BrokeragePartnerPage() {
           <Reveal immediate delay={200} className="relative hidden lg:block">
             <div className="lw-figure-zoom relative ml-auto w-full max-w-[560px] overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_40px_80px_-40px_rgba(31,31,31,0.5)]">
               <img
-                src="/images/redesign/realtor_couple-consultation-laptop.webp"
+                src="/images/library/realtor-meeting-couple.webp"
                 alt="A real estate agent meeting with homeowners"
                 className="block h-full w-full object-cover"
                 loading="eager"

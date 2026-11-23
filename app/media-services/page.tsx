@@ -60,10 +60,10 @@ export default function MediaServicesPage() {
         <div className="container mx-auto max-w-6xl px-4">
           <PhotoStrip
             photos={[
-              { ...LIB.photographer, caption: 'Real estate photography' },
-              { ...LIB.drone, caption: 'Drone photography' },
-              { ...LIB.paintCrew1, caption: 'Contractor branding' },
-              { ...LIB.kitchenDark, caption: 'Finished-project photos' },
+              { ...LIB.mediaFilming, caption: 'Real estate video' },
+              { ...LIB.droneLake, caption: 'Drone photography' },
+              { ...LIB.mediaCamera, caption: 'Jobsite photography' },
+              { ...LIB.kitchenLake, caption: 'Finished-project photos' },
             ]}
           />
         </div>

@@ -70,7 +70,7 @@ export default function FaqPage() {
     <PageShell surface="marketing">
       <Navigation variant="light" />
       <section className="relative isolate overflow-hidden bg-brand-navy text-white">
-        <HeroPhoto src={LIB.paintCrew2.src} position="50% 30%" />
+        <HeroPhoto src={LIB.tabletConsult.src} position="50% 30%" />
         <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="container relative mx-auto px-4 py-12 md:py-16">
           <p className="lw-label-lg mb-3">FAQ</p>

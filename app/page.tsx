@@ -20,7 +20,7 @@ import CountUp from '@/components/site/CountUp';
 import HomepageTrustBars from '@/components/site/HomepageTrustBars';
 import FaqSection from '@/components/site/FaqSection';
 import NewsletterSignupForm from '@/components/NewsletterSignupForm';
-import HolidayBar from '@/components/site/HolidayBar';
+import HolidayBanner from '@/components/site/HolidayBanner';
 import ContractorRecruitBar from '@/components/site/ContractorRecruitBar';
 import { pageMetadata, homepageStructuredData } from '@/lib/seo';
 import JsonLd from '@/components/seo/JsonLd';
@@ -112,14 +112,13 @@ export default function LandingPage() {
     <PageShell surface="marketing">
       <JsonLd data={homepageStructuredData} />
       <Navigation variant="navy" />
+      <HolidayBanner />
 
       {/* BRAND REDESIGN: laid out to match the approved homepage mockup */}
       <BrandHomeHero />
       <BrandPathways />
       <BrandFeaturedManual />
 
-      {/* seasonal banner (self-hides out of season) */}
-      <HolidayBar />
 
       {/* Homeowner request entry point (JobRequestWidget), unchanged logic */}
       <HomeownerHero variant="section" />

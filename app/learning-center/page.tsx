@@ -14,13 +14,13 @@ export const metadata = pageMetadata({
   path: '/learning-center',
 });
 
-const CATEGORY_PHOTO: Record<string, { src: string; alt: string }> = {
-  'Hiring guide': LIB.jobRequestKitchen,
-  'IronClad Standards': LIB.blueprints,
-  'Realtor resource': LIB.realtorCouple,
-  'Business manual': LIB.playbookScene,
-  'Marketing and photography': LIB.photographer,
-  Templates: LIB.blueprints,
+const CATEGORY_PHOTO: Record<string, { src: string; alt: string; pos: string }> = {
+  'Hiring guide': { src: '/images/library/handyman-tablet-consultation.webp', alt: 'A contractor walking a homeowner through an estimate on a tablet', pos: '50% 18%' },
+  'IronClad Standards': { src: '/images/library/inspector-explains-findings.webp', alt: 'A contractor reviewing findings with a homeowner', pos: '50% 20%' },
+  'Realtor resource': { src: '/images/library/realtor-contractor-water-heater.webp', alt: 'A realtor and a contractor checking a water heater before listing', pos: '50% 15%' },
+  'Business manual': { src: '/images/brand/playbook-cover-scene.webp', alt: 'The ListWorx Contractor Business Playbook', pos: '45% 35%' },
+  'Marketing and photography': { src: '/images/library/media-camera-jobsite.webp', alt: 'A contractor photographing finished work on the jobsite', pos: '50% 40%' },
+  Templates: { src: '/images/library/plans-calculator-desk.webp', alt: 'Plans, a calculator and a pencil on a desk', pos: '50% 40%' },
 };
 
 export default function LearningCenterPage() {
@@ -44,14 +44,18 @@ export default function LearningCenterPage() {
         <div className="grid gap-5 md:grid-cols-2">
           {items.map((r) => (
             <Link key={r.slug} href={`/learning-center/${r.slug}`} className="group overflow-hidden rounded-2xl border border-mailer-border bg-mailer-card transition hover:border-lw-rust">
-              <div className="relative h-40 overflow-hidden bg-brand-navy">
+              <div className="relative h-52 overflow-hidden bg-brand-navy">
                 {r.category === 'IronClad Standards' ? (
-                  <div className="flex h-full items-center justify-center bg-gradient-to-br from-brand-navy to-brand-navy-soft">
-                    <IroncladBadge variant="standards" hover={false} className="h-32" />
-                  </div>
+                  <>
+                    <img src={CATEGORY_PHOTO[r.category].src} alt={CATEGORY_PHOTO[r.category].alt} loading="lazy" className="h-full w-full object-cover opacity-60" style={{ objectPosition: CATEGORY_PHOTO[r.category].pos }} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <IroncladBadge variant="standards" hover={false} className="h-32 drop-shadow-xl" />
+                    </div>
+                  </>
                 ) : (
-                  <img src={CATEGORY_PHOTO[r.category].src} alt={CATEGORY_PHOTO[r.category].alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                  <img src={CATEGORY_PHOTO[r.category].src} alt={CATEGORY_PHOTO[r.category].alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" style={{ objectPosition: CATEGORY_PHOTO[r.category].pos }} />
                 )}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-mailer-card via-mailer-card/60 to-transparent" />
               </div>
               <div className="p-6">
               <p className="text-xs font-bold uppercase tracking-widest text-white/40">{r.category} · {r.audience}</p>

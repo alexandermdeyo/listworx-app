@@ -5,7 +5,7 @@
  * so it never goes stale. Snow stops for visitors who prefer reduced motion.
  */
 
-function isHolidaySeason(now = new Date()) {
+export function isHolidaySeason(now = new Date()) {
   const m = now.getMonth(); // 0 = Jan
   const d = now.getDate();
   return m === 10 || m === 11 || (m === 0 && d <= 6);

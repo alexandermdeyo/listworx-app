@@ -97,8 +97,8 @@ export default function SupplierPartnerPage() {
 
           <Reveal delay={120} className="lw-figure-zoom overflow-hidden rounded-2xl border border-zinc-200 shadow-[0_30px_60px_-40px_rgba(31,31,31,0.5)]">
             <img
-              src="/images/redesign/contractor_hvac-crop.webp"
-              alt="A contractor at work with tools and materials"
+              src="/images/library/plans-new-build-a.webp"
+              alt="Two builders reviewing plans on a new build"
               className="block h-full w-full object-cover"
               loading="lazy"
             />

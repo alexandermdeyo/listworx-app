@@ -94,9 +94,9 @@ export default function PricingPage() {
           className="mt-8"
           photos={[
             { ...LIB.videoCrew, caption: 'Branding and short-form video' },
-            { ...LIB.photographer, caption: 'Real estate photography' },
-            { ...LIB.drone, caption: 'Drone photography' },
-            { ...LIB.kitchenWhite, caption: 'Finished-project photos' },
+            { ...LIB.mediaFilming, caption: 'Real estate video' },
+            { ...LIB.droneLake, caption: 'Drone photography' },
+            { ...LIB.mediaCamera, caption: 'Jobsite photography' },
           ]}
         />
         <div className="mt-8 grid gap-6 md:grid-cols-2">

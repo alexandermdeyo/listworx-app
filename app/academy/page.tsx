@@ -66,7 +66,7 @@ export default function AcademyPage() {
 
       {/* SECTION 1 — HERO */}
       <section className="relative isolate overflow-hidden bg-brand-navy py-14 text-white md:py-20">
-        <HeroPhoto src={LIB.blueprints.src} position="60% 30%" />
+        <HeroPhoto src={LIB.hvacMentor.src} position="60% 30%" />
         <Brushstroke variant="corner" className="pointer-events-none absolute left-0 top-0 z-10 w-[110px] md:w-[180px]" />
         <div className="container relative mx-auto px-4">
           <Reveal immediate delay={0}>

@@ -247,10 +247,10 @@ export default function IronCladStandardsPage() {
             <PhotoStrip
               className="mb-8"
               photos={[
-                { ...LIB.roofers, caption: 'Roofing' },
-                { ...LIB.hvac, caption: 'HVAC' },
-                { ...LIB.painterWall, caption: 'Painting' },
-                { ...LIB.cleaningCrew, caption: 'Home cleaning' },
+                { ...LIB.roofer, caption: 'Roofing' },
+                { ...LIB.hvacTech, caption: 'HVAC' },
+                { ...LIB.womanElectrician, caption: 'Electrical' },
+                { ...LIB.plumber, caption: 'Plumbing' },
               ]}
             />
 
