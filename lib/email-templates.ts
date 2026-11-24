@@ -730,7 +730,6 @@ export const LISTWORX_SITE = 'https://listworx.co';
 /** Email-sized copies (scaled down only) of the site's real brand files. */
 export const BADGE_KIT_FILES = {
   standards: { path: '/brand/badge-kit/ironclad-standards-240.png', fullSize: '/Ironclad_Standards_Logo.png', width: 120, height: 120 },
-  certified: { path: '/brand/badge-kit/ironclad-certified-partner-240.png', fullSize: '/Ironclad_Cert_Partner_Final_Logo.png', width: 120, height: 115 },
   wordmarkForDark: { path: '/brand/badge-kit/listworx-wordmark-for-dark-backgrounds-560.png', fullSize: '/brand/listworx-wordmark-dark.png', width: 240, height: 28 },
   wordmarkForLight: { path: '/brand/badge-kit/listworx-wordmark-for-light-backgrounds-560.png', fullSize: '/brand/listworx-wordmark-light.png', width: 240, height: 28 },
 } as const;
@@ -750,27 +749,24 @@ export type BadgeKitInput = {
   companyName?: string | null;
   /** Public ListWorx profile page, or null if it isn't live yet. */
   profileUrl?: string | null;
-  /** True only when an admin has marked the contractor IronClad Certified. */
-  certified?: boolean;
   /** Override only for previews on the test site; real sends use listworx.co. */
   assetBase?: string;
 };
 
 /** The HTML a contractor pastes on their own site. Exported so tests and the
  *  dashboard can reuse exactly what the email shows. */
-export function badgeKitSnippet({ profileUrl, certified }: Pick<BadgeKitInput, 'profileUrl' | 'certified'>) {
+export function badgeKitSnippet({ profileUrl }: Pick<BadgeKitInput, 'profileUrl'>) {
   const href = profileUrl || LISTWORX_SITE;
-  const badge = certified ? BADGE_KIT_FILES.certified : BADGE_KIT_FILES.standards;
-  const alt = certified
-    ? 'IronClad Certified Partner, ListWorx contractor network'
-    : 'Member of the ListWorx contractor network, IronClad Standards';
+  // Every member gets the IronClad Standards shield. The IronClad Certified
+  // Partner badge is never part of the join email: it is only given once a
+  // contractor actually earns certification (owner, 2026-11-23).
+  const badge = BADGE_KIT_FILES.standards;
+  const alt = 'Member of the ListWorx contractor network, IronClad Standards';
   const html =
     `<a href="${href}" target="_blank" rel="noopener" title="ListWorx contractor network">` +
     `<img src="${BADGE_KIT_ASSET_BASE}${badge.path}" alt="${alt}" width="${badge.width}" height="${badge.height}" style="border:0;">` +
     `</a>`;
-  const text = certified
-    ? `IronClad Certified Partner in the ListWorx contractor network: ${href}`
-    : `Proud member of the ListWorx contractor network: ${href}`;
+  const text = `Proud member of the ListWorx contractor network: ${href}`;
   return { href, html, text };
 }
 
@@ -778,8 +774,7 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
   const asset = (input.assetBase || BADGE_KIT_ASSET_BASE).replace(/\/$/, '');
   const firstName = (input.ownerName || '').trim().split(/\s+/)[0] || '';
   const company = (input.companyName || '').trim();
-  const certified = input.certified === true;
-  const snippet = badgeKitSnippet({ profileUrl: input.profileUrl, certified });
+  const snippet = badgeKitSnippet({ profileUrl: input.profileUrl });
   const dashboardUrl = `${LISTWORX_SITE}/contractor-dashboard`;
   const applyUrl = `${LISTWORX_SITE}/apply`;
   const F = BADGE_KIT_FILES;
@@ -827,16 +822,11 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           ${imgTile('#FFFFFF', F.standards.path, F.standards.width, F.standards.height, 'IronClad Standards', 'IronClad Standards shield', F.standards.fullSize)}
-          ${certified
-            ? imgTile('#FFFFFF', F.certified.path, F.certified.width, F.certified.height, 'IronClad Certified Partner', 'IronClad Certified Partner badge', F.certified.fullSize)
-            : imgTile('#0E0E0E', F.wordmarkForDark.path, F.wordmarkForDark.width, F.wordmarkForDark.height, 'ListWorx', 'ListWorx logo for dark backgrounds', F.wordmarkForDark.fullSize)}
+          ${imgTile('#0E0E0E', F.wordmarkForDark.path, F.wordmarkForDark.width, F.wordmarkForDark.height, 'ListWorx', 'ListWorx logo for dark backgrounds', F.wordmarkForDark.fullSize)}
         </tr>
         <tr>
-          ${certified
-            ? imgTile('#0E0E0E', F.wordmarkForDark.path, F.wordmarkForDark.width, F.wordmarkForDark.height, 'ListWorx', 'ListWorx logo for dark backgrounds', F.wordmarkForDark.fullSize)
-            : ''}
           ${imgTile('#FFFFFF', F.wordmarkForLight.path, F.wordmarkForLight.width, F.wordmarkForLight.height, 'ListWorx', 'ListWorx logo for light backgrounds', F.wordmarkForLight.fullSize)}
-          ${certified ? '' : '<td class="kit-tile" style="width:50%;"></td>'}
+          <td class="kit-tile" style="width:50%;"></td>
         </tr>
       </table>
 
@@ -859,7 +849,7 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
 
   const html = layout(
     greeting,
-    "We're glad you're here. Your member badge kit is below.",
+    'Your member badge kit and a link for your website are below.',
     body,
     'Your ListWorx badge kit and a link for your website are inside.',
     'contractor',
@@ -886,7 +876,6 @@ export function contractorBadgeKitEmail(input: BadgeKitInput): EmailTemplate {
     '',
     'YOUR MEMBER BADGE KIT',
     `IronClad Standards shield: ${asset}${F.standards.fullSize}`,
-    ...(certified ? [`IronClad Certified Partner badge: ${asset}${F.certified.fullSize}`] : []),
     `ListWorx logo for dark backgrounds: ${asset}${F.wordmarkForDark.fullSize}`,
     `ListWorx logo for light backgrounds: ${asset}${F.wordmarkForLight.fullSize}`,
     '',

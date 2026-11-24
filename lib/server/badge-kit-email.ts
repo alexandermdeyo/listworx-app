@@ -45,7 +45,7 @@ export async function sendBadgeKitEmailOnce(
 
     const { data: profile, error } = await supabase
       .from('contractor_profiles')
-      .select('id, user_id, email, owner_name, company_name, partner_status, archived, ironclad_certified, profile_slug, profile_published')
+      .select('id, user_id, email, owner_name, company_name, partner_status, archived, profile_slug, profile_published')
       .eq('id', contractorId)
       .maybeSingle();
     if (error || !profile) return { status: 'skipped', reason: 'profile not found' };
@@ -61,12 +61,10 @@ export async function sendBadgeKitEmailOnce(
     if (!to) return { status: 'skipped', reason: 'no email address' };
 
     const profileUrl = publicProfileUrl(profile);
-    const certified = profile.ironclad_certified === true;
     const email = contractorBadgeKitEmail({
       ownerName: profile.owner_name,
       companyName: profile.company_name,
       profileUrl,
-      certified,
     });
 
     const logBase = { table_name: 'contractor_profiles', record_id: contractorId, user_id: profile.user_id || null };
@@ -76,7 +74,7 @@ export async function sendBadgeKitEmailOnce(
       const { error: logError } = await supabase.from('audit_logs').insert({
         ...logBase,
         action: BADGE_KIT_SENT_ACTION,
-        changes: { to, subject: email.subject, resend_id: resendId, profile_url: profileUrl, certified_badge: certified },
+        changes: { to, subject: email.subject, resend_id: resendId, profile_url: profileUrl },
       });
       if (logError) console.error('[badge-kit] sent but could not log the send:', logError);
       console.log(`[badge-kit] sent to contractor ${contractorId}`);

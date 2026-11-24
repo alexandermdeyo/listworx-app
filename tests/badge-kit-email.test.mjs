@@ -18,19 +18,15 @@ test('badge kit images exist on the site and load from listworx.co', () => {
   assert.ok(!/cid:|data:image/.test(html), 'no attachments or inline data images');
 });
 
-test('uncertified members get the IronClad Standards shield, never the Certified badge', () => {
-  const { html, text } = contractorBadgeKitEmail({ ownerName: 'Pat', companyName: 'Doe Roofing', certified: false });
+test('join email never includes the IronClad Certified Partner badge, even for a certified profile', () => {
+  const { html, text } = contractorBadgeKitEmail({ ownerName: 'Pat', companyName: 'Doe Roofing', certified: true });
   assert.ok(html.includes(BADGE_KIT_FILES.standards.path));
-  assert.ok(!html.includes(BADGE_KIT_FILES.certified.path));
-  assert.ok(!/Certified Partner/i.test(html) && !/Certified Partner/i.test(text));
-  const snip = badgeKitSnippet({ profileUrl: null, certified: false });
-  assert.ok(snip.html.includes(BADGE_KIT_FILES.standards.path));
-});
-
-test('certified members also get the Certified badge, and it goes in their snippet', () => {
-  const { html } = contractorBadgeKitEmail({ ownerName: 'Pat', certified: true });
-  assert.ok(html.includes(BADGE_KIT_FILES.certified.path) && html.includes(BADGE_KIT_FILES.standards.path));
-  assert.ok(badgeKitSnippet({ certified: true }).html.includes(BADGE_KIT_FILES.certified.path));
+  assert.ok(!('certified' in BADGE_KIT_FILES));
+  for (const banned of ['Ironclad_Cert_Partner', 'ironclad-certified-partner', 'Certified Partner']) {
+    assert.ok(!html.includes(banned) && !text.includes(banned), banned);
+  }
+  assert.ok(badgeKitSnippet({ profileUrl: null }).html.includes(BADGE_KIT_FILES.standards.path));
+  assert.ok(!readFileSync('lib/server/badge-kit-email.ts', 'utf8').includes('ironclad_certified'));
 });
 
 test('snippet links to the profile page, falling back to listworx.co, with a plain-text version', () => {
